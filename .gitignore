@@ -1,0 +1,66 @@
+# ---------- OS / 工具杂项 ----------
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.pyc
+*.class
+.atom/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# ---------- IDE ----------
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code（多数团队会提交 .vscode，按需注释）
+.vscode/
+
+# ---------- Flutter / Dart / Pub ----------
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+.pub-cache/              # 一般不提交
+**/doc/api/
+**/ios/Flutter/.last_build_id
+devtools_options.yaml
+
+# Flutter 应用通常“提交” pubspec.lock；若是 package 才忽略
+# pubspec.lock
+
+# ---------- 构建输出 ----------
+/build/
+android/build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+macos/Flutter/ephemeral/
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# ---------- Android ----------
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/*.keystore
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# ---------- iOS / macOS ----------
+ios/Pods/
+ios/.symlinks/
+# Xcode 用户数据（scheme 通常可以提交共享的 xcshareddata，用户本地的就别提交）
+# ios/Runner.xcodeproj/xcuserdata/
+# ios/Runner.xcworkspace/xcuserdata/
+macos/Pods/
+
+# ---------- 符号表 / 混淆 ----------
+app.*.symbols
+app.*.map.json

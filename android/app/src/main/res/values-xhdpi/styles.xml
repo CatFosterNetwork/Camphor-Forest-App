@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 超高DPI屏幕的UCrop主题 - 修复ActionBar冲突 -->
+    <style name="UCropTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 禁用Window ActionBar -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowActionBar">false</item>
+        
+        <item name="android:statusBarColor">#2196F3</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorPrimaryDark">#1976D2</item>
+        <item name="colorAccent">#2196F3</item>
+        
+        <!-- 超高DPI屏幕：较大工具栏高度 -->
+        <item name="actionBarSize">88dp</item>
+        <item name="android:actionBarSize">88dp</item>
+    </style>
+</resources>
