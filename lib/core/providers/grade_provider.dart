@@ -119,11 +119,11 @@ class GradeNotifier extends StateNotifier<GradeState> {
   static String getCurrentXnm() {
     final now = DateTime.now();
     final month = now.month;
-    if (month >= 1 && month <= 7) {
+    if (month >= 8) {
       return now.year.toString(); // 1-7月使用本年
     } else {
       // 8-12月
-      return (now.year + 1).toString(); // 8-12月使用本年+1
+      return (now.year - 1).toString(); // 8-12月使用本年+1
     }
   }
 
