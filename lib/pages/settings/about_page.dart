@@ -10,6 +10,9 @@ import 'package:dio/dio.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+
+import '../../core/providers/permission_provider.dart';
+import '../../core/services/permission_service.dart';
 // import 'package:flutter_svg/flutter_svg.dart'; // 暂时不使用SVG
 import 'package:package_info_plus/package_info_plus.dart';
 // import 'package:go_router/go_router.dart'; // 暂时不使用
@@ -31,13 +34,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   String version = '1.0.0';
   String buildNumber = '1';
   String packageName = 'social.swu.camphor_forest';
-  
+
   @override
   void initState() {
     super.initState();
     _loadPackageInfo();
   }
-  
+
   Future<void> _loadPackageInfo() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
@@ -63,24 +66,27 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: true, // 使用背景
-      forceStatusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark, // 强制状态栏图标适配
-      appBar: ThemeAwareAppBar(
-        title: '关于',
-      ),
+      forceStatusBarIconBrightness: isDarkMode
+          ? Brightness.light
+          : Brightness.dark, // 强制状态栏图标适配
+      appBar: ThemeAwareAppBar(title: '关于'),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.92,
           child: Column(
             children: [
               const SizedBox(height: 80), // 顶部间距
-              
               // SWU Logo - 全尺寸圆角显示
               Container(
                 width: 160,
                 height: 160,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(80), // 100%圆角弧度（半径为容器宽度的一半）
-                  color: isDarkMode ? const Color(0xFF202125) : Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(
+                    80,
+                  ), // 100%圆角弧度（半径为容器宽度的一半）
+                  color: isDarkMode
+                      ? const Color(0xFF202125)
+                      : Colors.grey.shade200,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(80), // 100%圆角弧度
@@ -92,16 +98,15 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 48), // Logo和卡片间距
-              
               // 信息卡片
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                   color: isDarkMode ? const Color(0xFF202125) : Colors.white,
-                  border: isDarkMode 
+                  border: isDarkMode
                       ? Border.all(color: const Color(0xFF616266), width: 1)
                       : null,
                 ),
@@ -109,34 +114,25 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // 应用版本
-                    _buildInfoRow(
-                      '应用版本',
-                      version,
-                      isDarkMode,
-                      isFirst: true,
-                    ),
-                    
+                    _buildInfoRow('应用版本', version, isDarkMode, isFirst: true),
+
                     // 系统版本（Flutter相当于微信版本）
                     _buildInfoRow(
                       'Flutter版本',
                       _getFlutterVersion(),
                       isDarkMode,
                     ),
-                    
+
                     // Dart版本（相当于SDK版本）
-                    _buildInfoRow(
-                      'Dart版本',
-                      _getDartVersion(),
-                      isDarkMode,
-                    ),
-                    
+                    _buildInfoRow('Dart版本', _getDartVersion(), isDarkMode),
+
                     // 用户协议
                     _buildActionRow(
                       '用户协议',
                       isDarkMode,
                       onTap: () => _navigateToUserAgreement(context),
                     ),
-                    
+
                     // 官方Q群
                     _buildActionRow(
                       '官方Q群',
@@ -147,7 +143,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 32), // 底部间距
             ],
           ),
@@ -167,12 +163,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        border: isFirst 
-            ? null 
+        border: isFirst
+            ? null
             : Border(
                 top: BorderSide(
-                  color: isDarkMode 
-                      ? const Color(0xFF616266) 
+                  color: isDarkMode
+                      ? const Color(0xFF616266)
                       : Colors.grey.shade400.withAlpha(102), // 0.4 * 255 ≈ 102
                   width: 1,
                 ),
@@ -193,8 +189,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             value,
             style: TextStyle(
               fontSize: 18,
-              color: isDarkMode 
-                  ? const Color(0xFFA9AAAC) 
+              color: isDarkMode
+                  ? const Color(0xFFA9AAAC)
                   : Colors.grey.shade500,
             ),
           ),
@@ -212,7 +208,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: isLast 
+      borderRadius: isLast
           ? const BorderRadius.only(
               bottomLeft: Radius.circular(24),
               bottomRight: Radius.circular(24),
@@ -224,8 +220,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: isDarkMode 
-                  ? const Color(0xFF616266) 
+              color: isDarkMode
+                  ? const Color(0xFF616266)
                   : Colors.grey.shade400.withAlpha(102), // 0.4 * 255 ≈ 102
               width: 1,
             ),
@@ -271,7 +267,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   void _navigateToUserAgreement(BuildContext context) {
     // 如果有用户协议页面路由，可以导航过去
     // context.push(RouteConstants.userAgreement);
-    
+
     // 临时显示提示
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -284,16 +280,14 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   /// 显示官方群二维码
   void _showOfficialGroup(BuildContext context) {
     final isDarkMode = ref.read(effectiveIsDarkModeProvider);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
         title: Text(
           '官方Q群',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
+          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -318,16 +312,18 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   ],
                 ),
                 child: CachedImage(
-                  imageUrl: isDarkMode 
-                    ? 'https://data.swu.social/service/qrcode_dark.JPG'
-                    : 'https://data.swu.social/service/qrcode_light.JPG',
+                  imageUrl: isDarkMode
+                      ? 'https://data.swu.social/service/qrcode_dark.JPG'
+                      : 'https://data.swu.social/service/qrcode_light.JPG',
                   fit: BoxFit.contain, // 保持原图片比例
                   borderRadius: BorderRadius.circular(8),
                   placeholder: Container(
                     width: 200,
                     height: 200,
                     decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                      color: isDarkMode
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
@@ -338,7 +334,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                     width: 200,
                     height: 200,
                     decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                      color: isDarkMode
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
@@ -354,7 +352,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                           Text(
                             '加载失败',
                             style: TextStyle(
-                              color: isDarkMode ? Colors.white70 : Colors.black54,
+                              color: isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black54,
                               fontSize: 14,
                             ),
                           ),
@@ -381,9 +381,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               '关闭',
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
           ),
         ],
@@ -396,28 +394,32 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     try {
       // QQ群号：你需要替换为实际的群号
       const String groupNumber = '837036146'; // 请替换为实际的群号
-      
+
       // 尝试直接打开QQ应用
-      final Uri qqGroupUri = Uri.parse('mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D$groupNumber');
-      final Uri webUri = Uri.parse('https://qm.qq.com/cgi-bin/qm/qr?k=$groupNumber');
-      
+      final Uri qqGroupUri = Uri.parse(
+        'mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D$groupNumber',
+      );
+      final Uri webUri = Uri.parse(
+        'https://qm.qq.com/cgi-bin/qm/qr?k=$groupNumber',
+      );
+
       bool launched = false;
-      
+
       // 先尝试打开QQ应用
       if (await canLaunchUrl(qqGroupUri)) {
         await launchUrl(qqGroupUri);
         launched = true;
-      } 
+      }
       // 如果QQ应用不可用，打开浏览器
       else if (await canLaunchUrl(webUri)) {
         await launchUrl(webUri, mode: LaunchMode.externalApplication);
         launched = true;
       }
-      
+
       if (!launched) {
         // 如果都无法打开，则复制链接到剪贴板作为备选方案
         await Clipboard.setData(ClipboardData(text: webUri.toString()));
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -432,8 +434,10 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       // 发生错误时，尝试复制链接作为备选方案
       try {
         const String groupNumber = '837036146';
-        await Clipboard.setData(ClipboardData(text: 'https://qm.qq.com/cgi-bin/qm/qr?k=$groupNumber'));
-        
+        await Clipboard.setData(
+          ClipboardData(text: 'https://qm.qq.com/cgi-bin/qm/qr?k=$groupNumber'),
+        );
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -480,7 +484,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // 保存图片选项
             ListTile(
               leading: Icon(
@@ -498,7 +502,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                 _saveQRCodeImage(isDarkMode);
               },
             ),
-            
+
             // 打开QQ群选项
             ListTile(
               leading: Icon(
@@ -516,7 +520,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                 _openQQGroup();
               },
             ),
-            
+
             // 调用系统扫描选项
             ListTile(
               leading: Icon(
@@ -534,7 +538,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                 _openSystemScanner();
               },
             ),
-            
+
             const SizedBox(height: 10),
           ],
         ),
@@ -552,22 +556,22 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         builder: (context) => _buildSaveProgressDialog(isDarkMode),
       );
 
-      final String imageUrl = isDarkMode 
-        ? 'https://data.swu.social/service/qrcode_dark.JPG'
-        : 'https://data.swu.social/service/qrcode_light.JPG';
-      
-      // 检查并请求存储权限
-      final bool hasPermission = await _checkAndRequestStoragePermission();
-      
-      if (!hasPermission) {
+      final String imageUrl = isDarkMode
+          ? 'https://data.swu.social/service/qrcode_dark.JPG'
+          : 'https://data.swu.social/service/qrcode_light.JPG';
+
+      // 使用新的权限管理器检查存储权限
+      final result = await PermissionService.requestStoragePermission(
+        context: context,
+        showRationale: true,
+      );
+
+      if (!result.isGranted) {
         if (mounted) {
           Navigator.of(context).pop(); // 关闭进度对话框
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('需要存储权限才能保存图片到相册'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          PermissionService.showErrorSnackBar(
+            context,
+            result.errorMessage ?? '需要存储权限才能保存图片到相册',
           );
         }
         return;
@@ -575,30 +579,18 @@ class _AboutPageState extends ConsumerState<AboutPage> {
 
       // 下载图片
       final Uint8List imageBytes = await _downloadImage(imageUrl);
-      
+
       // 保存到相册
       await _saveImageToGallery(imageBytes, isDarkMode);
-      
+
       if (mounted) {
         Navigator.of(context).pop(); // 关闭进度对话框
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('二维码已成功保存到相册'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        PermissionService.showSuccessSnackBar(context, '二维码已成功保存到相册');
       }
     } catch (e) {
       if (mounted) {
         Navigator.of(context).pop(); // 关闭进度对话框
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('保存失败: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        PermissionService.showErrorSnackBar(context, '保存失败: $e');
       }
     }
   }
@@ -644,7 +636,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         return false;
       }
     }
-    
+
     return false;
   }
 
@@ -660,33 +652,27 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   /// 显示权限被拒绝的对话框
   Future<void> _showPermissionDeniedDialog() async {
     if (!mounted) return;
-    
+
     final isDarkMode = ref.read(effectiveIsDarkModeProvider);
-    
+
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
         title: Text(
           '权限被拒绝',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
+          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         ),
         content: Text(
           '需要相册权限才能保存二维码图片。请在设置中手动开启权限。',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white70 : Colors.black54,
-          ),
+          style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               '取消',
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
           ),
           TextButton(
@@ -694,10 +680,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               Navigator.of(context).pop();
               openAppSettings();
             },
-            child: const Text(
-              '去设置',
-              style: TextStyle(color: Colors.blue),
-            ),
+            child: const Text('去设置', style: TextStyle(color: Colors.blue)),
           ),
         ],
       ),
@@ -715,16 +698,20 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   }
 
   /// 保存图片到相册
-  Future<void> _saveImageToGallery(Uint8List imageBytes, bool isDarkMode) async {
+  Future<void> _saveImageToGallery(
+    Uint8List imageBytes,
+    bool isDarkMode,
+  ) async {
     // 创建临时文件
     final tempDir = await getTemporaryDirectory();
-    final fileName = 'qrcode_${isDarkMode ? 'dark' : 'light'}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final fileName =
+        'qrcode_${isDarkMode ? 'dark' : 'light'}_${DateTime.now().millisecondsSinceEpoch}.jpg';
     final file = File('${tempDir.path}/$fileName');
     await file.writeAsBytes(imageBytes);
-    
+
     // 使用gal保存到相册
     await Gal.putImage(file.path);
-    
+
     // 删除临时文件
     await file.delete();
   }
@@ -736,15 +723,11 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircularProgressIndicator(
-            color: Colors.blue,
-          ),
+          CircularProgressIndicator(color: Colors.blue),
           const SizedBox(height: 16),
           Text(
             '正在保存二维码...',
-            style: TextStyle(
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
+            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
           ),
         ],
       ),
@@ -763,9 +746,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         // 相机应用扫描
         'intent:#Intent;action=android.media.action.IMAGE_CAPTURE;end',
       ];
-      
+
       bool scannerOpened = false;
-      
+
       for (String intentUrl in scannerApps) {
         try {
           final Uri scannerUri = Uri.parse(intentUrl);
@@ -779,7 +762,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           continue;
         }
       }
-      
+
       if (!scannerOpened) {
         // 如果无法打开任何扫描器，提示用户手动操作
         if (mounted) {

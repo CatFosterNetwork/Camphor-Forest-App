@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
+import '../../core/providers/permission_provider.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
 import '../../core/widgets/cached_image.dart';
@@ -15,11 +16,11 @@ class ProfileSettingsPage extends ConsumerStatefulWidget {
   const ProfileSettingsPage({super.key});
 
   @override
-  ConsumerState<ProfileSettingsPage> createState() => _ProfileSettingsPageState();
+  ConsumerState<ProfileSettingsPage> createState() =>
+      _ProfileSettingsPageState();
 }
 
 class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
-  
   /// 强制刷新用户数据
   Future<void> _refreshUserData() async {
     try {
@@ -32,236 +33,251 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
       debugPrint('刷新用户数据失败: $e');
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
     final authState = ref.watch(authProvider);
     final user = authState.user;
-    
+
     // 获取主题色，如果没有主题则使用默认蓝色
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
-    final activeColor = isDarkMode 
-        ? themeColor.withAlpha(204) 
-        : themeColor;
+    final activeColor = isDarkMode ? themeColor.withAlpha(204) : themeColor;
 
     return ThemeAwareScaffold(
       pageType: PageType.settings,
-      forceStatusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark, // 强制状态栏图标适配
-      appBar: ThemeAwareAppBar(
-        title: '个人资料设置',
-      ),
+      forceStatusBarIconBrightness: isDarkMode
+          ? Brightness.light
+          : Brightness.dark, // 强制状态栏图标适配
+      appBar: ThemeAwareAppBar(title: '个人资料设置'),
       body: authState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : authState.errorMessage != null
-              ? Center(child: Text('加载失败: ${authState.errorMessage}'))
-              : ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-            // 个人信息卡片
-            Card( 
-              color: isDarkMode ? Colors.grey.shade800 : Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '基本信息',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    
-                    // 头像 - 使用缓存组件
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => _showAvatarUploadDialog(context, ref, themeColor),
-                        child: Stack(
-                          children: [
-                            CachedAvatar(
-                              imageUrl: user?.avatarUrl,
-                              radius: 50,
-                              backgroundColor: Colors.grey.shade300,
-                              child: Icon(
-                                Icons.person,
-                                size: 50,
-                                color: Colors.grey.shade600,
-                              ),
+          ? Center(child: Text('加载失败: ${authState.errorMessage}'))
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // 个人信息卡片
+                Card(
+                  color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '基本信息',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 头像 - 使用缓存组件
+                        Center(
+                          child: GestureDetector(
+                            onTap: () => _showAvatarUploadDialog(
+                              context,
+                              ref,
+                              themeColor,
                             ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: themeColor,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                                    width: 2,
+                            child: Stack(
+                              children: [
+                                CachedAvatar(
+                                  imageUrl: user?.avatarUrl,
+                                  radius: 50,
+                                  backgroundColor: Colors.grey.shade300,
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: Colors.grey.shade600,
                                   ),
                                 ),
-                                child: const Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.white,
-                                  size: 16,
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: themeColor,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isDarkMode
+                                            ? Colors.grey.shade800
+                                            : Colors.white,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+
+                        const SizedBox(height: 24),
+
+                        // 姓名（只读）
+                        _buildInfoItem(
+                          '用户名',
+                          user?.name ?? '未设置',
+                          Icons.person_outline,
+                          isDarkMode,
+                        ),
+
+                        // 学号（只读）
+                        _buildInfoItem(
+                          '学号',
+                          user?.studentId ?? '未设置',
+                          Icons.badge_outlined,
+                          isDarkMode,
+                          readOnly: true,
+                        ),
+
+                        // 邮箱
+                        _buildInfoItem(
+                          '邮箱',
+                          user?.email ?? '未设置',
+                          Icons.email_outlined,
+                          isDarkMode,
+                          onTap: () =>
+                              _showEditDialog(context, '邮箱', user?.email ?? ''),
+                        ),
+
+                        // 学院
+                        _buildInfoItem(
+                          '学院',
+                          user?.college.isNotEmpty == true
+                              ? user!.college
+                              : '未设置',
+                          Icons.school_outlined,
+                          isDarkMode,
+                        ),
+
+                        // 专业
+                        _buildInfoItem(
+                          '专业',
+                          user?.major.isNotEmpty == true ? user!.major : '未设置',
+                          Icons.book_outlined,
+                          isDarkMode,
+                        ),
+
+                        // 班级
+                        _buildInfoItem(
+                          '班级',
+                          user?.className.isNotEmpty == true
+                              ? user!.className
+                              : '未设置',
+                          Icons.group_outlined,
+                          isDarkMode,
+                        ),
+
+                        // 个人简介
+                        _buildInfoItem(
+                          '个人简介',
+                          user?.bio.isNotEmpty == true ? user!.bio : '未设置',
+                          Icons.info_outlined,
+                          isDarkMode,
+                          onTap: () =>
+                              _showEditDialog(context, '个人简介', user?.bio ?? ''),
+                        ),
+                      ],
                     ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // 姓名（只读）
-                    _buildInfoItem(
-                      '用户名',
-                      user?.name ?? '未设置',
-                      Icons.person_outline,
-                      isDarkMode,
-                    ),
-                    
-                    // 学号（只读）
-                    _buildInfoItem(
-                      '学号',
-                      user?.studentId ?? '未设置',
-                      Icons.badge_outlined,
-                      isDarkMode,
-                      readOnly: true,
-                    ),
-                    
-                    // 邮箱
-                    _buildInfoItem(
-                      '邮箱',
-                      user?.email ?? '未设置',
-                      Icons.email_outlined,
-                      isDarkMode,
-                      onTap: () => _showEditDialog(context, '邮箱', user?.email ?? ''),
-                    ),
-                    
-                    // 学院
-                    _buildInfoItem(
-                      '学院',
-                      user?.college.isNotEmpty == true ? user!.college : '未设置',
-                      Icons.school_outlined,
-                      isDarkMode,
-                    ),
-                    
-                    // 专业
-                    _buildInfoItem(
-                      '专业',
-                      user?.major.isNotEmpty == true ? user!.major : '未设置',
-                      Icons.book_outlined,
-                      isDarkMode,
-                    ),
-                    
-                    // 班级
-                    _buildInfoItem(
-                      '班级',
-                      user?.className.isNotEmpty == true ? user!.className : '未设置',
-                      Icons.group_outlined,
-                      isDarkMode,
-                    ),
-                    
-                    // 个人简介
-                    _buildInfoItem(
-                      '个人简介',
-                      user?.bio.isNotEmpty == true ? user!.bio : '未设置',
-                      Icons.info_outlined,
-                      isDarkMode,
-                      onTap: () => _showEditDialog(context, '个人简介', user?.bio ?? ''),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // 注：密码修改和指纹登录功能已按要求移除
-            
-            
-            // 隐私设置
-            Card(
-              color: isDarkMode ? Colors.grey.shade800 : Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '隐私设置',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : Colors.black,
-                      ),
+
+                const SizedBox(height: 16),
+
+                // 注：密码修改和指纹登录功能已按要求移除
+
+                // 隐私设置
+                Card(
+                  color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '隐私设置',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        SwitchListTile(
+                          title: Text(
+                            '允许数据统计',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '帮助改进应用体验',
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black54,
+                            ),
+                          ),
+                          value: true,
+                          onChanged: (value) {
+                            // TODO: 实现数据统计开关
+                          },
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: activeColor,
+                        ),
+
+                        SwitchListTile(
+                          title: Text(
+                            '崩溃报告',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '自动发送崩溃日志',
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black54,
+                            ),
+                          ),
+                          value: true,
+                          onChanged: (value) {
+                            // TODO: 实现崩溃报告开关
+                          },
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: activeColor,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    
-                    SwitchListTile(
-                      title: Text(
-                        '允许数据统计',
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      subtitle: Text(
-                        '帮助改进应用体验',
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white70 : Colors.black54,
-                        ),
-                      ),
-                      value: true,
-                      onChanged: (value) {
-                        // TODO: 实现数据统计开关
-                      },
-                      contentPadding: EdgeInsets.zero,
-                      activeColor: activeColor,
-                    ),
-                    
-                    SwitchListTile(
-                      title: Text(
-                        '崩溃报告',
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      subtitle: Text(
-                        '自动发送崩溃日志',
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white70 : Colors.black54,
-                        ),
-                      ),
-                      value: true,
-                      onChanged: (value) {
-                        // TODO: 实现崩溃报告开关
-                      },
-                      contentPadding: EdgeInsets.zero,
-                      activeColor: activeColor,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
     );
   }
 
-
-
-  void _showEditDialog(BuildContext context, String field, String currentValue) {
+  void _showEditDialog(
+    BuildContext context,
+    String field,
+    String currentValue,
+  ) {
     showDialog(
       context: context,
       builder: (context) => _EditFieldDialog(
@@ -272,10 +288,12 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     );
   }
 
-
-
   /// 显示头像上传选项对话框
-  void _showAvatarUploadDialog(BuildContext context, WidgetRef ref, Color themeColor) {
+  void _showAvatarUploadDialog(
+    BuildContext context,
+    WidgetRef ref,
+    Color themeColor,
+  ) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -339,11 +357,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               color: themeColor.withAlpha(26),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(
-              icon,
-              size: 30,
-              color: themeColor,
-            ),
+            child: Icon(icon, size: 30, color: themeColor),
           ),
           const SizedBox(height: 8),
           Text(label),
@@ -361,18 +375,35 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     try {
       debugPrint('🎬 开始头像上传流程...');
       debugPrint('📷 图片来源: ${source == ImageSource.camera ? "相机" : "相册"}');
-      
-      // 1. 使用图片服务选择和处理图片（裁剪+压缩）
-      debugPrint('🖼️ 第1步：选择和处理图片...');
+
+      // 1. 检查并请求权限
+      final permissionChecker = ref.read(permissionCheckerProvider);
+      bool hasPermission;
+
+      if (source == ImageSource.camera) {
+        hasPermission = await permissionChecker.ensureCameraPermission(context);
+      } else {
+        hasPermission = await permissionChecker.ensurePhotosPermission(context);
+      }
+
+      if (!hasPermission) {
+        debugPrint('❌ 权限检查失败');
+        return;
+      }
+
+      // 2. 使用图片服务选择和处理图片（裁剪+压缩）
+      debugPrint('🖼️ 第2步：选择和处理图片...');
       final imageService = ImageService();
-      final processedImageFile = await imageService.pickAndProcessAvatar(source: source);
-      
+      final processedImageFile = await imageService.pickAndProcessAvatar(
+        source: source,
+      );
+
       // 如果用户取消了裁剪，直接返回
       if (processedImageFile == null) {
         debugPrint('❌ 用户取消了图片选择或裁剪');
         return; // 用户取消了裁剪操作，不显示任何提示
       }
-      
+
       debugPrint('✅ 图片处理完成: ${processedImageFile.path}');
       debugPrint('📊 文件大小: ${await processedImageFile.length()} bytes');
 
@@ -399,16 +430,19 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
       final studentId = authState.user?.studentId ?? '';
       final extension = imageService.getFileExtension(processedImageFile.path);
       final fileName = imageService.generateFileName(studentId, extension);
-      
+
       debugPrint('🆔 学号: $studentId');
       debugPrint('📎 文件扩展名: $extension');
       debugPrint('📄 生成的文件名: $fileName');
-      
+
       // 4. 上传图片到OSS
       debugPrint('☁️ 第3步：上传图片到OSS...');
       final apiService = ref.read(apiServiceProvider);
-      final avatarUrl = await apiService.uploadImage(processedImageFile.path, fileName);
-      
+      final avatarUrl = await apiService.uploadImage(
+        processedImageFile.path,
+        fileName,
+      );
+
       debugPrint('🎉 图片上传成功！头像URL: $avatarUrl');
 
       // 5. 更新用户信息到服务器
@@ -425,20 +459,20 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           'bio': updatedUser.bio,
           'avatarUrl': avatarUrl,
         };
-        
+
         debugPrint('📋 准备更新的用户信息:');
         debugPrint('  - name: ${updatedUser.name}');
         debugPrint('  - studentId: ${updatedUser.studentId}');
         debugPrint('  - avatarUrl: $avatarUrl');
-        
+
         final response = await apiService.modifyPersonalInfo(userMap);
         debugPrint('📬 用户信息更新响应: $response');
         final success = response['success'] ?? false;
         debugPrint('✅ 用户信息更新${success ? "成功" : "失败"}');
-        
+
         if (context.mounted) {
           Navigator.of(context).pop(); // 关闭进度对话框
-          
+
           if (success) {
             // 6. API成功后，立即更新本地状态
             debugPrint('🔄 第5步：更新本地状态...');
@@ -450,7 +484,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                 final updatedUser = currentUser.copyWith(avatarUrl: avatarUrl);
                 debugPrint('🔄 更新用户头像URL...');
                 ref.updateUser(updatedUser);
-                
+
                 debugPrint('✅ 本地状态更新完成');
               } else {
                 debugPrint('⚠️ 当前用户为null');
@@ -458,7 +492,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
             } catch (e) {
               debugPrint('❌ 更新用户状态失败: $e');
             }
-            
+
             // 7. 显示成功提示
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -481,19 +515,20 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭进度对话框
-        
+
         // 特殊处理SSL证书错误
         String errorMessage = '上传失败';
-        if (e.toString().contains('CERTIFICATE_VERIFY_FAILED') || 
+        if (e.toString().contains('CERTIFICATE_VERIFY_FAILED') ||
             e.toString().contains('certificate has expired') ||
             e.toString().contains('unable to get local issuer certificate')) {
           errorMessage = '服务器SSL证书问题，请联系技术管理员处理证书配置';
         } else if (e.toString().contains('HandshakeException')) {
           errorMessage = 'SSL握手失败，这是服务器端证书配置问题，请联系管理员';
         } else {
-          errorMessage = '上传失败: ${e.toString().length > 100 ? "${e.toString().substring(0, 100)}..." : e.toString()}';
+          errorMessage =
+              '上传失败: ${e.toString().length > 100 ? "${e.toString().substring(0, 100)}..." : e.toString()}';
         }
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
@@ -505,8 +540,6 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
       }
     }
   }
-
-
 
   /// 构建信息项目
   Widget _buildInfoItem(
@@ -524,9 +557,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
           child: Row(
             children: [
               Icon(
@@ -551,7 +582,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                       value,
                       style: TextStyle(
                         fontSize: 16,
-                        color: isDarkMode 
+                        color: isDarkMode
                             ? (readOnly ? Colors.white38 : Colors.white)
                             : (readOnly ? Colors.black38 : Colors.black),
                         fontWeight: FontWeight.w500,
@@ -623,7 +654,9 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
           labelText: widget.field,
           border: const OutlineInputBorder(),
         ),
-        keyboardType: widget.field == '邮箱' ? TextInputType.emailAddress : TextInputType.text,
+        keyboardType: widget.field == '邮箱'
+            ? TextInputType.emailAddress
+            : TextInputType.text,
       ),
       actions: [
         TextButton(
@@ -674,11 +707,14 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
       // 构建更新后的用户信息
       final user = authState.user!;
       Map<String, dynamic> userMap;
-      
+
       switch (widget.field) {
         case '邮箱':
           // 邮箱验证
-          final emailRegex = RegExp(r'^[\w\-.]+@[\w\-.]+\.[A-Z]{2,4}$', caseSensitive: false);
+          final emailRegex = RegExp(
+            r'^[\w\-.]+@[\w\-.]+\.[A-Z]{2,4}$',
+            caseSensitive: false,
+          );
           if (!emailRegex.hasMatch(newValue)) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -730,7 +766,7 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
       // 调用API保存
       final apiService = ref.read(apiServiceProvider);
       final response = await apiService.modifyPersonalInfo(userMap);
-      
+
       if (mounted) {
         if (response['success'] == true) {
           // API成功后，直接更新本地状态为用户输入的新值
@@ -743,14 +779,14 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
                 email: widget.field == '邮箱' ? newValue : currentUser.email,
                 bio: widget.field == '个人简介' ? newValue : currentUser.bio,
               );
-              
+
               // 立即更新状态 - 这样UI就会显示用户输入的值
               ref.updateUser(updatedUser);
             }
           } catch (e) {
             debugPrint('更新用户状态失败: $e');
           }
-          
+
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

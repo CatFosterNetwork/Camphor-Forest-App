@@ -21,9 +21,11 @@ class CalendarViewScreen extends ConsumerStatefulWidget {
 }
 
 class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
-  static const String calendarUrl = 'https://data.swu.social/service/2025cal.webp';
+  static const String calendarUrl =
+      'https://data.swu.social/service/2025cal.webp';
   bool _isLoading = false;
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   void dispose() {
@@ -81,7 +83,9 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
                           Text(
                             '加载校历中...',
                             style: TextStyle(
-                              color: isDarkMode ? Colors.white70 : Colors.black54,
+                              color: isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black54,
                               fontSize: 16,
                             ),
                           ),
@@ -110,7 +114,9 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
                           Text(
                             '请检查网络连接后重试',
                             style: TextStyle(
-                              color: isDarkMode ? Colors.white70 : Colors.black54,
+                              color: isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black54,
                               fontSize: 14,
                             ),
                           ),
@@ -142,10 +148,7 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
                       SizedBox(height: 16),
                       Text(
                         '正在保存...',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ],
                   ),
@@ -158,7 +161,10 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
               left: 16,
               right: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(8),
@@ -166,10 +172,7 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
                 child: const Text(
                   '双指缩放查看 • 长按保存到相册',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ),
             ),
@@ -183,10 +186,16 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
   Future<void> _saveCalendar() async {
     if (_isLoading) return;
 
-    // 检查并请求存储权限
-    final hasPermission = await PermissionService.checkAndRequestStoragePermission(context);
-    if (!hasPermission) {
-      PermissionService.showErrorSnackBar(context, '需要存储权限才能保存校历图片');
+    // 使用新的权限管理器检查存储权限
+    final result = await PermissionService.requestStoragePermission(
+      context: context,
+      showRationale: true,
+    );
+    if (!result.isGranted) {
+      PermissionService.showErrorSnackBar(
+        context,
+        result.errorMessage ?? '需要存储权限才能保存校历图片',
+      );
       return;
     }
 

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
+import '../../core/providers/permission_provider.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
 
@@ -13,14 +14,16 @@ import '../../core/widgets/theme_aware_scaffold.dart';
 
 class CustomThemeSettingsPage extends ConsumerStatefulWidget {
   final String? themeId; // 'create' 或 具体的主题代码
-  
+
   const CustomThemeSettingsPage({super.key, this.themeId});
 
   @override
-  ConsumerState<CustomThemeSettingsPage> createState() => _CustomThemeSettingsPageState();
+  ConsumerState<CustomThemeSettingsPage> createState() =>
+      _CustomThemeSettingsPageState();
 }
 
-class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPage> {
+class _CustomThemeSettingsPageState
+    extends ConsumerState<CustomThemeSettingsPage> {
   theme_model.Theme? customTheme;
   bool isInitializing = true;
   String? customThemeId;
@@ -37,14 +40,14 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
   void _initializeTheme() async {
     try {
       final themeId = widget.themeId;
-      
+
       if (themeId == 'create') {
         // 创建新主题模式
         await _createNewTheme();
       } else if (themeId != null) {
         // 编辑现有主题模式
         await _loadExistingTheme(themeId);
-    } else {
+      } else {
         // 默认模式（向后兼容）
         await _loadDefaultTheme();
       }
@@ -61,12 +64,12 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
   }
 
   Future<void> _createNewTheme() async {
-          final currentTheme = ref.read(selectedCustomThemeProvider);
+    final currentTheme = ref.read(selectedCustomThemeProvider);
     final baseTheme = currentTheme ?? _getDefaultTheme();
-    
+
     final service = ref.read(customThemeServiceProvider);
     final uniqueCode = await service.generateUniqueThemeCode('custom');
-    
+
     customTheme = _copyTheme(baseTheme);
     customTheme = customTheme!.copyWith(
       code: uniqueCode,
@@ -83,14 +86,14 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
       (theme) => theme.code == themeCode,
       orElse: () => _getDefaultTheme(),
     );
-    
+
     customTheme = _copyTheme(existingTheme);
     customThemeId = themeCode;
     isCreateMode = false;
   }
 
   Future<void> _loadDefaultTheme() async {
-          final currentTheme = ref.read(selectedCustomThemeProvider);
+    final currentTheme = ref.read(selectedCustomThemeProvider);
     customTheme = _copyTheme(currentTheme ?? _getDefaultTheme());
     isCreateMode = true;
   }
@@ -101,7 +104,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
 
     if (isInitializing || customTheme == null) {
       return Scaffold(
-        backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade50,
+        backgroundColor: isDarkMode
+            ? Colors.grey.shade900
+            : Colors.grey.shade50,
         body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -119,7 +124,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
       onWillPop: _handleBackPress,
       child: ThemeAwareScaffold(
         pageType: PageType.settings,
-        forceStatusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark, // 强制状态栏图标适配
+        forceStatusBarIconBrightness: isDarkMode
+            ? Brightness.light
+            : Brightness.dark, // 强制状态栏图标适配
         appBar: AppBar(
           title: Text(isCreateMode ? '创建主题' : '编辑主题'),
           backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
@@ -159,7 +166,7 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                 const PopupMenuItem(
                   value: 'reset',
                   child: Row(
-            children: [
+                    children: [
                       Icon(Icons.refresh),
                       SizedBox(width: 8),
                       Text('重置更改'),
@@ -172,28 +179,27 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
         ),
         body: ListView(
           padding: const EdgeInsets.all(16),
-                  children: [
+          children: [
             // 主题基本信息
             _buildThemeBasicInfo(isDarkMode),
-                    
-                    const SizedBox(height: 16),
-                    
+
+            const SizedBox(height: 16),
+
             // 图片设置
             _buildImageSettings(isDarkMode),
-                    
-                      const SizedBox(height: 16),
-            
+
+            const SizedBox(height: 16),
+
             // 颜色设置
             _buildColorSettings(isDarkMode),
 
-            
             const SizedBox(height: 24),
-            
+
             // 保存按钮
             _buildSaveButton(isDarkMode),
-            
+
             const SizedBox(height: 16),
-            
+
             // 主题预览
             _buildThemePreview(isDarkMode),
           ],
@@ -218,18 +224,18 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   color: isDarkMode ? Colors.blue.shade300 : Colors.blue,
                 ),
                 const SizedBox(width: 8),
-            Text(
+                Text(
                   '主题信息',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
-            ),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // 主题名称
             Text(
               '主题名称',
@@ -248,7 +254,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   color: isDarkMode ? Colors.white54 : Colors.black54,
                 ),
                 filled: true,
-                fillColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
+                fillColor: isDarkMode
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade100,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -258,18 +266,16 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   vertical: 12,
                 ),
               ),
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
               onChanged: (value) {
                 if (customTheme != null) {
                   _updateTheme(title: value.isNotEmpty ? value : '我的自定义主题');
                 }
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 主题代码
             Text(
               '主题代码',
@@ -282,18 +288,15 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 customTheme?.code ?? '',
-              style: TextStyle(
-                color: isDarkMode ? Colors.white70 : Colors.black54,
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
                   fontFamily: 'monospace',
                 ),
               ),
@@ -320,18 +323,18 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   color: isDarkMode ? Colors.blue.shade300 : Colors.blue,
                 ),
                 const SizedBox(width: 8),
-            Text(
+                Text(
                   '背景图片',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // 主页背景图片
             _buildImagePicker(
               title: '主页背景图片',
@@ -339,7 +342,7 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
               onImagePicked: (path) => _updateTheme(indexBackgroundImg: path),
               isDarkMode: isDarkMode,
             ),
-            
+
             // 主页相关模糊效果
             const SizedBox(height: 8),
             _buildBlurOption(
@@ -354,9 +357,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
               onChanged: (value) => _updateTheme(indexMessageBoxBlur: value),
               isDarkMode: isDarkMode,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 课表背景图片
             _buildImagePicker(
               title: '课表背景图片',
@@ -364,13 +367,14 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
               onImagePicked: (path) => _updateTheme(img: path),
               isDarkMode: isDarkMode,
             ),
-            
+
             // 课表相关模糊效果
             const SizedBox(height: 8),
             _buildBlurOption(
               title: '课表背景模糊',
               value: customTheme?.classTableBackgroundBlur ?? false,
-              onChanged: (value) => _updateTheme(classTableBackgroundBlur: value),
+              onChanged: (value) =>
+                  _updateTheme(classTableBackgroundBlur: value),
               isDarkMode: isDarkMode,
             ),
           ],
@@ -390,8 +394,8 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
       children: [
         Text(
           title,
-                      style: TextStyle(
-                        fontSize: 14,
+          style: TextStyle(
+            fontSize: 14,
             fontWeight: FontWeight.w500,
             color: isDarkMode ? Colors.white : Colors.black,
           ),
@@ -406,13 +410,15 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
+                  color: isDarkMode
+                      ? Colors.grey.shade700
+                      : Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   currentPath.isEmpty ? '未设置' : currentPath,
                   style: TextStyle(
-                    color: currentPath.isEmpty 
+                    color: currentPath.isEmpty
                         ? (isDarkMode ? Colors.white54 : Colors.black54)
                         : (isDarkMode ? Colors.white : Colors.black),
                   ),
@@ -428,7 +434,10 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
             ),
           ],
@@ -453,18 +462,18 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   color: isDarkMode ? Colors.blue.shade300 : Colors.blue,
                 ),
                 const SizedBox(width: 8),
-            Text(
+                Text(
                   '主题颜色',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // 基础颜色
             _buildColorSelector(
               title: '背景颜色',
@@ -472,27 +481,27 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
               onColorChanged: (color) => _updateTheme(backColor: color),
               isDarkMode: isDarkMode,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             _buildColorSelector(
               title: '前景颜色',
               color: customTheme?.foregColor ?? Colors.white,
               onColorChanged: (color) => _updateTheme(foregColor: color),
               isDarkMode: isDarkMode,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             _buildColorSelector(
               title: '日期颜色',
               color: customTheme?.weekColor ?? Colors.grey,
               onColorChanged: (color) => _updateTheme(weekColor: color),
               isDarkMode: isDarkMode,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 课表颜色列表
             Text(
               '课表颜色列表',
@@ -538,14 +547,14 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
               color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(12),
             ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
                     color: color,
-                  borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: isDarkMode ? Colors.white24 : Colors.black12,
                       width: 1,
@@ -553,16 +562,16 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   ),
                 ),
                 const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                         '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                      style: TextStyle(
-                        fontSize: 16,
+                        style: TextStyle(
+                          fontSize: 16,
                           fontWeight: FontWeight.w500,
-                        color: isDarkMode ? Colors.white : Colors.black,
+                          color: isDarkMode ? Colors.white : Colors.black,
                           fontFamily: 'monospace',
                         ),
                       ),
@@ -572,18 +581,18 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                           fontSize: 12,
                           color: isDarkMode ? Colors.white70 : Colors.black54,
                         ),
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
                 Icon(
                   Icons.edit,
                   color: isDarkMode ? Colors.white54 : Colors.black54,
                 ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
       ],
     );
   }
@@ -630,9 +639,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                    child: Text(
+                  child: Text(
                     '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                      style: TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: isDarkMode ? Colors.white : Colors.black,
                       fontFamily: 'monospace',
@@ -670,9 +679,7 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
         dense: true,
         controlAffinity: ListTileControlAffinity.leading,
         tileColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade50,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -710,8 +717,8 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Icon(
@@ -719,18 +726,18 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                   color: isDarkMode ? Colors.blue.shade300 : Colors.blue,
                 ),
                 const SizedBox(width: 8),
-        Text(
+                Text(
                   '主题预览',
-          style: TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
-        ),
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // 简单的主题预览
             Container(
               width: double.infinity,
@@ -740,15 +747,15 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Stack(
-          children: [
+                children: [
                   // 背景色块
                   Positioned(
                     top: 16,
                     left: 16,
-              child: Container(
+                    child: Container(
                       width: 80,
-                height: 40,
-                decoration: BoxDecoration(
+                      height: 40,
+                      decoration: BoxDecoration(
                         color: customTheme?.foregColor ?? Colors.white,
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -764,7 +771,7 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                       ),
                     ),
                   ),
-                  
+
                   // 日期色块
                   Positioned(
                     top: 16,
@@ -777,18 +784,18 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Center(
-                  child: Text(
+                        child: Text(
                           '日期',
-                    style: TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-                  
+
                   // 颜色列表预览
                   Positioned(
                     bottom: 16,
@@ -796,21 +803,25 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                     right: 16,
                     child: Row(
                       children: [
-                        ...customTheme?.colorList.take(5).map((color) => 
-                          Container(
-                            width: 20,
-                            height: 20,
-                            margin: const EdgeInsets.only(right: 4),
-                            decoration: BoxDecoration(
-                              color: color,
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: Colors.white24,
-                                width: 1,
-                              ),
-                            ),
-                          ),
-                        ).toList() ?? [],
+                        ...customTheme?.colorList
+                                .take(5)
+                                .map(
+                                  (color) => Container(
+                                    width: 20,
+                                    height: 20,
+                                    margin: const EdgeInsets.only(right: 4),
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: Colors.white24,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList() ??
+                            [],
                         if ((customTheme?.colorList.length ?? 0) > 5)
                           Container(
                             width: 20,
@@ -827,9 +838,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                                   fontSize: 10,
                                 ),
                               ),
-              ),
-            ),
-          ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],
@@ -855,7 +866,7 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
     List<Color>? colorList,
   }) {
     if (customTheme == null) return;
-    
+
     setState(() {
       customTheme = customTheme!.copyWith(
         title: title ?? customTheme!.title,
@@ -882,7 +893,8 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
     final TextEditingController aController = TextEditingController();
 
     void updateControllersFromColor(Color color) {
-      hexController.text = '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+      hexController.text =
+          '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
       rController.text = color.r.toString();
       gController.text = color.g.toString();
       bController.text = color.b.toString();
@@ -900,8 +912,8 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
           selectedColor = Color(value);
           onColorChanged(selectedColor);
           updateControllersFromColor(selectedColor);
-      }
-    } catch (e) {
+        }
+      } catch (e) {
         // 忽略无效的hex值
       }
     }
@@ -913,7 +925,7 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
         final int b = int.parse(bController.text).clamp(0, 255);
         final double a = double.parse(aController.text).clamp(0.0, 1.0);
         final int alpha = (a * 255).round();
-        
+
         selectedColor = Color.fromARGB(alpha, r, g, b);
         onColorChanged(selectedColor);
         updateControllersFromColor(selectedColor);
@@ -928,7 +940,7 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-      title: const Text('选择颜色'),
+          title: const Text('选择颜色'),
           content: SizedBox(
             width: double.maxFinite,
             child: SingleChildScrollView(
@@ -952,11 +964,11 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                     },
                     enableShadesSelection: false,
                     enableTonalPalette: false,
-      enableOpacity: true,
+                    enableOpacity: true,
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // 颜色预览
                   Container(
                     width: double.infinity,
@@ -967,9 +979,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                       border: Border.all(color: Colors.grey),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Hex 输入
                   TextField(
                     controller: hexController,
@@ -984,9 +996,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                       setState(() {});
                     },
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // RGBA 输入
                   Row(
                     children: [
@@ -1046,7 +1058,9 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
                             border: OutlineInputBorder(),
                             hintText: '0.0-1.0',
                           ),
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                           onChanged: (value) {
                             updateColorFromRGBA();
                             setState(() {});
@@ -1059,28 +1073,37 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
               ),
             ),
           ),
-        actions: [
-          TextButton(
+          actions: [
+            TextButton(
               onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
+              child: const Text('取消'),
+            ),
             ElevatedButton(
               onPressed: () {
                 onColorChanged(selectedColor);
                 Navigator.of(context).pop();
               },
               child: const Text('确定'),
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Future<void> _pickImage(Function(String) onImagePicked) async {
-    final XFile? image = await _imagePicker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      onImagePicked(image.path);
+    // 使用新的权限管理器
+    final permissionChecker = ref.read(permissionCheckerProvider);
+    final imagePath = await permissionChecker.pickImageWithPermission(
+      context,
+      ImageSource.gallery,
+    );
+
+    if (imagePath != null) {
+      onImagePicked(imagePath);
+      setState(() {
+        hasUnsavedChanges = true;
+      });
     }
   }
 
@@ -1090,16 +1113,17 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
     try {
       final manager = ref.read(customThemeManagerProvider.notifier);
       await manager.saveTheme(customTheme!);
-      
+
       // 自动应用保存的主题
-      await ref.read(selectedThemeCodeProvider.notifier)
+      await ref
+          .read(selectedThemeCodeProvider.notifier)
           .setThemeCode(customTheme!.code);
-      
+
       setState(() {
         hasUnsavedChanges = false;
         isCreateMode = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('主题保存成功'),
@@ -1173,36 +1197,56 @@ class _CustomThemeSettingsPageState extends ConsumerState<CustomThemeSettingsPag
       return theme_model.Theme(
         code: 'custom_${DateTime.now().millisecondsSinceEpoch}',
         title: '我的自定义主题',
-        img: 'https://data.swu.social/service/external_files/2301371392301561862291631292311861844564564.webp',
+        img:
+            'https://data.swu.social/service/external_files/2301371392301561862291631292311861844564564.webp',
         indexBackgroundBlur: false,
-        indexBackgroundImg: 'https://www.yumus.cn/api/?target=img&brand=bing&ua=m',
+        indexBackgroundImg:
+            'https://www.yumus.cn/api/?target=img&brand=bing&ua=m',
         indexMessageBoxBlur: true,
         backColor: const Color.fromARGB(255, 35, 88, 168),
         foregColor: const Color.fromARGB(255, 255, 255, 255),
         weekColor: const Color.fromARGB(255, 221, 221, 221),
         classTableBackgroundBlur: false,
         colorList: const [
-          Color(0xFF2255a3), Color(0xFF2358a8), Color(0xFF275baa), Color(0xFF2c5fab), Color(0xFF3767b0),
-          Color(0xFF3969b1), Color(0xFF3d6cb2), Color(0xFF426fb4), Color(0xFF4673b6), Color(0xFF4a76b7),
+          Color(0xFF2255a3),
+          Color(0xFF2358a8),
+          Color(0xFF275baa),
+          Color(0xFF2c5fab),
+          Color(0xFF3767b0),
+          Color(0xFF3969b1),
+          Color(0xFF3d6cb2),
+          Color(0xFF426fb4),
+          Color(0xFF4673b6),
+          Color(0xFF4a76b7),
         ],
       );
     }
-    
+
     // 预设主题模板
     return theme_model.Theme(
       code: 'classic-theme-1',
       title: '你好西大人',
-      img: 'https://data.swu.social/service/external_files/2301371392301561862291631292311861844564564.webp',
+      img:
+          'https://data.swu.social/service/external_files/2301371392301561862291631292311861844564564.webp',
       indexBackgroundBlur: false,
-      indexBackgroundImg: 'https://www.yumus.cn/api/?target=img&brand=bing&ua=m',
+      indexBackgroundImg:
+          'https://www.yumus.cn/api/?target=img&brand=bing&ua=m',
       indexMessageBoxBlur: true,
       backColor: const Color.fromARGB(255, 35, 88, 168),
       foregColor: const Color.fromARGB(255, 255, 255, 255),
       weekColor: const Color.fromARGB(255, 221, 221, 221),
       classTableBackgroundBlur: false,
       colorList: const [
-        Color(0xFF2255a3), Color(0xFF2358a8), Color(0xFF275baa), Color(0xFF2c5fab), Color(0xFF3767b0),
-        Color(0xFF3969b1), Color(0xFF3d6cb2), Color(0xFF426fb4), Color(0xFF4673b6), Color(0xFF4a76b7),
+        Color(0xFF2255a3),
+        Color(0xFF2358a8),
+        Color(0xFF275baa),
+        Color(0xFF2c5fab),
+        Color(0xFF3767b0),
+        Color(0xFF3969b1),
+        Color(0xFF3d6cb2),
+        Color(0xFF426fb4),
+        Color(0xFF4673b6),
+        Color(0xFF4a76b7),
       ],
     );
   }
