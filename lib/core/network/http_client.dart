@@ -71,7 +71,7 @@ class HttpClient implements IHttpClient {
 
           return handler.next(opts);
         },
-        onResponse: (response, handler) {
+        onResponse: (response, handler) async {
           // 尝试从响应头中提取并保存 Cookie
           final headers = response.headers.map;
           final setCookie = headers['set-cookie'] ?? headers['Set-Cookie'];
@@ -79,7 +79,7 @@ class HttpClient implements IHttpClient {
           if (setCookie != null) {
             for (final cookie in setCookie) {
               if (cookie.startsWith('DoorKey=')) {
-                _secureStorage.write(
+                await _secureStorage.write(
                   key: UserService.jwtKey,
                   value: cookie.split(';').first,
                 );

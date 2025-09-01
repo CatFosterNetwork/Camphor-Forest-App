@@ -83,7 +83,7 @@ class UserService {
     final updatedUserInfo = await getUser();
     if (updatedUserInfo != null) {
       _userInfo = updatedUserInfo;
-      saveUser();
+      await saveUser();
       debugPrint('🔄 用户信息已更新');
     } else {
       debugPrint('❌ 获取用户信息失败');
@@ -180,20 +180,20 @@ class UserService {
   }
 
   /// 更新用户信息并保存到本地存储
-  void updateUserInfo(UserModel user) {
+  void updateUserInfo(UserModel user) async {
     debugPrint('🔄 更新用户信息: ${user.name}');
     _userInfo = user;
-    saveUser();
+    await saveUser();
   }
 
   /// 保存用户信息和 JWT 到本地存储
-  void saveUser() {
+  Future<void> saveUser() async {
     debugPrint('💾 开始保存用户信息和 JWT 到本地存储');
-    _secureStorage.write(
+    await _secureStorage.write(
       key: _userInfoKey,
       value: jsonEncode(_userInfo.toJson()),
     ); // 使用 secureStorage 保存用户信息
-    _secureStorage.write(key: jwtKey, value: _jwt); // 使用 secureStorage 保存 JWT
+    await _secureStorage.write(key: jwtKey, value: _jwt); // 使用 secureStorage 保存 JWT
     debugPrint('👤 已保存用户信息: ${_userInfo.name}');
     debugPrint('🔐 已保存 JWT: ${_jwt.isNotEmpty ? '有效' : '无效'}');
   }
@@ -231,7 +231,7 @@ class UserService {
         }
 
         _userInfo = newUserInfo;
-        saveUser();
+        await saveUser();
         return _userInfo;
       }
       debugPrint('❌ 获取用户信息失败');
@@ -258,12 +258,12 @@ class UserService {
         debugPrint('🍪 Cookie: $cookie');
         final jwtPart = cookie
             .split(';')
-            .firstWhere((row) => row.startsWith('DoorKey='), orElse: () => '');
+            .firstWhere((row) => row.trim().startsWith('DoorKey='), orElse: () => '');
 
         if (jwtPart.isNotEmpty) {
-          _jwt = jwtPart;
+          _jwt = jwtPart.trim();
           debugPrint('🔑 JWT 提取成功: ${_jwt.substring(0, 20)}...');
-          saveUser();
+          await saveUser();
           // 获取用户信息
           await getUser();
           // 获取配置
@@ -300,7 +300,7 @@ class UserService {
     // 清空用户信息和 JWT
     _userInfo = UserModel.empty();
     _jwt = '';
-    saveUser();
+    await saveUser();
     final index = await _secureStorage.read(key: 'index');
     final weather = await _secureStorage.read(key: 'weather');
     debugPrint('🗑️ 清空本地存储');
