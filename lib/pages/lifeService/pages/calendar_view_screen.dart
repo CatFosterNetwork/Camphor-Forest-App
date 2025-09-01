@@ -21,7 +21,7 @@ class CalendarViewScreen extends ConsumerStatefulWidget {
 }
 
 class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
-  static const String calendarUrl = 'https://data.swu.social/service/2024cal.jpeg';
+  static const String calendarUrl = 'https://data.swu.social/service/2025cal.jpeg';
   bool _isLoading = false;
   final TransformationController _transformationController = TransformationController();
 

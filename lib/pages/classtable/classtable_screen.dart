@@ -314,7 +314,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
           pageType: PageType.classtable,
           extendBodyBehindAppBar: true, // 让背景在AppBar下显示
           appBar: ThemeAwareAppBar(
-            title: '2025/7/7',
+            title: DateTime.now().toString().split(' ')[0],
             transparent: true,
             actions: [
               AnimatedBuilder(
