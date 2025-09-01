@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "social.swu.camphor_forest"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "29.0.13599879"
+    // ndkVersion = "29.0.13599879"
+    ndkVersion = "27.0.12077973"
     // ndkVersion = flutter.ndkVersion
 
     compileOptions {

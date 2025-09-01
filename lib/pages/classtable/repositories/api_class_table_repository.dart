@@ -35,10 +35,14 @@ class ApiClassTableRepository implements ClassTableRepository {
 
       debugPrint('解析完成, 总周数: ${table.weekTable.length}, 总课程数: $totalCourses');
 
-      // 保存到本地
+      // 如果成功获取到课表信息，先清空本地缓存再保存新数据
       if (totalCourses > 0) {
+        debugPrint('成功获取课表数据，先清空本地缓存');
+        await clearLocal(xnm, xqm);
+
+        debugPrint('开始保存新的课表数据到本地缓存');
         await saveLocal(xnm, xqm, table);
-        debugPrint('课表数据已保存到本地缓存');
+        debugPrint('新课表数据已保存到本地缓存');
       } else {
         debugPrint('未解析到有效课程，不保存到本地缓存');
       }
@@ -124,6 +128,18 @@ class ApiClassTableRepository implements ClassTableRepository {
       debugPrint('课表数据保存成功');
     } catch (e) {
       debugPrint('保存课表数据失败: $e');
+    }
+  }
+
+  /// 清空本地缓存的课表数据
+  @override
+  Future<void> clearLocal(String xnm, String xqm) async {
+    try {
+      debugPrint('清空本地课表缓存 (xnm: $xnm, xqm: $xqm)');
+      await prefs.remove(_key(xnm, xqm));
+      debugPrint('本地课表缓存已清空');
+    } catch (e) {
+      debugPrint('清空本地课表缓存失败: $e');
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/config/providers/theme_config_provider.dart';
+import '../../core/providers/grade_provider.dart';
 
 import 'providers/classtable_providers.dart';
 
@@ -21,9 +22,9 @@ class ClassTableScreen extends ConsumerStatefulWidget {
 
 class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     with SingleTickerProviderStateMixin {
-  // 学年学期参数可用 queryParam 传递；此处简单写死
-  static const String xnm = '2024';
-  static const String xqm = '12';
+  // 学年学期参数 - 使用动态计算的当前学期
+  late final String xnm;
+  late final String xqm;
 
   int _currentWeek = 1;
   bool _isLoading = false;
@@ -35,9 +36,13 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   late Animation<double> _refreshRotateAnimation;
 
   @override
-  
   void initState() {
     super.initState();
+
+    // 初始化学年学期参数
+    xnm = GradeNotifier.getCurrentXnm();
+    xqm = GradeNotifier.getCurrentSemester();
+
     // 计算当前周次
     final diffDays = DateTime.now().difference(SemesterConfig.start).inDays;
     _currentWeek = (diffDays ~/ 7) + 1;
@@ -142,12 +147,23 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   }
 
   // 显示课程详情对话框
-  void _showCourseDetail(BuildContext context, Course course, bool isDark, Rect courseRect, List<Course> allCourses) {
+  void _showCourseDetail(
+    BuildContext context,
+    Course course,
+    bool isDark,
+    Rect courseRect,
+    List<Course> allCourses,
+  ) {
     final currentTheme = ref.read(selectedCustomThemeProvider);
-    
+
     // 使用与课表图表相同的颜色计算逻辑
-    final courseColor = _getCourseColorFromChart(course, allCourses, currentTheme, isDark);
-    
+    final courseColor = _getCourseColorFromChart(
+      course,
+      allCourses,
+      currentTheme,
+      isDark,
+    );
+
     Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false, // 设置为透明
@@ -169,7 +185,12 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   }
 
   // 使用与课表图表完全相同的颜色计算逻辑
-  Color _getCourseColorFromChart(Course course, List<Course> allCourses, custom_theme_model.Theme? customTheme, bool isDark) {
+  Color _getCourseColorFromChart(
+    Course course,
+    List<Course> allCourses,
+    custom_theme_model.Theme? customTheme,
+    bool isDark,
+  ) {
     final scheme = Theme.of(context).colorScheme;
 
     // 深色模式下使用统一的深色背景
@@ -197,11 +218,11 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     }
 
     // 使用课程ID的字符码和来选择颜色，与课表图表逻辑完全一致
-    final colorIndex = course.id.codeUnits.fold(0, (sum, code) => sum + code) % baseColors.length;
+    final colorIndex =
+        course.id.codeUnits.fold(0, (sum, code) => sum + code) %
+        baseColors.length;
     return baseColors[colorIndex];
   }
-
-
 
   // 切换周次
   void _changeWeek(int week) {
@@ -210,8 +231,6 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
       debugPrint('切换到第$_currentWeek周');
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -244,9 +263,13 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
 
         // 当前周的课表数据
         final weekSchedule = table.getWeekSchedule(_currentWeek);
-        
+
         // 提取所有课程，用于计算最大周次
-        final allCourses = table.getAllCourses().values.expand((e) => e).toList();
+        final allCourses = table
+            .getAllCourses()
+            .values
+            .expand((e) => e)
+            .toList();
         debugPrint('总课程数量: ${allCourses.length}');
 
         int maxWeek = 1;
@@ -307,9 +330,9 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                         icon: const Icon(Icons.refresh),
                         onPressed: _loadData,
                         tooltip: '刷新课表',
-                        color: isDarkMode 
-                    ? const Color(0xFFBFC2C9)
-                    : (currentTheme?.foregColor ?? Colors.black),
+                        color: isDarkMode
+                            ? const Color(0xFFBFC2C9)
+                            : (currentTheme?.foregColor ?? Colors.black),
                       ),
                     ),
                   );
@@ -317,9 +340,10 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               ),
               IconButton(
                 icon: const Icon(Icons.calendar_month),
-                onPressed: () => _showWeekSelector(context, maxWeek, currentTheme),
+                onPressed: () =>
+                    _showWeekSelector(context, maxWeek, currentTheme),
                 tooltip: '选择周次',
-                color: isDarkMode 
+                color: isDarkMode
                     ? const Color(0xFFBFC2C9)
                     : (currentTheme?.foregColor ?? Colors.black),
               ),
@@ -329,49 +353,54 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
           body: Stack(
             children: [
               Column(
-                  children: [
-                    // 添加周数选择器
-                    WeekSelectorTabs(
-                      currentWeek: _currentWeek,
-                      maxWeek: maxWeek,
-                      onWeekChanged: _changeWeek,
-                      customTheme: currentTheme,
-                      darkMode: isDarkMode,
-                    ),
+                children: [
+                  // 添加周数选择器
+                  WeekSelectorTabs(
+                    currentWeek: _currentWeek,
+                    maxWeek: maxWeek,
+                    onWeekChanged: _changeWeek,
+                    customTheme: currentTheme,
+                    darkMode: isDarkMode,
+                  ),
 
-                    // 课表内容
-                    Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent, // 确保空白区域也能接收手势
-                        onHorizontalDragEnd: (details) {
-                          final velocity = details.primaryVelocity ?? 0;
+                  // 课表内容
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent, // 确保空白区域也能接收手势
+                      onHorizontalDragEnd: (details) {
+                        final velocity = details.primaryVelocity ?? 0;
 
-                          if (velocity.abs() < 200) return;
-                          if (velocity < 0 && _currentWeek < maxWeek) {
-                            // 向左滑，下一周
-                            _changeWeek(_currentWeek + 1);
-                          } else if (velocity > 0 && _currentWeek > 1) {
-                            // 向右滑，上一周
-                            _changeWeek(_currentWeek - 1);
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: ClassTableChart(
-                            courses: courses,
-                            darkMode: isDarkMode,
-                            currentWeek: _currentWeek,
-                            semesterStart: SemesterConfig.start,
-                            customTheme: currentTheme,
-                            onCourseTap: (course, courseRect) =>
-                                _showCourseDetail(context, course, isDarkMode, courseRect, courses),
-                          ),
+                        if (velocity.abs() < 200) return;
+                        if (velocity < 0 && _currentWeek < maxWeek) {
+                          // 向左滑，下一周
+                          _changeWeek(_currentWeek + 1);
+                        } else if (velocity > 0 && _currentWeek > 1) {
+                          // 向右滑，上一周
+                          _changeWeek(_currentWeek - 1);
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: ClassTableChart(
+                          courses: courses,
+                          darkMode: isDarkMode,
+                          currentWeek: _currentWeek,
+                          semesterStart: SemesterConfig.start,
+                          customTheme: currentTheme,
+                          onCourseTap: (course, courseRect) =>
+                              _showCourseDetail(
+                                context,
+                                course,
+                                isDarkMode,
+                                courseRect,
+                                courses,
+                              ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              
+                  ),
+                ],
+              ),
 
               // 悬浮按钮，添加动画效果
               Positioned(
@@ -381,9 +410,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                   animation: _refreshAnimController,
                   builder: (context, child) {
                     return Transform.scale(
-                      scale: _isRefreshing
-                          ? _refreshScaleAnimation.value
-                          : 1.0,
+                      scale: _isRefreshing ? _refreshScaleAnimation.value : 1.0,
                       child: TweenAnimationBuilder<double>(
                         tween: Tween<double>(begin: 1.0, end: 1.0),
                         duration: const Duration(milliseconds: 200),
@@ -397,9 +424,11 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                               _loadData();
                             });
                           },
-                          backgroundColor: (currentTheme?.colorList.isNotEmpty == true 
-                              ? currentTheme!.colorList.first 
-                              : Colors.blue).withAlpha(204),
+                          backgroundColor:
+                              (currentTheme?.colorList.isNotEmpty == true
+                                      ? currentTheme!.colorList.first
+                                      : Colors.blue)
+                                  .withAlpha(204),
                           child: Transform.rotate(
                             angle: _isRefreshing
                                 ? _refreshRotateAnimation.value
@@ -419,12 +448,14 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     );
   }
 
-
-
   // 显示周次选择器
-  void _showWeekSelector(BuildContext context, int maxWeek, custom_theme_model.Theme? currentTheme) {
+  void _showWeekSelector(
+    BuildContext context,
+    int maxWeek,
+    custom_theme_model.Theme? currentTheme,
+  ) {
     final isDarkMode = ref.read(effectiveIsDarkModeProvider);
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
@@ -439,7 +470,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
             Text(
               '选择周次',
               style: TextStyle(
-                fontSize: 18, 
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: isDarkMode ? Colors.white : Colors.black,
               ),
@@ -457,20 +488,21 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                 itemBuilder: (context, index) {
                   final week = index + 1;
                   final isSelected = week == _currentWeek;
-                  
+
                   // 获取选中状态的颜色
-                  final selectedColor = currentTheme?.colorList.isNotEmpty == true 
-                      ? currentTheme!.colorList.first 
+                  final selectedColor =
+                      currentTheme?.colorList.isNotEmpty == true
+                      ? currentTheme!.colorList.first
                       : Theme.of(context).primaryColor;
-                  
+
                   // 根据深色模式设置未选中状态的颜色
-                  final unselectedBackgroundColor = isDarkMode 
-                      ? Colors.grey.shade800 
+                  final unselectedBackgroundColor = isDarkMode
+                      ? Colors.grey.shade800
                       : Colors.grey.shade200;
-                  final unselectedTextColor = isDarkMode 
-                      ? Colors.white70 
+                  final unselectedTextColor = isDarkMode
+                      ? Colors.white70
                       : Colors.black87;
-                  
+
                   return InkWell(
                     onTap: () {
                       setState(() => _currentWeek = week);
@@ -478,7 +510,9 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isSelected ? selectedColor : unselectedBackgroundColor,
+                        color: isSelected
+                            ? selectedColor
+                            : unselectedBackgroundColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
@@ -486,7 +520,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                           '$week',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: isSelected 
+                            color: isSelected
                                 ? _getTextColorForBackground(selectedColor)
                                 : unselectedTextColor,
                           ),
