@@ -14,17 +14,13 @@ class TodoBrief extends ConsumerStatefulWidget {
   final bool blur;
   final bool darkMode;
 
-  const TodoBrief({
-    super.key,
-    required this.blur,
-    required this.darkMode,
-  });
+  const TodoBrief({super.key, required this.blur, required this.darkMode});
 
   @override
   ConsumerState<TodoBrief> createState() => _TodoBriefState();
 }
 
-class _TodoBriefState extends ConsumerState<TodoBrief> 
+class _TodoBriefState extends ConsumerState<TodoBrief>
     with TickerProviderStateMixin {
   late AnimationController _refreshController;
   bool _isRefreshing = false;
@@ -47,18 +43,18 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   /// 处理刷新操作，包含动画和提示
   Future<void> _handleRefresh() async {
     if (_isRefreshing) return; // 防止重复点击
-    
+
     setState(() {
       _isRefreshing = true;
     });
-    
+
     // 开始旋转动画
     _refreshController.repeat();
-    
+
     try {
       // 执行刷新操作
       await ref.read(todoProvider.notifier).refresh();
-      
+
       // 刷新成功提示和触觉反馈
       if (mounted) {
         HapticFeedback.lightImpact(); // 轻微触觉反馈
@@ -74,7 +70,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
       // 停止动画
       _refreshController.stop();
       _refreshController.reset();
-      
+
       if (mounted) {
         setState(() {
           _isRefreshing = false;
@@ -86,7 +82,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   /// 显示刷新结果通知
   void _showRefreshNotification(bool isSuccess, String message) {
     if (!mounted) return;
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -109,20 +105,20 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
             ),
           ],
         ),
-        backgroundColor: isSuccess 
-            ? Colors.green.shade600 
+        backgroundColor: isSuccess
+            ? Colors.green.shade600
             : Colors.red.shade600,
         duration: Duration(milliseconds: isSuccess ? 2000 : 3000),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         margin: const EdgeInsets.all(16),
-        action: isSuccess ? null : SnackBarAction(
-          label: '重试',
-          textColor: Colors.white,
-          onPressed: _handleRefresh,
-        ),
+        action: isSuccess
+            ? null
+            : SnackBarAction(
+                label: '重试',
+                textColor: Colors.white,
+                onPressed: _handleRefresh,
+              ),
       ),
     );
   }
@@ -141,8 +137,8 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
     final subtitleColor = widget.darkMode ? Colors.white54 : Colors.black54;
     // 获取主题色，如果没有主题则使用默认蓝色
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
 
     Widget child = Container(
@@ -193,7 +189,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: _isRefreshing 
+                          color: _isRefreshing
                               ? Colors.blue.withAlpha(26)
                               : Colors.grey.withAlpha(26),
                           borderRadius: BorderRadius.circular(20),
@@ -206,7 +202,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                                 angle: _refreshController.value * 2 * 3.14159,
                                 child: Icon(
                                   Icons.refresh,
-                                  color: _isRefreshing 
+                                  color: _isRefreshing
                                       ? Colors.blue
                                       : Colors.grey.shade600,
                                   size: 18,
@@ -220,33 +216,29 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                   ),
                   const SizedBox(width: 8),
                   // 添加按钮
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => _showTodoEditModal(context, null, ref),
-                  borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: themeColor.withAlpha(26),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => _showTodoEditModal(context, null, ref),
                       borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: themeColor.withAlpha(26),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(Icons.add, color: themeColor, size: 20),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.add,
-                      color: themeColor,
-                      size: 20,
-                    ),
-                  ),
-                ),
                   ),
                 ],
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 待办事项内容
           _buildTodoContent(context, ref, textColor, subtitleColor, themeColor),
         ],
@@ -258,26 +250,81 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   }
 
   /// 构建待办事项内容区域
-  Widget _buildTodoContent(BuildContext context, WidgetRef ref, Color textColor, Color subtitleColor, Color themeColor) {
+  Widget _buildTodoContent(
+    BuildContext context,
+    WidgetRef ref,
+    Color textColor,
+    Color subtitleColor,
+    Color themeColor,
+  ) {
     final allTodos = ref.watch(todoProvider);
-    
+
     debugPrint('TodoBrief: 当前待办事项数量: ${allTodos.length}');
-    
+
     if (allTodos.isEmpty) {
       debugPrint('TodoBrief: 显示空状态');
       return _buildEmptyState(subtitleColor);
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTodoSection(context, ref, TodoCategory.overdue, textColor, subtitleColor, themeColor),
-        _buildTodoSection(context, ref, TodoCategory.today, textColor, subtitleColor, themeColor),
-        _buildTodoSection(context, ref, TodoCategory.tomorrow, textColor, subtitleColor, themeColor),
-        _buildTodoSection(context, ref, TodoCategory.thisWeek, textColor, subtitleColor, themeColor),
-        _buildTodoSection(context, ref, TodoCategory.future, textColor, subtitleColor, themeColor),
-        _buildTodoSection(context, ref, TodoCategory.noDueTime, textColor, subtitleColor, themeColor),
-        _buildTodoSection(context, ref, TodoCategory.completed, textColor, subtitleColor, themeColor),
+        _buildTodoSection(
+          context,
+          ref,
+          TodoCategory.overdue,
+          textColor,
+          subtitleColor,
+          themeColor,
+        ),
+        _buildTodoSection(
+          context,
+          ref,
+          TodoCategory.today,
+          textColor,
+          subtitleColor,
+          themeColor,
+        ),
+        _buildTodoSection(
+          context,
+          ref,
+          TodoCategory.tomorrow,
+          textColor,
+          subtitleColor,
+          themeColor,
+        ),
+        _buildTodoSection(
+          context,
+          ref,
+          TodoCategory.thisWeek,
+          textColor,
+          subtitleColor,
+          themeColor,
+        ),
+        _buildTodoSection(
+          context,
+          ref,
+          TodoCategory.future,
+          textColor,
+          subtitleColor,
+          themeColor,
+        ),
+        _buildTodoSection(
+          context,
+          ref,
+          TodoCategory.noDueTime,
+          textColor,
+          subtitleColor,
+          themeColor,
+        ),
+        _buildTodoSection(
+          context,
+          ref,
+          TodoCategory.completed,
+          textColor,
+          subtitleColor,
+          themeColor,
+        ),
       ],
     );
   }
@@ -295,11 +342,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                 color: Colors.grey.withAlpha(26),
                 borderRadius: BorderRadius.circular(50),
               ),
-              child: Icon(
-                Icons.task_alt,
-                color: subtitleColor,
-                size: 32,
-              ),
+              child: Icon(Icons.task_alt, color: subtitleColor, size: 32),
             ),
             const SizedBox(height: 16),
             Text(
@@ -325,9 +368,16 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   }
 
   /// 构建单个分类的待办事项区域
-  Widget _buildTodoSection(BuildContext context, WidgetRef ref, TodoCategory category, Color textColor, Color subtitleColor, Color themeColor) {
+  Widget _buildTodoSection(
+    BuildContext context,
+    WidgetRef ref,
+    TodoCategory category,
+    Color textColor,
+    Color subtitleColor,
+    Color themeColor,
+  ) {
     List<TodoItem> todos;
-    
+
     switch (category) {
       case TodoCategory.overdue:
         todos = ref.watch(overdueProvider);
@@ -381,7 +431,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                 Icon(
                   category.icon,
                   size: 16,
-                    color: _getCategoryColor(category),
+                  color: _getCategoryColor(category),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -394,7 +444,10 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: _getCategoryColor(category),
                     borderRadius: BorderRadius.circular(10),
@@ -411,20 +464,20 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // 待办事项列表 - 添加位置过渡动画
           ...displayTodos.map((todo) {
-            
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 600),
               switchInCurve: Curves.easeOutCubic,
               switchOutCurve: Curves.easeInCubic,
               transitionBuilder: (child, animation) {
                 // 根据动画进度决定移动方向
-                final isNewItem = child.key == ValueKey('${todo.id}_${category.name}');
-                final slideOffset = isNewItem 
+                final isNewItem =
+                    child.key == ValueKey('${todo.id}_${category.name}');
+                final slideOffset = isNewItem
                     ? Tween<Offset>(
                         begin: const Offset(0, -1), // 从上方滑入（新分类）
                         end: Offset.zero,
@@ -433,19 +486,24 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                         begin: Offset.zero,
                         end: const Offset(0, 1), // 向下方滑出（旧分类）
                       ).animate(animation);
-                
+
                 return SlideTransition(
                   position: slideOffset,
-                  child: FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  ),
+                  child: FadeTransition(opacity: animation, child: child),
                 );
               },
               child: Container(
                 key: ValueKey('${todo.id}_${category.name}'),
-              margin: const EdgeInsets.only(bottom: 8),
-              child: _buildTodoItem(context, ref, todo, category, textColor, subtitleColor, themeColor),
+                margin: const EdgeInsets.only(bottom: 8),
+                child: _buildTodoItem(
+                  context,
+                  ref,
+                  todo,
+                  category,
+                  textColor,
+                  subtitleColor,
+                  themeColor,
+                ),
               ),
             );
           }),
@@ -455,10 +513,18 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   }
 
   /// 构建单个待办事项
-  Widget _buildTodoItem(BuildContext context, WidgetRef ref, TodoItem todo, TodoCategory category, Color textColor, Color subtitleColor, Color themeColor) {
+  Widget _buildTodoItem(
+    BuildContext context,
+    WidgetRef ref,
+    TodoItem todo,
+    TodoCategory category,
+    Color textColor,
+    Color subtitleColor,
+    Color themeColor,
+  ) {
     final isCompleted = category == TodoCategory.completed;
     final isOverdue = category == TodoCategory.overdue;
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -468,18 +534,18 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isCompleted 
+            color: isCompleted
                 ? Colors.grey.withAlpha(13)
-                : isOverdue 
-                    ? Colors.red.withAlpha(13)
-                    : Colors.transparent,
+                : isOverdue
+                ? Colors.red.withAlpha(13)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isCompleted 
+              color: isCompleted
                   ? Colors.grey.withAlpha(51)
-                  : isOverdue 
-                      ? Colors.red.withAlpha(76)
-                      : Colors.grey.withAlpha(26),
+                  : isOverdue
+                  ? Colors.red.withAlpha(76)
+                  : Colors.grey.withAlpha(26),
               width: 1,
             ),
           ),
@@ -497,17 +563,19 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: isCompleted 
+                      color: isCompleted
                           ? Colors.green.withAlpha(26)
                           : _getCategoryColor(category).withAlpha(26),
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: isCompleted ? [
-                        BoxShadow(
-                          color: Colors.green.withAlpha(76),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      boxShadow: isCompleted
+                          ? [
+                              BoxShadow(
+                                color: Colors.green.withAlpha(76),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Center(
                       child: AnimatedSwitcher(
@@ -518,27 +586,27 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                             child: child,
                           );
                         },
-                      child: isCompleted
-                          ? Icon(
-                              Icons.check_circle,
+                        child: isCompleted
+                            ? Icon(
+                                Icons.check_circle,
                                 key: const ValueKey('completed'),
-                              color: Colors.green,
-                              size: 24,
-                            )
+                                color: Colors.green,
+                                size: 24,
+                              )
                             : Icon(
                                 category.icon,
                                 key: const ValueKey('incomplete'),
                                 size: 20,
                                 color: _getCategoryColor(category),
                               ),
-                            ),
+                      ),
                     ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 16),
-              
+
               // 待办事项信息
               Expanded(
                 child: Column(
@@ -551,7 +619,10 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                         if (todo.important && !isCompleted)
                           Container(
                             margin: const EdgeInsets.only(right: 8),
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.red.withAlpha(26),
                               borderRadius: BorderRadius.circular(4),
@@ -565,7 +636,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                               ),
                             ),
                           ),
-                        
+
                         // 标题 - 添加完成动画
                         Expanded(
                           child: AnimatedDefaultTextStyle(
@@ -583,22 +654,25 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                             ),
                             child: Text(
                               todo.title,
-                            textAlign: TextAlign.right,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.right,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    
+
                     // 截止时间
                     if (todo.due != null)
                       Container(
                         margin: const EdgeInsets.only(top: 4),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: isOverdue 
+                          color: isOverdue
                               ? Colors.red.withAlpha(26)
                               : Colors.grey.withAlpha(26),
                           borderRadius: BorderRadius.circular(8),
@@ -611,10 +685,10 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
                             color: isCompleted
                                 ? Colors.grey.withAlpha(153)
                                 : isOverdue
-                                    ? Colors.red
-                                    : (todo.important 
-                                        ? Colors.orange.shade700
-                                        : Colors.grey.shade600),
+                                ? Colors.red
+                                : (todo.important
+                                      ? Colors.orange.shade700
+                                      : Colors.grey.shade600),
                           ),
                         ),
                       ),
@@ -652,8 +726,8 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   Widget _applyContainerStyle(Widget child) {
     Widget styledChild = Container(
       decoration: BoxDecoration(
-        color: widget.darkMode 
-            ? Colors.grey.shade900.withAlpha(230) 
+        color: widget.darkMode
+            ? Colors.grey.shade900.withAlpha(230)
             : Colors.white.withAlpha(230),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -674,14 +748,13 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: widget.darkMode 
+              color: widget.darkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: widget.darkMode ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              ) : null,
+              border: widget.darkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
             ),
             child: child,
           ),
@@ -695,10 +768,10 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   /// 显示待办事项编辑模态框
   void _showTodoEditModal(BuildContext context, TodoItem? todo, WidgetRef ref) {
     final currentTheme = ref.read(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -715,7 +788,7 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   String _formatRelativeTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = dateTime.difference(now);
-    
+
     if (difference.isNegative) {
       // 已经过去的时间
       final absDifference = difference.abs();

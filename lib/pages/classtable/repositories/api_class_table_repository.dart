@@ -18,7 +18,7 @@ class ApiClassTableRepository implements ClassTableRepository {
 
     try {
       // 使用原有的API方法获取数据
-      final responseData = await api.getClassTable(xnm: xnm, xqm: xqm);
+      final responseData = await api.fetchClassTable(xnm: xnm, xqm: xqm);
       debugPrint('获取到原始课表数据类型: ${responseData.runtimeType}');
 
       // 使用增强的fromRawJson方法解析数据

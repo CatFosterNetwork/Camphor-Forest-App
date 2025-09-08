@@ -6,7 +6,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/widgets/theme_aware_scaffold.dart';
 import '../../core/constants/route_constants.dart';
-import '../../core/config/providers/new_core_providers.dart' hide effectiveIsDarkModeProvider;
+import '../../core/config/providers/new_core_providers.dart'
+    hide effectiveIsDarkModeProvider;
 import '../../core/config/services/app_config_service.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,22 +19,20 @@ class IndexSettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    
+
     // 获取主题色，如果没有主题则使用默认蓝色
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
-    final activeColor = isDarkMode 
-        ? themeColor.withAlpha(204) 
-        : themeColor;
+    final activeColor = isDarkMode ? themeColor.withAlpha(204) : themeColor;
 
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: false, // 设置页面使用纯色背景，保持专业感
-      forceStatusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark, // 强制状态栏图标适配
-      appBar: ThemeAwareAppBar(
-        title: '主页设置',
-      ),
+      forceStatusBarIconBrightness: isDarkMode
+          ? Brightness.light
+          : Brightness.dark, // 强制状态栏图标适配
+      appBar: ThemeAwareAppBar(title: '主页设置'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -65,18 +64,21 @@ class IndexSettingsPage extends ConsumerWidget {
                       // 森林功能总开关
                       Consumer(
                         builder: (context, ref, child) {
-                          final isEnabled = ref.watch(newShouldShowForestFeaturesProvider);
+                          final isEnabled = ref.watch(
+                            newShouldShowForestFeaturesProvider,
+                          );
                           return Switch.adaptive(
                             value: isEnabled,
                             onChanged: (value) async {
                               // 切换所有森林功能
-                              final prefs = await SharedPreferences.getInstance();
+                              final prefs =
+                                  await SharedPreferences.getInstance();
                               final configService = AppConfigService(prefs);
-                              
+
                               // 森林功能列表
                               final forestFeatures = [
                                 'forest-showSchoolNavigation',
-                                'forest-showBBS', 
+                                'forest-showBBS',
                                 'forest-showLifeService',
                                 'forest-showFeedback',
                                 'forest-showFleaMarket',
@@ -84,18 +86,33 @@ class IndexSettingsPage extends ConsumerWidget {
                                 'forest-showLibrary',
                                 'forest-showAds',
                               ];
-                              
+
                               // 如果要启用，则启用核心功能
                               if (value) {
                                 // 启用核心功能
-                                await configService.updateConfigItem('forest-showSchoolNavigation', true);
-                                await configService.updateConfigItem('forest-showBBS', true);
-                                await configService.updateConfigItem('forest-showLifeService', true);
-                                await configService.updateConfigItem('forest-showFeedback', true);
+                                await configService.updateConfigItem(
+                                  'forest-showSchoolNavigation',
+                                  true,
+                                );
+                                await configService.updateConfigItem(
+                                  'forest-showBBS',
+                                  true,
+                                );
+                                await configService.updateConfigItem(
+                                  'forest-showLifeService',
+                                  true,
+                                );
+                                await configService.updateConfigItem(
+                                  'forest-showFeedback',
+                                  true,
+                                );
                               } else {
                                 // 关闭所有森林功能
                                 for (final feature in forestFeatures) {
-                                  await configService.updateConfigItem(feature, false);
+                                  await configService.updateConfigItem(
+                                    feature,
+                                    false,
+                                  );
                                 }
                               }
                             },
@@ -119,7 +136,7 @@ class IndexSettingsPage extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // 课表设置
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -135,12 +152,12 @@ class IndexSettingsPage extends ConsumerWidget {
                 children: [
                   Text(
                     '课表显示',
-                                            style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: isDarkMode ? Colors.white : Colors.black87,
-                          letterSpacing: 0.5,
-                        ),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: isDarkMode ? Colors.white : Colors.black87,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -152,7 +169,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '显示课表简览',
@@ -173,7 +190,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '启用背景模糊',
@@ -198,7 +215,7 @@ class IndexSettingsPage extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // 快捷卡片设置
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -214,12 +231,12 @@ class IndexSettingsPage extends ConsumerWidget {
                 children: [
                   Text(
                     '快捷卡片',
-                                            style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: isDarkMode ? Colors.white : Colors.black87,
-                          letterSpacing: 0.5,
-                        ),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: isDarkMode ? Colors.white : Colors.black87,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -231,7 +248,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '显示待办',
@@ -252,7 +269,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '显示已完成待办',
@@ -273,7 +290,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '显示考试列表',
@@ -294,7 +311,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '显示水电余额',
@@ -315,7 +332,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '显示空教室',
@@ -336,7 +353,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '显示成绩',
@@ -361,7 +378,7 @@ class IndexSettingsPage extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // 快捷操作
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -377,15 +394,15 @@ class IndexSettingsPage extends ConsumerWidget {
                 children: [
                   Text(
                     '快捷操作',
-                                            style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: isDarkMode ? Colors.white : Colors.black87,
-                          letterSpacing: 0.5,
-                        ),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: isDarkMode ? Colors.white : Colors.black87,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   ListTile(
                     leading: Icon(
                       Icons.table_chart_outlined,
@@ -411,7 +428,7 @@ class IndexSettingsPage extends ConsumerWidget {
                     onTap: () => context.push(RouteConstants.classTable),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  
+
                   ListTile(
                     leading: Icon(
                       Icons.refresh,

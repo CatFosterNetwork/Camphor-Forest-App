@@ -13,24 +13,20 @@ class GradeBrief extends ConsumerWidget {
   final bool blur;
   final bool darkMode;
 
-  const GradeBrief({
-    super.key,
-    required this.blur,
-    required this.darkMode,
-  });
+  const GradeBrief({super.key, required this.blur, required this.darkMode});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final gradeState = ref.watch(gradeProvider);
     final statistics = ref.watch(gradeStatisticsProvider);
     final sortedGrades = ref.watch(sortedGradesProvider);
-    
+
     // 获取主题色
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
-    
+
     final textColor = darkMode ? Colors.white70 : Colors.black87;
     final subtitleColor = darkMode ? Colors.white54 : Colors.black54;
 
@@ -85,13 +81,18 @@ class GradeBrief extends ConsumerWidget {
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              themeColor,
+                            ),
                           ),
                         )
                       else if (_hasNewGrades(gradeState))
                         Container(
                           margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.red.withAlpha(204),
                             borderRadius: BorderRadius.circular(10),
@@ -130,12 +131,18 @@ class GradeBrief extends ConsumerWidget {
                   ),
                 ],
               ),
-          
+
               const SizedBox(height: 16),
-          
+
               // 根据状态显示不同内容
               if (statistics != null && !gradeState.isLoading) ...[
-                _buildGradeContent(statistics, sortedGrades, textColor, subtitleColor, gradeState),
+                _buildGradeContent(
+                  statistics,
+                  sortedGrades,
+                  textColor,
+                  subtitleColor,
+                  gradeState,
+                ),
               ] else if (gradeState.error != null) ...[
                 _buildErrorState(textColor, subtitleColor, ref),
               ] else ...[
@@ -151,7 +158,13 @@ class GradeBrief extends ConsumerWidget {
   }
 
   /// 构建成绩内容
-  Widget _buildGradeContent(statistics, sortedGrades, Color textColor, Color subtitleColor, gradeState) {
+  Widget _buildGradeContent(
+    statistics,
+    sortedGrades,
+    Color textColor,
+    Color subtitleColor,
+    gradeState,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -161,16 +174,19 @@ class GradeBrief extends ConsumerWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: darkMode
-                  ? [Colors.green.shade800.withAlpha(26), Colors.blue.shade800.withAlpha(26)]
-                  : [Colors.green.shade500.withAlpha(26), Colors.blue.shade500.withAlpha(26)],
+                  ? [
+                      Colors.green.shade800.withAlpha(26),
+                      Colors.blue.shade800.withAlpha(26),
+                    ]
+                  : [
+                      Colors.green.shade500.withAlpha(26),
+                      Colors.blue.shade500.withAlpha(26),
+                    ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.green.withAlpha(51),
-              width: 1,
-            ),
+            border: Border.all(color: Colors.green.withAlpha(51), width: 1),
           ),
           child: Column(
             children: [
@@ -201,14 +217,14 @@ class GradeBrief extends ConsumerWidget {
                   ),
                 ],
               ),
-              
+
               // 分割线
               Container(
                 height: 1,
                 color: Colors.green.withAlpha(76),
                 margin: const EdgeInsets.symmetric(vertical: 12),
               ),
-              
+
               // 第二行：必修GPA、全科GPA和总学分
               Row(
                 children: [
@@ -253,9 +269,9 @@ class GradeBrief extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // 最新成绩
         if (sortedGrades.isNotEmpty) ...[
           Row(
@@ -271,33 +287,28 @@ class GradeBrief extends ConsumerWidget {
               ),
               Text(
                 '${sortedGrades.length}门课程',
-                style: TextStyle(
-                  color: subtitleColor,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: subtitleColor, fontSize: 12),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // 成绩列表（最多显示3个）
-          ...sortedGrades.take(3).map((grade) => 
-            _buildGradeItem(grade, textColor, subtitleColor)),
-          
+          ...sortedGrades
+              .take(3)
+              .map((grade) => _buildGradeItem(grade, textColor, subtitleColor)),
+
           const SizedBox(height: 8),
         ],
-        
+
         // 更新时间
         if (gradeState.lastUpdateTime != null)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               '更新时间: ${_formatUpdateTime(gradeState.lastUpdateTime!)}',
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 11,
-              ),
+              style: TextStyle(color: subtitleColor, fontSize: 11),
             ),
           ),
       ],
@@ -326,13 +337,7 @@ class GradeBrief extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              '点击重试',
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 12,
-              ),
-            ),
+            Text('点击重试', style: TextStyle(color: subtitleColor, fontSize: 12)),
             const SizedBox(height: 8),
             ElevatedButton.icon(
               onPressed: () => ref.read(gradeProvider.notifier).refreshGrades(),
@@ -341,7 +346,10 @@ class GradeBrief extends ConsumerWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.withAlpha(204),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -360,26 +368,16 @@ class GradeBrief extends ConsumerWidget {
       child: Center(
         child: Column(
           children: [
-            Icon(
-              Icons.school_outlined,
-              color: subtitleColor,
-              size: 32,
-            ),
+            Icon(Icons.school_outlined, color: subtitleColor, size: 32),
             const SizedBox(height: 8),
             Text(
               '暂无成绩信息',
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: subtitleColor, fontSize: 14),
             ),
             const SizedBox(height: 4),
             Text(
               '点击刷新获取最新成绩',
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: subtitleColor, fontSize: 12),
             ),
             const SizedBox(height: 8),
             ElevatedButton.icon(
@@ -389,7 +387,10 @@ class GradeBrief extends ConsumerWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.withAlpha(204),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -402,7 +403,12 @@ class GradeBrief extends ConsumerWidget {
   }
 
   /// 构建统计项目
-  Widget _buildStatItem(String label, String value, Color valueColor, Color labelColor) {
+  Widget _buildStatItem(
+    String label,
+    String value,
+    Color valueColor,
+    Color labelColor,
+  ) {
     return Column(
       children: [
         Text(
@@ -433,17 +439,14 @@ class GradeBrief extends ConsumerWidget {
   /// 构建单个成绩项目
   Widget _buildGradeItem(grade, Color textColor, Color subtitleColor) {
     final scoreColor = _getScoreColor(grade.zcj);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: scoreColor.withAlpha(20),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: scoreColor.withAlpha(51),
-          width: 0.5,
-        ),
+        border: Border.all(color: scoreColor.withAlpha(51), width: 0.5),
       ),
       child: Row(
         children: [
@@ -466,10 +469,7 @@ class GradeBrief extends ConsumerWidget {
                   children: [
                     Text(
                       '学分: ${grade.xf}',
-                      style: TextStyle(
-                        color: subtitleColor,
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: subtitleColor, fontSize: 11),
                     ),
                     if (grade.kcxzmc != null) ...[
                       Container(
@@ -484,12 +484,12 @@ class GradeBrief extends ConsumerWidget {
                       Text(
                         grade.kcxzmc!,
                         style: TextStyle(
-                          color: grade.kcxzmc!.contains('必') 
+                          color: grade.kcxzmc!.contains('必')
                               ? Colors.red.withAlpha(178)
                               : subtitleColor,
                           fontSize: 11,
-                          fontWeight: grade.kcxzmc!.contains('必') 
-                              ? FontWeight.w500 
+                          fontWeight: grade.kcxzmc!.contains('必')
+                              ? FontWeight.w500
                               : FontWeight.normal,
                         ),
                       ),
@@ -556,8 +556,8 @@ class GradeBrief extends ConsumerWidget {
   Widget _applyContainerStyle(Widget child) {
     Widget styledChild = Container(
       decoration: BoxDecoration(
-        color: darkMode 
-            ? Colors.grey.shade900.withAlpha(230) 
+        color: darkMode
+            ? Colors.grey.shade900.withAlpha(230)
             : Colors.white.withAlpha(230),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -578,14 +578,13 @@ class GradeBrief extends ConsumerWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: darkMode 
+              color: darkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: darkMode ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              ) : null,
+              border: darkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
             ),
             child: child,
           ),
@@ -608,7 +607,7 @@ class GradeBrief extends ConsumerWidget {
   String _formatUpdateTime(DateTime time) {
     final now = DateTime.now();
     final diff = now.difference(time);
-    
+
     if (diff.inMinutes < 1) {
       return '刚刚';
     } else if (diff.inMinutes < 60) {
@@ -626,10 +625,7 @@ class GradeBrief extends ConsumerWidget {
   void _navigateToGradeQuery(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const GradeQueryScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const GradeQueryScreen()),
     );
   }
-
 }

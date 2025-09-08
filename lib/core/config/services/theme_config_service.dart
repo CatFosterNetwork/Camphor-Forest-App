@@ -13,7 +13,7 @@ import '../../services/custom_theme_service.dart';
 class ThemeConfigService {
   static const String _configKey = 'theme_config';
   static const String _legacyConfigKey = 'config';
-  
+
   final SharedPreferences _prefs;
   final CustomThemeService _customThemeService;
 
@@ -29,7 +29,7 @@ class ThemeConfigService {
         debugPrint('ThemeConfigService: 成功加载主题配置');
         return config;
       }
-      
+
       // 如果新配置不存在，尝试从旧配置迁移
       return await _migrateFromLegacyConfig();
     } catch (e) {
@@ -71,12 +71,26 @@ class ThemeConfigService {
   /// 选择主题
   Future<ThemeConfig> selectTheme(String themeCode, Theme? theme) async {
     final currentConfig = await loadConfig();
+
+    // 如果切换到自定义主题
+    if (themeCode == 'custom') {
+      final updatedConfig = currentConfig.copyWith(
+        selectedThemeCode: themeCode,
+        clearSelectedTheme: true, // 清除预设主题
+      );
+      await saveConfig(updatedConfig);
+      debugPrint('ThemeConfigService: 选择自定义主题');
+      return updatedConfig;
+    }
+
+    // 如果切换到预设主题
     final updatedConfig = currentConfig.copyWith(
       selectedThemeCode: themeCode,
       selectedTheme: theme,
+      clearCustomTheme: false, // 保留自定义主题但不使用
     );
     await saveConfig(updatedConfig);
-    debugPrint('ThemeConfigService: 选择主题 $themeCode');
+    debugPrint('ThemeConfigService: 选择主题 $themeCode (${theme?.title})');
     return updatedConfig;
   }
 
@@ -86,6 +100,7 @@ class ThemeConfigService {
     final updatedConfig = currentConfig.copyWith(
       customTheme: customTheme,
       selectedThemeCode: 'custom',
+      clearSelectedTheme: true, // 清除预设主题
     );
     await saveConfig(updatedConfig);
     debugPrint('ThemeConfigService: 设置自定义主题');
@@ -116,7 +131,7 @@ class ThemeConfigService {
       final config = await loadConfig();
       return config.customTheme;
     }
-    
+
     try {
       final themes = await getAllThemes();
       final foundTheme = themes.where((theme) => theme.code == themeCode);
@@ -170,21 +185,22 @@ class ThemeConfigService {
     try {
       final legacyConfigJson = _prefs.getString(_legacyConfigKey);
       if (legacyConfigJson != null) {
-        final legacyConfig = jsonDecode(legacyConfigJson) as Map<String, dynamic>;
-        
+        final legacyConfig =
+            jsonDecode(legacyConfigJson) as Map<String, dynamic>;
+
         // 创建新的ThemeConfig，只提取主题相关的字段
         final themeConfig = ThemeConfig.fromJson(legacyConfig);
-        
+
         // 保存到新的存储键
         await saveConfig(themeConfig);
-        
+
         debugPrint('ThemeConfigService: 成功从旧配置迁移主题设置');
         return themeConfig;
       }
     } catch (e) {
       debugPrint('ThemeConfigService: 旧配置迁移失败: $e');
     }
-    
+
     // 如果迁移失败，返回默认配置
     debugPrint('ThemeConfigService: 使用默认主题配置');
     return ThemeConfig.defaultConfig;
@@ -207,15 +223,15 @@ class ThemeConfigService {
   /// 获取当前使用的主题
   Future<Theme?> getCurrentTheme() async {
     final config = await loadConfig();
-    
+
     if (config.isUsingCustomTheme) {
       return config.customTheme ?? await loadCustomThemeFromFile();
     }
-    
+
     if (config.selectedTheme != null) {
       return config.selectedTheme;
     }
-    
+
     // 根据主题代码获取主题
     return await getThemeByCode(config.selectedThemeCode);
   }
@@ -230,7 +246,7 @@ class ThemeConfigService {
   Future<ThemeConfig> cycleThemeMode() async {
     final config = await loadConfig();
     String nextMode;
-    
+
     switch (config.themeMode) {
       case 'system':
         nextMode = 'light';
@@ -244,7 +260,7 @@ class ThemeConfigService {
       default:
         nextMode = 'system';
     }
-    
+
     return await setThemeMode(nextMode);
   }
 }

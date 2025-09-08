@@ -21,8 +21,8 @@ class GradeNormalTab extends ConsumerWidget {
     final currentSemester = ref.watch(currentSemesterProvider);
     final availableSemesters = ref.watch(availableSemestersProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
 
     return RefreshIndicator(
@@ -37,16 +37,14 @@ class GradeNormalTab extends ConsumerWidget {
             _buildSemesterSelector(
               context,
               currentSemester,
-              availableSemesters.length > 1 
-                  ? availableSemesters.sublist(1, availableSemesters.length)
-                  : availableSemesters,
+              availableSemesters,
               isDarkMode,
               themeColor,
               ref,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 成绩列表卡片
             _buildGradeListCard(
               context,
@@ -56,12 +54,12 @@ class GradeNormalTab extends ConsumerWidget {
               themeColor,
               ref,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 统计信息卡片
             const GradeStatisticsCard(),
-            
+
             const SizedBox(height: 80), // 底部间距
           ],
         ),
@@ -82,7 +80,9 @@ class GradeNormalTab extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800.withAlpha(128) : Colors.white.withAlpha(204),
+        color: isDarkMode
+            ? Colors.grey.shade800.withAlpha(128)
+            : Colors.white.withAlpha(204),
         borderRadius: BorderRadius.circular(25), // 改为圆弧样式
         boxShadow: [
           BoxShadow(
@@ -93,7 +93,14 @@ class GradeNormalTab extends ConsumerWidget {
         ],
       ),
       child: InkWell(
-        onTap: () => _showSemesterPicker(context, availableSemesters, currentSemester, isDarkMode, themeColor, ref),
+        onTap: () => _showSemesterPicker(
+          context,
+          availableSemesters,
+          currentSemester,
+          isDarkMode,
+          themeColor,
+          ref,
+        ),
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -138,7 +145,9 @@ class GradeNormalTab extends ConsumerWidget {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800.withAlpha(128) : Colors.white.withAlpha(204),
+        color: isDarkMode
+            ? Colors.grey.shade800.withAlpha(128)
+            : Colors.white.withAlpha(204),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -153,7 +162,7 @@ class GradeNormalTab extends ConsumerWidget {
         children: [
           // 标题栏和排序按钮
           _buildGradeListHeader(gradeState.sortBy, isDarkMode, themeColor, ref),
-          
+
           // 成绩列表
           if (gradeState.isLoading)
             _buildLoadingState(isDarkMode)
@@ -163,13 +172,18 @@ class GradeNormalTab extends ConsumerWidget {
             _buildEmptyState(isDarkMode)
           else
             _buildGradeList(context, grades, isDarkMode, ref),
-            
+
           const SizedBox(height: 20),
-          
+
           // 刷新按钮
           if (!gradeState.isLoading)
-            _buildRefreshButton(gradeState.isLoading, isDarkMode, themeColor, ref),
-            
+            _buildRefreshButton(
+              gradeState.isLoading,
+              isDarkMode,
+              themeColor,
+              ref,
+            ),
+
           const SizedBox(height: 20), // 添加底部间距
         ],
       ),
@@ -177,7 +191,12 @@ class GradeNormalTab extends ConsumerWidget {
   }
 
   /// 构建成绩列表标题栏
-  Widget _buildGradeListHeader(GradeSortBy currentSortBy, bool isDarkMode, Color themeColor, WidgetRef ref) {
+  Widget _buildGradeListHeader(
+    GradeSortBy currentSortBy,
+    bool isDarkMode,
+    Color themeColor,
+    WidgetRef ref,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -190,10 +209,42 @@ class GradeNormalTab extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          _buildSortButton('课程名称', GradeSortBy.course, currentSortBy, isDarkMode, themeColor, ref, flex: 2),
-          _buildSortButton('学分', GradeSortBy.credit, currentSortBy, isDarkMode, themeColor, ref, flex: 1),
-          _buildSortButton('成绩', GradeSortBy.score, currentSortBy, isDarkMode, themeColor, ref, flex: 1),
-          _buildSortButton('绩点', GradeSortBy.gpa, currentSortBy, isDarkMode, themeColor, ref, flex: 1),
+          _buildSortButton(
+            '课程名称',
+            GradeSortBy.course,
+            currentSortBy,
+            isDarkMode,
+            themeColor,
+            ref,
+            flex: 2,
+          ),
+          _buildSortButton(
+            '学分',
+            GradeSortBy.credit,
+            currentSortBy,
+            isDarkMode,
+            themeColor,
+            ref,
+            flex: 1,
+          ),
+          _buildSortButton(
+            '成绩',
+            GradeSortBy.score,
+            currentSortBy,
+            isDarkMode,
+            themeColor,
+            ref,
+            flex: 1,
+          ),
+          _buildSortButton(
+            '绩点',
+            GradeSortBy.gpa,
+            currentSortBy,
+            isDarkMode,
+            themeColor,
+            ref,
+            flex: 1,
+          ),
         ],
       ),
     );
@@ -210,7 +261,7 @@ class GradeNormalTab extends ConsumerWidget {
     int flex = 1,
   }) {
     final isActive = currentSortBy == sortBy;
-    
+
     return Expanded(
       flex: flex,
       child: InkWell(
@@ -273,7 +324,12 @@ class GradeNormalTab extends ConsumerWidget {
   }
 
   /// 构建错误状态
-  Widget _buildErrorState(String error, bool isDarkMode, Color themeColor, WidgetRef ref) {
+  Widget _buildErrorState(
+    String error,
+    bool isDarkMode,
+    Color themeColor,
+    WidgetRef ref,
+  ) {
     return Container(
       padding: const EdgeInsets.all(32),
       child: Center(
@@ -359,7 +415,9 @@ class GradeNormalTab extends ConsumerWidget {
     WidgetRef ref,
   ) {
     return Column(
-      children: grades.map((grade) => _buildGradeItem(context, grade, isDarkMode, ref)).toList(),
+      children: grades
+          .map((grade) => _buildGradeItem(context, grade, isDarkMode, ref))
+          .toList(),
     );
   }
 
@@ -371,7 +429,7 @@ class GradeNormalTab extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final scoreColor = _getScoreColor(grade.zcj, isDarkMode);
-    
+
     return InkWell(
       onTap: () => _showCourseDetail(context, grade, ref),
       child: Container(
@@ -399,7 +457,7 @@ class GradeNormalTab extends ConsumerWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            
+
             // 学分
             Expanded(
               flex: 1,
@@ -412,7 +470,7 @@ class GradeNormalTab extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            
+
             // 成绩
             Expanded(
               flex: 1,
@@ -433,7 +491,7 @@ class GradeNormalTab extends ConsumerWidget {
                 ),
               ),
             ),
-            
+
             // 绩点
             Expanded(
               flex: 1,
@@ -453,12 +511,19 @@ class GradeNormalTab extends ConsumerWidget {
   }
 
   /// 构建刷新按钮
-  Widget _buildRefreshButton(bool isLoading, bool isDarkMode, Color themeColor, WidgetRef ref) {
+  Widget _buildRefreshButton(
+    bool isLoading,
+    bool isDarkMode,
+    Color themeColor,
+    WidgetRef ref,
+  ) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: ElevatedButton(
-        onPressed: isLoading ? null : () => ref.read(gradeProvider.notifier).refreshGrades(),
+        onPressed: isLoading
+            ? null
+            : () => ref.read(gradeProvider.notifier).refreshGrades(),
         style: ElevatedButton.styleFrom(
           backgroundColor: themeColor,
           foregroundColor: Colors.white,
@@ -469,10 +534,7 @@ class GradeNormalTab extends ConsumerWidget {
         ),
         child: Text(
           isLoading ? '刷新中...' : '刷新成绩',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -508,7 +570,7 @@ class GradeNormalTab extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            
+
             // 标题
             Padding(
               padding: const EdgeInsets.all(20),
@@ -521,7 +583,7 @@ class GradeNormalTab extends ConsumerWidget {
                 ),
               ),
             ),
-            
+
             // 学期列表
             Flexible(
               child: ListView.builder(
@@ -529,22 +591,22 @@ class GradeNormalTab extends ConsumerWidget {
                 itemCount: availableSemesters.length,
                 itemBuilder: (context, index) {
                   final semester = availableSemesters[index];
-                  final isSelected = semester.xnm == currentSemester.xnm && 
-                                   semester.xqm == currentSemester.xqm;
-                  
+                  final isSelected =
+                      semester.xnm == currentSemester.xnm &&
+                      semester.xqm == currentSemester.xqm;
+
                   return ListTile(
                     title: Text(
                       semester.displayName,
                       style: TextStyle(
                         color: isDarkMode ? Colors.white : Colors.black,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                     trailing: isSelected
-                        ? Icon(
-                            Icons.check,
-                            color: themeColor,
-                          )
+                        ? Icon(Icons.check, color: themeColor)
                         : null,
                     onTap: () {
                       ref.read(gradeProvider.notifier).changeSemester(semester);
@@ -554,7 +616,7 @@ class GradeNormalTab extends ConsumerWidget {
                 },
               ),
             ),
-            
+
             const SizedBox(height: 20),
           ],
         ),
@@ -563,7 +625,11 @@ class GradeNormalTab extends ConsumerWidget {
   }
 
   /// 显示课程详情
-  void _showCourseDetail(BuildContext context, CalculatedGrade grade, WidgetRef ref) {
+  void _showCourseDetail(
+    BuildContext context,
+    CalculatedGrade grade,
+    WidgetRef ref,
+  ) {
     showDialog(
       context: context,
       builder: (context) => GradeCourseDetailModal(grade: grade),

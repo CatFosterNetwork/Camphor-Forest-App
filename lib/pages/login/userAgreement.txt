@@ -1,0 +1,4414 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"
+	xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+	xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+	<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+	<meta name=ProgId content=Word.Document>
+	<meta name=Generator content="Microsoft Word 15">
+	<meta name=Originator content="Microsoft Word 15">
+	<link rel=File-List href="服务条款.fld/filelist.xml">
+	<link rel=dataStoreItem href="服务条款.fld/item0001.xml" target="服务条款.fld/props002.xml">
+	<link rel=dataStoreItem href="服务条款.fld/item0003.xml" target="服务条款.fld/props004.xml">
+	<link rel=dataStoreItem href="服务条款.fld/item0005.xml" target="服务条款.fld/props006.xml">
+	<link rel=themeData href="服务条款.fld/themedata.thmx">
+	<link rel=colorSchemeMapping href="服务条款.fld/colorschememapping.xml">
+	<style>
+		<!--		
+		/* Font Definitions */
+		@font-face {
+			font-family: Wingdings;
+			panose-1: 5 0 0 0 0 0 0 0 0 0;
+			mso-font-charset: 0;
+			mso-generic-font-family: decorative;
+			mso-font-pitch: variable;
+			mso-font-signature: 3 0 0 0 -2147483647 0;
+		}
+
+		@font-face {
+			font-family: 宋体;
+			panose-1: 2 1 6 0 3 1 1 1 1 1;
+			mso-font-alt: SimSun;
+			mso-font-charset: 134;
+			mso-generic-font-family: auto;
+			mso-font-pitch: variable;
+			mso-font-signature: 515 680460288 22 0 262145 0;
+		}
+
+		@font-face {
+			font-family: 黑体;
+			panose-1: 2 1 6 9 6 1 1 1 1 1;
+			mso-font-alt: SimHei;
+			mso-font-charset: 134;
+			mso-generic-font-family: modern;
+			mso-font-pitch: fixed;
+			mso-font-signature: -2147482945 953122042 22 0 262145 0;
+		}
+
+		@font-face {
+			font-family: Mangal;
+			panose-1: 2 4 5 3 5 2 3 3 2 2;
+			mso-font-charset: 0;
+			mso-generic-font-family: roman;
+			mso-font-pitch: variable;
+			mso-font-signature: 32771 0 0 0 1 0;
+		}
+
+		@font-face {
+			font-family: "Cambria Math";
+			panose-1: 2 4 5 3 5 4 6 3 2 4;
+			mso-font-charset: 0;
+			mso-generic-font-family: roman;
+			mso-font-pitch: variable;
+			mso-font-signature: -536870145 1107305727 0 0 415 0;
+		}
+
+		@font-face {
+			font-family: 微软雅黑;
+			panose-1: 2 11 5 3 2 2 4 2 2 4;
+			mso-font-alt: "microsoft yahei";
+			mso-font-charset: 134;
+			mso-generic-font-family: swiss;
+			mso-font-pitch: variable;
+			mso-font-signature: -2147483001 718224464 22 0 262175 0;
+		}
+
+		@font-face {
+			font-family: "Helvetica Neue";
+			panose-1: 2 0 5 3 0 0 0 2 0 4;
+			mso-font-charset: 0;
+			mso-generic-font-family: auto;
+			mso-font-pitch: variable;
+			mso-font-signature: -452984065 1342208475 16 0 1 0;
+		}
+
+		@font-face {
+			font-family: "\@宋体";
+			panose-1: 2 1 6 0 3 1 1 1 1 1;
+			mso-font-charset: 134;
+			mso-generic-font-family: auto;
+			mso-font-pitch: variable;
+			mso-font-signature: 515 680460288 22 0 262145 0;
+		}
+
+		@font-face {
+			font-family: "\@黑体";
+			panose-1: 2 1 6 0 3 1 1 1 1 1;
+			mso-font-charset: 134;
+			mso-generic-font-family: modern;
+			mso-font-pitch: fixed;
+			mso-font-signature: -2147482945 953122042 22 0 262145 0;
+		}
+
+		@font-face {
+			font-family: "\@微软雅黑";
+			mso-font-charset: 134;
+			mso-generic-font-family: swiss;
+			mso-font-pitch: variable;
+			mso-font-signature: -2147483001 718224464 22 0 262175 0;
+		}
+
+		/* Style Definitions */
+		p.MsoNormal,
+		li.MsoNormal,
+		div.MsoNormal {
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-parent: "";
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 16.0pt;
+			margin-left: 0cm;
+			line-height: 150%;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+		}
+
+		h1 {
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 1 字符";
+			mso-style-next: 正文;
+			margin-top: 18.0pt;
+			margin-right: 0cm;
+			margin-bottom: 16.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 1;
+			font-size: 32.0pt;
+			mso-bidi-font-size: 16.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			letter-spacing: .7pt;
+			mso-font-kerning: 0pt;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+		}
+
+		h2 {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 2 字符";
+			mso-style-next: 正文;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 12.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 2;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 13.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+		}
+
+		h2.CxSpFirst {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 2 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 2;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 13.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+		}
+
+		h2.CxSpMiddle {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 2 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 2;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 13.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+		}
+
+		h2.CxSpLast {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 2 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 0cm;
+			margin-bottom: 12.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 2;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 13.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+		}
+
+		h3 {
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 3 字符";
+			mso-style-next: 正文;
+			margin-top: 2.0pt;
+			margin-right: 0cm;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			line-height: 150%;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 3;
+			font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+		}
+
+		h4 {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 4 字符";
+			mso-style-next: 正文;
+			margin-top: 0cm;
+			margin-right: 0cm;
+			margin-bottom: 10.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 4;
+			font-size: 17.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+			mso-bidi-font-style: italic;
+		}
+
+		h5 {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 5 字符";
+			mso-style-next: 正文;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 9.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 5;
+			font-size: 17.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+			font-style: italic;
+			mso-bidi-font-style: normal;
+		}
+
+		h6 {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 6 字符";
+			mso-style-next: 正文;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 9.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 6;
+			font-size: 15.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+			font-weight: normal;
+		}
+
+		p.MsoHeading7,
+		li.MsoHeading7,
+		div.MsoHeading7 {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 7 字符";
+			mso-style-next: 正文;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 9.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 7;
+			font-size: 15.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+			font-style: italic;
+		}
+
+		p.MsoHeading8,
+		li.MsoHeading8,
+		div.MsoHeading8 {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 8 字符";
+			mso-style-next: 正文;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 9.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 8;
+			font-size: 13.0pt;
+			mso-bidi-font-size: 10.5pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoHeading9,
+		li.MsoHeading9,
+		div.MsoHeading9 {
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-qformat: yes;
+			mso-style-link: "标题 9 字符";
+			mso-style-next: 正文;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 9.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			mso-outline-level: 9;
+			font-size: 13.0pt;
+			mso-bidi-font-size: 10.5pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+			font-style: italic;
+		}
+
+		p.MsoHeader,
+		li.MsoHeader,
+		div.MsoHeader {
+			mso-style-priority: 99;
+			mso-style-link: "页眉 字符";
+			margin: 0cm;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoFooter,
+		li.MsoFooter,
+		div.MsoFooter {
+			mso-style-priority: 99;
+			mso-style-qformat: yes;
+			mso-style-link: "页脚 字符";
+			margin: 0cm;
+			mso-pagination: widow-orphan;
+			background: #0072C6;
+			mso-background-themecolor: accent1;
+			border: none;
+			mso-border-alt: solid #0072C6 .5pt;
+			mso-border-themecolor: accent1;
+			padding: 0cm;
+			mso-padding-alt: 8.0pt 31.0pt 8.0pt 31.0pt;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: white;
+			mso-themecolor: background1;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoCaption,
+		li.MsoCaption,
+		div.MsoCaption {
+			mso-style-noshow: yes;
+			mso-style-priority: 35;
+			mso-style-qformat: yes;
+			mso-style-next: 正文;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 10.0pt;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan;
+			font-size: 10.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+			font-style: italic;
+		}
+
+		p.MsoTitle,
+		li.MsoTitle,
+		div.MsoTitle {
+			mso-style-noshow: yes;
+			mso-style-priority: 1;
+			mso-style-link: "标题 字符";
+			mso-style-next: 正文;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 42.0pt;
+			mso-bidi-font-size: 28.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #F98723;
+			mso-themecolor: accent2;
+			letter-spacing: -.5pt;
+			mso-font-kerning: 14.0pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoTitleCxSpFirst,
+		li.MsoTitleCxSpFirst,
+		div.MsoTitleCxSpFirst {
+			mso-style-noshow: yes;
+			mso-style-priority: 1;
+			mso-style-link: "标题 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 42.0pt;
+			mso-bidi-font-size: 28.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #F98723;
+			mso-themecolor: accent2;
+			letter-spacing: -.5pt;
+			mso-font-kerning: 14.0pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoTitleCxSpMiddle,
+		li.MsoTitleCxSpMiddle,
+		div.MsoTitleCxSpMiddle {
+			mso-style-noshow: yes;
+			mso-style-priority: 1;
+			mso-style-link: "标题 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 42.0pt;
+			mso-bidi-font-size: 28.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #F98723;
+			mso-themecolor: accent2;
+			letter-spacing: -.5pt;
+			mso-font-kerning: 14.0pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoTitleCxSpLast,
+		li.MsoTitleCxSpLast,
+		div.MsoTitleCxSpLast {
+			mso-style-noshow: yes;
+			mso-style-priority: 1;
+			mso-style-link: "标题 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 42.0pt;
+			mso-bidi-font-size: 28.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #F98723;
+			mso-themecolor: accent2;
+			letter-spacing: -.5pt;
+			mso-font-kerning: 14.0pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoClosing,
+		li.MsoClosing,
+		div.MsoClosing {
+			mso-style-priority: 32;
+			mso-style-qformat: yes;
+			mso-style-link: "结束语 字符";
+			margin-top: 36.0pt;
+			margin-right: 0cm;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoClosingCxSpFirst,
+		li.MsoClosingCxSpFirst,
+		div.MsoClosingCxSpFirst {
+			mso-style-priority: 32;
+			mso-style-qformat: yes;
+			mso-style-link: "结束语 字符";
+			mso-style-type: export-only;
+			margin-top: 36.0pt;
+			margin-right: 0cm;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoClosingCxSpMiddle,
+		li.MsoClosingCxSpMiddle,
+		div.MsoClosingCxSpMiddle {
+			mso-style-priority: 32;
+			mso-style-qformat: yes;
+			mso-style-link: "结束语 字符";
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoClosingCxSpLast,
+		li.MsoClosingCxSpLast,
+		div.MsoClosingCxSpLast {
+			mso-style-priority: 32;
+			mso-style-qformat: yes;
+			mso-style-link: "结束语 字符";
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoSignature,
+		li.MsoSignature,
+		div.MsoSignature {
+			mso-style-priority: 33;
+			mso-style-qformat: yes;
+			mso-style-link: "签名 字符";
+			margin-top: 54.0pt;
+			margin-right: 0cm;
+			margin-bottom: 14.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoSignatureCxSpFirst,
+		li.MsoSignatureCxSpFirst,
+		div.MsoSignatureCxSpFirst {
+			mso-style-priority: 33;
+			mso-style-qformat: yes;
+			mso-style-link: "签名 字符";
+			mso-style-type: export-only;
+			margin-top: 54.0pt;
+			margin-right: 0cm;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoSignatureCxSpMiddle,
+		li.MsoSignatureCxSpMiddle,
+		div.MsoSignatureCxSpMiddle {
+			mso-style-priority: 33;
+			mso-style-qformat: yes;
+			mso-style-link: "签名 字符";
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoSignatureCxSpLast,
+		li.MsoSignatureCxSpLast,
+		div.MsoSignatureCxSpLast {
+			mso-style-priority: 33;
+			mso-style-qformat: yes;
+			mso-style-link: "签名 字符";
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 0cm;
+			margin-bottom: 14.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			mso-bidi-font-weight: bold;
+		}
+
+		p.MsoSubtitle,
+		li.MsoSubtitle,
+		div.MsoSubtitle {
+			mso-style-noshow: yes;
+			mso-style-priority: 11;
+			mso-style-qformat: yes;
+			mso-style-link: "副标题 字符";
+			margin-top: 0cm;
+			margin-right: 0cm;
+			margin-bottom: 36.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 11.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoSubtitleCxSpFirst,
+		li.MsoSubtitleCxSpFirst,
+		div.MsoSubtitleCxSpFirst {
+			mso-style-noshow: yes;
+			mso-style-priority: 11;
+			mso-style-qformat: yes;
+			mso-style-link: "副标题 字符";
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 11.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoSubtitleCxSpMiddle,
+		li.MsoSubtitleCxSpMiddle,
+		div.MsoSubtitleCxSpMiddle {
+			mso-style-noshow: yes;
+			mso-style-priority: 11;
+			mso-style-qformat: yes;
+			mso-style-link: "副标题 字符";
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 11.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoSubtitleCxSpLast,
+		li.MsoSubtitleCxSpLast,
+		div.MsoSubtitleCxSpLast {
+			mso-style-noshow: yes;
+			mso-style-priority: 11;
+			mso-style-qformat: yes;
+			mso-style-link: "副标题 字符";
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 0cm;
+			margin-bottom: 36.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 11.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoSalutation,
+		li.MsoSalutation,
+		div.MsoSalutation {
+			mso-style-priority: 3;
+			mso-style-qformat: yes;
+			mso-style-link: "称呼 字符";
+			mso-style-next: 正文;
+			margin-top: 50.0pt;
+			margin-right: 0cm;
+			margin-bottom: 6.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 36.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoSalutationCxSpFirst,
+		li.MsoSalutationCxSpFirst,
+		div.MsoSalutationCxSpFirst {
+			mso-style-priority: 3;
+			mso-style-qformat: yes;
+			mso-style-link: "称呼 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin-top: 50.0pt;
+			margin-right: 0cm;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 36.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoSalutationCxSpMiddle,
+		li.MsoSalutationCxSpMiddle,
+		div.MsoSalutationCxSpMiddle {
+			mso-style-priority: 3;
+			mso-style-qformat: yes;
+			mso-style-link: "称呼 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 36.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoSalutationCxSpLast,
+		li.MsoSalutationCxSpLast,
+		div.MsoSalutationCxSpLast {
+			mso-style-priority: 3;
+			mso-style-qformat: yes;
+			mso-style-link: "称呼 字符";
+			mso-style-next: 正文;
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 0cm;
+			margin-bottom: 6.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 36.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.MsoDate,
+		li.MsoDate,
+		div.MsoDate {
+			mso-style-priority: 1;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-link: "日期 字符";
+			margin-top: 8.0pt;
+			margin-right: 151.2pt;
+			margin-bottom: 30.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 16.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			font-weight: bold;
+			mso-bidi-font-weight: normal;
+		}
+
+		p.MsoDateCxSpFirst,
+		li.MsoDateCxSpFirst,
+		div.MsoDateCxSpFirst {
+			mso-style-priority: 1;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-link: "日期 字符";
+			mso-style-type: export-only;
+			margin-top: 8.0pt;
+			margin-right: 151.2pt;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 16.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			font-weight: bold;
+			mso-bidi-font-weight: normal;
+		}
+
+		p.MsoDateCxSpMiddle,
+		li.MsoDateCxSpMiddle,
+		div.MsoDateCxSpMiddle {
+			mso-style-priority: 1;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-link: "日期 字符";
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 151.2pt;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 16.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			font-weight: bold;
+			mso-bidi-font-weight: normal;
+		}
+
+		p.MsoDateCxSpLast,
+		li.MsoDateCxSpLast,
+		div.MsoDateCxSpLast {
+			mso-style-priority: 1;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-link: "日期 字符";
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 151.2pt;
+			margin-bottom: 30.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 16.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+			font-weight: bold;
+			mso-bidi-font-weight: normal;
+		}
+
+		a:link,
+		span.MsoHyperlink {
+			mso-style-priority: 99;
+			color: blue;
+			text-decoration: underline;
+			text-underline: single;
+		}
+
+		a:visited,
+		span.MsoHyperlinkFollowed {
+			mso-style-noshow: yes;
+			mso-style-priority: 99;
+			color: #79498B;
+			mso-themecolor: followedhyperlink;
+			text-decoration: underline;
+			text-underline: single;
+		}
+
+		strong {
+			mso-style-priority: 22;
+			mso-style-qformat: yes;
+			color: #0072C6;
+			mso-themecolor: accent1;
+		}
+
+		em {
+			mso-style-noshow: yes;
+			mso-style-priority: 20;
+			mso-style-qformat: yes;
+			color: #F98723;
+			mso-themecolor: accent2;
+		}
+
+		p {
+			mso-style-noshow: yes;
+			mso-style-priority: 99;
+			mso-margin-top-alt: auto;
+			margin-right: 0cm;
+			mso-margin-bottom-alt: auto;
+			margin-left: 0cm;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: 宋体;
+			mso-bidi-font-family: 宋体;
+		}
+
+		span.MsoPlaceholderText {
+			mso-style-noshow: yes;
+			mso-style-priority: 99;
+			mso-style-unhide: no;
+			color: gray;
+		}
+
+		p.MsoQuote,
+		li.MsoQuote,
+		div.MsoQuote {
+			mso-style-noshow: yes;
+			mso-style-priority: 29;
+			mso-style-qformat: yes;
+			mso-style-link: "引用 字符";
+			mso-style-next: 正文;
+			margin-top: 18.0pt;
+			margin-right: 34.55pt;
+			margin-bottom: 18.0pt;
+			margin-left: 34.55pt;
+			line-height: 150%;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-ansi-language: EN-GB;
+			font-style: italic;
+		}
+
+		p.MsoIntenseQuote,
+		li.MsoIntenseQuote,
+		div.MsoIntenseQuote {
+			mso-style-noshow: yes;
+			mso-style-priority: 30;
+			mso-style-qformat: yes;
+			mso-style-link: "明显引用 字符";
+			mso-style-next: 正文;
+			margin-top: 18.0pt;
+			margin-right: 34.55pt;
+			margin-bottom: 18.0pt;
+			margin-left: 34.55pt;
+			mso-pagination: widow-orphan;
+			font-size: 20.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #F98723;
+			mso-themecolor: accent2;
+			letter-spacing: .7pt;
+			mso-ansi-language: EN-GB;
+			font-style: italic;
+		}
+
+		span.MsoSubtleEmphasis {
+			mso-style-noshow: yes;
+			mso-style-priority: 19;
+			mso-style-qformat: yes;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			font-style: italic;
+		}
+
+		span.MsoIntenseEmphasis {
+			mso-style-noshow: yes;
+			mso-style-priority: 21;
+			mso-style-qformat: yes;
+			color: #F98723;
+			mso-themecolor: accent2;
+			font-weight: bold;
+			mso-bidi-font-weight: normal;
+			font-style: italic;
+		}
+
+		span.MsoSubtleReference {
+			mso-style-noshow: yes;
+			mso-style-priority: 31;
+			mso-style-qformat: yes;
+			font-variant: normal !important;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			font-style: italic;
+			mso-bidi-font-style: normal;
+		}
+
+		span.MsoIntenseReference {
+			mso-style-noshow: yes;
+			mso-style-priority: 32;
+			mso-style-qformat: yes;
+			font-variant: normal !important;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			letter-spacing: 0pt;
+			font-weight: bold;
+			font-style: italic;
+			mso-bidi-font-style: normal;
+		}
+
+		span.MsoBookTitle {
+			mso-style-noshow: yes;
+			mso-style-priority: 33;
+			mso-style-qformat: yes;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			letter-spacing: 0pt;
+			font-weight: normal;
+			mso-bidi-font-weight: bold;
+			font-style: normal;
+			mso-bidi-font-style: italic;
+			text-decoration: underline;
+			text-underline: single;
+		}
+
+		p.MsoTocHeading,
+		li.MsoTocHeading,
+		div.MsoTocHeading {
+			mso-style-noshow: yes;
+			mso-style-priority: 39;
+			mso-style-qformat: yes;
+			mso-style-parent: "标题 1";
+			mso-style-next: 正文;
+			margin-top: 18.0pt;
+			margin-right: 0cm;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			line-height: 150%;
+			mso-pagination: widow-orphan lines-together;
+			page-break-after: avoid;
+			font-size: 42.0pt;
+			mso-bidi-font-size: 16.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			letter-spacing: .7pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.a,
+		li.a,
+		div.a {
+			mso-style-name: 地址;
+			mso-style-priority: 2;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			margin-top: 8.0pt;
+			margin-right: 151.2pt;
+			margin-bottom: 30.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.aCxSpFirst,
+		li.aCxSpFirst,
+		div.aCxSpFirst {
+			mso-style-name: 地址CxSpFirst;
+			mso-style-priority: 2;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-type: export-only;
+			margin-top: 8.0pt;
+			margin-right: 151.2pt;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.aCxSpMiddle,
+		li.aCxSpMiddle,
+		div.aCxSpMiddle {
+			mso-style-name: 地址CxSpMiddle;
+			mso-style-priority: 2;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 151.2pt;
+			margin-bottom: 0cm;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		p.aCxSpLast,
+		li.aCxSpLast,
+		div.aCxSpLast {
+			mso-style-name: 地址CxSpLast;
+			mso-style-priority: 2;
+			mso-style-unhide: no;
+			mso-style-qformat: yes;
+			mso-style-type: export-only;
+			margin-top: 0cm;
+			margin-right: 151.2pt;
+			margin-bottom: 30.0pt;
+			margin-left: 0cm;
+			mso-add-space: auto;
+			mso-pagination: widow-orphan;
+			font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-ascii-font-family: Arial;
+			mso-ascii-theme-font: minor-latin;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			mso-hansi-font-family: Arial;
+			mso-hansi-theme-font: minor-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-ansi-language: EN-GB;
+		}
+
+		span.a0 {
+			mso-style-name: "结束语 字符";
+			mso-style-priority: 32;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 结束语;
+			mso-bidi-font-size: 9.0pt;
+			font-family: 黑体;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-bidi-font-weight: bold;
+		}
+
+		span.a1 {
+			mso-style-name: "签名 字符";
+			mso-style-priority: 33;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 签名;
+			mso-ansi-font-size: 12.0pt;
+			mso-bidi-font-size: 9.0pt;
+			font-family: 黑体;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			letter-spacing: 1.4pt;
+			mso-bidi-font-weight: bold;
+		}
+
+		span.a2 {
+			mso-style-name: "日期 字符";
+			mso-style-priority: 1;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 日期;
+			mso-ansi-font-size: 16.0pt;
+			letter-spacing: 1.4pt;
+			font-weight: bold;
+			mso-bidi-font-weight: normal;
+		}
+
+		span.1 {
+			mso-style-name: "标题 1 字符";
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 1";
+			mso-ansi-font-size: 32.0pt;
+			mso-bidi-font-size: 16.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+			letter-spacing: .7pt;
+		}
+
+		span.a3 {
+			mso-style-name: "明显引用 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 30;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 明显引用;
+			mso-ansi-font-size: 20.0pt;
+			mso-bidi-font-size: 12.0pt;
+			color: #F98723;
+			mso-themecolor: accent2;
+			letter-spacing: .7pt;
+			font-style: italic;
+		}
+
+		span.a4 {
+			mso-style-name: "引用 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 29;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 引用;
+			mso-ansi-font-size: 12.0pt;
+			mso-bidi-font-size: 12.0pt;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			font-style: italic;
+		}
+
+		span.a5 {
+			mso-style-name: "副标题 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 11;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 副标题;
+			mso-ansi-font-size: 20.0pt;
+			font-family: 黑体;
+			mso-fareast-font-family: 黑体;
+			mso-fareast-theme-font: minor-fareast;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+		}
+
+		span.a6 {
+			mso-style-name: "标题 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 1;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 标题;
+			mso-ansi-font-size: 42.0pt;
+			mso-bidi-font-size: 28.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #F98723;
+			mso-themecolor: accent2;
+			letter-spacing: -.5pt;
+			mso-font-kerning: 14.0pt;
+		}
+
+		span.4 {
+			mso-style-name: "标题 4 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 4";
+			mso-ansi-font-size: 17.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			mso-bidi-font-style: italic;
+		}
+
+		span.5 {
+			mso-style-name: "标题 5 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 5";
+			mso-ansi-font-size: 17.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			font-style: italic;
+			mso-bidi-font-style: normal;
+		}
+
+		span.6 {
+			mso-style-name: "标题 6 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 6";
+			mso-ansi-font-size: 15.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+		}
+
+		span.7 {
+			mso-style-name: "标题 7 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 7";
+			mso-ansi-font-size: 15.0pt;
+			mso-bidi-font-size: 12.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			font-style: italic;
+		}
+
+		span.8 {
+			mso-style-name: "标题 8 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 8";
+			mso-ansi-font-size: 13.0pt;
+			mso-bidi-font-size: 10.5pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+		}
+
+		span.9 {
+			mso-style-name: "标题 9 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 9";
+			mso-ansi-font-size: 13.0pt;
+			mso-bidi-font-size: 10.5pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			font-style: italic;
+		}
+
+		span.a7 {
+			mso-style-name: "称呼 字符";
+			mso-style-priority: 3;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 称呼;
+			mso-ansi-font-size: 36.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+		}
+
+		span.a8 {
+			mso-style-name: "页脚 字符";
+			mso-style-priority: 99;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 页脚;
+			color: white;
+			mso-themecolor: background1;
+			background: #0072C6;
+			mso-shading-themecolor: accent1;
+		}
+
+		span.2 {
+			mso-style-name: "标题 2 字符";
+			mso-style-noshow: yes;
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 2";
+			mso-ansi-font-size: 20.0pt;
+			mso-bidi-font-size: 13.0pt;
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+			text-transform: uppercase;
+		}
+
+		span.3 {
+			mso-style-name: "标题 3 字符";
+			mso-style-priority: 9;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: "标题 3";
+			font-family: "Georgia", serif;
+			mso-ascii-font-family: Georgia;
+			mso-ascii-theme-font: major-latin;
+			mso-fareast-font-family: 方正舒体;
+			mso-fareast-theme-font: major-fareast;
+			mso-hansi-font-family: Georgia;
+			mso-hansi-theme-font: major-latin;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: major-bidi;
+			color: #0072C6;
+			mso-themecolor: accent1;
+		}
+
+		span.a9 {
+			mso-style-name: "页眉 字符";
+			mso-style-priority: 99;
+			mso-style-unhide: no;
+			mso-style-locked: yes;
+			mso-style-link: 页眉;
+		}
+
+		span.SpellE {
+			mso-style-name: "";
+			mso-spl-e: yes;
+		}
+
+		.MsoChpDefault {
+			mso-style-type: export-only;
+			mso-default-props: yes;
+			font-size: 12.0pt;
+			mso-ansi-font-size: 12.0pt;
+			font-family: "Arial", sans-serif;
+			mso-bidi-font-family: Mangal;
+			mso-bidi-theme-font: minor-bidi;
+			color: #7F7F7F;
+			mso-themecolor: text1;
+			mso-themetint: 128;
+			mso-font-kerning: 0pt;
+			mso-ligatures: none;
+			mso-fareast-language: JA;
+		}
+
+		.MsoPapDefault {
+			mso-style-type: export-only;
+			margin-top: 8.0pt;
+			margin-right: 0cm;
+			margin-bottom: 16.0pt;
+			margin-left: 0cm;
+			line-height: 150%;
+		}
+
+		/* Page Definitions */
+		@page {
+			mso-page-border-surround-header: no;
+			mso-page-border-surround-footer: no;
+			mso-footnote-separator: url("服务条款.fld/header.html") fs;
+			mso-footnote-continuation-separator: url("服务条款.fld/header.html") fcs;
+			mso-endnote-separator: url("服务条款.fld/header.html") es;
+			mso-endnote-continuation-separator: url("服务条款.fld/header.html") ecs;
+		}
+
+		@page WordSection1 {
+			size: 21.0cm 841.95pt;
+			margin: 72.0pt 50.4pt 72.0pt 50.4pt;
+			mso-header-margin: 36.0pt;
+			mso-footer-margin: 21.6pt;
+			mso-title-page: yes;
+			mso-paper-source: 0;
+		}
+
+		div.WordSection1 {
+			page: WordSection1;
+		}
+
+		/* List Definitions */
+		@list l0 {
+			mso-list-id: 287205133;
+			mso-list-template-ids: 1989053664;
+		}
+
+		@list l0:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l0:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l1 {
+			mso-list-id: 327828036;
+			mso-list-template-ids: -330372704;
+		}
+
+		@list l1:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l1:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: o;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: "Courier New";
+			mso-bidi-font-family: "Times New Roman";
+		}
+
+		@list l1:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l1:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l1:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l1:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l1:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l1:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l1:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l2 {
+			mso-list-id: 527065788;
+			mso-list-template-ids: 944658940;
+		}
+
+		@list l2:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l2:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3 {
+			mso-list-id: 541208955;
+			mso-list-template-ids: -34576176;
+		}
+
+		@list l3:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l3:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4 {
+			mso-list-id: 565727789;
+			mso-list-template-ids: -1960938344;
+		}
+
+		@list l4:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l4:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l5 {
+			mso-list-id: 877351992;
+			mso-list-template-ids: 1201986146;
+		}
+
+		@list l5:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l5:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: o;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: "Courier New";
+			mso-bidi-font-family: "Times New Roman";
+		}
+
+		@list l5:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l5:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l5:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l5:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l5:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l5:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l5:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l6 {
+			mso-list-id: 1010721783;
+			mso-list-template-ids: -1568084988;
+		}
+
+		@list l6:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l6:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: o;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: "Courier New";
+			mso-bidi-font-family: "Times New Roman";
+		}
+
+		@list l6:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l6:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l6:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l6:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l6:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l6:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l6:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l7 {
+			mso-list-id: 1658612900;
+			mso-list-template-ids: 975501220;
+		}
+
+		@list l7:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l7:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: o;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: "Courier New";
+			mso-bidi-font-family: "Times New Roman";
+		}
+
+		@list l7:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l7:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l7:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l7:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l7:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l7:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l7:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l8 {
+			mso-list-id: 1828864893;
+			mso-list-template-ids: -942751976;
+		}
+
+		@list l8:level1 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 36.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Symbol;
+		}
+
+		@list l8:level2 {
+			mso-level-number-format: bullet;
+			mso-level-text: o;
+			mso-level-tab-stop: 72.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: "Courier New";
+			mso-bidi-font-family: "Times New Roman";
+		}
+
+		@list l8:level3 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 108.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l8:level4 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 144.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l8:level5 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 180.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l8:level6 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 216.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l8:level7 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 252.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l8:level8 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 288.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		@list l8:level9 {
+			mso-level-number-format: bullet;
+			mso-level-text: ;
+			mso-level-tab-stop: 324.0pt;
+			mso-level-number-position: left;
+			text-indent: -18.0pt;
+			mso-ansi-font-size: 10.0pt;
+			font-family: Wingdings;
+		}
+
+		ol {
+			margin-bottom: 0cm;
+		}
+
+		ul {
+			margin-bottom: 0cm;
+		}
+		-->
+	</style>
+	<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:普通表格;
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-priority:99;
+	mso-style-parent:"";
+	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+	mso-para-margin-top:8.0pt;
+	mso-para-margin-right:0cm;
+	mso-para-margin-bottom:16.0pt;
+	mso-para-margin-left:0cm;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Arial",sans-serif;
+	mso-ascii-font-family:Arial;
+	mso-ascii-theme-font:minor-latin;
+	mso-hansi-font-family:Arial;
+	mso-hansi-theme-font:minor-latin;
+	mso-bidi-font-family:Mangal;
+	mso-bidi-theme-font:minor-bidi;
+	color:#7F7F7F;
+	mso-themecolor:text1;
+	mso-themetint:128;
+	mso-fareast-language:JA;}
+table.MsoTableGrid
+	{mso-style-name:网格型;
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin-top:8.0pt;
+	mso-para-margin-right:0cm;
+	mso-para-margin-bottom:0cm;
+	mso-para-margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Arial",sans-serif;
+	mso-ascii-font-family:Arial;
+	mso-ascii-theme-font:minor-latin;
+	mso-hansi-font-family:Arial;
+	mso-hansi-theme-font:minor-latin;
+	mso-bidi-font-family:Mangal;
+	mso-bidi-theme-font:minor-bidi;
+	color:#7F7F7F;
+	mso-themecolor:text1;
+	mso-themetint:128;
+	mso-fareast-language:JA;}
+table.BusinessPaper
+	{mso-style-name:"Business Paper";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	border:none;
+	border-bottom:solid #0072C6 1.0pt;
+	mso-border-bottom-themecolor:accent1;
+	mso-border-bottom-alt:solid #0072C6 .75pt;
+	mso-border-bottom-themecolor:accent1;
+	mso-padding-alt:0cm 0cm 0cm 11.5pt;
+	mso-border-insideh:.75pt solid #0072C6;
+	mso-border-insideh-themecolor:accent1;
+	mso-para-margin-top:12.0pt;
+	mso-para-margin-right:0cm;
+	mso-para-margin-bottom:9.0pt;
+	mso-para-margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Arial",sans-serif;
+	mso-ascii-font-family:Arial;
+	mso-ascii-theme-font:minor-latin;
+	mso-hansi-font-family:Arial;
+	mso-hansi-theme-font:minor-latin;
+	mso-bidi-font-family:Mangal;
+	mso-bidi-theme-font:minor-bidi;
+	color:#7F7F7F;
+	mso-themecolor:text1;
+	mso-themetint:128;
+	mso-fareast-language:JA;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+table.BusinessPaperFirstRow
+	{mso-style-name:"Business Paper";
+	mso-table-condition:first-row;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-tstyle-shading:#0072C6;
+	mso-tstyle-shading-themecolor:accent1;
+	mso-tstyle-vert-align:bottom;
+	mso-tstyle-border-top:cell-none;
+	mso-tstyle-border-left:cell-none;
+	mso-tstyle-border-bottom:cell-none;
+	mso-tstyle-border-right:cell-none;
+	mso-tstyle-diagonal-down:cell-none;
+	mso-tstyle-diagonal-up:cell-none;
+	mso-tstyle-border-insideh:cell-none;
+	mso-tstyle-border-insidev:cell-none;
+	mso-para-margin-top:auto;
+	mso-para-margin-bottom:auto;
+	word-break:normal;
+	font-size:14.0pt;
+	mso-ansi-font-size:14.0pt;
+	color:#FDF9F7;
+	mso-themecolor:background2;
+	mso-ansi-font-weight:bold;
+	mso-ansi-font-style:normal;}
+table.BusinessPaperFirstCol
+	{mso-style-name:"Business Paper";
+	mso-table-condition:first-column;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	mso-para-margin-top:auto;
+	mso-para-margin-bottom:auto;
+	text-align:right;
+	word-break:normal;
+	font-size:12.0pt;
+	mso-ansi-font-size:12.0pt;
+	font-family:"Georgia",serif;
+	mso-ascii-font-family:Georgia;
+	mso-ascii-theme-font:major-latin;
+	mso-hansi-font-family:Georgia;
+	mso-hansi-theme-font:major-latin;
+	color:#F98723;
+	mso-themecolor:accent2;
+	mso-ansi-font-weight:normal;
+	mso-ansi-font-style:normal;}
+table.BusinessPaperNWCell
+	{mso-style-name:"Business Paper";
+	mso-table-condition:nw-cell;
+	mso-style-priority:99;
+	mso-style-unhide:no;
+	text-align:left;
+	word-break:normal;}
+table.3-11
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-tstyle-rowband-size:1;
+	mso-tstyle-colband-size:1;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	border:solid #0072C6 1.0pt;
+	mso-border-themecolor:accent1;
+	mso-border-alt:solid #0072C6 .5pt;
+	mso-border-themecolor:accent1;
+	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+	mso-para-margin-top:8.0pt;
+	mso-para-margin-right:0cm;
+	mso-para-margin-bottom:0cm;
+	mso-para-margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Arial",sans-serif;
+	mso-ascii-font-family:Arial;
+	mso-ascii-theme-font:minor-latin;
+	mso-hansi-font-family:Arial;
+	mso-hansi-theme-font:minor-latin;
+	mso-bidi-font-family:Mangal;
+	mso-bidi-theme-font:minor-bidi;
+	color:#7F7F7F;
+	mso-themecolor:text1;
+	mso-themetint:128;
+	mso-fareast-language:JA;}
+table.3-11FirstRow
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:first-row;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-shading:#0072C6;
+	mso-tstyle-shading-themecolor:accent1;
+	color:white;
+	mso-themecolor:background1;
+	mso-ansi-font-weight:bold;
+	mso-bidi-font-weight:bold;}
+table.3-11LastRow
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:last-row;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-shading:white;
+	mso-tstyle-shading-themecolor:background1;
+	mso-tstyle-border-top:1.5pt double #0072C6;
+	mso-tstyle-border-top-themecolor:accent1;
+	mso-ansi-font-weight:bold;
+	mso-bidi-font-weight:bold;}
+table.3-11FirstCol
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:first-column;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-shading:white;
+	mso-tstyle-shading-themecolor:background1;
+	mso-tstyle-border-right:cell-none;
+	mso-ansi-font-weight:bold;
+	mso-bidi-font-weight:bold;}
+table.3-11LastCol
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:last-column;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-shading:white;
+	mso-tstyle-shading-themecolor:background1;
+	mso-tstyle-border-left:cell-none;
+	mso-ansi-font-weight:bold;
+	mso-bidi-font-weight:bold;}
+table.3-11OddColumn
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:odd-column;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-border-left:.5pt solid #0072C6;
+	mso-tstyle-border-left-themecolor:accent1;
+	mso-tstyle-border-right:.5pt solid #0072C6;
+	mso-tstyle-border-right-themecolor:accent1;}
+table.3-11OddRow
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:odd-row;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-border-top:.5pt solid #0072C6;
+	mso-tstyle-border-top-themecolor:accent1;
+	mso-tstyle-border-bottom:.5pt solid #0072C6;
+	mso-tstyle-border-bottom-themecolor:accent1;
+	mso-tstyle-border-insideh:cell-none;}
+table.3-11NECell
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:ne-cell;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-border-left:cell-none;
+	mso-tstyle-border-bottom:cell-none;}
+table.3-11NWCell
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:nw-cell;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-border-bottom:cell-none;
+	mso-tstyle-border-right:cell-none;}
+table.3-11SECell
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:se-cell;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-border-top:1.5pt double #0072C6;
+	mso-tstyle-border-top-themecolor:accent1;
+	mso-tstyle-border-left:cell-none;}
+table.3-11SWCell
+	{mso-style-name:"清单表 3 - 着色 11";
+	mso-table-condition:sw-cell;
+	mso-style-priority:48;
+	mso-style-unhide:no;
+	mso-tstyle-border-top:1.5pt double #0072C6;
+	mso-tstyle-border-top-themecolor:accent1;
+	mso-tstyle-border-right:cell-none;}
+</style>
+<![endif]-->
+</head>
+
+<body lang=ZH-CN link=blue vlink="#79498B" style='tab-interval:36.0pt;
+word-wrap:break-word'>
+
+	<div class=WordSection1>
+
+		<p class=MsoNormal align=center style='margin:0cm;text-align:center;line-height:
+37.5pt;mso-outline-level:3;word-break:break-all'><a name="_Hlk177169768"><span style='font-size:16.0pt;font-family:"微软雅黑",sans-serif;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>《服务条款》<span lang=EN-US>
+						<o:p></o:p>
+					</span></span></a></p>
+
+		<p class=MsoNormal align=center style='margin:0cm;text-align:center;line-height:
+37.5pt;mso-outline-level:3'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>最近修订日期：</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>2024</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>年</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>9</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>月</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>13</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>日</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>介绍</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>欢迎您使用<a name="_Hlk177169139">樟木林</a></span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169139'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>Toolbox</span></span></span><span
+				style='mso-bookmark:_Hlk177169139'></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>！我们能够为用户提供多样化的服务。您使用我们的产品和服务（</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>“服务”</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>或</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>“我们的服务”</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>）须受本《服务条款》（</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>“本条款”</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>）所限制，请详细阅读。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>感谢您详细审阅本条款，希望您对我们的服务感到满意。</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>如果你对本条款有任何疑问或您希望就本条款向我们发出任何通知，请通过</span></span><span
+				style='mso-bookmark:_Hlk177169768'></span><a href="mailto:support@swu.social"><span
+					style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;mso-ansi-language:EN-US'>support<b>@swu.social</b></span></span><span
+					style='mso-bookmark:_Hlk177169768'></span></a><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>联系我们。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>遵守本条款</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>如您是全球任何地方使用我们服务的用户，则此等条款适用于您。</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>请参阅本条款及我们的政策和指引，藉以明了您可如何使用我们的服务及在什么情况下不可使用我们的服务。您使用我们的服务时，不论身在何处，必须遵守本条款，并只可按照适用法律和规例所允许而使用我们的服务。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>如您不同意本条款，则必须停止使用我们的服务。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>服务的范围和限制</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><a name="_Hlk177169559"></a><a
+					name="_Hlk177169167"><span style='mso-bookmark:
+_Hlk177169559'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:
+"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>“樟木林</span></span></a></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='mso-bookmark:_Hlk177169167'><span style='mso-bookmark:_Hlk177169559'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>Toolbox</span></span></span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169167'><span
+						style='mso-bookmark:_Hlk177169559'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>”</span></span></span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169167'><span
+						style='mso-bookmark:_Hlk177169559'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>WeChat App</span></span></span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169167'><span
+						style='mso-bookmark:_Hlk177169559'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>（以下简称“樟木林”）旨</span></span></span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169559'><span
+						style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>在为用户提供便利，搜集、整合并提供西南大学（以下简称“学校”）各个系统的信息（包括但不限于：教务系统、办事大厅、学生用能查询系统）。用户使用此服务时，应确保其行为符合学校的规章制度和要求。</span></span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='mso-bookmark:_Hlk177169559'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>
+						<o:p></o:p>
+					</span></span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='mso-bookmark:_Hlk177169559'><a name="_Hlk177169688"><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>“樟木林</span></a></span></span><span style='mso-bookmark:
+_Hlk177169768'><span style='mso-bookmark:_Hlk177169559'><span
+						style='font-size:
+11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:
+"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>”并非学校官方应用，所提供的信息仅供参考，请以学校官方网页及文档为准。我们不对因使用本服务而产生的任何直接或间接损失承担责任。用户应妥善保管个人账号和密码，防止信息泄露。“樟木林”保留随时更新、修改或终止服务的权利，恕不另行通知。</span></span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169559'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>
+						<o:p></o:p>
+					</span></span></span></p>
+
+		<span style='mso-bookmark:_Hlk177169559'></span>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们不对因用户使用“樟木林”而可能导致的任何后果负责，包括但不限于因不符合学校规定或政策而产生的任何处罚或责任。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>订约实体</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您使用我们的服务，即表示同意与我们签订本条款。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们可在某些特定服务条款中规定，您使用我们某项或多项服务（相关特定服务条款适用）时，是与我们某一家关联公司订约。在上述情况下，相关特定服务条款会明确相关的订约实体，而本条款的所有条款及细则（除上一段外）藉提述而被纳入该等相关的特定服务条款。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>额外条款和政策</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们提供多样化的服务，因此您使用我们所有服务或特定服务时，本部分或者不时向您告知的所载的若干额外条款和政策可能适用。本额外服务条款和政策全部构成本条款的一部分，并纳入本条款之内。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您使用我们的服务时必须遵守以下特定政策：</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>•</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>《隐私政策》</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>－</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'> </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>载有我们如何收集、储存和使用您的个人资料；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>•</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>《</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>Cookies</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>政策》</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>－</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'> </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>载有我们如何在我们的服务中使用</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>Cookies</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>•</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>《允许使用政策》</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>－</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'> </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>载有您使用我们的服务时适用的良好行为规则；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>不一致之处</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>在任何额外条款或政策与本条款有差异的范围内，有关额外条款或额外政策将适用，但该等额外条款或额外政策（除非在该等额外条款或额外政策另有明确订明则例外）不会修改本条款的以下部分：</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>•</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>“修改条款与我们的服务”；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>•</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>“我们的知识产权”；及</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>•</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>“对我们的服务负法律责任”。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>然而，在任何特定国家条款与本条款、或任何额外条款或政策有差异的范围内，不论本条款任何部分牵涉其中，有关特定国家条款应适用。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>修改条款与我们的服务</span></span><span style='mso-bookmark:
+_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";
+mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:
+EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们可能不时修改本条款，故请不时返回本条款翻查。</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>此外，由于我们的服务和用户经验不断逐步发展，我们可能不时（并在适用法律和规例允许的范围内）增加、变更或删除我们的服务项目（包括是否免费提供某服务），或暂停或完全终止某服务。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们若认为本条款或我们的服务的任何修改是合理重要的修改，我们将在修改生效前通过我们的网站、与您直接通讯或以其他方式通知您。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>在我们修改本条款或我们的服务后，不论我们有没有发出通知，而您仍继续使用我们的服务，即表示同意被经修订的本条款所约束。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>您的账户</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您可能需要向我们开立账户以进入并使用我们某些服务，如“樟木林”服务账号。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您的账户乃是您的个人账户，您不得馈赠、借出或转让任何其他人，或以其他方式允许任何其他人进入或使用您的账户。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您须负责：</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'> (<span class=SpellE>i</span>) </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>保管用以进入您的账户和我们的服务的任何密码，及</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (ii) </span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>承担通过您的账户对我们的服务所作出的一切使用行为。如您发现或怀疑您的账户或密码已被泄露，必须尽快以所示的联络方式）通知我们。除非我们已接获并确认收到您向我们发出关于您的账户</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>/</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>密码被泄露的通知，我们会视所有在我们的服务内对您的账户的使用均是由您作出。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>撤销账户</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您亦可撤销您的特定服务账户－</span></span><span style='mso-bookmark:
+_Hlk177169768'><span style='font-size:11.0pt;font-family:"Helvetica Neue";
+mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:
+EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>有关其他指引，请参阅相关的特定服务条款。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>付款</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您可以不时在我们的服务上支付服务费（无论是支付给我们或者第三方），作为您使用我们服务的一部分（包括我们提供的服务，或在我们的服务范围内提供的某些额外服务项目）。我们的特定服务条款载有该等付款适用的其他条款（包括有关退款（如有）、账单安排和欠缴服务费的任何后果）。您必须遵守所有有关向我们付款的相关条款。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>您的内容</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>当您使用我们的服务而提交、上载、传送或显示任何数据、资料、媒体或其他内容（“您的内容”）时，您知道并同意：</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>提供其学校账户名、密码和相关信息，以便“樟木林”能够代表用户获取每日课表及完成其他校园服务相关操作。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><a name="_Hlk177170560"><span
+					style='mso-bookmark:_Hlk177169768'><span
+						style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们可以在接到学校协助调查通知时，提供您的信息给学校，包括但不限于您的账户名、学号及访问记录等。我们将严格遵守相关法律法规，在确保信息安全的前提下，对这些信息进行必要的处理和传输。</span></span></a><span
+				style='mso-bookmark:_Hlk177170560'></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>您</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666'>的信息将被存储在安全的服务器上，并仅用于完成相关信息获取或提供用户同意的其他服务。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-GB style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>不将我们的软件用于任何非法目的，或以任何方式破坏或干扰服务的正常运行。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>我们不会将您的内容卖给任何第三方；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>我们收集、处理及使用您的内容须受我们的《隐私政策》所限制；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>您授权我们和我们的关联公司使用您的内容（我们无须向您支付费用或收费），包括以您的内容制作衍生作品、公开展示及公开表演您的内容，作为提供、宣传、发展和尝试提升我们的服务之用，包括您提交您的内容所使用的相关服务以及我们现时或日后可能提供的任何其他服务；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>我们可使用您就您的内容所提供的名称（不论是否您的账户名称、真实名称或其他名称）；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>在使用您的内容作该等用途时，只要您的内容已纳入您所用由我们提供的服务内，我们和我们的关联公司可以在全球各地于任何媒体，并通过任何发布方法，包括日后发展的媒体和方法，复印、复制、主理、储存、处理、改写、修改、翻译、履行、发布和刊登您的内容；及</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><a name="_Hlk177170412"><span lang=EN-US
+						style='font-size:11.0pt;font-family:"Helvetica Neue";
+mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:
+EN-US'>• </span></a></span><span style='mso-bookmark:_Hlk177170412'></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>我们可以与协助我们提供、宣传、发展和提升我们的服务的第三方分享您的内容，但我们不会将您的内容售予该等第三方（我们的关联公司除外），作其本身用途（即与我们的服务无关的用途）；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>此外，您同意我们和我们的关联公司（须受本条款、我们的《隐私政策》和适用法律和规例所限制）：</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>• </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>可以在您停止使用我们的服务后，保留并继续使用您的内容</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>－</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'> </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>例如，您已与我们的服务的其他用户分享您的内容；及可能需要保留或披露您的内容，以便遵守适用法律和规例或遵从法院命令、传召或其他法律程序，我们和我们的关联公司也可以因应政府当局、执法机构或类似组织（不论是否设于您的司法管辖区或其他地区）的合法要求而披露您的内容；及我们可能为了强制执行本条款、保护我们的权利、财产或安全或我们关联公司、我们的服务的其他用户的权利、财产或安全而需要披露您的内容（包括与您在我们开立的账户有关的任何资料）。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您理解即使您要求从我们的服务删除您的内容，但基于技术和行政问题，我们可能需要若干时间才可完成，或甚可能无法完成，例如，我们可能无法阻止任何第三方储存或使用您已经通过我们的服务公开的您的内容。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们保留权利可就任何理由（包括在我们认为适当时或适用法律和规例所规定）阻截或删除您的内容。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>对您的内容负责</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您须对您的内容负上全责，我们建议您在任何时间均保存该内容的后备档案。您必须在任何时间确保：</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>(<span class=SpellE>i</span>) </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>您具备所需权利提交、传送或显示您的内容，并授予我们本条款所载的权利；及</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (ii) </span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>您的内容（和我们根据本条款使用您的内容）没有侵犯或违反任何人的权利或触犯任何其他适用法律或规例。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>侵权</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们会对声称的侵权（包括对知识产权的侵犯、诽谤和对于其他民事权利的侵犯）的通知或者其他诉求和要求作出反应。如果您有任何类似的对侵权相关的担忧，请以所示的联系方式尽快联系我们。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>第三方内容和服务</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们不会对提交给我们的服务的任何内容，或由我们的服务传送、显示或连结的任何内容（包括任何您的内容或我们的服务的其他用户或我们的广告商所提供的其他内容）的合法性、准确性或可靠性负责，也不会就此给予认可、支持或保证。您确认知晓并同意，当您使用我们的服务时，您有可能会遇上不准确、误导、诽谤性、令人反感或非法的内容。凡因您依赖或使用任何从我们的服务获得或取得的内容而产生的风险，一概由您自行承担。对于您因使用我们的服务而获得或取得的内容，您使用我们的服务并不赋予您任何于该等内容或对该等内容的权利。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们亦不保证任何通过我们的服务授予、提供、宣传或连结的第三方服务的质素、可靠性或适当性，我们也不会就您该等第三方服务的使用或您与该等第三方服务的关系负责。如您通过我们的服务进入第三方服务，您必须遵守该等服务适用的任何条款和条件。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们可能审阅（但不承诺一定会审阅）通过我们的服务提供的内容和第三方服务，从而决定其能否遵守我们的政策、适用法律和规例或是否会引起其他异议。如某些内容或第三方服务侵犯知识产权，或是不雅、诽谤性或粗秽的，或违反任何权利或对我们的服务安全或执行构成风险，我们可以删除或拒绝提供或连结到某些内容或第三方服务。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>在我们服务出现的第三方内容和服务可能不时受其他条款的约束，包括原先制作该等内容和服务的有关第三方（例如负责撰写在我们服务所出现的报道的新闻机构或拥有您在我们的服务上取用的相关歌曲的版权的唱片公司）的条款。在该情况下，您同意就该第三方内容和服务遵守获通知的更多条款和细则。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>我们的服务的广告内容</span></span><span style='mso-bookmark:
+_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";
+mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:
+EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们有些服务可能包含广告或商业内容。您同意我们可以在我们的服务内加入、展示及在其他方面传达广告或商业内容，并（在合理可行的情况下）辨别已支付的服务和通讯。您亦同意，正如我们的《隐私政策》已更详细解释，我们会使用针对目标对象的广告，尝试提供更适合您并对您有用的广告。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>我们的知识产权</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>所有关于或有关我们的服务和软件（包括任何日后的更新、升级和新版本）的知识产权将继续归我们和我们的特许持有人所有。除非本条款另行明确规定，否则您无权使用我们的知识产权。特别是，未经我们事先书面同意，您无权使用我们的商标或产品名称（例如“樟木林</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>Toolbox</span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>”或“</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>Camphor Forest Toolbox</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>”）、标识、域名或其他独特品版特征。您向我们提供任何有关我们服务的意见或建议全部均是自愿的，我们可以酌情决定随意使用该等意见和建议，而不须向您支付任何款项或对您负上任何其他责任。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>如我们的服务需要您下载并使用我们提供的任何软件，我们根据本条款（包括根据任何有关软件或在您的特定设备使用该软件的特定技术规定）赋予您有限、个人、非独家、不可转授、不可转让、免专利权费和可撤销的软件使用特许权，让您使用我们的服务</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>。您对任何我们的软件及我们的服务得使用亦受我们的《最终用户特许协议》所载条款及条件的规范，该协议已藉提述纳入本条款。请注意，特定软件适用的条款和条件可能会补充这些特许条款。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>除非我们根据适用法律或规例不得予以禁止，或您已事先获得我们的书面同意，否则您不得对我们的软件进行复制、修改、反编译、倒序制造或尝试抽取源代码。如适用法律或规例授权您对我们的软件进行反编译或抽取源代码，您须先联络我们以取得所需资料。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们可能不时更新我们的软件，该等更新可以自动或人手进行。请注意，如您没有安装软件升级或新版本，我们的服务可能会难以妥善操作，甚至完全不能操作。我们不保证一定更新我们的软件，或该更新软件可以继续支援您的设备或系统。</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>我们的服务对您的设备的使用</span></span><span style='mso-bookmark:
+_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";
+mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:
+EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>为使我们可向您提供我们的服务，我们可能需要取用或使用您用以取用该服务的相关设备（例如移动电话、平板电脑或桌面电脑），</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>例如我们有可能需要使用您的设备的处理器和储存装置以完成相关的软件安装，或我们可能需要取用您的联络名单以便提供某些我们应用程式内的互动功能。您同意我们就此取用您的设备。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们会就某一特定服务如何在该服务内或在其他方面使用及取用您的设备提供进一步资料。您应该明白，倘若您不向我们授予该等取用或使用权，我们可能无法为您提供相关服务。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们对任何在您的设备内的个人资料（按《隐私政策》的定义）的使用或取用均按照本条款（包括我们的《隐私政策》）的规定处理。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>请注意，我们对于您就您对我们的服务或软件的使用而产生或有关的任何第三方费用（包括任何您的互联网及电信服务供应商的费用）概不负责。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>保证和免责条款</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们向您保证，我们定当合理审慎地凭著合理技巧来提供我们的服务</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>除了前段提供的保证外，在适用法律和规例允许的范围内，我们所有服务和软件均“按原状”和“按提供状况”而提供，我们与我们的关联公司均没有对我们的服务、我们的软件或任何通过我们的服务提交、传送或显示的内容作出任何声明、保证或给予任何承诺，包括：</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (<span class=SpellE>i</span>)</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>我们的服务或软件将不受干扰、是安全的、没有错漏或没有病毒；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>(ii) </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>我们的服务或软件将会与您的设备相容；或</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (iii) </span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>我们的服务或软件将具适销质量、适合特定用途或没有侵犯任何人的知识产权的任何声明、保证或承诺。在适用法律和规例允许的范围内，您放弃任何和所有的隐含声明、保证和承诺。</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>终止条款</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>由您使用我们的服务起直至您或我们终止您进入有关服务止的期间内均适用本条款。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>我们可以暂停或终止您进入您的账户或我们的任何或所有服务：</span></span><span style='mso-bookmark:_Hlk177169768'><span
+					lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (<span class=SpellE>i</span>) </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>如我们合理相信您已违反本条款；</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (ii) </span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>如您使用我们的服务对我们或我们的服务的其他用户造成风险、可能导致我们面临第三方提出申索的威胁，或可能影响我们的声誉；</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (iii) </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>如您有很长时间没有使用我们的服务；或</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (iv) </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>任何其他原因。在合理可行情况下，我们会向您发出暂停或终止服务通知。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>保留您的内容并设立后备档案</span></span><span style='mso-bookmark:
+_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";
+mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:
+EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>在终止本条款后，我们只会根据本条款（包括《隐私政策》）保留并使用您的内容。如我们暂停或终止某服务，或您或我们终止您进入我们的服务，我们不保证我们可以将您的任何内容交还给您，而且我们可能会在服务终止后的任何时间未经通知而永久删除您的内容。请确保您定期为您的内容设立后备档案。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>一般规定</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>本条款是您与我们就我们的服务而订立的全部协议。您同意您不会为本条款未明确订明的任何陈述而向我们提出申索。本条款任何条文（或任何条文部分）无效不会影响任何其他条文（或该条文其馀部分）的效力或强制执行能力。如法院裁定我们不能按本条款原订的方式强制执行本条款的任何部分，我们可以在适用法律和规例容许强制执行的范围内，采用类似条款取代该等条款，而本条款的其馀条款维持不变。凡延误强制执行本条款的任何条文，一概不会被诠释为放弃于该条文的任何权利。于本条款的任何权利和责任（就性质而言）应继续有效，包括但不限于与各方各自的法律责任有关的任何责任或各方给予的赔偿（如有），在本条款终止或届满后将继续有效。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>除了您与我们外，在符合任何适用的法律和规章下，任何人均无权通过法律的施行或其他方式，未经我们同意向任何人强制执行本条款，而您亦不可未经我们事先同意转授、出让或转让本条款或于本条款的任何权利或责任。我们可以未经事先获得您的同意或未向您发出通知，随意全部或局部出让、转让或对外分包本条款或我们于本条款的权利和责任。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:
+"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'> </span></span><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>您确认知晓并同意，我们的合伙人或关联公司在任何情况下均不必对本条款承担任何法律责任。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:14.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:windowtext;
+mso-ansi-language:EN-US'>管辖法律和争议的解决</span></span><span style='mso-bookmark:
+_Hlk177169768'><span lang=EN-US style='font-size:14.0pt;font-family:"Helvetica Neue";
+mso-fareast-font-family:宋体;mso-bidi-font-family:宋体;color:windowtext;mso-ansi-language:
+EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>除了在以下范围内：</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:
+宋体;mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'> (<span class=SpellE>i</span>) </span></span><span
+				style='mso-bookmark:_Hlk177169768'><span style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>任何纳入本条款的适用额外条款另行规定，或</span></span><span style='mso-bookmark:_Hlk177169768'><span lang=EN-US
+					style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'> (ii) </span></span><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:
+宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";
+mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>您的司法管辖区的适用法律和规例另行规定（例如，您可能在您的司法管辖区有法定权利向当地法院（包括小额钱债法院（或类似法院）提出申索或对申索作出抗辩），本条款以及本条款产生或有关的任何争议或申索将受香港特别行政区的法律管辖。</span></span><span
+				style='mso-bookmark:_Hlk177169768'><span lang=EN-US style='font-size:11.0pt;
+font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+					<o:p></o:p>
+				</span></span></p>
+
+		<p class=MsoNormal style='margin-top:4.5pt;margin-right:0cm;margin-bottom:0cm;
+margin-left:0cm;line-height:18.0pt'><span style='mso-bookmark:_Hlk177169768'><span
+					style='font-size:11.0pt;font-family:宋体;mso-ascii-font-family:"Helvetica Neue";
+mso-hansi-font-family:"Helvetica Neue";mso-bidi-font-family:宋体;color:#666666;
+mso-ansi-language:EN-US'>凡因本条款产生、有关或相关的任何争议、纠纷或申索（不论是合约、侵权或其他方面的），包括本条款的存在、效力、解释、履行、违反或终止，均将根据提交《仲裁通知》时有效的《香港国际仲裁中心机构仲裁规则》，提交香港国际仲裁中心最后解决。仲裁地点为香港。仲裁庭只由一名仲裁员组成。仲裁程序所用语言为英文。</span></span><span
+				style='mso-bookmark:_Hlk177169768'></span><span lang=EN-US style='font-size:
+11.0pt;font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
+宋体;color:#666666;mso-ansi-language:EN-US'>
+				<o:p></o:p>
+			</span></p>
+
+	</div>
+
+</body>
+
+</html>

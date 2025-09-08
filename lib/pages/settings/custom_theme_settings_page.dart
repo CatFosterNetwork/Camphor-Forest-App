@@ -29,7 +29,6 @@ class _CustomThemeSettingsPageState
   String? customThemeId;
   bool isCreateMode = false; // 是否是创建模式
   bool hasUnsavedChanges = false;
-  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -1192,38 +1191,8 @@ class _CustomThemeSettingsPageState
   }
 
   theme_model.Theme _getDefaultTheme() {
-    // 如果是创建模式，生成一个新的自定义主题
-    if (isCreateMode) {
-      return theme_model.Theme(
-        code: 'custom_${DateTime.now().millisecondsSinceEpoch}',
-        title: '我的自定义主题',
-        img:
-            'https://data.swu.social/service/external_files/2301371392301561862291631292311861844564564.webp',
-        indexBackgroundBlur: false,
-        indexBackgroundImg:
-            'https://www.yumus.cn/api/?target=img&brand=bing&ua=m',
-        indexMessageBoxBlur: true,
-        backColor: const Color.fromARGB(255, 35, 88, 168),
-        foregColor: const Color.fromARGB(255, 255, 255, 255),
-        weekColor: const Color.fromARGB(255, 221, 221, 221),
-        classTableBackgroundBlur: false,
-        colorList: const [
-          Color(0xFF2255a3),
-          Color(0xFF2358a8),
-          Color(0xFF275baa),
-          Color(0xFF2c5fab),
-          Color(0xFF3767b0),
-          Color(0xFF3969b1),
-          Color(0xFF3d6cb2),
-          Color(0xFF426fb4),
-          Color(0xFF4673b6),
-          Color(0xFF4a76b7),
-        ],
-      );
-    }
-
-    // 预设主题模板
-    return theme_model.Theme(
+    // 你好西大人主题的标准配置（与themes.json保持一致）
+    final standardHelloTheme = theme_model.Theme(
       code: 'classic-theme-1',
       title: '你好西大人',
       img:
@@ -1232,11 +1201,11 @@ class _CustomThemeSettingsPageState
       indexBackgroundImg:
           'https://www.yumus.cn/api/?target=img&brand=bing&ua=m',
       indexMessageBoxBlur: true,
-      backColor: const Color.fromARGB(255, 35, 88, 168),
-      foregColor: const Color.fromARGB(255, 255, 255, 255),
-      weekColor: const Color.fromARGB(255, 221, 221, 221),
+      backColor: Color.fromRGBO(35, 88, 168, 1), // 确保使用正确的RGB值
+      foregColor: Color.fromRGBO(255, 255, 255, 1),
+      weekColor: Color.fromRGBO(221, 221, 221, 1),
       classTableBackgroundBlur: false,
-      colorList: const [
+      colorList: [
         Color(0xFF2255a3),
         Color(0xFF2358a8),
         Color(0xFF275baa),
@@ -1249,6 +1218,17 @@ class _CustomThemeSettingsPageState
         Color(0xFF4a76b7),
       ],
     );
+
+    // 如果是创建模式，生成一个基于标准主题的新自定义主题
+    if (isCreateMode) {
+      return standardHelloTheme.copyWith(
+        code: 'custom_${DateTime.now().millisecondsSinceEpoch}',
+        title: '我的主题 ${DateTime.now().month}-${DateTime.now().day}',
+      );
+    }
+
+    // 预设主题模板
+    return standardHelloTheme;
   }
 
   theme_model.Theme _copyTheme(theme_model.Theme original) {

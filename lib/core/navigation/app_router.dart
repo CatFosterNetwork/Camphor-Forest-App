@@ -12,7 +12,7 @@ import '../services/navigation_service.dart';
 
 // —— Authentication
 import '../../pages/login/login_screen.dart';
-// import '../../pages/authentication/pages/user_agreement_screen.dart';
+import '../../pages/login/user_agreement.dart';
 // —— Options
 import '../../pages/settings/options_screen.dart';
 import '../../pages/settings/index_settings_page.dart';
@@ -33,7 +33,7 @@ import '../../pages/index/index_screen.dart';
 // import '../../pages/bbs/pages/article_detail_screen.dart';
 // // —— ClassTable
 import '../../pages/classtable/classtable_screen.dart';
-// import '../../pages/class_table/pages/customize_class_table_screen.dart';
+import '../../pages/classtable/custom_classtable_screen.dart';
 // // —— Home / Profile
 // import '../../pages/home/pages/home_screen.dart';
 // import '../../pages/home/pages/modify_personal_info_screen.dart';
@@ -49,10 +49,10 @@ import '../../pages/lifeService/pages/grade_query_screen.dart';
 import '../../pages/lifeService/pages/calendar_view_screen.dart';
 import '../../pages/lifeService/pages/expense_query_screen.dart';
 import '../../pages/lifeService/pages/dorm_bind_screen.dart';
-// // —— Statistics
-// import '../../pages/statistics/pages/statistics_screen.dart';
-// // —— School Navigation
-// import '../../pages/school_navigation/pages/school_navigation_screen.dart';
+// —— Statistics
+import '../../pages/statistics/statistics_screen.dart';
+// —— School Navigation
+import '../../pages/school_navigation/school_navigation_screen.dart';
 
 /// 监听 [stream]，每当有事件发出就调用 notifyListeners()，
 /// 供 GoRouter 的 refreshListenable 使用。
@@ -73,7 +73,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   // 注意：authProvider 现在抛出未实现错误，我们需要使用异步版本
   // final authNotifier = ref.read(authProvider.notifier);
   // final initialized = ref.watch(authProvider.select((s) => s.initialized));
-  
+
   // 直接获取UserService的Future，在redirect中处理异步
   final userServiceFuture = ref.read(userServiceProvider.future);
 
@@ -83,18 +83,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
     initialLocation: RouteConstants.login,
     debugLogDiagnostics: true,
+
     // 注意：refreshListenable 暂时移除，因为 authProvider 需要重构
     // 登录状态检查通过 redirect 函数处理
-
     routes: <RouteBase>[
       GoRoute(
         path: RouteConstants.login,
         builder: (ctx, state) => const LoginScreen(),
       ),
-      // GoRoute(
-      //   path: RouteConstants.userAgreement,
-      //   builder: (ctx, state) => const UserAgreementScreen(),
-      // ),
+      GoRoute(
+        path: RouteConstants.userAgreement,
+        builder: (ctx, state) => const UserAgreementPage(),
+      ),
       GoRoute(
         path: RouteConstants.options,
         builder: (ctx, state) => const OptionsScreen(),
@@ -164,6 +164,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteConstants.classTable,
         builder: (ctx, state) => const ClassTableScreen(),
       ),
+      GoRoute(
+        path: RouteConstants.classTableCustomize,
+        builder: (ctx, state) => const CustomClassTableScreen(),
+      ),
       // GoRoute(
       //   path: RouteConstants.home,
       //   builder: (ctx, state) => const HomeScreen(),
@@ -230,14 +234,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      // GoRoute(
-      //   path: RouteConstants.statistics,
-      //   builder: (ctx, state) => const StatisticsScreen(),
-      // ),
-      // GoRoute(
-      //   path: RouteConstants.schoolNavigation,
-      //   builder: (ctx, state) => const SchoolNavigationScreen(),
-      // ),
+      GoRoute(
+        path: RouteConstants.statistics,
+        builder: (ctx, state) {
+          final kch = state.queryParameters['kch'];
+          final courseName = state.queryParameters['courseName'];
+          return StatisticsScreen(kch: kch, courseName: courseName);
+        },
+      ),
+      GoRoute(
+        path: RouteConstants.schoolNavigation,
+        builder: (ctx, state) => const SchoolNavigationScreen(),
+      ),
     ],
 
     // 全局重定向（登录守卫）
@@ -245,11 +253,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       if (whitelist.contains(state.location)) {
         return null;
       }
-      
+
       try {
         // 等待UserService加载完成
         final userService = await userServiceFuture;
-        
+
         // 检查登录状态
         final isLoggedIn = await userService.check();
 

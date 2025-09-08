@@ -11,20 +11,20 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // 优化高刷新率屏幕性能
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  
+
   final prefs = await SharedPreferences.getInstance();
-  
+
   // 创建ProviderContainer用于预初始化
   final container = ProviderContainer(
     overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
   );
-  
+
   // 预初始化主题系统
   await _preInitializeTheme(container);
-  
+
   await initialization();
   runApp(
     ProviderScope(
@@ -38,16 +38,16 @@ void main() async {
 Future<void> _preInitializeTheme(ProviderContainer container) async {
   try {
     debugPrint('🎨 开始预初始化主题系统...');
-    
+
     // 预加载主题列表
     await container.read(customThemesProvider.future);
-    
+
     // 触发主题配置初始化
     container.read(themeConfigNotifierProvider);
-    
+
     // 等待一段时间让初始化完成
     await Future.delayed(const Duration(milliseconds: 200));
-    
+
     debugPrint('🎨 主题系统预初始化完成');
   } catch (e) {
     debugPrint('🎨 主题系统预初始化失败: $e');
@@ -61,10 +61,10 @@ Future<void> initialization() async {
   // 初始化图片缓存服务
   final imageCacheService = ImageCacheService();
   await imageCacheService.initialize();
-  
+
   // 预加载启动时需要的图片
   imageCacheService.preloadStartupImages();
-  
+
   // 初始化完成后移除启动画面
   FlutterNativeSplash.remove();
 }

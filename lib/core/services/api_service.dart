@@ -360,7 +360,7 @@ class ApiService {
     try {
       debugPrint('📸 开始上传图片: $fileName');
       debugPrint('📄 本地文件路径: $filePath');
-      
+
       // 1. 先签名
       debugPrint('🔐 第1步：获取OSS签名...');
       final sign = await _http.get<Map<String, dynamic>>(
@@ -368,10 +368,10 @@ class ApiService {
         converter: (d) => d as Map<String, dynamic>,
         queryParameters: {'type': 'IMAGE'},
       );
-      
+
       debugPrint('✅ 签名请求成功');
       debugPrint('📋 签名响应: $sign');
-      
+
       final data = sign['data'] as Map<String, dynamic>;
       final keyPath = (data['keyPath'] as String);
       final ossFilePath = keyPath + fileName;
@@ -382,7 +382,7 @@ class ApiService {
       final algorithm = data['q-sign-algorithm'] as String;
       final keyTime = data['q-key-time'] as String;
       final signature = data['q-signature'] as String;
-      
+
       debugPrint('🔑 签名参数解析完成:');
       debugPrint('  - policy: ${policy.substring(0, 50)}...');
       debugPrint('  - q-ak: $ak');
@@ -416,12 +416,9 @@ class ApiService {
         'q-key-time': keyTime,
         'q-signature': signature,
         'x-cos-meta-username': username,
-        'file': await MultipartFile.fromFile(
-          filePath,
-          filename: fileName,
-        ),
+        'file': await MultipartFile.fromFile(filePath, filename: fileName),
       });
-      
+
       debugPrint('✅ FormData构造完成:');
       debugPrint('  - key: $ossFilePath');
       debugPrint('  - x-cos-meta-username: $username');
@@ -438,7 +435,7 @@ class ApiService {
           },
         ],
       });
-      
+
       debugPrint('🎨 Pic-Operations: $picOperations');
       debugPrint('🌐 上传URL: ${ApiConstants.ossUrl}');
 
@@ -468,13 +465,28 @@ class ApiService {
       } else {
         debugPrint('❌ 上传失败，状态码: ${response.statusCode}');
         debugPrint('❌ 响应内容: ${response.data}');
-        throw HttpException(response.statusCode ?? 0, '图片上传失败: ${response.statusMessage}');
+        throw HttpException(
+          response.statusCode ?? 0,
+          '图片上传失败: ${response.statusMessage}',
+        );
       }
     } catch (e) {
       debugPrint("❌ 图片上传过程中发生异常: $e");
       debugPrint("📍 异常堆栈: ${StackTrace.current}");
       rethrow;
     }
+  }
+
+  /// 获取课表数据
+  Future<Map<String, dynamic>> fetchClassTable({
+    required String xnm,
+    required String xqm,
+  }) async {
+    return await _http.get<Map<String, dynamic>>(
+      ApiConstants.classTable,
+      converter: (d) => d as Map<String, dynamic>,
+      queryParameters: {'xnm': xnm, 'xqm': xqm},
+    );
   }
 
   Future<Map<String, dynamic>> getCourseStatistics(String kch) =>
@@ -495,10 +507,4 @@ class ApiService {
     ApiConstants.features,
     converter: (d) => d as List<dynamic>,
   );
-
-
-
-
-
-
 }

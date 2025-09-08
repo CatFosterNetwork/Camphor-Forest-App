@@ -41,11 +41,14 @@ class Theme {
             .replaceAll(')', '')
             .replaceAll('/', '')
             .trim();
-        
+
         // 使用正则表达式提取数字
         final RegExp numberRegex = RegExp(r'\d+');
-        final List<String> matches = numberRegex.allMatches(cleanRgb).map((m) => m.group(0)!).toList();
-        
+        final List<String> matches = numberRegex
+            .allMatches(cleanRgb)
+            .map((m) => m.group(0)!)
+            .toList();
+
         if (matches.length >= 3) {
           final int r = int.parse(matches[0]).clamp(0, 255);
           final int g = int.parse(matches[1]).clamp(0, 255);
@@ -83,7 +86,8 @@ class Theme {
 
   Map<String, dynamic> toJson() {
     String colorToRgb(Color color) {
-      return 'rgb(${color.r}, ${color.g}, ${color.b})';
+      // 修复：使用 red、green、blue 属性（0-255整数），而不是 r、g、b（0.0-1.0浮点数）
+      return 'rgb(${color.red}, ${color.green}, ${color.blue})';
     }
 
     String colorToHex(Color color) {
@@ -128,7 +132,8 @@ class Theme {
       backColor: backColor ?? this.backColor,
       foregColor: foregColor ?? this.foregColor,
       weekColor: weekColor ?? this.weekColor,
-      classTableBackgroundBlur: classTableBackgroundBlur ?? this.classTableBackgroundBlur,
+      classTableBackgroundBlur:
+          classTableBackgroundBlur ?? this.classTableBackgroundBlur,
       colorList: colorList ?? this.colorList,
     );
   }

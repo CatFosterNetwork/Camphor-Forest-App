@@ -21,7 +21,7 @@ class CamphorForestApp extends ConsumerWidget {
     final router = ref.watch(goRouterProvider);
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    
+
     // 使用统一的状态栏服务管理状态栏样式
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final timestamp = DateTime.now().toString().substring(11, 23);
@@ -30,8 +30,10 @@ class CamphorForestApp extends ConsumerWidget {
       debugPrint('  - isDarkMode: $isDarkMode');
       debugPrint('  - currentTheme: ${currentTheme?.title ?? 'null'}');
       debugPrint('  - currentTheme.code: ${currentTheme?.code ?? 'null'}');
-      debugPrint('  - MaterialApp.themeMode: ${_convertStringToThemeMode(themeMode)}');
-      
+      debugPrint(
+        '  - MaterialApp.themeMode: ${_convertStringToThemeMode(themeMode)}',
+      );
+
       // 状态栏现在由AdaptiveStatusBar声明式管理，无需手动设置
     });
 
@@ -39,7 +41,7 @@ class CamphorForestApp extends ConsumerWidget {
     final isIos = defaultTargetPlatform == TargetPlatform.iOS;
 
     if (isIos) {
-              return CupertinoApp.router(
+      return CupertinoApp.router(
         routerConfig: router,
         title: '樟木林Toolbox',
         theme: _buildCupertinoTheme(currentTheme, isDarkMode),
@@ -115,9 +117,7 @@ class CamphorForestApp extends ConsumerWidget {
       cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -142,19 +142,20 @@ class CamphorForestApp extends ConsumerWidget {
       cardTheme: CardThemeData(
         color: Colors.grey.shade800,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 
   /// 构建Cupertino主题
-  CupertinoThemeData _buildCupertinoTheme(theme_model.Theme? customTheme, bool isDarkMode) {
+  CupertinoThemeData _buildCupertinoTheme(
+    theme_model.Theme? customTheme,
+    bool isDarkMode,
+  ) {
     return CupertinoThemeData(
       brightness: isDarkMode ? Brightness.dark : Brightness.light,
       primaryColor: customTheme?.colorList.first ?? CupertinoColors.systemBlue,
-      scaffoldBackgroundColor: isDarkMode 
+      scaffoldBackgroundColor: isDarkMode
           ? const Color(0xFF202125)
           : (customTheme?.backColor ?? CupertinoColors.systemBackground),
     );

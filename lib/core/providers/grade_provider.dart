@@ -211,20 +211,16 @@ class GradeNotifier extends StateNotifier<GradeState> {
 
     // 生成近4年的学期
     for (int year = currentYear - 3; year <= currentYear; year++) {
-      // 秋季学期：8-12月，xqm=3，xnm=year+1
+      // 秋季学期：xqm=3，xnm=year
       semesters.add(
-        SemesterInfo(
-          xnm: (year + 1).toString(),
-          xqm: '3',
-          displayName: '$year年秋季学期',
-        ),
+        SemesterInfo(xnm: year.toString(), xqm: '3', displayName: '$year年秋季学期'),
       );
-      // 春季学期：1-7月，xqm=12，xnm=year+1
+      // 春季学期：xqm=12，xnm=year-1
       semesters.add(
         SemesterInfo(
-          xnm: (year + 1).toString(),
+          xnm: (year - 1).toString(),
           xqm: '12',
-          displayName: '${year + 1}年春季学期',
+          displayName: '$year年春季学期',
         ),
       );
     }
@@ -261,11 +257,35 @@ class GradeNotifier extends StateNotifier<GradeState> {
           }
         }
 
-        // 处理详情数据 (可能直接在data.items中)
-        final items = data['items'];
-        if (items is List) {
-          detailItems = items.cast<Map<String, dynamic>>();
+        // 处理详情数据
+        List<Map<String, dynamic>>? detailData;
+
+        // 方式1: data.detail.items
+        final detail = data['detail'];
+        if (detail is Map<String, dynamic>) {
+          final items = detail['items'];
+          if (items is List) {
+            detailData = items.cast<Map<String, dynamic>>();
+          }
         }
+
+        // 方式2: data.items（微信版本normal.vue中的方式）
+        if (detailData == null || detailData.isEmpty) {
+          final items = data['items'];
+          if (items is List) {
+            detailData = items.cast<Map<String, dynamic>>();
+          }
+        }
+
+        // 方式3: 如果详情数据为空，使用汇总数据作为详情数据
+        if (detailData == null || detailData.isEmpty) {
+          if (summaryItems.isNotEmpty) {
+            detailData = summaryItems;
+            debugPrint('🎓 使用汇总数据作为详情数据，条数: ${detailData.length}');
+          }
+        }
+
+        detailItems = detailData ?? [];
       }
 
       // 处理成绩汇总数据
@@ -428,6 +448,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
 
         gradeMap[summary.kchId] = CalculatedGrade(
           kcmc: summary.kcmc,
+          kch: summary.kch,
           kchId: summary.kchId,
           xf: summary.xf,
           zcj: summary.bfzcj, // 使用百分制成绩
@@ -676,7 +697,37 @@ final gradeProvider = StateNotifierProvider<GradeNotifier, GradeState>((ref) {
 /// 排序后的成绩列表
 final sortedGradesProvider = Provider<List<CalculatedGrade>>((ref) {
   final state = ref.watch(gradeProvider);
-  return state.calculatedGrades;
+  final grades = List<CalculatedGrade>.from(state.calculatedGrades);
+
+  // 根据排序方式排序
+  switch (state.sortBy) {
+    case GradeSortBy.course:
+      grades.sort((a, b) => a.kcmc.compareTo(b.kcmc));
+      break;
+    case GradeSortBy.credit:
+      grades.sort((a, b) {
+        final creditA = double.tryParse(a.xf) ?? 0;
+        final creditB = double.tryParse(b.xf) ?? 0;
+        return creditB.compareTo(creditA); // 降序
+      });
+      break;
+    case GradeSortBy.score:
+      grades.sort((a, b) {
+        final scoreA = double.tryParse(a.zcj.toString()) ?? 0;
+        final scoreB = double.tryParse(b.zcj.toString()) ?? 0;
+        return scoreB.compareTo(scoreA); // 降序
+      });
+      break;
+    case GradeSortBy.gpa:
+      grades.sort((a, b) {
+        final gpaA = double.tryParse(a.jd) ?? 0;
+        final gpaB = double.tryParse(b.jd) ?? 0;
+        return gpaB.compareTo(gpaA); // 降序
+      });
+      break;
+  }
+
+  return grades;
 });
 
 /// 成绩统计信息

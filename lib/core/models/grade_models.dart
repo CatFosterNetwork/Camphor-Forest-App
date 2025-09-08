@@ -333,6 +333,7 @@ class GradeSummary {
 /// 计算的成绩信息
 class CalculatedGrade {
   final String kcmc;
+  final String kch;
   final String kchId;
   final String xf;
   final dynamic zcj; // 可能是数字或字符串（如"优"）
@@ -344,6 +345,7 @@ class CalculatedGrade {
 
   const CalculatedGrade({
     required this.kcmc,
+    required this.kch,
     required this.kchId,
     required this.xf,
     required this.zcj,
@@ -389,10 +391,10 @@ class GradeStatistics {
 
 /// 成绩排序方式
 enum GradeSortBy {
-  course,  // 按课程名称
-  credit,  // 按学分
-  score,   // 按成绩
-  gpa,     // 按绩点
+  course, // 按课程名称
+  credit, // 按学分
+  score, // 按成绩
+  gpa, // 按绩点
 }
 
 /// 成绩单类型
@@ -400,10 +402,7 @@ class TranscriptType {
   final String name;
   final String fileProperty;
 
-  const TranscriptType({
-    required this.name,
-    required this.fileProperty,
-  });
+  const TranscriptType({required this.name, required this.fileProperty});
 }
 
 /// 电子凭证类型
@@ -411,10 +410,7 @@ class VoucherType {
   final String name;
   final String fileProperty;
 
-  const VoucherType({
-    required this.name,
-    required this.fileProperty,
-  });
+  const VoucherType({required this.name, required this.fileProperty});
 }
 
 /// 成绩发送选项

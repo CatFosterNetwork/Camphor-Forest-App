@@ -47,8 +47,8 @@ class _GradeQueryScreenState extends ConsumerState<GradeQueryScreen>
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final gradeState = ref.watch(gradeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
 
     return ThemeAwareScaffold(
@@ -95,7 +95,9 @@ class _GradeQueryScreenState extends ConsumerState<GradeQueryScreen>
               indicatorColor: themeColor,
               indicatorWeight: 3,
               labelColor: themeColor,
-              unselectedLabelColor: isDarkMode ? Colors.white70 : Colors.black54,
+              unselectedLabelColor: isDarkMode
+                  ? Colors.white70
+                  : Colors.black54,
               labelStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -106,18 +108,9 @@ class _GradeQueryScreenState extends ConsumerState<GradeQueryScreen>
               ),
               padding: const EdgeInsets.symmetric(vertical: 4), // 增加Tab内边距
               tabs: const [
-                Tab(
-                  icon: Icon(Icons.school, size: 20),
-                  text: '成绩查询',
-                ),
-                Tab(
-                  icon: Icon(Icons.description, size: 20),
-                  text: '成绩单',
-                ),
-                Tab(
-                  icon: Icon(Icons.verified, size: 20),
-                  text: '电子凭证',
-                ),
+                Tab(icon: Icon(Icons.school, size: 20), text: '成绩查询'),
+                Tab(icon: Icon(Icons.description, size: 20), text: '成绩单'),
+                Tab(icon: Icon(Icons.verified, size: 20), text: '电子凭证'),
               ],
             ),
           ),

@@ -8,16 +8,16 @@ import '../../models/theme_model.dart' as theme_model;
 class ThemeConfig {
   /// 主题模式：auto, system, light, dark
   final String themeMode;
-  
+
   /// 是否为深色模式（当themeMode为light/dark时使用）
   final bool isDarkMode;
-  
+
   /// 当前选中的主题
   final theme_model.Theme? selectedTheme;
-  
+
   /// 自定义主题
   final theme_model.Theme? customTheme;
-  
+
   /// 选中的主题代码
   final String selectedThemeCode;
 
@@ -34,13 +34,14 @@ class ThemeConfig {
     return ThemeConfig(
       themeMode: json['theme-colorMode'] ?? 'system',
       isDarkMode: json['theme-darkMode'] ?? false,
-      selectedTheme: json['theme-theme'] != null 
+      selectedTheme: json['theme-theme'] != null
           ? theme_model.Theme.fromJson(json['theme-theme'])
           : null,
       customTheme: json['theme-customTheme'] != null
           ? theme_model.Theme.fromJson(json['theme-customTheme'])
           : null,
-      selectedThemeCode: json['selectedThemeCode'] ?? 'classic-theme-1', // 默认为你好西大人主题
+      selectedThemeCode:
+          json['selectedThemeCode'] ?? 'classic-theme-1', // 默认为你好西大人主题
     );
   }
 
@@ -62,12 +63,16 @@ class ThemeConfig {
     theme_model.Theme? selectedTheme,
     theme_model.Theme? customTheme,
     String? selectedThemeCode,
+    bool clearSelectedTheme = false,
+    bool clearCustomTheme = false,
   }) {
     return ThemeConfig(
       themeMode: themeMode ?? this.themeMode,
       isDarkMode: isDarkMode ?? this.isDarkMode,
-      selectedTheme: selectedTheme ?? this.selectedTheme,
-      customTheme: customTheme ?? this.customTheme,
+      selectedTheme: clearSelectedTheme
+          ? null
+          : (selectedTheme ?? this.selectedTheme),
+      customTheme: clearCustomTheme ? null : (customTheme ?? this.customTheme),
       selectedThemeCode: selectedThemeCode ?? this.selectedThemeCode,
     );
   }
@@ -84,7 +89,8 @@ class ThemeConfig {
         return true;
       case 'system':
         // 获取系统实际的亮度模式
-        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        final brightness =
+            WidgetsBinding.instance.platformDispatcher.platformBrightness;
         return brightness == Brightness.dark;
       default:
         return isDarkMode;

@@ -37,7 +37,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
       });
 
       final totalSize = await _getTotalCacheSize();
-      
+
       setState(() {
         _cacheSize = _formatBytes(totalSize);
         _isCalculatingCache = false;
@@ -53,7 +53,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
   /// 获取总缓存大小
   Future<int> _getTotalCacheSize() async {
     int totalSize = 0;
-    
+
     try {
       // 获取应用缓存目录
       final cacheDir = await getTemporaryDirectory();
@@ -78,7 +78,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
       // 如果获取失败，返回0
       totalSize = 0;
     }
-    
+
     return totalSize;
   }
 
@@ -102,7 +102,8 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
   String _formatBytes(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024) return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (bytes < 1024 * 1024 * 1024)
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 
@@ -110,22 +111,20 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    
+
     // 获取主题色，如果没有主题则使用默认蓝色
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
-    final activeColor = isDarkMode 
-        ? themeColor.withAlpha(204) 
-        : themeColor;
+    final activeColor = isDarkMode ? themeColor.withAlpha(204) : themeColor;
 
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: false, // 设置页面使用纯色背景，保持专业感
-      forceStatusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark, // 强制状态栏图标适配
-      appBar: ThemeAwareAppBar(
-        title: '其他设置',
-      ),
+      forceStatusBarIconBrightness: isDarkMode
+          ? Brightness.light
+          : Brightness.dark, // 强制状态栏图标适配
+      appBar: ThemeAwareAppBar(title: '其他设置'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -152,8 +151,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
-                  
+
                   SwitchListTile(
                     title: Text(
                       '推送通知',
@@ -174,7 +172,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '课程提醒',
@@ -199,7 +197,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
               ),
             ),
           ),
-          
+
           // 缓存设置
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -223,7 +221,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   ListTile(
                     leading: Icon(
                       Icons.storage_outlined,
@@ -243,32 +241,37 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                             height: 12,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: isDarkMode ? Colors.white70 : Colors.black54,
+                              color: isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black54,
                             ),
                           ),
                           const SizedBox(width: 8),
                         ],
                         Text(
                           _cacheSize,
-                      style: TextStyle(
-                        color: isDarkMode ? Colors.white70 : Colors.black54,
-                      ),
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.white70 : Colors.black54,
+                          ),
                         ),
                       ],
                     ),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () => _showClearCacheDialog(context, isDarkMode),
+                      onPressed: () =>
+                          _showClearCacheDialog(context, isDarkMode),
                       icon: const Icon(Icons.cleaning_services),
                       label: const Text('清理缓存'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDarkMode ? Colors.orange.withAlpha(204) : Colors.orange,
+                        backgroundColor: isDarkMode
+                            ? Colors.orange.withAlpha(204)
+                            : Colors.orange,
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -277,7 +280,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
               ),
             ),
           ),
-          
+
           // 网络设置
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -301,7 +304,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '仅WiFi下载',
@@ -322,7 +325,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   ListTile(
                     leading: Icon(
                       Icons.network_check,
@@ -345,14 +348,15 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                       color: isDarkMode ? Colors.white70 : Colors.black54,
                       size: 16,
                     ),
-                    onTap: () => _showNetworkDiagnostic(context, isDarkMode, themeColor),
+                    onTap: () =>
+                        _showNetworkDiagnostic(context, isDarkMode, themeColor),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ],
               ),
             ),
           ),
-          
+
           // 语言和地区
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -376,7 +380,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   ListTile(
                     leading: Icon(
                       Icons.language,
@@ -406,7 +410,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
               ),
             ),
           ),
-          
+
           // 实验性功能
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -441,13 +445,10 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                   const SizedBox(height: 8),
                   Text(
                     '这些功能仍在开发中，可能不稳定',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.orange,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.orange),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '灵动岛',
@@ -468,7 +469,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     contentPadding: EdgeInsets.zero,
                     activeColor: activeColor,
                   ),
-                  
+
                   SwitchListTile(
                     title: Text(
                       '自动续期自动签到',
@@ -505,24 +506,18 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
         title: Text(
           '清理缓存',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
+          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         ),
         content: Text(
           '确定要清理所有缓存数据吗？这将清除临时文件和图片缓存。',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white70 : Colors.black54,
-          ),
+          style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               '取消',
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
           ),
           TextButton(
@@ -530,10 +525,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
               Navigator.of(context).pop();
               _performCacheClear(context, isDarkMode);
             },
-            child: const Text(
-              '确定',
-              style: TextStyle(color: Colors.orange),
-            ),
+            child: const Text('确定', style: TextStyle(color: Colors.orange)),
           ),
         ],
       ),
@@ -552,13 +544,13 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     try {
       // 执行真实的缓存清理
       final result = await _clearAllCache();
-      
+
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭进度对话框
-        
+
         // 重新计算缓存大小
         _calculateCacheSize();
-        
+
         // 显示结果
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -571,7 +563,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭进度对话框
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('缓存清理失败: $e'),
@@ -587,7 +579,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
   Future<CacheClearResult> _clearAllCache() async {
     int totalClearedSize = 0;
     int totalFiles = 0;
-    
+
     try {
       // 清理临时目录
       final tempDir = await getTemporaryDirectory();
@@ -634,7 +626,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
   Future<DirectoryClearResult> _clearDirectory(Directory directory) async {
     int clearedSize = 0;
     int clearedFiles = 0;
-    
+
     try {
       await for (final entity in directory.list(recursive: true)) {
         if (entity is File) {
@@ -651,15 +643,19 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     } catch (e) {
       // 忽略目录访问错误
     }
-    
+
     return DirectoryClearResult(size: clearedSize, files: clearedFiles);
   }
 
-  void _showNetworkDiagnostic(BuildContext context, bool isDarkMode, Color themeColor) {
+  void _showNetworkDiagnostic(
+    BuildContext context,
+    bool isDarkMode,
+    Color themeColor,
+  ) {
     showDialog(
       context: context,
       builder: (context) => NetworkDiagnosticDialog(
-        isDarkMode: isDarkMode, 
+        isDarkMode: isDarkMode,
         themeColor: themeColor,
       ),
     );
@@ -667,12 +663,10 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
 
   void _showLanguageSelector(BuildContext context, bool isDarkMode) {
     final currentTheme = ref.read(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
-    final activeColor = isDarkMode 
-        ? themeColor.withAlpha(204) 
-        : themeColor;
+    final activeColor = isDarkMode ? themeColor.withAlpha(204) : themeColor;
 
     showDialog(
       context: context,
@@ -680,9 +674,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
         title: Text(
           '选择语言',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
+          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -722,9 +714,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               '取消',
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             ),
           ),
         ],
@@ -762,7 +752,8 @@ class NetworkDiagnosticDialog extends StatefulWidget {
   });
 
   @override
-  State<NetworkDiagnosticDialog> createState() => _NetworkDiagnosticDialogState();
+  State<NetworkDiagnosticDialog> createState() =>
+      _NetworkDiagnosticDialogState();
 }
 
 class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
@@ -785,7 +776,7 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
 
       // 检查网络连接
       final connectivity = await _checkConnectivity();
-      
+
       // 检查服务器连接和延迟
       final serverTest = await _testServerConnection();
 
@@ -824,11 +815,11 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
         if (interface.addresses.isNotEmpty) {
           hasActiveInterface = true;
           // 判断连接类型
-          if (interface.name.toLowerCase().contains('wlan') || 
+          if (interface.name.toLowerCase().contains('wlan') ||
               interface.name.toLowerCase().contains('wifi')) {
             connectionType = 'WiFi';
           } else if (interface.name.toLowerCase().contains('cellular') ||
-                     interface.name.toLowerCase().contains('mobile')) {
+              interface.name.toLowerCase().contains('mobile')) {
             connectionType = '移动数据';
           } else if (interface.name.toLowerCase().contains('eth')) {
             connectionType = '以太网';
@@ -839,16 +830,9 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
         }
       }
 
-      return {
-        'isConnected': hasActiveInterface,
-        'type': connectionType,
-      };
+      return {'isConnected': hasActiveInterface, 'type': connectionType};
     } catch (e) {
-      return {
-        'isConnected': false,
-        'type': '检测失败',
-        'error': e.toString(),
-      };
+      return {'isConnected': false, 'type': '检测失败', 'error': e.toString()};
     }
   }
 
@@ -856,53 +840,46 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
   Future<Map<String, dynamic>> _testServerConnection() async {
     try {
       final stopwatch = Stopwatch()..start();
-      
+
       // 测试百度（中国常用的网站）
-      final response = await http.get(
-        Uri.parse('https://www.baidu.com'),
-        headers: {'User-Agent': 'Camphor Forest App'},
-      ).timeout(
-        const Duration(seconds: 10),
-      );
-      
+      final response = await http
+          .get(
+            Uri.parse('https://www.baidu.com'),
+            headers: {'User-Agent': 'Camphor Forest App'},
+          )
+          .timeout(const Duration(seconds: 10));
+
       stopwatch.stop();
-      
+
       return {
         'reachable': response.statusCode == 200,
         'latency': stopwatch.elapsedMilliseconds,
       };
     } on TimeoutException {
-      return {
-        'reachable': false,
-        'error': '连接超时',
-      };
+      return {'reachable': false, 'error': '连接超时'};
     } on SocketException {
-      return {
-        'reachable': false,
-        'error': '网络不可达',
-      };
+      return {'reachable': false, 'error': '网络不可达'};
     } catch (e) {
-      return {
-        'reachable': false,
-        'error': '连接失败: ${e.toString()}',
-      };
+      return {'reachable': false, 'error': '连接失败: ${e.toString()}'};
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: widget.isDarkMode ? const Color(0xFF202125) : Colors.white,
+      backgroundColor: widget.isDarkMode
+          ? const Color(0xFF202125)
+          : Colors.white,
       title: Text(
         '网络诊断',
         style: TextStyle(
           color: widget.isDarkMode ? Colors.white : Colors.black,
         ),
       ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        children: [
           if (_isLoading) ...[
             Text(
               '正在检查网络连接...',
@@ -913,7 +890,9 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
             const SizedBox(height: 16),
             LinearProgressIndicator(
               color: widget.themeColor,
-              backgroundColor: widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
+              backgroundColor: widget.isDarkMode
+                  ? Colors.grey.shade700
+                  : Colors.grey.shade300,
             ),
             const SizedBox(height: 16),
           ] else if (_result != null) ...[
@@ -965,11 +944,11 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
               ],
             ),
           ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(
             '关闭',
             style: TextStyle(
@@ -984,9 +963,13 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
   Widget _buildResultItem(String label, String value, bool isGood) {
     Color statusColor;
     if (isGood) {
-      statusColor = widget.isDarkMode ? Colors.green.shade300 : Colors.green.shade700;
+      statusColor = widget.isDarkMode
+          ? Colors.green.shade300
+          : Colors.green.shade700;
     } else {
-      statusColor = widget.isDarkMode ? Colors.red.shade300 : Colors.red.shade700;
+      statusColor = widget.isDarkMode
+          ? Colors.red.shade300
+          : Colors.red.shade700;
     }
 
     return Row(
@@ -1001,10 +984,7 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
         Expanded(
           child: Text(
             value,
-            style: TextStyle(
-              color: statusColor,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(color: statusColor, fontWeight: FontWeight.w500),
           ),
         ),
       ],
@@ -1032,23 +1012,18 @@ class DirectoryClearResult {
   final int size;
   final int files;
 
-  DirectoryClearResult({
-    required this.size,
-    required this.files,
-  });
+  DirectoryClearResult({required this.size, required this.files});
 }
 
 /// 缓存清理进度对话框
 class CacheClearProgressDialog extends StatefulWidget {
   final bool isDarkMode;
 
-  const CacheClearProgressDialog({
-    super.key,
-    required this.isDarkMode,
-  });
+  const CacheClearProgressDialog({super.key, required this.isDarkMode});
 
   @override
-  State<CacheClearProgressDialog> createState() => _CacheClearProgressDialogState();
+  State<CacheClearProgressDialog> createState() =>
+      _CacheClearProgressDialogState();
 }
 
 class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
@@ -1073,13 +1048,9 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
     _animationController.forward();
     _startStepAnimation();
@@ -1106,7 +1077,9 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: widget.isDarkMode ? const Color(0xFF202125) : Colors.white,
+      backgroundColor: widget.isDarkMode
+          ? const Color(0xFF202125)
+          : Colors.white,
       content: FadeTransition(
         opacity: _fadeAnimation,
         child: Column(
@@ -1127,7 +1100,7 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // 标题
             Text(
               '正在清理缓存',
@@ -1138,14 +1111,16 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // 进度指示器
             LinearProgressIndicator(
               color: Colors.orange,
-              backgroundColor: widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
+              backgroundColor: widget.isDarkMode
+                  ? Colors.grey.shade700
+                  : Colors.grey.shade300,
             ),
             const SizedBox(height: 16),
-            
+
             // 当前步骤
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
@@ -1160,7 +1135,7 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
               ),
             ),
             const SizedBox(height: 8),
-            
+
             // 提示文字
             Text(
               '请稍等，正在清理应用缓存...',

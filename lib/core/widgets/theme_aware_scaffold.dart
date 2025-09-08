@@ -8,11 +8,11 @@ import '../../widgets/app_background.dart';
 
 /// 页面类型枚举，用于不同背景策略
 enum PageType {
-  indexPage,  // 主页
-  loginPage,  // 登录页
+  indexPage, // 主页
+  loginPage, // 登录页
   classtable, // 课表页
-  settings,   // 设置页
-  other,      // 其他页面
+  settings, // 设置页
+  other, // 其他页面
 }
 
 /// 主题感知的Scaffold包装器
@@ -52,7 +52,7 @@ class ThemeAwareScaffold extends ConsumerWidget {
 
     // 判断是否应该使用背景
     bool shouldUseBackground;
-    
+
     switch (pageType) {
       case PageType.indexPage:
       case PageType.loginPage:
@@ -65,7 +65,7 @@ class ThemeAwareScaffold extends ConsumerWidget {
         shouldUseBackground = isDarkMode ? useBackground : false;
         break;
     }
-    
+
     // 记录实际的背景状态，用于状态栏决策
     final bool actualHasBackground = shouldUseBackground;
 
@@ -73,7 +73,7 @@ class ThemeAwareScaffold extends ConsumerWidget {
     if (shouldUseBackground) {
       String imageUrl;
       bool bgBlur;
-      
+
       // 根据页面类型选择不同的背景
       switch (pageType) {
         case PageType.classtable:
@@ -97,7 +97,9 @@ class ThemeAwareScaffold extends ConsumerWidget {
       debugPrint('   🎨 背景图片: $imageUrl');
       debugPrint('   🌫️ 背景模糊: $bgBlur');
       debugPrint('   🎨 状态栏背景: Colors.transparent');
-      debugPrint('   🔧 forceStatusBarIconBrightness: $forceStatusBarIconBrightness');
+      debugPrint(
+        '   🔧 forceStatusBarIconBrightness: $forceStatusBarIconBrightness',
+      );
       debugPrint('   📋 即将传递给 AdaptiveStatusBar...\n');
 
       return AdaptiveStatusBar(
@@ -109,7 +111,8 @@ class ThemeAwareScaffold extends ConsumerWidget {
           backgroundColor: Colors.transparent,
           appBar: appBar as PreferredSizeWidget?,
           extendBodyBehindAppBar: true, // 让AppBar透明时内容延伸到AppBar下方
-          resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? false, // 默认固定背景，除非明确指定
+          resizeToAvoidBottomInset:
+              resizeToAvoidBottomInset ?? false, // 默认固定背景，除非明确指定
           body: Stack(
             children: [
               // 使用统一的AppBackground组件
@@ -124,9 +127,7 @@ class ThemeAwareScaffold extends ConsumerWidget {
                 ),
               ),
               // 页面内容，加上安全区域
-              SafeArea(
-                child: body,
-              ),
+              SafeArea(child: body),
             ],
           ),
           floatingActionButton: floatingActionButton,
@@ -151,20 +152,23 @@ class ThemeAwareScaffold extends ConsumerWidget {
         case PageType.classtable:
         case PageType.other:
           // 其他页面使用主题色或默认浅灰色
-          scaffoldBackgroundColor = currentTheme?.backColor ?? Colors.grey.shade50;
+          scaffoldBackgroundColor =
+              currentTheme?.backColor ?? Colors.grey.shade50;
           break;
       }
     }
-    
+
     debugPrint('🏗️  ThemeAwareScaffold [${pageType.name}] 构建参数:');
     debugPrint('   📱 页面类型: ${pageType.name}');
     debugPrint('   🌓 isDarkMode: $isDarkMode');
     debugPrint('   🖼️ hasBackground: $useBackground');
     debugPrint('   🎯 actualHasBackground: $actualHasBackground');
     debugPrint('   🎨 scaffoldBackgroundColor: $scaffoldBackgroundColor');
-    debugPrint('   🔧 forceStatusBarIconBrightness: $forceStatusBarIconBrightness');
+    debugPrint(
+      '   🔧 forceStatusBarIconBrightness: $forceStatusBarIconBrightness',
+    );
     debugPrint('   📋 即将传递给 AdaptiveStatusBar...\n');
-    
+
     return AdaptiveStatusBar(
       pageType: pageType,
       hasBackground: actualHasBackground,
@@ -214,8 +218,9 @@ class ThemeAwareAppBar extends ConsumerWidget implements PreferredSizeWidget {
     if (transparent) {
       bgColor = Colors.transparent;
     } else {
-      bgColor = backgroundColor ??
-          (isDarkMode 
+      bgColor =
+          backgroundColor ??
+          (isDarkMode
               ? (currentTheme?.backColor.withAlpha(230) ?? Colors.grey.shade900)
               : (currentTheme?.backColor ?? Colors.white));
     }
@@ -287,4 +292,3 @@ class TransparentAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
-

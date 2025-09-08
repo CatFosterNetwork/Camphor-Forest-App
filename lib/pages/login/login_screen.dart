@@ -13,7 +13,6 @@ import 'package:camphor_forest/core/providers/core_providers.dart'; // ← apiSe
 import 'package:camphor_forest/core/providers/auth_provider.dart';
 import 'package:camphor_forest/core/widgets/theme_aware_scaffold.dart';
 
-
 /// 登录页面，提供用户身份验证和交互界面
 ///
 /// 主要功能：
@@ -190,7 +189,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // 监听认证状态，确保界面响应
     ref.watch(authProvider);
     final size = MediaQuery.of(context).size;
-    
+
     // 保持白色文字的一致性，通过背景遮罩来提供对比度
 
     return ThemeAwareScaffold(
@@ -218,263 +217,280 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                  // 学校 Logo
-                  Container(
-                    width: 160,
-                    height: 160,
-                    decoration: const BoxDecoration(
-                      color: Colors.white, // 白色背景
-                      shape: BoxShape.circle, // 圆形
-                    ),
-                    child: ClipOval(
-                      child: SvgPicture.asset(
-                        'assets/icons/swulogo.svg',
+                      // 学校 Logo
+                      Container(
                         width: 160,
                         height: 160,
-                        fit: BoxFit.cover,
-                        placeholderBuilder: (_) =>
-                            const CircularProgressIndicator(),
-                        colorFilter: const ColorFilter.mode(
-                          Color.fromRGBO(12, 63, 107, 1),
-                          BlendMode.srcIn,
+                        decoration: const BoxDecoration(
+                          color: Colors.white, // 白色背景
+                          shape: BoxShape.circle, // 圆形
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // 登录表单
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        // 账号输入框
-                        TextFormField(
-                          key: _accountFieldKey,
-                          controller: _accountCtrl,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration('请输入账号', Icons.person),
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          onChanged: (_) => setState(() {}),
-                          validator: (v) =>
-                              (v?.isEmpty ?? true) ? '请输入账号' : null,
-                        ),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: (() {
-                            final err =
-                                _accountFieldKey.currentState?.errorText;
-                            return (err == null || err.isEmpty)
-                                ? const SizedBox.shrink(key: ValueKey('empty'))
-                                : Padding(
-                                    key: const ValueKey('errorAccount'),
-                                    padding: const EdgeInsets.only(
-                                      left: 16.0,
-                                      top: 4.0,
-                                    ),
-                                    child: Text(
-                                      err,
-                                      style: const TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  );
-                          })(),
-                        ),
-                        const SizedBox(height: 16),
-                        // 密码输入框
-                        TextFormField(
-                          key: _passwordFieldKey,
-                          controller: _passwordCtrl,
-                          obscureText: _obscure,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            hintText: '请输入密码',
-                            hintStyle: const TextStyle(
-                              color: Color(0xB3FFFFFF),
-                            ),
-                            filled: true,
-                            fillColor: const Color(0x33FFFFFF),
-                            prefixIcon: const Icon(
-                              Icons.lock,
-                              color: Colors.white,
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscure
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                if (!mounted) return;
-                                setState(() => _obscure = !_obscure);
-                              },
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
-                            ),
-                            errorStyle: const TextStyle(height: 0, fontSize: 0),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
+                        child: ClipOval(
+                          child: SvgPicture.asset(
+                            'assets/icons/swulogo.svg',
+                            width: 160,
+                            height: 160,
+                            fit: BoxFit.cover,
+                            placeholderBuilder: (_) =>
+                                const CircularProgressIndicator(),
+                            colorFilter: const ColorFilter.mode(
+                              Color.fromRGBO(12, 63, 107, 1),
+                              BlendMode.srcIn,
                             ),
                           ),
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          onChanged: (_) => setState(() {}),
-                          validator: (v) =>
-                              (v?.isEmpty ?? true) ? '请输入密码' : null,
                         ),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: (() {
-                            final err =
-                                _passwordFieldKey.currentState?.errorText;
-                            return (err == null || err.isEmpty)
-                                ? const SizedBox.shrink(key: ValueKey('empty'))
-                                : Padding(
-                                    key: const ValueKey('errorPwd'),
-                                    padding: const EdgeInsets.only(
-                                      left: 16.0,
-                                      top: 4.0,
-                                    ),
-                                    child: Text(
-                                      err,
-                                      style: const TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  );
-                          })(),
-                        ),
-                        const SizedBox(height: 16),
-                        // 用户协议复选框
-                        Row(
+                      ),
+                      const SizedBox(height: 24),
+                      // 登录表单
+                      Form(
+                        key: _formKey,
+                        child: Column(
                           children: [
-                            Checkbox(
-                              value: _agree,
-                              splashRadius: 25,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                            // 账号输入框
+                            TextFormField(
+                              key: _accountFieldKey,
+                              controller: _accountCtrl,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: _inputDecoration(
+                                '请输入账号',
+                                Icons.person,
                               ),
-                              side: const BorderSide(
-                                color: Colors.white,
-                                width: 1,
-                              ),
-                              activeColor: Colors.greenAccent,
-                              checkColor: Colors.white,
-                              focusColor: Colors.white,
-                              onChanged: (v) {
-                                if (!mounted) return;
-                                setState(() => _agree = v ?? false);
-                              },
-                              fillColor: WidgetStateProperty.all(
-                                _agree
-                                    ? Colors.greenAccent
-                                    : Colors.transparent,
-                              ),
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              onChanged: (_) => setState(() {}),
+                              validator: (v) =>
+                                  (v?.isEmpty ?? true) ? '请输入账号' : null,
                             ),
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  text: '我已阅读并同意 ',
-                                  style: const TextStyle(color: Colors.white),
-                                  children: [
-                                    TextSpan(
-                                      text: '《用户协议》',
-                                      style: const TextStyle(
-                                        color: Colors.lightBlueAccent,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          if (!mounted) return;
-                                          Navigator.of(context).pushNamed(
-                                            RouteConstants.userAgreement,
-                                          );
-                                        },
-                                    ),
-                                  ],
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: (() {
+                                final err =
+                                    _accountFieldKey.currentState?.errorText;
+                                return (err == null || err.isEmpty)
+                                    ? const SizedBox.shrink(
+                                        key: ValueKey('empty'),
+                                      )
+                                    : Padding(
+                                        key: const ValueKey('errorAccount'),
+                                        padding: const EdgeInsets.only(
+                                          left: 16.0,
+                                          top: 4.0,
+                                        ),
+                                        child: Text(
+                                          err,
+                                          style: const TextStyle(
+                                            color: Colors.redAccent,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      );
+                              })(),
+                            ),
+                            const SizedBox(height: 16),
+                            // 密码输入框
+                            TextFormField(
+                              key: _passwordFieldKey,
+                              controller: _passwordCtrl,
+                              obscureText: _obscure,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: '请输入密码',
+                                hintStyle: const TextStyle(
+                                  color: Color(0xB3FFFFFF),
+                                ),
+                                filled: true,
+                                fillColor: const Color(0x33FFFFFF),
+                                prefixIcon: const Icon(
+                                  Icons.lock,
+                                  color: Colors.white,
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscure
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    if (!mounted) return;
+                                    setState(() => _obscure = !_obscure);
+                                  },
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
+                                ),
+                                errorStyle: const TextStyle(
+                                  height: 0,
+                                  fontSize: 0,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 14,
                                 ),
                               ),
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              onChanged: (_) => setState(() {}),
+                              validator: (v) =>
+                                  (v?.isEmpty ?? true) ? '请输入密码' : null,
+                            ),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: (() {
+                                final err =
+                                    _passwordFieldKey.currentState?.errorText;
+                                return (err == null || err.isEmpty)
+                                    ? const SizedBox.shrink(
+                                        key: ValueKey('empty'),
+                                      )
+                                    : Padding(
+                                        key: const ValueKey('errorPwd'),
+                                        padding: const EdgeInsets.only(
+                                          left: 16.0,
+                                          top: 4.0,
+                                        ),
+                                        child: Text(
+                                          err,
+                                          style: const TextStyle(
+                                            color: Colors.redAccent,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      );
+                              })(),
+                            ),
+                            const SizedBox(height: 16),
+                            // 用户协议复选框
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _agree,
+                                  splashRadius: 25,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  side: const BorderSide(
+                                    color: Colors.white,
+                                    width: 1,
+                                  ),
+                                  activeColor: Colors.greenAccent,
+                                  checkColor: Colors.white,
+                                  focusColor: Colors.white,
+                                  onChanged: (v) {
+                                    if (!mounted) return;
+                                    setState(() => _agree = v ?? false);
+                                  },
+                                  fillColor: WidgetStateProperty.all(
+                                    _agree
+                                        ? Colors.greenAccent
+                                        : Colors.transparent,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: '我已阅读并同意 ',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: '《用户协议》',
+                                          style: const TextStyle(
+                                            color: Colors.lightBlueAccent,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              if (!mounted) return;
+                                              context.push(
+                                                RouteConstants.userAgreement,
+                                              );
+                                            },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            // 登录按钮
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              switchInCurve: Curves.easeInOut,
+                              switchOutCurve: Curves.easeInOut,
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) {
+                                    return ScaleTransition(
+                                      scale: animation,
+                                      child: child,
+                                    );
+                                  },
+                              child: _loading
+                                  ? SizedBox(
+                                      key: const ValueKey('loader'),
+                                      width: _btnSize,
+                                      height: _btnSize,
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 3,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      key: const ValueKey('btn'),
+                                      width: _btnSize,
+                                      height: _btnSize,
+                                      child: AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 200,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                        decoration: BoxDecoration(
+                                          color: _agree
+                                              ? Colors.blueAccent
+                                              : Colors.grey.withAlpha(128),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: IconButton(
+                                          onPressed: _onLogin,
+                                          splashRadius: _btnSize / 2,
+                                          icon: const Icon(
+                                            Icons.arrow_forward,
+                                            size: 32,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-                        // 登录按钮
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          switchInCurve: Curves.easeInOut,
-                          switchOutCurve: Curves.easeInOut,
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
-                                return ScaleTransition(
-                                  scale: animation,
-                                  child: child,
-                                );
-                              },
-                          child: _loading
-                              ? SizedBox(
-                                  key: const ValueKey('loader'),
-                                  width: _btnSize,
-                                  height: _btnSize,
-                                  child: const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : SizedBox(
-                                  key: const ValueKey('btn'),
-                                  width: _btnSize,
-                                  height: _btnSize,
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    curve: Curves.easeInOut,
-                                    decoration: BoxDecoration(
-                                      color: _agree
-                                          ? Colors.blueAccent
-                                          : Colors.grey.withAlpha(128),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: IconButton(
-                                      onPressed: _onLogin,
-                                      splashRadius: _btnSize / 2,
-                                      icon: const Icon(
-                                        Icons.arrow_forward,
-                                        size: 32,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                      ),
+                      const SizedBox(height: 32),
+                      // 分隔线
+                      Container(
+                        width: size.width * 0.3,
+                        height: 0.5,
+                        color: Colors.white54,
+                      ),
+                      const SizedBox(height: 24),
+                      // 诗句装饰
+                      const Text(
+                        '一处风声，看落花流萤，那粉色佳人，摇曳，摇曳。苍天赐予一个多情的梦，在花落之间。怎堪月痩影单，残风缠绵，好一个悲曲，绚烂绚烂。',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          height: 1.4,
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  // 分隔线
-                  Container(
-                    width: size.width * 0.3,
-                    height: 0.5,
-                    color: Colors.white54,
-                  ),
-                  const SizedBox(height: 24),
-                  // 诗句装饰
-                  const Text(
-                    '一处风声，看落花流萤，那粉色佳人，摇曳，摇曳。苍天赐予一个多情的梦，在花落之间。怎堪月痩影单，残风缠绵，好一个悲曲，绚烂绚烂。',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                      height: 1.4,
-                    ),
-                    textAlign: TextAlign.justify,
-                  ),
-                ],
+                        textAlign: TextAlign.justify,
+                      ),
+                    ],
                   ),
                 ),
               ),

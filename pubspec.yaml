@@ -63,6 +63,8 @@ dependencies:
   gal: ^2.3.0
   crypto: ^3.0.5
   path_provider: ^2.1.5
+  fl_chart: ^0.69.0
+  webview_flutter: ^4.7.0
 
 
 dev_dependencies:
@@ -82,6 +84,7 @@ flutter:
     - assets/icons/
     - assets/icons/swulogo.svg
     - assets/splash_logo.png
+    - lib/pages/login/userAgreement.txt
 
 flutter_icons:
   android: true

@@ -53,16 +53,20 @@ class _WeekSelectorTabsState extends State<WeekSelectorTabs> {
 
   // 滚动到当前选中的周次
   void _scrollToCurrentWeek() {
+    if (!_scrollController.hasClients) return;
+
     // 计算需要滚动的位置
-    final estimatedTabWidth = 65.0; // 预估每个tab的宽度，增加一点宽度
+    final estimatedTabWidth = 66.0; // 预估每个tab的宽度(60 + 12 margin)
     final screenWidth = MediaQuery.of(context).size.width;
-    final offset = (_currentWeekDisplayed - 1) * estimatedTabWidth;
+
+    // 确保当前周在有效范围内
+    final safeCurrentWeek = _currentWeekDisplayed.clamp(1, widget.maxWeek);
+    final offset = (safeCurrentWeek - 1) * estimatedTabWidth;
 
     // 尝试将当前选中项居中
     final scrollTo = offset - (screenWidth / 2) + (estimatedTabWidth / 2);
 
     // 限制在有效滚动范围内
-    if (!_scrollController.hasClients) return;
     final maxScrollExtent = _scrollController.position.maxScrollExtent;
     final scrollOffset = scrollTo.clamp(0.0, maxScrollExtent);
 
@@ -78,12 +82,12 @@ class _WeekSelectorTabsState extends State<WeekSelectorTabs> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = widget.darkMode ?? (theme.brightness == Brightness.dark);
-    
+
     // 获取主题颜色
-    final primaryColor = widget.customTheme?.colorList.isNotEmpty == true 
+    final primaryColor = widget.customTheme?.colorList.isNotEmpty == true
         ? widget.customTheme!.colorList.first
         : theme.colorScheme.primary;
-    final textColor = isDarkMode 
+    final textColor = isDarkMode
         ? const Color(0xFFBFC2C9)
         : (widget.customTheme?.foregColor ?? Colors.black54);
 
@@ -92,31 +96,22 @@ class _WeekSelectorTabsState extends State<WeekSelectorTabs> {
       // 确保最少显示20周
       final totalWeeks = widget.maxWeek > 20 ? widget.maxWeek : 20;
 
-      // 先确定当前显示的周次范围
-      int startWeek = _currentWeekDisplayed - 2;
-      if (startWeek < 1) startWeek = 1;
-      int endWeek = startWeek + 4;
-      if (endWeek > totalWeeks) {
-        endWeek = totalWeeks;
-        startWeek = endWeek - 4;
-        if (startWeek < 1) startWeek = 1;
-      }
-
       return List.generate(totalWeeks, (index) {
         final weekNumber = index + 1;
         final isSelected = weekNumber == widget.currentWeek;
 
         return GestureDetector(
-          onTap: () => widget.onWeekChanged(weekNumber),
+          onTap: () {
+            _currentWeekDisplayed = weekNumber;
+            widget.onWeekChanged(weekNumber);
+          },
           child: Container(
             width: 60, // 增加宽度，防止文字溢出
             margin: const EdgeInsets.symmetric(horizontal: 6),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: isSelected
-                      ? primaryColor
-                      : Colors.transparent,
+                  color: isSelected ? primaryColor : Colors.transparent,
                   width: 2.0,
                 ),
               ),
@@ -131,9 +126,7 @@ class _WeekSelectorTabsState extends State<WeekSelectorTabs> {
                     child: Text(
                       '第$weekNumber周',
                       style: TextStyle(
-                        color: isSelected
-                            ? primaryColor
-                            : textColor,
+                        color: isSelected ? primaryColor : textColor,
                         fontWeight: isSelected
                             ? FontWeight.bold
                             : FontWeight.normal,

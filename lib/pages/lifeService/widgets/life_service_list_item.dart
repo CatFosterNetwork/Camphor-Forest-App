@@ -22,10 +22,10 @@ class LifeServiceListItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    
+
     // 获取主题色，如果没有主题则使用默认蓝色
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
 
     return Material(
@@ -54,9 +54,9 @@ class LifeServiceListItem extends ConsumerWidget {
                   size: 28,
                 ),
               ),
-              
+
               const SizedBox(width: 20),
-              
+
               // 文本内容
               Expanded(
                 child: Column(
@@ -83,7 +83,7 @@ class LifeServiceListItem extends ConsumerWidget {
                   ],
                 ),
               ),
-              
+
               // 箭头图标
               Icon(
                 Icons.chevron_right,

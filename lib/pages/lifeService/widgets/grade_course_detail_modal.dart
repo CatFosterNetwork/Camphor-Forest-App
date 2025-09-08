@@ -2,24 +2,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../../core/models/grade_models.dart';
 import '../../../core/providers/grade_provider.dart';
+import '../../../core/constants/route_constants.dart';
 
 /// 课程详情弹窗
 class GradeCourseDetailModal extends ConsumerWidget {
   final CalculatedGrade grade;
 
-  const GradeCourseDetailModal({
-    super.key,
-    required this.grade,
-  });
+  const GradeCourseDetailModal({super.key, required this.grade});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
-    final examHistory = ref.read(gradeProvider.notifier).getCourseExamHistory(grade.kchId);
+    final examHistory = ref
+        .read(gradeProvider.notifier)
+        .getCourseExamHistory(grade.kchId);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -38,7 +39,9 @@ class GradeCourseDetailModal extends ConsumerWidget {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade50,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +56,9 @@ class GradeCourseDetailModal extends ConsumerWidget {
                               '考试详情',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isDarkMode ? Colors.white70 : Colors.black54,
+                                color: isDarkMode
+                                    ? Colors.white70
+                                    : Colors.black54,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -102,6 +107,11 @@ class GradeCourseDetailModal extends ConsumerWidget {
 
                     // 课程信息
                     _buildCourseInfoSection(grade, isDarkMode),
+
+                    const SizedBox(height: 20),
+
+                    // 统计数据查看按钮
+                    _buildStatisticsButton(grade, isDarkMode, context),
                   ],
                 ),
               ),
@@ -113,7 +123,10 @@ class GradeCourseDetailModal extends ConsumerWidget {
   }
 
   /// 构建考试记录部分
-  Widget _buildExamHistorySection(List<GradeDetail> examHistory, bool isDarkMode) {
+  Widget _buildExamHistorySection(
+    List<GradeDetail> examHistory,
+    bool isDarkMode,
+  ) {
     // 按学期分组考试记录
     final Map<String, List<GradeDetail>> groupedExams = {};
     for (final exam in examHistory) {
@@ -133,11 +146,11 @@ class GradeCourseDetailModal extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 12),
-        
+
         ...groupedExams.entries.map((entry) {
           final semesterName = entry.key;
           final exams = entry.value;
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -153,7 +166,7 @@ class GradeCourseDetailModal extends ConsumerWidget {
                   ),
                 ),
               ),
-              
+
               // 该学期的考试记录
               ...exams.map((exam) => _buildExamItem(exam, isDarkMode)),
             ],
@@ -169,7 +182,9 @@ class GradeCourseDetailModal extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800.withAlpha(128) : Colors.grey.shade50,
+        color: isDarkMode
+            ? Colors.grey.shade800.withAlpha(128)
+            : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -216,7 +231,7 @@ class GradeCourseDetailModal extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 12),
-        
+
         _buildInfoRow('教师', grade.teacher ?? '未知', isDarkMode),
         _buildInfoRow(
           '课程性质',
@@ -230,9 +245,59 @@ class GradeCourseDetailModal extends ConsumerWidget {
         _buildInfoRow('学分', grade.xf, isDarkMode),
         _buildInfoRow('成绩', grade.zcj.toString(), isDarkMode),
         _buildInfoRow('绩点', grade.jd, isDarkMode),
-        if (grade.ksxz != null)
-          _buildInfoRow('考试性质', grade.ksxz!, isDarkMode),
+        if (grade.ksxz != null) _buildInfoRow('考试性质', grade.ksxz!, isDarkMode),
       ],
+    );
+  }
+
+  /// 构建统计数据查看按钮
+  Widget _buildStatisticsButton(
+    CalculatedGrade grade,
+    bool isDarkMode,
+    BuildContext context,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        // 关闭当前模态框
+        Navigator.of(context).pop();
+        // 导航到统计页面，传递课程代码参数
+        context.push(
+          '${RouteConstants.statistics}?kch=${grade.kch}&courseName=${Uri.encodeComponent(grade.kcmc)}',
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDarkMode
+              ? Colors.blue.shade800.withAlpha(128)
+              : Colors.blue.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDarkMode ? Colors.blue.shade600 : Colors.blue.shade200,
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.analytics_outlined,
+              color: isDarkMode ? Colors.blue.shade300 : Colors.blue.shade700,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '点此处查看课程统计数据',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? Colors.blue.shade300 : Colors.blue.shade700,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

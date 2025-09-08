@@ -27,14 +27,38 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
 
   // 成绩单类型列表
   final List<TranscriptType> _transcriptTypes = [
-    TranscriptType(name: '中文成绩单', fileProperty: 'c5bdaa73-4076-48ad-87d6-c5435922524f'),
-    TranscriptType(name: '英文成绩单', fileProperty: '72dd8cfb-56d3-40ed-958a-f9dd552a9e06'),
-    TranscriptType(name: '最好成绩中文成绩单', fileProperty: '77886b51-b8ce-4fc5-863f-3ebc08b18d74'),
-    TranscriptType(name: '最好成绩英文成绩单', fileProperty: '10bda17a-2548-4091-8b5f-f0709dc74427'),
-    TranscriptType(name: '中文辅修成绩单', fileProperty: 'b52d541e-ad41-4305-a90b-13df4583fe50'),
-    TranscriptType(name: '英文辅修成绩单', fileProperty: 'a918fd1c-0a47-450c-ab65-763f5ce97968'),
-    TranscriptType(name: '最好成绩中文辅修成绩单', fileProperty: '6ffd75e1-7c7c-40d0-9e49-9a419c10eb24'),
-    TranscriptType(name: '最好成绩英文辅修成绩单', fileProperty: '14c6354a-1f8f-40ae-b531-5dce30287dfc'),
+    TranscriptType(
+      name: '中文成绩单',
+      fileProperty: 'c5bdaa73-4076-48ad-87d6-c5435922524f',
+    ),
+    TranscriptType(
+      name: '英文成绩单',
+      fileProperty: '72dd8cfb-56d3-40ed-958a-f9dd552a9e06',
+    ),
+    TranscriptType(
+      name: '最好成绩中文成绩单',
+      fileProperty: '77886b51-b8ce-4fc5-863f-3ebc08b18d74',
+    ),
+    TranscriptType(
+      name: '最好成绩英文成绩单',
+      fileProperty: '10bda17a-2548-4091-8b5f-f0709dc74427',
+    ),
+    TranscriptType(
+      name: '中文辅修成绩单',
+      fileProperty: 'b52d541e-ad41-4305-a90b-13df4583fe50',
+    ),
+    TranscriptType(
+      name: '英文辅修成绩单',
+      fileProperty: 'a918fd1c-0a47-450c-ab65-763f5ce97968',
+    ),
+    TranscriptType(
+      name: '最好成绩中文辅修成绩单',
+      fileProperty: '6ffd75e1-7c7c-40d0-9e49-9a419c10eb24',
+    ),
+    TranscriptType(
+      name: '最好成绩英文辅修成绩单',
+      fileProperty: '14c6354a-1f8f-40ae-b531-5dce30287dfc',
+    ),
   ];
 
   @override
@@ -47,8 +71,8 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
 
     return SingleChildScrollView(
@@ -58,32 +82,32 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
         children: [
           // 成绩单类型选择
           _buildTranscriptTypeSelector(isDarkMode, themeColor),
-          
+
           const SizedBox(height: 20),
-          
+
           // 绩点类型选择
           _buildGpaTypeSelector(isDarkMode, themeColor),
-          
+
           const SizedBox(height: 20),
-          
+
           // 排名类型选择
           _buildRankingTypeSelector(isDarkMode, themeColor),
-          
+
           const SizedBox(height: 20),
-          
+
           // 平均分类型选择
           _buildAverageTypeSelector(isDarkMode, themeColor),
-          
+
           const SizedBox(height: 20),
-          
+
           // 邮箱输入
           _buildEmailInput(isDarkMode, themeColor),
-          
+
           const SizedBox(height: 30),
-          
+
           // 发送按钮
           _buildSendButton(isDarkMode, themeColor),
-          
+
           const SizedBox(height: 80),
         ],
       ),
@@ -95,7 +119,9 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800.withAlpha(128) : Colors.white.withAlpha(204),
+        color: isDarkMode
+            ? Colors.grey.shade800.withAlpha(128)
+            : Colors.white.withAlpha(204),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -117,7 +143,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // 中英文标题行
           Row(
             children: [
@@ -146,7 +172,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // 成绩单选项（2列网格布局）
           GridView.builder(
             shrinkWrap: true,
@@ -161,7 +187,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
             itemBuilder: (context, index) {
               final isSelected = index == _selectedTranscriptIndex;
               final transcript = _transcriptTypes[index];
-              
+
               return InkWell(
                 onTap: () {
                   if (isSelected) {
@@ -176,11 +202,16 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
-                    color: isSelected 
+                    color: isSelected
                         ? Colors.blue.withAlpha(204)
-                        : (isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100),
+                        : (isDarkMode
+                              ? Colors.grey.shade700
+                              : Colors.grey.shade100),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected ? Colors.blue : Colors.transparent,
@@ -194,8 +225,10 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
                         transcript.name,
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                          color: isSelected 
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          color: isSelected
                               ? Colors.white
                               : (isDarkMode ? Colors.white : Colors.black),
                         ),
@@ -208,7 +241,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
                         isSelected ? '点击预览' : '点击选择',
                         style: TextStyle(
                           fontSize: 10,
-                          color: isSelected 
+                          color: isSelected
                               ? Colors.white.withAlpha(204)
                               : (isDarkMode ? Colors.white60 : Colors.black54),
                         ),
@@ -295,7 +328,9 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800.withAlpha(128) : Colors.white.withAlpha(204),
+        color: isDarkMode
+            ? Colors.grey.shade800.withAlpha(128)
+            : Colors.white.withAlpha(204),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -317,12 +352,12 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
             ),
           ),
           const SizedBox(height: 12),
-          
+
           Column(
             children: options.map((option) {
               final value = option['value']!;
               final label = option['label']!;
-              
+
               return RadioListTile<String>(
                 title: Text(
                   label,
@@ -350,7 +385,9 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800.withAlpha(128) : Colors.white.withAlpha(204),
+        color: isDarkMode
+            ? Colors.grey.shade800.withAlpha(128)
+            : Colors.white.withAlpha(204),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -372,7 +409,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
             ),
           ),
           const SizedBox(height: 8),
-          
+
           Text(
             '成绩单将发送至以下邮箱',
             style: TextStyle(
@@ -380,15 +417,13 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
               color: isDarkMode ? Colors.white70 : Colors.black54,
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           TextField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            style: TextStyle(
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
+            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             decoration: InputDecoration(
               hintText: '请输入邮箱地址',
               hintStyle: TextStyle(
@@ -401,13 +436,17 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade300,
+                  color: isDarkMode
+                      ? Colors.grey.shade600
+                      : Colors.grey.shade300,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade300,
+                  color: isDarkMode
+                      ? Colors.grey.shade600
+                      : Colors.grey.shade300,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -415,7 +454,9 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
                 borderSide: BorderSide(color: themeColor, width: 2),
               ),
               filled: true,
-              fillColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade50,
+              fillColor: isDarkMode
+                  ? Colors.grey.shade700
+                  : Colors.grey.shade50,
             ),
           ),
         ],
@@ -426,7 +467,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
   /// 构建发送按钮
   Widget _buildSendButton(bool isDarkMode, Color themeColor) {
     final isEmailValid = _isValidEmail(_emailController.text);
-    
+
     return SizedBox(
       width: double.infinity,
       height: 50,
@@ -451,10 +492,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
               )
             : const Text(
                 '发送成绩单',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
       ),
     );
@@ -464,22 +502,22 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
   Future<void> _previewTranscript(int index, Color themeColor) async {
     try {
       _showSnackBar('正在生成预览...', themeColor);
-      
+
       final apiService = ref.read(apiServiceProvider);
       final selectedTranscript = _transcriptTypes[index];
       final isDarkMode = ref.read(effectiveIsDarkModeProvider);
-      
+
       final result = await apiService.studyCertificate({
         'fileProperty': selectedTranscript.fileProperty,
         'jd': _jdType,
         'pjf': _pjfType,
         'pm': _pmType,
       });
-      
+
       if (result['success'] == true) {
         final data = result['data'];
         final smallImageList = data['smallImageList'];
-        
+
         if (smallImageList != null && mounted) {
           // 显示预览模态框
           await PreviewService.showPreviewModal(
@@ -507,24 +545,27 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
     }
 
     // 先申请存储权限（用于可能的本地保存）
-    final shouldContinue = await PermissionService.showPermissionRationaleDialog(
-      context,
-      title: '权限申请',
-      content: '为了更好地为您服务，我们需要存储权限来保存成绩单到本地。您也可以选择跳过，仅发送到邮箱。',
-      confirmText: '授予权限',
-      cancelText: '跳过',
-    );
+    final shouldContinue =
+        await PermissionService.showPermissionRationaleDialog(
+          context,
+          title: '权限申请',
+          content: '为了更好地为您服务，我们需要存储权限来保存成绩单到本地。您也可以选择跳过，仅发送到邮箱。',
+          confirmText: '授予权限',
+          cancelText: '跳过',
+        );
 
     if (shouldContinue) {
-      final hasPermission = await PermissionService.checkAndRequestStoragePermission(context);
+      final hasPermission =
+          await PermissionService.checkAndRequestStoragePermission(context);
       if (!hasPermission) {
-        final continueAnyway = await PermissionService.showPermissionRationaleDialog(
-          context,
-          title: '继续操作',
-          content: '没有存储权限，但您仍可以将成绩单发送到邮箱。是否继续？',
-          confirmText: '继续',
-          cancelText: '取消',
-        );
+        final continueAnyway =
+            await PermissionService.showPermissionRationaleDialog(
+              context,
+              title: '继续操作',
+              content: '没有存储权限，但您仍可以将成绩单发送到邮箱。是否继续？',
+              confirmText: '继续',
+              cancelText: '取消',
+            );
         if (!continueAnyway) return;
       }
     }
@@ -534,10 +575,10 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
     try {
       final apiService = ref.read(apiServiceProvider);
       final selectedTranscript = _transcriptTypes[_selectedTranscriptIndex];
-      
+
       // 显示处理进度
       PermissionService.showSaveProgressDialog(context, '正在生成成绩单...');
-      
+
       // 1. 先生成成绩单
       final studyCertResult = await apiService.studyCertificate({
         'fileProperty': selectedTranscript.fileProperty,
@@ -545,12 +586,12 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
         'pjf': _pjfType,
         'pm': _pmType,
       });
-      
+
       if (studyCertResult['success'] == true) {
         final data = studyCertResult['data'];
         final fileUrl = data['fileUrl'];
         final pdfSerialId = data['pdfSerialId'];
-        
+
         // 2. 发送邮件
         await apiService.sendStudyCertificate({
           'fileUrl': fileUrl,
@@ -559,7 +600,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
           'vcid': selectedTranscript.fileProperty,
           'toEmail': _emailController.text,
         });
-        
+
         if (mounted) {
           Navigator.of(context).pop(); // 关闭进度对话框
           PermissionService.showSuccessSnackBar(context, '成绩单发送成功，请查看您的邮箱');
@@ -585,17 +626,17 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
 
   /// 验证邮箱格式
   bool _isValidEmail(String email) {
-    return RegExp(r'^[\w\-.]+@[\w\-.]+\.[A-Z]{2,4}$', caseSensitive: false).hasMatch(email);
+    return RegExp(
+      r'^[\w\-.]+@[\w\-.]+\.[A-Z]{2,4}$',
+      caseSensitive: false,
+    ).hasMatch(email);
   }
 
   /// 显示提示消息
   void _showSnackBar(String message, Color themeColor) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: themeColor,
-        ),
+        SnackBar(content: Text(message), backgroundColor: themeColor),
       );
     }
   }

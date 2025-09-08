@@ -33,9 +33,11 @@ class CustomThemeService {
   Future<bool> saveCustomTheme(Theme theme) async {
     try {
       final customThemes = await getCustomThemes();
-      
+
       // 检查是否已存在相同code的主题，如果存在则替换
-      final existingIndex = customThemes.indexWhere((t) => t.code == theme.code);
+      final existingIndex = customThemes.indexWhere(
+        (t) => t.code == theme.code,
+      );
       if (existingIndex != -1) {
         customThemes[existingIndex] = theme;
       } else {
@@ -57,7 +59,9 @@ class CustomThemeService {
   Future<bool> deleteCustomTheme(String themeCode) async {
     try {
       final customThemes = await getCustomThemes();
-      final filteredThemes = customThemes.where((t) => t.code != themeCode).toList();
+      final filteredThemes = customThemes
+          .where((t) => t.code != themeCode)
+          .toList();
 
       final themesJsonString = json.encode(
         filteredThemes.map((t) => t.toJson()).toList(),

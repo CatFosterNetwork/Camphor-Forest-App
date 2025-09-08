@@ -8,9 +8,9 @@ class ClassTableChart extends StatelessWidget {
   final bool darkMode;
   final int currentWeek;
   final DateTime semesterStart;
-  
+
   // 新增主题配置支持
-  final CustomTheme.Theme? customTheme;
+  final CustomTheme.Theme customTheme;
 
   // 新增交互回调
   final void Function(Course course, Rect courseRect)? onCourseTap;
@@ -21,7 +21,7 @@ class ClassTableChart extends StatelessWidget {
     required this.darkMode,
     required this.currentWeek,
     required this.semesterStart,
-    this.customTheme,
+    required this.customTheme,
     this.onCourseTap,
   });
 
@@ -71,10 +71,9 @@ class ClassTableChart extends StatelessWidget {
   Widget _buildDateHeader(double height) {
     final monday = semesterStart.add(Duration(days: (currentWeek - 1) * 7));
     final days = List.generate(7, (i) => monday.add(Duration(days: i)));
-    
-    final headerTextColor = darkMode 
-        ? const Color(0xFFBFC2C9)
-        : (customTheme?.weekColor ?? Colors.black87);
+
+    // 改进颜色逻辑，确保主题切换时正确更新
+    final headerTextColor = _getHeaderTextColor();
     final today = DateTime.now();
 
     return SizedBox(
@@ -145,9 +144,8 @@ class ClassTableChart extends StatelessWidget {
 
   // 提取时间列为独立方法
   Widget _buildTimeColumn(double cellHeight) {
-    final timeTextColor = darkMode 
-        ? const Color(0xFFBFC2C9)
-        : (customTheme?.foregColor.withAlpha(204) ?? Colors.black54);
+    // 改进颜色逻辑，确保主题切换时正确更新
+    final timeTextColor = _getTimeTextColor();
 
     return SizedBox(
       width: 40,
@@ -226,19 +224,8 @@ class ClassTableChart extends StatelessWidget {
 
   // 绘制背景网格
   Widget _buildGridBackground(double cellHeight) {
-    // 根据自定义主题和深色模式调整网格颜色
-    final Color gridColor;
-    if (customTheme != null) {
-      // 如果有自定义主题，使用前景色作为网格颜色基础
-      gridColor = darkMode 
-          ? customTheme!.foregColor.withAlpha(26)
-          : customTheme!.foregColor.withAlpha(15);
-    } else {
-      // 没有自定义主题时使用默认颜色
-      gridColor = darkMode
-          ? Colors.white.withAlpha(20)
-          : Colors.black.withAlpha(13);
-    }
+    // 改进网格颜色逻辑，确保主题切换时正确更新
+    final Color gridColor = _getGridColor();
 
     final totalGridHeight = cellHeight * PeriodTimes.times.length;
 
@@ -306,10 +293,17 @@ class ClassTableChart extends StatelessWidget {
         width: width,
         height: height,
         child: GestureDetector(
-          onTap: onCourseTap != null ? () {
-            final courseRect = Rect.fromLTWH(left + 2, top + 1, width, height);
-            onCourseTap!(course, courseRect);
-          } : null,
+          onTap: onCourseTap != null
+              ? () {
+                  final courseRect = Rect.fromLTWH(
+                    left + 2,
+                    top + 1,
+                    width,
+                    height,
+                  );
+                  onCourseTap!(course, courseRect);
+                }
+              : null,
           child: Hero(
             tag: 'course_${course.id}_${course.weekday}_${course.start}',
             child: _CourseCard(
@@ -378,8 +372,8 @@ class ClassTableChart extends StatelessWidget {
 
     // 浅色模式下使用自定义主题的颜色列表
     final List<Color> baseColors;
-    if (customTheme?.colorList.isNotEmpty == true) {
-      baseColors = customTheme!.colorList;
+    if (customTheme.colorList.isNotEmpty) {
+      baseColors = customTheme.colorList;
     } else {
       baseColors = [
         scheme.primary,
@@ -400,13 +394,46 @@ class ClassTableChart extends StatelessWidget {
     for (int i = 0; i < uniqueCourseIds.length; i++) {
       final courseId = uniqueCourseIds[i];
       // 使用课程ID的字符码和来选择颜色
-      final colorIndex = courseId.codeUnits.fold(0, (sum, code) => sum + code) % baseColors.length;
+      final colorIndex =
+          courseId.codeUnits.fold(0, (sum, code) => sum + code) %
+          baseColors.length;
       final color = baseColors[colorIndex];
-      
+
       colorMap[courseId] = color;
     }
 
     return colorMap;
+  }
+
+  // 获取日期头部文本颜色
+  Color _getHeaderTextColor() {
+    if (darkMode) {
+      return const Color(0xFFBFC2C9);
+    }
+
+    // 浅色模式下使用主题的weekColor
+    return customTheme.weekColor;
+  }
+
+  // 获取时间列文本颜色
+  Color _getTimeTextColor() {
+    if (darkMode) {
+      return const Color(0xFFBFC2C9);
+    }
+
+    // 浅色模式下使用主题的foregColor
+    return customTheme.foregColor.withAlpha(204);
+  }
+
+  // 获取网格颜色
+  Color _getGridColor() {
+    if (darkMode) {
+      // 深色模式下的网格颜色
+      return customTheme.foregColor.withAlpha(26);
+    }
+
+    // 浅色模式下的网格颜色
+    return customTheme.foregColor.withAlpha(15);
   }
 }
 
@@ -440,10 +467,9 @@ class _CourseCard extends StatelessWidget {
         color: color,
         borderRadius: BorderRadius.circular(6),
         // 深色模式下添加边框
-        border: darkMode ? Border.all(
-          color: const Color(0xFF616266),
-          width: 1,
-        ) : null,
+        border: darkMode
+            ? Border.all(color: const Color(0xFF616266), width: 1)
+            : null,
         boxShadow: [
           BoxShadow(
             color: darkMode ? Colors.black26 : Colors.black12,
@@ -474,7 +500,7 @@ class _CourseCard extends StatelessWidget {
                 maxLines: 2, // 允许两行显示
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 8, 
+                  fontSize: 8,
                   color: _getTextColor().withAlpha(230),
                   height: 1.1, // 减小行高以节省空间
                 ),
@@ -486,15 +512,15 @@ class _CourseCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 9, 
-                color: _getTextColor().withAlpha(230)
+                fontSize: 9,
+                color: _getTextColor().withAlpha(230),
               ),
             ),
         ],
       ),
     );
   }
-  
+
   // 获取文本颜色，适配深色模式
   Color _getTextColor() {
     if (darkMode) {

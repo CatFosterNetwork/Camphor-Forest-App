@@ -13,11 +13,7 @@ class ClassroomBrief extends ConsumerStatefulWidget {
   final bool blur;
   final bool darkMode;
 
-  const ClassroomBrief({
-    super.key,
-    required this.blur,
-    required this.darkMode,
-  });
+  const ClassroomBrief({super.key, required this.blur, required this.darkMode});
 
   @override
   ConsumerState<ClassroomBrief> createState() => _ClassroomBriefState();
@@ -44,10 +40,10 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
   Widget build(BuildContext context) {
     // 获取主题色
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true 
-        ? currentTheme!.colorList[0] 
+    final themeColor = currentTheme?.colorList.isNotEmpty == true
+        ? currentTheme!.colorList[0]
         : Colors.blue;
-    
+
     final textColor = widget.darkMode ? Colors.white70 : Colors.black87;
     final subtitleColor = widget.darkMode ? Colors.white54 : Colors.black54;
 
@@ -115,9 +111,9 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
                   ),
                 ],
               ),
-          
+
               const SizedBox(height: 16),
-          
+
               // 内容区域
               if (_classrooms.isNotEmpty) ...[
                 _buildClassroomContent(textColor, subtitleColor),
@@ -138,7 +134,7 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
     final classroom = _classrooms.first;
     final displayName = classroom.cdbh.replaceAll(RegExp(r'^\d+'), '');
     final locationName = '${classroom.xqmc}${classroom.jxlmc}';
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -148,16 +144,16 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: widget.darkMode
-                  ? [Colors.blue.shade800.withAlpha(76), Colors.green.shade800.withAlpha(76)]
+                  ? [
+                      Colors.blue.shade800.withAlpha(76),
+                      Colors.green.shade800.withAlpha(76),
+                    ]
                   : [Colors.blue.shade50, Colors.green.shade50],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.blue.withAlpha(76),
-              width: 1,
-            ),
+            border: Border.all(color: Colors.blue.withAlpha(76), width: 1),
           ),
           child: Row(
             children: [
@@ -179,16 +175,13 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
                       const SizedBox(height: 4),
                       Text(
                         locationName,
-                        style: TextStyle(
-                          color: subtitleColor,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: subtitleColor, fontSize: 12),
                       ),
                     ],
                   ],
                 ),
               ),
-              
+
               // 教室信息
               Expanded(
                 flex: 3,
@@ -198,18 +191,12 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
                     if (classroom.dateDigit.isNotEmpty)
                       Text(
                         classroom.dateDigit,
-                        style: TextStyle(
-                          color: subtitleColor,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: subtitleColor, fontSize: 12),
                       ),
                     const SizedBox(height: 2),
                     Text(
                       '可容纳${classroom.zws}人',
-                      style: TextStyle(
-                        color: subtitleColor,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: subtitleColor, fontSize: 12),
                     ),
                   ],
                 ),
@@ -228,11 +215,7 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
       child: Center(
         child: Column(
           children: [
-            Icon(
-              Icons.meeting_room_outlined,
-              color: subtitleColor,
-              size: 32,
-            ),
+            Icon(Icons.meeting_room_outlined, color: subtitleColor, size: 32),
             const SizedBox(height: 8),
             Text(
               '点击查询空教室',
@@ -252,8 +235,8 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
   Widget _applyContainerStyle(Widget child) {
     Widget styledChild = Container(
       decoration: BoxDecoration(
-        color: widget.darkMode 
-            ? Colors.grey.shade900.withAlpha(230) 
+        color: widget.darkMode
+            ? Colors.grey.shade900.withAlpha(230)
             : Colors.white.withAlpha(230),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -274,14 +257,13 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: widget.darkMode 
+              color: widget.darkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: widget.darkMode ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              ) : null,
+              border: widget.darkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
             ),
             child: child,
           ),
@@ -296,9 +278,7 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
   void _navigateToClassroomQuery(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const ClassroomQueryScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const ClassroomQueryScreen()),
     );
   }
 }

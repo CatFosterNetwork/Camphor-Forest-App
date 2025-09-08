@@ -4,23 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:gal/gal.dart';
 import 'package:dio/dio.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../core/providers/permission_provider.dart';
 import '../../core/services/permission_service.dart';
 // import 'package:flutter_svg/flutter_svg.dart'; // 暂时不使用SVG
 import 'package:package_info_plus/package_info_plus.dart';
-// import 'package:go_router/go_router.dart'; // 暂时不使用
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
 import '../../core/widgets/cached_image.dart';
-// import '../../core/constants/route_constants.dart'; // 暂时不使用
+import '../../core/constants/route_constants.dart';
 
 class AboutPage extends ConsumerStatefulWidget {
   const AboutPage({super.key});
@@ -265,16 +262,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
 
   /// 导航到用户协议页面
   void _navigateToUserAgreement(BuildContext context) {
-    // 如果有用户协议页面路由，可以导航过去
-    // context.push(RouteConstants.userAgreement);
-
-    // 临时显示提示
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('用户协议功能开发中'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    context.push(RouteConstants.userAgreement);
   }
 
   /// 显示官方群二维码
@@ -593,98 +581,6 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         PermissionService.showErrorSnackBar(context, '保存失败: $e');
       }
     }
-  }
-
-  /// 检查并请求存储权限
-  Future<bool> _checkAndRequestStoragePermission() async {
-    if (Platform.isAndroid) {
-      // Android 13+ 使用新的照片权限
-      if (await _isAndroid13OrHigher()) {
-        final status = await Permission.photos.status;
-        if (status.isGranted) {
-          return true;
-        } else if (status.isDenied) {
-          final result = await Permission.photos.request();
-          return result.isGranted;
-        } else if (status.isPermanentlyDenied) {
-          await _showPermissionDeniedDialog();
-          return false;
-        }
-      } else {
-        // Android 12 及以下使用存储权限
-        final status = await Permission.storage.status;
-        if (status.isGranted) {
-          return true;
-        } else if (status.isDenied) {
-          final result = await Permission.storage.request();
-          return result.isGranted;
-        } else if (status.isPermanentlyDenied) {
-          await _showPermissionDeniedDialog();
-          return false;
-        }
-      }
-    } else if (Platform.isIOS) {
-      // iOS 使用照片权限
-      final status = await Permission.photos.status;
-      if (status.isGranted) {
-        return true;
-      } else if (status.isDenied) {
-        final result = await Permission.photos.request();
-        return result.isGranted;
-      } else if (status.isPermanentlyDenied) {
-        await _showPermissionDeniedDialog();
-        return false;
-      }
-    }
-
-    return false;
-  }
-
-  /// 检查是否为Android 13或更高版本
-  Future<bool> _isAndroid13OrHigher() async {
-    if (Platform.isAndroid) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      return androidInfo.version.sdkInt >= 33;
-    }
-    return false;
-  }
-
-  /// 显示权限被拒绝的对话框
-  Future<void> _showPermissionDeniedDialog() async {
-    if (!mounted) return;
-
-    final isDarkMode = ref.read(effectiveIsDarkModeProvider);
-
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
-        title: Text(
-          '权限被拒绝',
-          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-        ),
-        content: Text(
-          '需要相册权限才能保存二维码图片。请在设置中手动开启权限。',
-          style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              '取消',
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              openAppSettings();
-            },
-            child: const Text('去设置', style: TextStyle(color: Colors.blue)),
-          ),
-        ],
-      ),
-    );
   }
 
   /// 下载图片

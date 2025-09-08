@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/config/providers/theme_config_provider.dart';
-import '../../core/providers/grade_provider.dart';
 
 import 'providers/classtable_providers.dart';
 
@@ -9,9 +8,12 @@ import '../../core/widgets/theme_aware_scaffold.dart';
 import 'widgets/class_table_chart.dart';
 import 'widgets/week_selector_tabs.dart';
 import 'widgets/course_detail_modal.dart';
+import 'widgets/history_classtable_selector.dart';
+import 'providers/classtable_settings_provider.dart';
 import 'constants/semester.dart';
 import 'models/course.dart';
 import '../../core/models/theme_model.dart' as custom_theme_model;
+import 'package:go_router/go_router.dart';
 
 class ClassTableScreen extends ConsumerStatefulWidget {
   const ClassTableScreen({super.key});
@@ -22,9 +24,11 @@ class ClassTableScreen extends ConsumerStatefulWidget {
 
 class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     with SingleTickerProviderStateMixin {
-  // 学年学期参数 - 使用动态计算的当前学期
-  late final String xnm;
-  late final String xqm;
+  // 学年学期参数 - 使用稳定的值，避免不必要的重建
+  late String _currentXnm;
+  late String _currentXqm;
+  bool _isInitialized = false;
+  bool _hasAutoCalculatedWeek = false;
 
   int _currentWeek = 1;
   bool _isLoading = false;
@@ -40,13 +44,12 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     super.initState();
 
     // 初始化学年学期参数
-    xnm = GradeNotifier.getCurrentXnm();
-    xqm = GradeNotifier.getCurrentSemester();
+    final now = DateTime.now();
+    _currentXnm = now.year.toString();
+    _currentXqm = now.month < 7 ? '12' : '3';
 
-    // 计算当前周次
-    final diffDays = DateTime.now().difference(SemesterConfig.start).inDays;
-    _currentWeek = (diffDays ~/ 7) + 1;
-    if (_currentWeek < 1) _currentWeek = 1;
+    // 计算当前周次将在build方法中根据当前学期动态计算
+    _currentWeek = 1; // 默认值
 
     // 初始化刷新动画
     _refreshAnimController = AnimationController(
@@ -91,59 +94,13 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
           ),
         );
 
-    // 延迟初始化数据，确保状态正确更新
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadData();
-    });
+    // 课表数据现在由classTableProvider自动管理
   }
 
   @override
   void dispose() {
     _refreshAnimController.dispose();
     super.dispose();
-  }
-
-  // 加载或刷新数据
-  Future<void> _loadData() async {
-    if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-      _isRefreshing = true;
-    });
-
-    // 启动刷新动画
-    _refreshAnimController.reset();
-    _refreshAnimController.forward();
-
-    try {
-      // 强制刷新课表数据
-      await ref.read(classTableRepositoryProvider).fetchRemote(xnm, xqm);
-      if (mounted) {
-        ref.invalidate(classTableProvider((xnm: xnm, xqm: xqm)));
-      }
-    } catch (e) {
-      debugPrint('加载课表数据失败: $e');
-      // 如果远程加载失败，尝试从本地加载
-      if (mounted) {
-        ref.invalidate(classTableProvider((xnm: xnm, xqm: xqm)));
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-
-          // 延迟关闭旋转动画，确保动画完成
-          Future.delayed(const Duration(milliseconds: 500), () {
-            if (mounted) {
-              setState(() {
-                _isRefreshing = false;
-              });
-            }
-          });
-        });
-      }
-    }
   }
 
   // 显示课程详情对话框
@@ -228,8 +185,37 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   void _changeWeek(int week) {
     setState(() {
       _currentWeek = week;
-      debugPrint('切换到第$_currentWeek周');
+      debugPrint('🗓️ 切换到第$_currentWeek周 (学期: $_currentXnm-$_currentXqm)');
     });
+  }
+
+  // 格式化AppBar标题：当前学期显示日期，历史学期显示学期名称
+  String _formatAppBarTitle() {
+    // 判断是否为当前学期
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final currentMonth = now.month;
+
+    // 计算当前学期
+    final currentXnm = currentMonth < 7
+        ? (currentYear - 1).toString()
+        : currentYear.toString();
+    final currentXqm = currentMonth < 7 ? '12' : '3';
+
+    // 如果是当前学期，显示当前日期
+    if (_currentXnm == currentXnm && _currentXqm == currentXqm) {
+      return DateTime.now().toString().split(' ')[0];
+    }
+
+    // 如果是历史学期，只显示学期名称
+    final year = int.tryParse(_currentXnm) ?? DateTime.now().year;
+    if (_currentXqm == '3') {
+      return '${year}年秋季学期';
+    } else if (_currentXqm == '12') {
+      return '${year + 1}年春季学期';
+    } else {
+      return '${_currentXnm}-${_currentXqm}学期';
+    }
   }
 
   @override
@@ -237,7 +223,78 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     // 使用现有的主题系统
     final currentTheme = ref.watch(selectedCustomThemeProvider);
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
-    final tableAsync = ref.watch(classTableProvider((xnm: xnm, xqm: xqm)));
+
+    // 初始化时读取设置
+    if (!_isInitialized) {
+      final settings = ref.read(classTableSettingsProvider);
+      // 直接更新，不用setState，避免触发监听器
+      _currentXnm = settings.currentXnm;
+      _currentXqm = settings.currentXqm;
+      _isInitialized = true;
+      debugPrint('📅 初始化学期: ${settings.currentXnm}-${settings.currentXqm}');
+    }
+
+    // 监听学期变化
+    ref.listen<ClassTableSettingsState>(classTableSettingsProvider, (
+      previous,
+      next,
+    ) {
+      if (previous != null &&
+          (next.currentXnm != _currentXnm || next.currentXqm != _currentXqm)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _currentXnm = next.currentXnm;
+              _currentXqm = next.currentXqm;
+              _currentWeek = 1; // 重置周次
+              _hasAutoCalculatedWeek = false; // 允许新学期重新计算周次
+            });
+            debugPrint('📅 学期切换: ${next.currentXnm}-${next.currentXqm}，周次重置为1');
+          }
+        });
+      }
+    });
+
+    final tableAsync = ref.watch(
+      classTableProvider((xnm: _currentXnm, xqm: _currentXqm)),
+    );
+
+    // 根据当前学期动态计算周次
+    final semesterStart = SemesterConfig.getSemesterStart(
+      _currentXnm,
+      _currentXqm,
+    );
+
+    // 判断是否为当前学期
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final currentMonth = now.month;
+    final currentXnm = currentMonth < 7
+        ? (currentYear - 1).toString()
+        : currentYear.toString();
+    final currentXqm = currentMonth < 7 ? '12' : '3';
+    final isCurrentSemester =
+        _currentXnm == currentXnm && _currentXqm == currentXqm;
+
+    // 只有当前学期才基于日期计算周次，历史学期使用固定的第1周
+    if (isCurrentSemester) {
+      final diffDays = now.difference(semesterStart).inDays;
+      final calculatedWeek = (diffDays ~/ 7) + 1;
+
+      // 只在真正的首次初始化时根据日期设置周次，避免覆盖用户手动选择
+      if (_currentWeek == 1 && calculatedWeek > 0 && !_hasAutoCalculatedWeek) {
+        _hasAutoCalculatedWeek = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _currentWeek = calculatedWeek.clamp(1, 30);
+            debugPrint('🕰️ 根据日期自动设置为第$_currentWeek周（当前学期，首次初始化）');
+          });
+        });
+      }
+    } else {
+      // 历史学期：如果是刚切换过来的（周次为1且未自动计算过），保持第1周
+      debugPrint('📅 历史学期 $_currentXnm-$_currentXqm，保持第$_currentWeek周');
+    }
 
     if (_isLoading && !_isRefreshing) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -253,7 +310,14 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
             children: [
               Text('加载失败 $e'),
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: _loadData, child: const Text('重试')),
+              ElevatedButton(
+                onPressed: () async {
+                  await ref.refresh(
+                    classTableProvider((xnm: _currentXnm, xqm: _currentXqm)),
+                  );
+                },
+                child: const Text('重试'),
+              ),
             ],
           ),
         ),
@@ -293,8 +357,14 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
         maxWeek = maxWeek > 20 ? maxWeek : 20;
         debugPrint('计算得到最大周次: $maxWeek');
 
-        // 确保 _currentWeek 在范围内
-        _currentWeek = _currentWeek.clamp(1, maxWeek);
+        // 只有当前周超出范围时才调整
+        if (_currentWeek > maxWeek) {
+          debugPrint('⚠️ 当前周 $_currentWeek 超出最大周次 $maxWeek，调整为: $maxWeek');
+          _currentWeek = maxWeek;
+        } else if (_currentWeek < 1) {
+          debugPrint('⚠️ 当前周 $_currentWeek 小于1，调整为: 1');
+          _currentWeek = 1;
+        }
 
         // 课表背景现在由ThemeAwareScaffold自动管理
 
@@ -309,140 +379,205 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
           debugPrint('当前第$_currentWeek周没有课程');
         }
 
-        return ThemeAwareScaffold(
-          useBackground: true,
-          pageType: PageType.classtable,
-          extendBodyBehindAppBar: true, // 让背景在AppBar下显示
-          appBar: ThemeAwareAppBar(
-            title: DateTime.now().toString().split(' ')[0],
-            transparent: true,
-            actions: [
-              AnimatedBuilder(
-                animation: _refreshAnimController,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _isRefreshing ? _refreshScaleAnimation.value : 1.0,
-                    child: Transform.rotate(
-                      angle: _isRefreshing
-                          ? _refreshRotateAnimation.value
-                          : 0.0,
-                      child: IconButton(
-                        icon: const Icon(Icons.refresh),
-                        onPressed: _loadData,
-                        tooltip: '刷新课表',
-                        color: isDarkMode
-                            ? const Color(0xFFBFC2C9)
-                            : (currentTheme?.foregColor ?? Colors.black),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.calendar_month),
-                onPressed: () =>
-                    _showWeekSelector(context, maxWeek, currentTheme),
-                tooltip: '选择周次',
-                color: isDarkMode
-                    ? const Color(0xFFBFC2C9)
-                    : (currentTheme?.foregColor ?? Colors.black),
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-          body: Stack(
-            children: [
-              Column(
-                children: [
-                  // 添加周数选择器
-                  WeekSelectorTabs(
-                    currentWeek: _currentWeek,
-                    maxWeek: maxWeek,
-                    onWeekChanged: _changeWeek,
-                    customTheme: currentTheme,
-                    darkMode: isDarkMode,
-                  ),
-
-                  // 课表内容
-                  Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent, // 确保空白区域也能接收手势
-                      onHorizontalDragEnd: (details) {
-                        final velocity = details.primaryVelocity ?? 0;
-
-                        if (velocity.abs() < 200) return;
-                        if (velocity < 0 && _currentWeek < maxWeek) {
-                          // 向左滑，下一周
-                          _changeWeek(_currentWeek + 1);
-                        } else if (velocity > 0 && _currentWeek > 1) {
-                          // 向右滑，上一周
-                          _changeWeek(_currentWeek - 1);
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(2),
-                        child: ClassTableChart(
-                          courses: courses,
-                          darkMode: isDarkMode,
-                          currentWeek: _currentWeek,
-                          semesterStart: SemesterConfig.start,
-                          customTheme: currentTheme,
-                          onCourseTap: (course, courseRect) =>
-                              _showCourseDetail(
-                                context,
-                                course,
-                                isDarkMode,
-                                courseRect,
-                                courses,
-                              ),
+        return Stack(
+          children: [
+            ThemeAwareScaffold(
+              useBackground: true,
+              pageType: PageType.classtable,
+              extendBodyBehindAppBar: true, // 让背景在AppBar下显示
+              appBar: ThemeAwareAppBar(
+                title: _formatAppBarTitle(),
+                transparent: true,
+                actions: [
+                  AnimatedBuilder(
+                    animation: _refreshAnimController,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: _isRefreshing
+                            ? _refreshScaleAnimation.value
+                            : 1.0,
+                        child: Transform.rotate(
+                          angle: _isRefreshing
+                              ? _refreshRotateAnimation.value
+                              : 0.0,
+                          child: IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () async {
+                              await ref.refresh(
+                                classTableProvider((
+                                  xnm: _currentXnm,
+                                  xqm: _currentXqm,
+                                )),
+                              );
+                            },
+                            tooltip: '刷新课表',
+                            color: isDarkMode
+                                ? const Color(0xFFBFC2C9)
+                                : (currentTheme?.foregColor ?? Colors.black),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.calendar_month),
+                    onPressed: () =>
+                        _showWeekSelector(context, maxWeek, currentTheme),
+                    tooltip: '选择周次',
+                    color: isDarkMode
+                        ? const Color(0xFFBFC2C9)
+                        : (currentTheme?.foregColor ?? Colors.black),
+                  ),
+                  const SizedBox(width: 8),
                 ],
               ),
+              body: Stack(
+                children: [
+                  Column(
+                    children: [
+                      // 添加周数选择器
+                      WeekSelectorTabs(
+                        currentWeek: _currentWeek,
+                        maxWeek: maxWeek,
+                        onWeekChanged: _changeWeek,
+                        customTheme: currentTheme,
+                        darkMode: isDarkMode,
+                      ),
 
-              // 悬浮按钮，添加动画效果
-              Positioned(
-                bottom: 32,
-                right: 32,
-                child: AnimatedBuilder(
-                  animation: _refreshAnimController,
-                  builder: (context, child) {
-                    return Transform.scale(
-                      scale: _isRefreshing ? _refreshScaleAnimation.value : 1.0,
-                      child: TweenAnimationBuilder<double>(
-                        tween: Tween<double>(begin: 1.0, end: 1.0),
-                        duration: const Duration(milliseconds: 200),
-                        builder: (context, scale, child) {
-                          return Transform.scale(scale: scale, child: child);
-                        },
-                        child: FloatingActionButton(
+                      // 课表内容
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent, // 确保空白区域也能接收手势
+                          onHorizontalDragEnd: (details) {
+                            final velocity = details.primaryVelocity ?? 0;
+
+                            if (velocity.abs() < 200) return;
+                            if (velocity < 0 && _currentWeek < maxWeek) {
+                              // 向左滑，下一周
+                              _changeWeek(_currentWeek + 1);
+                            } else if (velocity > 0 && _currentWeek > 1) {
+                              // 向右滑，上一周
+                              _changeWeek(_currentWeek - 1);
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: ClassTableChart(
+                              courses: courses,
+                              darkMode: isDarkMode,
+                              currentWeek: _currentWeek,
+                              semesterStart: SemesterConfig.getSemesterStart(
+                                _currentXnm,
+                                _currentXqm,
+                              ),
+                              customTheme: currentTheme,
+                              onCourseTap: (course, courseRect) =>
+                                  _showCourseDetail(
+                                    context,
+                                    course,
+                                    isDarkMode,
+                                    courseRect,
+                                    courses,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // 悬浮按钮组，添加动画效果
+                  Positioned(
+                    bottom: 32,
+                    right: 32,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 设置按钮
+                        FloatingActionButton(
+                          heroTag: "settings",
                           onPressed: () {
-                            // 添加按下动画
-                            setState(() {
-                              _loadData();
-                            });
+                            debugPrint('🔧 设置按钮被点击，显示操作菜单');
+                            _showActionMenu(context);
                           },
                           backgroundColor:
                               (currentTheme?.colorList.isNotEmpty == true
                                       ? currentTheme!.colorList.first
                                       : Colors.blue)
-                                  .withAlpha(204),
-                          child: Transform.rotate(
-                            angle: _isRefreshing
-                                ? _refreshRotateAnimation.value
-                                : 0.0,
-                            child: const Icon(Icons.refresh),
+                                  .withAlpha(153),
+                          child: const Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                            size: 28,
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+
+                        const SizedBox(height: 16),
+
+                        // 刷新按钮
+                        AnimatedBuilder(
+                          animation: _refreshAnimController,
+                          builder: (context, child) {
+                            return Transform.scale(
+                              scale: _isRefreshing
+                                  ? _refreshScaleAnimation.value
+                                  : 1.0,
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween<double>(begin: 1.0, end: 1.0),
+                                duration: const Duration(milliseconds: 200),
+                                builder: (context, scale, child) {
+                                  return Transform.scale(
+                                    scale: scale,
+                                    child: child,
+                                  );
+                                },
+                                child: FloatingActionButton(
+                                  heroTag: "refresh",
+                                  onPressed: () async {
+                                    setState(() {
+                                      _isRefreshing = true;
+                                    });
+                                    _refreshAnimController.forward().then((_) {
+                                      _refreshAnimController.reverse();
+                                      setState(() {
+                                        _isRefreshing = false;
+                                      });
+                                    });
+                                    // ignore: unawaited_futures
+                                    ref.refresh(
+                                      classTableProvider((
+                                        xnm: _currentXnm,
+                                        xqm: _currentXqm,
+                                      )),
+                                    );
+                                  },
+                                  backgroundColor:
+                                      (currentTheme?.colorList.isNotEmpty ==
+                                                  true
+                                              ? currentTheme!.colorList.first
+                                              : Colors.blue)
+                                          .withAlpha(204),
+                                  child: Transform.rotate(
+                                    angle: _isRefreshing
+                                        ? _refreshRotateAnimation.value
+                                        : 0.0,
+                                    child: const Icon(
+                                      Icons.refresh,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -541,5 +676,157 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   Color _getTextColorForBackground(Color backgroundColor) {
     final brightness = backgroundColor.computeLuminance();
     return brightness > 0.5 ? Colors.black87 : Colors.white;
+  }
+
+  /// 显示操作菜单（使用Material的ModalBottomSheet）
+  void _showActionMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => _buildMaterialActionSheet(context),
+    );
+  }
+
+  /// 构建Material风格的ActionSheet
+  Widget _buildMaterialActionSheet(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 拖拽指示器
+            Container(
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurface.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // 标题
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                '课表设置',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+
+            const Divider(height: 1),
+
+            // 菜单选项
+            _buildMaterialOption(
+              context,
+              icon: Icons.history_rounded,
+              title: '历史课表',
+              subtitle: '查看和切换到以前的学期',
+              onTap: () {
+                Navigator.pop(context);
+                _showHistoryDialog(context);
+              },
+            ),
+
+            _buildMaterialOption(
+              context,
+              icon: Icons.edit_calendar_rounded,
+              title: '自定义课表',
+              subtitle: '添加和编辑自定义课程',
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/classTable/customize');
+              },
+            ),
+
+            const SizedBox(height: 8),
+
+            // 取消按钮
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => Navigator.pop(context),
+                style: FilledButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text('取消'),
+              ),
+            ),
+
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 构建Material风格的选项
+  Widget _buildMaterialOption(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          color: theme.colorScheme.onPrimaryContainer,
+          size: 24,
+        ),
+      ),
+      title: Text(
+        title,
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurface.withOpacity(0.7),
+        ),
+      ),
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        color: theme.colorScheme.onSurface.withOpacity(0.5),
+      ),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    );
+  }
+
+  /// 显示历史课表选择对话框
+  void _showHistoryDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const HistoryClassTableSelector(),
+    );
   }
 }
