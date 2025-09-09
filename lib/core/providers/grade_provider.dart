@@ -937,6 +937,28 @@ final availableSemestersProvider = Provider<List<SemesterInfo>>((ref) {
   return state.availableSemesters;
 });
 
+/// 排序后的可用学期列表（按年份降序，秋季在春季前）
+final sortedAvailableSemestersProvider = Provider<List<SemesterInfo>>((ref) {
+  final semesters = ref.watch(availableSemestersProvider);
+
+  // 创建一个副本进行排序，避免修改原始列表
+  final sortedSemesters = List<SemesterInfo>.from(semesters);
+
+  sortedSemesters.sort((a, b) {
+    // 首先按学年排序（较新的年份在前）
+    final yearComparison = b.xnm.compareTo(a.xnm);
+    if (yearComparison != 0) {
+      return yearComparison;
+    }
+
+    // 同一学年内，秋季学期（3）在春季学期（12）前
+    // 注意：xqm为"3"代表秋季，"12"代表春季
+    return a.xqm.compareTo(b.xqm);
+  });
+
+  return sortedSemesters;
+});
+
 /// 新成绩检测Provider
 final hasNewGradesProvider = Provider<bool>((ref) {
   final state = ref.watch(gradeProvider);

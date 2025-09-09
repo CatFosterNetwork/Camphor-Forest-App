@@ -19,7 +19,7 @@ class GradeNormalTab extends ConsumerWidget {
     final gradeState = ref.watch(gradeProvider);
     final sortedGrades = ref.watch(sortedGradesProvider);
     final currentSemester = ref.watch(currentSemesterProvider);
-    final availableSemesters = ref.watch(availableSemestersProvider);
+    final availableSemesters = ref.watch(sortedAvailableSemestersProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
     final themeColor = currentTheme?.colorList.isNotEmpty == true
         ? currentTheme!.colorList[0]
