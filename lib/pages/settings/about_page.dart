@@ -380,15 +380,28 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   /// 打开QQ群
   void _openQQGroup() async {
     try {
-      // QQ群号：你需要替换为实际的群号
-      const String groupNumber = '837036146'; // 请替换为实际的群号
+      // 根据平台使用不同的链接
+      Uri qqGroupUri;
+      if (Platform.isIOS) {
+        // iOS链接
+        qqGroupUri = Uri.parse(
+          'mqqapi://card/show_pslcard?src_type=internal&version=1&uin=837036146&authSig=pdyDAMgTDvhpPsOZLl1hT3Fhbrg9ESRHod2SKpMSnjX3zG78xYp9R6LIYeUJjLeK&card_type=group&source=external&jump_from=webapi',
+        );
+      } else if (Platform.isAndroid) {
+        // Android链接
+        qqGroupUri = Uri.parse(
+          'mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3DDaJyjtwq2ZzxvMtVmYOMM4i8zgaQCClN',
+        );
+      } else {
+        // 其他平台
+        qqGroupUri = Uri.parse(
+          'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah ',
+        );
+      }
 
-      // 尝试直接打开QQ应用
-      final Uri qqGroupUri = Uri.parse(
-        'mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D$groupNumber',
-      );
+      // 备用网页链接
       final Uri webUri = Uri.parse(
-        'https://qm.qq.com/cgi-bin/qm/qr?k=$groupNumber',
+        'https://qm.qq.com/cgi-bin/qm/qr?k=DaJyjtwq2ZzxvMtVmYOMM4i8zgaQCClN',
       );
 
       bool launched = false;
@@ -421,9 +434,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     } catch (e) {
       // 发生错误时，尝试复制链接作为备选方案
       try {
-        const String groupNumber = '837036146';
         await Clipboard.setData(
-          ClipboardData(text: 'https://qm.qq.com/cgi-bin/qm/qr?k=$groupNumber'),
+          ClipboardData(text: 'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah '),
         );
 
         if (mounted) {
