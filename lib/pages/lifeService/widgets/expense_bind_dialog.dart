@@ -29,7 +29,7 @@ class ExpenseBindDialog extends ConsumerStatefulWidget {
 class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
   final _formKey = GlobalKey<FormState>();
   final _roomController = TextEditingController();
-  
+
   String? _selectedArea;
   String? _selectedBuilding;
   bool _isLoading = false;
@@ -37,13 +37,13 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
   @override
   void initState() {
     super.initState();
-    
+
     // 初始化数据
     if (widget.initialDorm != null) {
       _selectedArea = widget.initialDorm!.area;
       _selectedBuilding = widget.initialDorm!.building;
     }
-    
+
     if (widget.initialRoomCode != null) {
       _roomController.text = widget.initialRoomCode!;
     }
@@ -59,21 +59,20 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final themeColor = ref.watch(selectedCustomThemeProvider);
-    final mainColor = themeColor?.colorList.isNotEmpty == true 
-        ? themeColor!.colorList[0] 
+    final mainColor = themeColor?.colorList.isNotEmpty == true
+        ? themeColor!.colorList[0]
         : Colors.blue;
-    
+
     final backgroundColor = isDarkMode ? const Color(0xFF2A2A2A) : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
 
     return Dialog(
       backgroundColor: backgroundColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
+        width: double.infinity,
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
@@ -85,10 +84,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
               padding: const EdgeInsets.fromLTRB(24, 20, 20, 16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    mainColor.withAlpha(26),
-                    mainColor.withAlpha(13),
-                  ],
+                  colors: [mainColor.withAlpha(26), mainColor.withAlpha(13)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -126,10 +122,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                         ),
                         Text(
                           '请选择您的宿舍园区和楼栋',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: subtitleColor,
-                          ),
+                          style: TextStyle(fontSize: 14, color: subtitleColor),
                         ),
                       ],
                     ),
@@ -152,7 +145,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                 ],
               ),
             ),
-            
+
             // 内容区域
             Flexible(
               child: SingleChildScrollView(
@@ -165,29 +158,44 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                       // 园区选择
                       _buildSectionTitle('选择园区', mainColor),
                       const SizedBox(height: 12),
-                      _buildAreaSelector(mainColor, textColor, subtitleColor, isDarkMode),
-                      
+                      _buildAreaSelector(
+                        mainColor,
+                        textColor,
+                        subtitleColor,
+                        isDarkMode,
+                      ),
+
                       const SizedBox(height: 24),
-                      
+
                       // 楼栋选择
                       _buildSectionTitle('选择楼栋', mainColor),
                       const SizedBox(height: 12),
-                      _buildBuildingSelector(mainColor, textColor, subtitleColor, isDarkMode),
-                      
+                      _buildBuildingSelector(
+                        mainColor,
+                        textColor,
+                        subtitleColor,
+                        isDarkMode,
+                      ),
+
                       const SizedBox(height: 24),
-                      
+
                       // 房间号输入
                       _buildSectionTitle('房间号', mainColor),
                       const SizedBox(height: 12),
-                      _buildRoomInput(mainColor, textColor, subtitleColor, isDarkMode),
-                      
+                      _buildRoomInput(
+                        mainColor,
+                        textColor,
+                        subtitleColor,
+                        isDarkMode,
+                      ),
+
                       const SizedBox(height: 24),
-                      
+
                       // 提示信息
                       _buildInfoCard(subtitleColor),
-                      
+
                       const SizedBox(height: 32),
-                      
+
                       // 操作按钮
                       _buildActionButtons(context, mainColor, textColor),
                     ],
@@ -225,11 +233,18 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
     );
   }
 
-  Widget _buildAreaSelector(Color mainColor, Color textColor, Color subtitleColor, bool isDarkMode) {
+  Widget _buildAreaSelector(
+    Color mainColor,
+    Color textColor,
+    Color subtitleColor,
+    bool isDarkMode,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withAlpha(13) : Colors.grey.withAlpha(13),
+        color: isDarkMode
+            ? Colors.white.withAlpha(13)
+            : Colors.grey.withAlpha(13),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDarkMode ? Colors.white24 : Colors.grey.shade300,
@@ -263,12 +278,17 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                   },
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected ? mainColor : Colors.transparent,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected ? mainColor : subtitleColor.withAlpha(76),
+                        color: isSelected
+                            ? mainColor
+                            : subtitleColor.withAlpha(76),
                       ),
                     ),
                     child: Text(
@@ -276,7 +296,9 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                       style: TextStyle(
                         color: isSelected ? Colors.white : textColor,
                         fontSize: 14,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                     ),
                   ),
@@ -289,13 +311,22 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
     );
   }
 
-  Widget _buildBuildingSelector(Color mainColor, Color textColor, Color subtitleColor, bool isDarkMode) {
-    final buildings = _selectedArea != null ? DormConfig.getBuildingsByArea(_selectedArea!) : <String>[];
-    
+  Widget _buildBuildingSelector(
+    Color mainColor,
+    Color textColor,
+    Color subtitleColor,
+    bool isDarkMode,
+  ) {
+    final buildings = _selectedArea != null
+        ? DormConfig.getBuildingsByArea(_selectedArea!)
+        : <String>[];
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withAlpha(13) : Colors.grey.withAlpha(13),
+        color: isDarkMode
+            ? Colors.white.withAlpha(13)
+            : Colors.grey.withAlpha(13),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDarkMode ? Colors.white24 : Colors.grey.shade300,
@@ -319,10 +350,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
               child: Center(
                 child: Text(
                   '请先选择园区',
-                  style: TextStyle(
-                    color: subtitleColor,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: subtitleColor, fontSize: 14),
                 ),
               ),
             ),
@@ -354,7 +382,9 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                         color: isSelected ? mainColor : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: isSelected ? mainColor : subtitleColor.withAlpha(76),
+                          color: isSelected
+                              ? mainColor
+                              : subtitleColor.withAlpha(76),
                         ),
                       ),
                       child: Center(
@@ -363,7 +393,9 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                           style: TextStyle(
                             color: isSelected ? Colors.white : textColor,
                             fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -379,7 +411,12 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
     );
   }
 
-  Widget _buildRoomInput(Color mainColor, Color textColor, Color subtitleColor, bool isDarkMode) {
+  Widget _buildRoomInput(
+    Color mainColor,
+    Color textColor,
+    Color subtitleColor,
+    bool isDarkMode,
+  ) {
     return TextFormField(
       controller: _roomController,
       style: TextStyle(color: textColor),
@@ -388,13 +425,8 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
         labelStyle: TextStyle(color: subtitleColor),
         hintText: '例如：0101',
         hintStyle: TextStyle(color: subtitleColor.withAlpha(178)),
-        prefixIcon: Icon(
-          Icons.door_front_door,
-          color: mainColor,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        prefixIcon: Icon(Icons.door_front_door, color: mainColor),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
@@ -406,7 +438,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
           borderSide: BorderSide(color: mainColor),
         ),
         filled: true,
-        fillColor: isDarkMode 
+        fillColor: isDarkMode
             ? Colors.white.withAlpha(13)
             : Colors.grey.withAlpha(13),
       ),
@@ -425,17 +457,11 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
       decoration: BoxDecoration(
         color: Colors.blue.withAlpha(26),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.blue.withAlpha(76),
-        ),
+        border: Border.all(color: Colors.blue.withAlpha(76)),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.info_outline,
-            color: Colors.blue,
-            size: 20,
-          ),
+          Icon(Icons.info_outline, color: Colors.blue, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -452,10 +478,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                 const SizedBox(height: 4),
                 Text(
                   '请确保选择的宿舍信息准确无误，绑定后可在设置中重新绑定',
-                  style: TextStyle(
-                    color: Colors.blue.shade600,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.blue.shade600, fontSize: 12),
                 ),
               ],
             ),
@@ -465,9 +488,16 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, Color mainColor, Color textColor) {
-    final canBind = _selectedArea != null && _selectedBuilding != null && _roomController.text.trim().isNotEmpty;
-    
+  Widget _buildActionButtons(
+    BuildContext context,
+    Color mainColor,
+    Color textColor,
+  ) {
+    final canBind =
+        _selectedArea != null &&
+        _selectedBuilding != null &&
+        _roomController.text.trim().isNotEmpty;
+
     return Column(
       children: [
         // 确定按钮
@@ -509,9 +539,9 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
                   ),
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // 取消按钮
         SizedBox(
           width: double.infinity,
@@ -525,10 +555,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
             ),
             child: Text(
               '取消',
-              style: TextStyle(
-                fontSize: 14,
-                color: textColor.withAlpha(178),
-              ),
+              style: TextStyle(fontSize: 14, color: textColor.withAlpha(178)),
             ),
           ),
         ),
@@ -545,7 +572,10 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
     });
 
     try {
-      final buildingId = DormConfig.getBuildingId(_selectedArea!, _selectedBuilding!);
+      final buildingId = DormConfig.getBuildingId(
+        _selectedArea!,
+        _selectedBuilding!,
+      );
       if (buildingId == null) {
         throw Exception('无效的宿舍配置');
       }
@@ -554,7 +584,7 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
         buildingId.toString(),
         _roomController.text.trim(),
       );
-      
+
       if (mounted) {
         Navigator.of(context).pop(true);
         ScaffoldMessenger.of(context).showSnackBar(
