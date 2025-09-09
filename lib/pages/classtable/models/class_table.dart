@@ -214,12 +214,12 @@ class ClassTable {
               weeks.add(1);
             }
 
-            // 实践课一般没有固定的星期几和节次，这里简单处理：
-            // 按实践课程的日期确定星期几，或者默认为周一
-            int weekday = 1; // 默认周一
+            // 实践课一般没有固定的星期几和节次
+            // 实践课程默认显示在周日（第7天）
+            int weekday = 7; // 默认周日
             final day = item['day']?.toString();
             if (day != null && day.isNotEmpty) {
-              weekday = int.tryParse(day) ?? 1;
+              weekday = int.tryParse(day) ?? 7; // 解析失败时仍然使用周日
             }
 
             // 创建课程对象
@@ -229,7 +229,7 @@ class ClassTable {
               classroom: classroom,
               teacher: teacher,
               weekday: weekday,
-              periods: [1, 2], // 实践课默认安排在第1-2节
+              periods: [1, 2, 3], // 实践课默认安排在第1-3节
               weeks: weeks,
               kcxz: '实践', // 实践课程的性质
               kclb: item['kclb']?.toString(), // 课程类别
