@@ -288,11 +288,121 @@ class GradeNotifier extends StateNotifier<GradeState> {
         detailItems = detailData ?? [];
       }
 
-      // 处理成绩汇总数据
+      // 获取已存储的成绩汇总数据用于比较
+      final existingSummariesJson = await _secureStorage.read(
+        key: 'gradesSummary',
+      );
+      List<GradeSummary> existingSummaries = [];
+      if (existingSummariesJson != null) {
+        final List<dynamic> list = json.decode(existingSummariesJson);
+        existingSummaries = list.map((e) => GradeSummary.fromJson(e)).toList();
+      }
+
+      final today = DateTime.now().toIso8601String().split(
+        'T',
+      )[0]; // 格式: YYYY-MM-DD
+
+      // 处理成绩汇总数据，检测新成绩并设置获取日期
       debugPrint('🎓 解析成绩汇总数据，条数: ${summaryItems.length}');
       for (final item in summaryItems) {
         try {
-          gradeSummaries.add(GradeSummary.fromJson(item));
+          final newGrade = GradeSummary.fromJson(item);
+
+          // 如果是首次获取成绩（没有已存储的成绩），所有成绩都标记为今天获取
+          if (existingSummaries.isEmpty) {
+            gradeSummaries.add(newGrade.copyWith(fetchDate: today));
+          } else {
+            // 检查是否为新成绩（在已有成绩中找不到相同的成绩）
+            final existingGrade = existingSummaries.firstWhere(
+              (existing) =>
+                  existing.kchId == newGrade.kchId &&
+                  existing.cj == newGrade.cj &&
+                  existing.ksxz == newGrade.ksxz,
+              orElse: () => GradeSummary(
+                bfzcj: '',
+                bh: '',
+                bhId: '',
+                bj: '',
+                cj: '',
+                cjsfzf: '',
+                date: '',
+                dateDigit: '',
+                dateDigitSeparator: '',
+                day: '',
+                jd: '',
+                jgId: '',
+                jgmc: '',
+                jgpxzd: '',
+                jsxm: '',
+                jxbId: '',
+                jxbmc: '',
+                kcbj: '',
+                kch: '',
+                kchId: '',
+                kclbmc: '',
+                kcmc: '',
+                kcxzdm: '',
+                kcxzmc: '',
+                key: '',
+                kkbmmc: '',
+                kklxdm: '',
+                ksxz: '',
+                ksxzdm: '',
+                listnav: '',
+                localeKey: '',
+                month: '',
+                njdmId: '',
+                njmc: '',
+                pageTotal: 0,
+                pageable: false,
+                queryModel: {},
+                queryTime: '',
+                rangeable: false,
+                rowId: '',
+                rwzxs: '',
+                sfdkbcx: '',
+                sfkj: '',
+                sfpk: '',
+                sfxwkc: '',
+                sfzh: '',
+                sfzx: '',
+                tjrxm: '',
+                tjsj: '',
+                totalResult: '',
+                userModel: {},
+                xb: '',
+                xbm: '',
+                xf: '',
+                xfjd: '',
+                xh: '',
+                xhId: '',
+                xm: '',
+                xnm: '',
+                xnmmc: '',
+                xqm: '',
+                xqmmc: '',
+                xsbjmc: '',
+                xslb: '',
+                xz: '',
+                year: '',
+                zsxymc: '',
+                zxs: '',
+                zyhId: '',
+                zymc: '',
+                fetchDate: null,
+              ),
+            );
+
+            if (existingGrade.kchId.isEmpty) {
+              // 新成绩，设置获取日期为今天
+              gradeSummaries.add(newGrade.copyWith(fetchDate: today));
+            } else {
+              // 已有成绩，保持原有的获取日期
+              gradeSummaries.add(
+                newGrade.copyWith(fetchDate: existingGrade.fetchDate),
+              );
+            }
+          }
         } catch (e) {
           debugPrint('解析成绩汇总数据失败: $e');
           debugPrint('原始数据: $item');
@@ -310,17 +420,96 @@ class GradeNotifier extends StateNotifier<GradeState> {
         }
       }
 
-      // 保存原始API数据
+      // 保存处理后的数据（包含fetchDate）
       if (detailItems.isNotEmpty) {
         await _secureStorage.write(
           key: 'grades',
           value: json.encode(detailItems),
         );
       }
-      if (summaryItems.isNotEmpty) {
+      if (gradeSummaries.isNotEmpty) {
+        // 将处理后的GradeSummary转换为JSON格式保存
+        final summaryJsonList = gradeSummaries
+            .map(
+              (summary) => {
+                'bfzcj': summary.bfzcj,
+                'bh': summary.bh,
+                'bh_id': summary.bhId,
+                'bj': summary.bj,
+                'cj': summary.cj,
+                'cjsfzf': summary.cjsfzf,
+                'date': summary.date,
+                'dateDigit': summary.dateDigit,
+                'dateDigitSeparator': summary.dateDigitSeparator,
+                'day': summary.day,
+                'jd': summary.jd,
+                'jg_id': summary.jgId,
+                'jgmc': summary.jgmc,
+                'jgpxzd': summary.jgpxzd,
+                'jsxm': summary.jsxm,
+                'jxb_id': summary.jxbId,
+                'jxbmc': summary.jxbmc,
+                'kcbj': summary.kcbj,
+                'kch': summary.kch,
+                'kch_id': summary.kchId,
+                'kclbmc': summary.kclbmc,
+                'kcmc': summary.kcmc,
+                'kcxzdm': summary.kcxzdm,
+                'kcxzmc': summary.kcxzmc,
+                'key': summary.key,
+                'kkbmmc': summary.kkbmmc,
+                'kklxdm': summary.kklxdm,
+                'ksxz': summary.ksxz,
+                'ksxzdm': summary.ksxzdm,
+                'listnav': summary.listnav,
+                'localeKey': summary.localeKey,
+                'month': summary.month,
+                'njdm_id': summary.njdmId,
+                'njmc': summary.njmc,
+                'pageTotal': summary.pageTotal,
+                'pageable': summary.pageable,
+                'queryModel': summary.queryModel,
+                'queryTime': summary.queryTime,
+                'rangeable': summary.rangeable,
+                'row_id': summary.rowId,
+                'rwzxs': summary.rwzxs,
+                'sfdkbcx': summary.sfdkbcx,
+                'sfkj': summary.sfkj,
+                'sfpk': summary.sfpk,
+                'sfxwkc': summary.sfxwkc,
+                'sfzh': summary.sfzh,
+                'sfzx': summary.sfzx,
+                'tjrxm': summary.tjrxm,
+                'tjsj': summary.tjsj,
+                'totalResult': summary.totalResult,
+                'userModel': summary.userModel,
+                'xb': summary.xb,
+                'xbm': summary.xbm,
+                'xf': summary.xf,
+                'xfjd': summary.xfjd,
+                'xh': summary.xh,
+                'xh_id': summary.xhId,
+                'xm': summary.xm,
+                'xnm': summary.xnm,
+                'xnmmc': summary.xnmmc,
+                'xqm': summary.xqm,
+                'xqmmc': summary.xqmmc,
+                'xsbjmc': summary.xsbjmc,
+                'xslb': summary.xslb,
+                'xz': summary.xz,
+                'year': summary.year,
+                'zsxymc': summary.zsxymc,
+                'zxs': summary.zxs,
+                'zyh_id': summary.zyhId,
+                'zymc': summary.zymc,
+                'fetchDate': summary.fetchDate,
+              },
+            )
+            .toList();
+
         await _secureStorage.write(
           key: 'gradesSummary',
-          value: json.encode(summaryItems),
+          value: json.encode(summaryJsonList),
         );
       }
 
@@ -746,4 +935,27 @@ final currentSemesterProvider = Provider<SemesterInfo>((ref) {
 final availableSemestersProvider = Provider<List<SemesterInfo>>((ref) {
   final state = ref.watch(gradeProvider);
   return state.availableSemesters;
+});
+
+/// 新成绩检测Provider
+final hasNewGradesProvider = Provider<bool>((ref) {
+  final state = ref.watch(gradeProvider);
+  final today = DateTime.now().toIso8601String().split(
+    'T',
+  )[0]; // 格式: YYYY-MM-DD
+
+  // 检查是否有当天获取的新成绩
+  final todayNewGrades = state.gradeSummaries
+      .where((grade) => grade.fetchDate == today)
+      .toList();
+
+  // 检查是否为首次获取成绩（所有成绩的获取日期都是同一天）
+  final allFetchDates = state.gradeSummaries
+      .map((grade) => grade.fetchDate)
+      .where((date) => date != null)
+      .toSet();
+  final isFirstTime = allFetchDates.length <= 1;
+
+  // 只有在非首次获取且有当天新成绩时才显示新成绩标记
+  return todayNewGrades.isNotEmpty && !isFirstTime;
 });

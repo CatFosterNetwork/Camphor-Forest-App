@@ -4,7 +4,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/providers/grade_provider.dart';
+import '../../../core/providers/grade_provider.dart'
+    show
+        gradeProvider,
+        gradeStatisticsProvider,
+        sortedGradesProvider,
+        hasNewGradesProvider;
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../lifeService/pages/grade_query_screen.dart';
 
@@ -23,8 +28,8 @@ class GradeBrief extends ConsumerWidget {
 
     // 获取主题色
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     final textColor = darkMode ? Colors.white70 : Colors.black87;
@@ -86,7 +91,7 @@ class GradeBrief extends ConsumerWidget {
                             ),
                           ),
                         )
-                      else if (_hasNewGrades(gradeState))
+                      else if (ref.watch(hasNewGradesProvider))
                         Container(
                           margin: const EdgeInsets.only(right: 8),
                           padding: const EdgeInsets.symmetric(
@@ -98,7 +103,7 @@ class GradeBrief extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Text(
-                            'NEW',
+                            '新成绩',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
@@ -142,6 +147,7 @@ class GradeBrief extends ConsumerWidget {
                   textColor,
                   subtitleColor,
                   gradeState,
+                  ref.watch(hasNewGradesProvider),
                 ),
               ] else if (gradeState.error != null) ...[
                 _buildErrorState(textColor, subtitleColor, ref),
@@ -159,11 +165,12 @@ class GradeBrief extends ConsumerWidget {
 
   /// 构建成绩内容
   Widget _buildGradeContent(
-    statistics,
-    sortedGrades,
+    dynamic statistics,
+    dynamic sortedGrades,
     Color textColor,
     Color subtitleColor,
-    gradeState,
+    dynamic gradeState,
+    bool hasNewGrades,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,8 +279,8 @@ class GradeBrief extends ConsumerWidget {
 
         const SizedBox(height: 12),
 
-        // 最新成绩
-        if (sortedGrades.isNotEmpty) ...[
+        // 最新成绩（只有在有新成绩时才显示）
+        if (hasNewGrades && sortedGrades.isNotEmpty) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -437,7 +444,7 @@ class GradeBrief extends ConsumerWidget {
   }
 
   /// 构建单个成绩项目
-  Widget _buildGradeItem(grade, Color textColor, Color subtitleColor) {
+  Widget _buildGradeItem(dynamic grade, Color textColor, Color subtitleColor) {
     final scoreColor = _getScoreColor(grade.zcj);
 
     return Container(
@@ -593,14 +600,6 @@ class GradeBrief extends ConsumerWidget {
     }
 
     return styledChild;
-  }
-
-  /// 判断是否有新成绩
-  bool _hasNewGrades(gradeState) {
-    if (gradeState.lastUpdateTime == null) return false;
-    final now = DateTime.now();
-    final diff = now.difference(gradeState.lastUpdateTime!);
-    return diff.inHours < 24 && gradeState.calculatedGrades.isNotEmpty;
   }
 
   /// 格式化更新时间

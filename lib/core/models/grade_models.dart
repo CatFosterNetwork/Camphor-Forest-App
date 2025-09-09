@@ -181,6 +181,9 @@ class GradeSummary {
   final String zyhId;
   final String zymc;
 
+  /// 新增：成绩获取日期
+  final String? fetchDate;
+
   const GradeSummary({
     required this.bfzcj,
     required this.bh,
@@ -252,6 +255,7 @@ class GradeSummary {
     required this.zxs,
     required this.zyhId,
     required this.zymc,
+    this.fetchDate,
   });
 
   factory GradeSummary.fromJson(Map<String, dynamic> json) {
@@ -326,6 +330,84 @@ class GradeSummary {
       zxs: json['zxs']?.toString() ?? '',
       zyhId: json['zyh_id']?.toString() ?? '',
       zymc: json['zymc']?.toString() ?? '',
+      fetchDate: json['fetchDate']?.toString(),
+    );
+  }
+
+  /// 创建带有新获取日期的副本
+  GradeSummary copyWith({String? fetchDate}) {
+    return GradeSummary(
+      bfzcj: bfzcj,
+      bh: bh,
+      bhId: bhId,
+      bj: bj,
+      cj: cj,
+      cjsfzf: cjsfzf,
+      date: date,
+      dateDigit: dateDigit,
+      dateDigitSeparator: dateDigitSeparator,
+      day: day,
+      jd: jd,
+      jgId: jgId,
+      jgmc: jgmc,
+      jgpxzd: jgpxzd,
+      jsxm: jsxm,
+      jxbId: jxbId,
+      jxbmc: jxbmc,
+      kcbj: kcbj,
+      kch: kch,
+      kchId: kchId,
+      kclbmc: kclbmc,
+      kcmc: kcmc,
+      kcxzdm: kcxzdm,
+      kcxzmc: kcxzmc,
+      key: key,
+      kkbmmc: kkbmmc,
+      kklxdm: kklxdm,
+      ksxz: ksxz,
+      ksxzdm: ksxzdm,
+      listnav: listnav,
+      localeKey: localeKey,
+      month: month,
+      njdmId: njdmId,
+      njmc: njmc,
+      pageTotal: pageTotal,
+      pageable: pageable,
+      queryModel: queryModel,
+      queryTime: queryTime,
+      rangeable: rangeable,
+      rowId: rowId,
+      rwzxs: rwzxs,
+      sfdkbcx: sfdkbcx,
+      sfkj: sfkj,
+      sfpk: sfpk,
+      sfxwkc: sfxwkc,
+      sfzh: sfzh,
+      sfzx: sfzx,
+      tjrxm: tjrxm,
+      tjsj: tjsj,
+      totalResult: totalResult,
+      userModel: userModel,
+      xb: xb,
+      xbm: xbm,
+      xf: xf,
+      xfjd: xfjd,
+      xh: xh,
+      xhId: xhId,
+      xm: xm,
+      xnm: xnm,
+      xnmmc: xnmmc,
+      xqm: xqm,
+      xqmmc: xqmmc,
+      xsbjmc: xsbjmc,
+      xslb: xslb,
+      xz: xz,
+      year: year,
+      zsxymc: zsxymc,
+      zxs: zxs,
+      zyhId: zyhId,
+      zymc: zymc,
+      fetchDate: fetchDate ?? this.fetchDate,
     );
   }
 }
