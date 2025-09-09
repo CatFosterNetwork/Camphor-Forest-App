@@ -311,8 +311,17 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               Text('加载失败 $e'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
-                  await ref.refresh(
+                onPressed: () {
+                  // 使用强制刷新确保从远程获取数据
+                  ref.invalidate(
+                    forceRefreshClassTableProvider((
+                      xnm: _currentXnm,
+                      xqm: _currentXqm,
+                    )),
+                  );
+
+                  // 刷新普通provider
+                  ref.invalidate(
                     classTableProvider((xnm: _currentXnm, xqm: _currentXqm)),
                   );
                 },
@@ -365,8 +374,6 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
           debugPrint('⚠️ 当前周 $_currentWeek 小于1，调整为: 1');
           _currentWeek = 1;
         }
-
-        // 课表背景现在由ThemeAwareScaffold自动管理
 
         // 获取当前周次的所有课程
         final List<Course> courses;
@@ -550,8 +557,17 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                       }
                                     });
 
-                                    // ignore: unawaited_futures
-                                    ref.refresh(
+                                    // 使用强制刷新provider来确保从远程获取最新数据
+                                    // 强制刷新会清除缓存并从远程获取数据
+                                    ref.invalidate(
+                                      forceRefreshClassTableProvider((
+                                        xnm: _currentXnm,
+                                        xqm: _currentXqm,
+                                      )),
+                                    );
+
+                                    // 刷新普通provider以保持数据一致性
+                                    ref.invalidate(
                                       classTableProvider((
                                         xnm: _currentXnm,
                                         xqm: _currentXqm,

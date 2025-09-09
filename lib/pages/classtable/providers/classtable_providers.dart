@@ -28,6 +28,36 @@ final _baseClassTableProvider =
           await repo.fetchRemote(params.xnm, params.xqm);
     });
 
+/// 强制从远程刷新课表数据的 Provider
+/// 使用 record 传参：({'xnm': '2024', 'xqm': '12'})
+final _forceRefreshClassTableProvider =
+    FutureProvider.family<ClassTable, ({String xnm, String xqm})>((
+      ref,
+      params,
+    ) async {
+      final repo = ref.watch(classTableRepositoryProvider);
+      // 强制从远程获取数据，不使用本地缓存
+      return await repo.fetchRemote(params.xnm, params.xqm);
+    });
+
+/// 强制刷新的增强课表数据 Provider
+final forceRefreshClassTableProvider =
+    FutureProvider.family<ClassTable, ({String xnm, String xqm})>((
+      ref,
+      params,
+    ) async {
+      // 强制从远程获取基础课表数据
+      final baseTable = await ref.watch(
+        _forceRefreshClassTableProvider(params).future,
+      );
+
+      return await _enhanceClassTableWithGradeAndCustomData(
+        ref,
+        baseTable,
+        params,
+      );
+    });
+
 /// 增强课表数据 Provider
 final classTableProvider =
     FutureProvider.family<ClassTable, ({String xnm, String xqm})>((
@@ -37,56 +67,67 @@ final classTableProvider =
       // 获取基础课表数据
       final baseTable = await ref.watch(_baseClassTableProvider(params).future);
 
-      // 获取成绩数据用于补充课程属性
-      final gradeState = ref.watch(gradeProvider);
-
-      // 从成绩数据中提取课程属性
-      final courseAttributesMap = <String, ({String? kcxz, String? kclb})>{};
-      for (final detail in gradeState.gradeDetails) {
-        if (detail.kch.isNotEmpty) {
-          courseAttributesMap[detail.kch] = (
-            kcxz: detail.ksxz != null && detail.ksxz!.isNotEmpty
-                ? detail.ksxz
-                : null,
-            kclb: detail.xmblmc.isNotEmpty ? detail.xmblmc : null,
-          );
-        }
-      }
-      for (final summary in gradeState.gradeSummaries) {
-        if (summary.kch.isNotEmpty) {
-          courseAttributesMap[summary.kch] = (
-            kcxz: summary.kcxzmc.isNotEmpty ? summary.kcxzmc : null,
-            kclb: summary.kclbmc.isNotEmpty ? summary.kclbmc : null,
-          );
-        }
-      }
-
-      // 用成绩数据补充课表课程的属性
-      final enhancedTableWithAttributes = _enhanceWithGradeAttributes(
+      return await _enhanceClassTableWithGradeAndCustomData(
+        ref,
         baseTable,
-        courseAttributesMap,
+        params,
       );
-
-      // 获取当前学期的自定义课程
-      final settings = ref.watch(classTableSettingsProvider);
-      final customCourses = settings.customCourses
-          .where(
-            (course) => course.xnm == params.xnm && course.xqm == params.xqm,
-          )
-          .toList();
-
-      // 如果没有自定义课程，返回已增强属性的课表
-      if (customCourses.isEmpty) {
-        return enhancedTableWithAttributes;
-      }
-
-      // 合并自定义课程到课表中
-      final finalTable = _mergeCustomCourses(
-        enhancedTableWithAttributes,
-        customCourses,
-      );
-      return finalTable;
     });
+
+/// 提取公共的课表增强逻辑
+Future<ClassTable> _enhanceClassTableWithGradeAndCustomData(
+  FutureProviderRef<ClassTable> ref,
+  ClassTable baseTable,
+  ({String xnm, String xqm}) params,
+) async {
+  // 获取成绩数据用于补充课程属性
+  final gradeState = ref.watch(gradeProvider);
+
+  // 从成绩数据中提取课程属性
+  final courseAttributesMap = <String, ({String? kcxz, String? kclb})>{};
+  for (final detail in gradeState.gradeDetails) {
+    if (detail.kch.isNotEmpty) {
+      courseAttributesMap[detail.kch] = (
+        kcxz: detail.ksxz != null && detail.ksxz!.isNotEmpty
+            ? detail.ksxz
+            : null,
+        kclb: detail.xmblmc.isNotEmpty ? detail.xmblmc : null,
+      );
+    }
+  }
+  for (final summary in gradeState.gradeSummaries) {
+    if (summary.kch.isNotEmpty) {
+      courseAttributesMap[summary.kch] = (
+        kcxz: summary.kcxzmc.isNotEmpty ? summary.kcxzmc : null,
+        kclb: summary.kclbmc.isNotEmpty ? summary.kclbmc : null,
+      );
+    }
+  }
+
+  // 用成绩数据补充课表课程的属性
+  final enhancedTableWithAttributes = _enhanceWithGradeAttributes(
+    baseTable,
+    courseAttributesMap,
+  );
+
+  // 获取当前学期的自定义课程
+  final settings = ref.watch(classTableSettingsProvider);
+  final customCourses = settings.customCourses
+      .where((course) => course.xnm == params.xnm && course.xqm == params.xqm)
+      .toList();
+
+  // 如果没有自定义课程，返回已增强属性的课表
+  if (customCourses.isEmpty) {
+    return enhancedTableWithAttributes;
+  }
+
+  // 合并自定义课程到课表中
+  final finalTable = _mergeCustomCourses(
+    enhancedTableWithAttributes,
+    customCourses,
+  );
+  return finalTable;
+}
 
 /// 用成绩数据增强课表课程的属性
 ClassTable _enhanceWithGradeAttributes(
