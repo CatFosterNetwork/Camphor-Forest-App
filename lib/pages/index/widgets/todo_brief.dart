@@ -7,7 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/todo_item.dart';
 import '../providers/todo_provider.dart';
 import 'todo_edit_modal.dart';
-import '../../../core/config/providers/theme_config_provider.dart';
+import '../../../core/config/providers/new_core_providers.dart';
+import '../../../core/config/models/app_config.dart';
 
 /// 待办事项简要组件
 class TodoBrief extends ConsumerStatefulWidget {
@@ -137,8 +138,8 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
     final subtitleColor = widget.darkMode ? Colors.white54 : Colors.black54;
     // 获取主题色，如果没有主题则使用默认蓝色
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     Widget child = Container(
@@ -258,73 +259,119 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
     Color themeColor,
   ) {
     final allTodos = ref.watch(todoProvider);
+    final appConfigAsync = ref.watch(appConfigNotifierProvider);
 
-    debugPrint('TodoBrief: 当前待办事项数量: ${allTodos.length}');
+    return appConfigAsync.when(
+      loading: () =>
+          Center(child: CircularProgressIndicator(color: themeColor)),
+      error: (_, __) => _buildEmptyState(subtitleColor),
+      data: (appConfig) {
+        // 根据配置过滤待办事项
+        final filteredTodos = appConfig.showFinishedTodo
+            ? allTodos
+            : allTodos.where((todo) => !todo.finished).toList();
 
-    if (allTodos.isEmpty) {
-      debugPrint('TodoBrief: 显示空状态');
-      return _buildEmptyState(subtitleColor);
-    }
+        debugPrint('TodoBrief: 原始待办事项数量: ${allTodos.length}');
+        debugPrint('TodoBrief: 过滤后待办事项数量: ${filteredTodos.length}');
+        debugPrint(
+          'TodoBrief: showFinishedTodo配置: ${appConfig.showFinishedTodo}',
+        );
 
+        if (filteredTodos.isEmpty) {
+          debugPrint('TodoBrief: 显示空状态');
+          return _buildEmptyState(subtitleColor);
+        }
+
+        return _buildFilteredTodoContent(
+          context,
+          ref,
+          filteredTodos,
+          appConfig,
+          textColor,
+          subtitleColor,
+          themeColor,
+        );
+      },
+    );
+  }
+
+  Widget _buildFilteredTodoContent(
+    BuildContext context,
+    WidgetRef ref,
+    List<TodoItem> filteredTodos,
+    AppConfig appConfig,
+    Color textColor,
+    Color subtitleColor,
+    Color themeColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTodoSection(
+        _buildTodoSectionWithData(
           context,
           ref,
           TodoCategory.overdue,
+          filteredTodos,
           textColor,
           subtitleColor,
           themeColor,
         ),
-        _buildTodoSection(
+        _buildTodoSectionWithData(
           context,
           ref,
           TodoCategory.today,
+          filteredTodos,
           textColor,
           subtitleColor,
           themeColor,
         ),
-        _buildTodoSection(
+        _buildTodoSectionWithData(
           context,
           ref,
           TodoCategory.tomorrow,
+          filteredTodos,
           textColor,
           subtitleColor,
           themeColor,
         ),
-        _buildTodoSection(
+        _buildTodoSectionWithData(
           context,
           ref,
           TodoCategory.thisWeek,
+          filteredTodos,
           textColor,
           subtitleColor,
           themeColor,
         ),
-        _buildTodoSection(
+        _buildTodoSectionWithData(
           context,
           ref,
           TodoCategory.future,
+          filteredTodos,
           textColor,
           subtitleColor,
           themeColor,
         ),
-        _buildTodoSection(
+        _buildTodoSectionWithData(
           context,
           ref,
           TodoCategory.noDueTime,
+          filteredTodos,
           textColor,
           subtitleColor,
           themeColor,
         ),
-        _buildTodoSection(
-          context,
-          ref,
-          TodoCategory.completed,
-          textColor,
-          subtitleColor,
-          themeColor,
-        ),
+        // 只有当配置允许显示已完成待办时才显示completed分类
+        if (appConfig.showFinishedTodo)
+          _buildTodoSectionWithData(
+            context,
+            ref,
+            TodoCategory.completed,
+            filteredTodos,
+            textColor,
+            subtitleColor,
+            themeColor,
+          ),
       ],
     );
   }
@@ -367,40 +414,48 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
     );
   }
 
-  /// 构建单个分类的待办事项区域
-  Widget _buildTodoSection(
+  /// 构建待办事项分组（使用过滤后的数据）
+  Widget _buildTodoSectionWithData(
     BuildContext context,
     WidgetRef ref,
     TodoCategory category,
+    List<TodoItem> allFilteredTodos,
     Color textColor,
     Color subtitleColor,
     Color themeColor,
   ) {
-    List<TodoItem> todos;
+    // 从过滤后的数据中按类别筛选（使用与provider相同的逻辑）
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final dayAfterTomorrow = tomorrow.add(const Duration(days: 1));
+    final oneWeekLater = now.add(const Duration(days: 7));
 
-    switch (category) {
-      case TodoCategory.overdue:
-        todos = ref.watch(overdueProvider);
-        break;
-      case TodoCategory.today:
-        todos = ref.watch(todayProvider);
-        break;
-      case TodoCategory.tomorrow:
-        todos = ref.watch(tomorrowProvider);
-        break;
-      case TodoCategory.thisWeek:
-        todos = ref.watch(thisWeekProvider);
-        break;
-      case TodoCategory.future:
-        todos = ref.watch(futureProvider);
-        break;
-      case TodoCategory.noDueTime:
-        todos = ref.watch(noDueTimeProvider);
-        break;
-      case TodoCategory.completed:
-        todos = ref.watch(completedProvider);
-        break;
-    }
+    List<TodoItem> todos = allFilteredTodos.where((todo) {
+      switch (category) {
+        case TodoCategory.overdue:
+          return !todo.finished && todo.due != null && todo.due!.isBefore(now);
+        case TodoCategory.today:
+          if (todo.finished || todo.due == null) return false;
+          return todo.due!.isAfter(now) && todo.due!.isBefore(tomorrow);
+        case TodoCategory.tomorrow:
+          if (todo.finished || todo.due == null) return false;
+          return todo.due!.isAfter(tomorrow) &&
+              todo.due!.isBefore(dayAfterTomorrow);
+        case TodoCategory.thisWeek:
+          if (todo.finished || todo.due == null) return false;
+          return todo.due!.isAfter(now) &&
+              todo.due!.isBefore(oneWeekLater) &&
+              !todo.due!.isBefore(dayAfterTomorrow);
+        case TodoCategory.future:
+          if (todo.finished || todo.due == null) return false;
+          return todo.due!.isAfter(oneWeekLater);
+        case TodoCategory.noDueTime:
+          return !todo.finished && todo.due == null;
+        case TodoCategory.completed:
+          return todo.finished;
+      }
+    }).toList();
 
     if (todos.isEmpty) {
       return const SizedBox.shrink();
@@ -409,108 +464,42 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
     // 显示所有待办事项
     final displayTodos = todos;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (displayTodos.isNotEmpty) ...[
+          const SizedBox(height: 12),
           // 分类标题
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: _getCategoryColor(category).withAlpha(26),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: _getCategoryColor(category).withAlpha(76),
-                width: 1,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              category.displayName,
+              style: TextStyle(
+                color: subtitleColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  category.icon,
-                  size: 16,
-                  color: _getCategoryColor(category),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  category.displayName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: _getCategoryColor(category),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getCategoryColor(category),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '${todos.length}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
-
-          const SizedBox(height: 12),
-
-          // 待办事项列表 - 添加位置过渡动画
-          ...displayTodos.map((todo) {
-            return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 600),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              transitionBuilder: (child, animation) {
-                // 根据动画进度决定移动方向
-                final isNewItem =
-                    child.key == ValueKey('${todo.id}_${category.name}');
-                final slideOffset = isNewItem
-                    ? Tween<Offset>(
-                        begin: const Offset(0, -1), // 从上方滑入（新分类）
-                        end: Offset.zero,
-                      ).animate(animation)
-                    : Tween<Offset>(
-                        begin: Offset.zero,
-                        end: const Offset(0, 1), // 向下方滑出（旧分类）
-                      ).animate(animation);
-
-                return SlideTransition(
-                  position: slideOffset,
-                  child: FadeTransition(opacity: animation, child: child),
-                );
-              },
-              child: Container(
-                key: ValueKey('${todo.id}_${category.name}'),
-                margin: const EdgeInsets.only(bottom: 8),
-                child: _buildTodoItem(
-                  context,
-                  ref,
-                  todo,
-                  category,
-                  textColor,
-                  subtitleColor,
-                  themeColor,
-                ),
-              ),
-            );
-          }),
+          const SizedBox(height: 8),
+          // 待办事项列表
+          ...displayTodos.map(
+            (todo) => _buildTodoItem(
+              context,
+              ref,
+              todo,
+              category,
+              textColor,
+              subtitleColor,
+              themeColor,
+            ),
+          ),
         ],
-      ),
+      ],
     );
   }
+
 
   /// 构建单个待办事项
   Widget _buildTodoItem(
@@ -768,8 +757,8 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   /// 显示待办事项编辑模态框
   void _showTodoEditModal(BuildContext context, TodoItem? todo, WidgetRef ref) {
     final currentTheme = ref.read(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     showModalBottomSheet(

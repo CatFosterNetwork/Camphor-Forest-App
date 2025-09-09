@@ -9,7 +9,7 @@ import '../models/forest_feature.dart';
 
 // 森林功能配置已迁移到AppConfig中管理
 
-/// 默认的森林功能列表
+/// 固定的森林功能列表（前四个核心功能）
 final _defaultFeatures = [
   ForestFeature(
     abbr: 'SchoolNavigation',
@@ -35,24 +35,6 @@ final _defaultFeatures = [
     icon: Icons.feedback_outlined,
     path: RouteConstants.feedback,
   ),
-  ForestFeature(
-    abbr: 'Library',
-    name: '图书馆',
-    icon: Icons.library_books_outlined,
-    path: RouteConstants.library,
-  ),
-  ForestFeature(
-    abbr: 'FleaMarket',
-    name: '跳蚤市场',
-    icon: Icons.store_outlined,
-    path: RouteConstants.fleaMarket,
-  ),
-  ForestFeature(
-    abbr: 'CampusRecruitment',
-    name: '校园招聘',
-    icon: Icons.work_outline,
-    path: RouteConstants.campusRecruitment,
-  ),
 ];
 
 /// 所有可用的森林功能
@@ -61,27 +43,19 @@ final allForestFeaturesProvider = Provider<List<ForestFeature>>((ref) {
   return _defaultFeatures;
 });
 
-/// 当前启用的森林功能（使用新的配置系统）
+/// 当前启用的森林功能（只包含前四个核心功能）
 final enabledForestFeaturesProvider = Provider<List<ForestFeature>>((ref) {
   final allFeatures = ref.watch(allForestFeaturesProvider);
   final appConfigAsync = ref.watch(appConfigNotifierProvider);
-  
+
   return appConfigAsync.when(
     data: (appConfig) {
       return allFeatures.where((feature) {
         switch (feature.abbr) {
-          case 'FleaMarket':
-            return appConfig.showFleaMarket;
-          case 'CampusRecruitment':
-            return appConfig.showCampusRecruitment;
           case 'SchoolNavigation':
             return appConfig.showSchoolNavigation;
-          case 'Library':
-            return appConfig.showLibrary;
           case 'BBS':
             return appConfig.showBBS;
-          case 'Ads':
-            return appConfig.showAds;
           case 'LifeService':
             return appConfig.showLifeService;
           case 'Feedback':
@@ -99,7 +73,7 @@ final enabledForestFeaturesProvider = Provider<List<ForestFeature>>((ref) {
 /// 森林功能组件是否应该显示（使用新的配置系统）
 final shouldShowForestFeaturesProvider = Provider<bool>((ref) {
   final appConfigAsync = ref.watch(appConfigNotifierProvider);
-  
+
   return appConfigAsync.when(
     data: (appConfig) => appConfig.hasAnyForestFeatureEnabled,
     loading: () => false, // 加载中时不显示
@@ -108,10 +82,12 @@ final shouldShowForestFeaturesProvider = Provider<bool>((ref) {
 });
 
 /// 模拟API获取功能列表
-final forestFeaturesApiProvider = FutureProvider<List<ForestFeature>>((ref) async {
+final forestFeaturesApiProvider = FutureProvider<List<ForestFeature>>((
+  ref,
+) async {
   // 模拟网络延迟
   await Future.delayed(const Duration(milliseconds: 500));
-  
+
   // 模拟API失败，返回默认列表
   return _defaultFeatures;
 });
