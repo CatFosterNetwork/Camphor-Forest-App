@@ -65,6 +65,7 @@ dependencies:
   path_provider: ^2.1.5
   fl_chart: ^0.69.0
   webview_flutter: ^4.7.0
+  flutter_platform_alert: ^0.8.0
 
 
 dev_dependencies:

@@ -1,12 +1,12 @@
 // lib/pages/lifeService/pages/calendar_view_screen.dart
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:gal/gal.dart';
+import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../../core/widgets/theme_aware_scaffold.dart';
@@ -186,15 +186,17 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
   Future<void> _saveCalendar() async {
     if (_isLoading) return;
 
-    // 使用新的权限管理器检查存储权限
+    // 1. 请求权限
     final result = await PermissionService.requestStoragePermission(
       context: context,
       showRationale: true,
     );
     if (!result.isGranted) {
-      PermissionService.showErrorSnackBar(
-        context,
-        result.errorMessage ?? '需要存储权限才能保存校历图片',
+      FlutterPlatformAlert.showAlert(
+        windowTitle: '权限错误',
+        text: result.errorMessage ?? '需要存储权限才能保存校历图片',
+        alertStyle: AlertButtonStyle.ok,
+        iconStyle: IconStyle.none,
       );
       return;
     }
@@ -203,50 +205,49 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
       _isLoading = true;
     });
 
-    try {
-      // 显示保存进度
-      PermissionService.showSaveProgressDialog(context, '正在保存校历...');
+    // 2. 显示加载指示器
+    PermissionService.showSaveProgressDialog(context, '正在保存校历...');
 
-      // 下载图片
+    String? successMessage;
+    String? errorMessage;
+
+    try {
+      // 3. 下载图片
       final response = await http.get(Uri.parse(calendarUrl));
       if (response.statusCode != 200) {
-        throw Exception('下载图片失败');
+        throw Exception('下载图片失败 (状态码: ${response.statusCode})');
       }
-
       final Uint8List bytes = response.bodyBytes;
 
-      // 获取保存路径
-      Directory? directory;
-      if (Platform.isAndroid) {
-        directory = Directory('/storage/emulated/0/Download');
-      } else if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
-      }
-
-      if (directory == null || !directory.existsSync()) {
-        directory = await getExternalStorageDirectory();
-      }
-
-      if (directory == null) {
-        throw Exception('无法找到保存路径');
-      }
-
-      // 保存文件
-      final fileName = '校历_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final file = File('${directory.path}/$fileName');
-      await file.writeAsBytes(bytes);
-
-      if (mounted) {
-        Navigator.of(context).pop(); // 关闭进度对话框
-        PermissionService.showSuccessSnackBar(context, '校历已保存到 ${file.path}');
-      }
+      // 4. 使用 gal 保存到相册
+      await Gal.putImageBytes(bytes);
+      successMessage = '校历已成功保存到相册';
     } catch (e) {
-      if (mounted) {
-        Navigator.of(context).pop(); // 关闭进度对话框
-        PermissionService.showErrorSnackBar(context, '保存失败：$e');
-      }
+      errorMessage = '保存失败: $e';
     } finally {
       if (mounted) {
+        // 5. 首先关闭对话框
+        Navigator.of(context).pop();
+
+        // 6. 然后根据结果显示原生提示
+        if (successMessage != null) {
+          FlutterPlatformAlert.showAlert(
+            windowTitle: '成功',
+            text: successMessage,
+            alertStyle: AlertButtonStyle.ok,
+            iconStyle: IconStyle.none,
+          );
+        }
+        if (errorMessage != null) {
+          FlutterPlatformAlert.showAlert(
+            windowTitle: '错误',
+            text: errorMessage,
+            alertStyle: AlertButtonStyle.ok,
+            iconStyle: IconStyle.none,
+          );
+        }
+
+        // 7. 恢复状态
         setState(() {
           _isLoading = false;
         });
