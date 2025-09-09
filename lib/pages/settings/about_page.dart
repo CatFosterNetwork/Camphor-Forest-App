@@ -395,13 +395,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       } else {
         // 其他平台
         qqGroupUri = Uri.parse(
-          'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah ',
+          'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah',
         );
       }
 
       // 备用网页链接
       final Uri webUri = Uri.parse(
-        'https://qm.qq.com/cgi-bin/qm/qr?k=DaJyjtwq2ZzxvMtVmYOMM4i8zgaQCClN',
+        'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah',
       );
 
       bool launched = false;
