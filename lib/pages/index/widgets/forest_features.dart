@@ -28,10 +28,7 @@ class ForestFeatures extends StatelessWidget {
     );
 
     if (!blur) {
-      return Container(
-      padding: const EdgeInsets.all(12),
-      child: grid,
-    );
+      return Container(padding: const EdgeInsets.all(12), child: grid);
     }
 
     return ClipRRect(
@@ -40,9 +37,9 @@ class ForestFeatures extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Container(
           decoration: BoxDecoration(
-            color: darkMode 
+            color: darkMode
                 ? const Color(0xFF2A2A2A).withAlpha(217)
-                                  : Colors.white.withAlpha(128),
+                : Colors.white.withAlpha(128),
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.all(12),

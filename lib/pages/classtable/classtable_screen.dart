@@ -388,37 +388,10 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               appBar: ThemeAwareAppBar(
                 title: _formatAppBarTitle(),
                 transparent: true,
+                foregroundColor: isDarkMode
+                    ? const Color(0xFFBFC2C9)
+                    : (currentTheme?.foregColor ?? Colors.black),
                 actions: [
-                  AnimatedBuilder(
-                    animation: _refreshAnimController,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: _isRefreshing
-                            ? _refreshScaleAnimation.value
-                            : 1.0,
-                        child: Transform.rotate(
-                          angle: _isRefreshing
-                              ? _refreshRotateAnimation.value
-                              : 0.0,
-                          child: IconButton(
-                            icon: const Icon(Icons.refresh),
-                            onPressed: () async {
-                              await ref.refresh(
-                                classTableProvider((
-                                  xnm: _currentXnm,
-                                  xqm: _currentXqm,
-                                )),
-                              );
-                            },
-                            tooltip: '刷新课表',
-                            color: isDarkMode
-                                ? const Color(0xFFBFC2C9)
-                                : (currentTheme?.foregColor ?? Colors.black),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                   IconButton(
                     icon: const Icon(Icons.calendar_month),
                     onPressed: () =>
@@ -542,7 +515,41 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                       setState(() {
                                         _isRefreshing = false;
                                       });
+
+                                      // 显示刷新成功提示
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.check_circle,
+                                                  color: Colors.white,
+                                                  size: 20,
+                                                ),
+                                                SizedBox(width: 8),
+                                                Text('课表刷新成功'),
+                                              ],
+                                            ),
+                                            backgroundColor:
+                                                Colors.green.shade600,
+                                            duration: const Duration(
+                                              seconds: 2,
+                                            ),
+                                            behavior: SnackBarBehavior.floating,
+                                            margin: const EdgeInsets.all(16),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     });
+
                                     // ignore: unawaited_futures
                                     ref.refresh(
                                       classTableProvider((
