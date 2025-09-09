@@ -113,8 +113,8 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     final currentTheme = ref.watch(selectedCustomThemeProvider);
 
     // 获取主题色，如果没有主题则使用默认蓝色
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
     final activeColor = isDarkMode ? themeColor.withAlpha(204) : themeColor;
 
@@ -129,13 +129,33 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
         padding: const EdgeInsets.all(16),
         children: [
           // 功能设置
-          Card(
+          Container(
             margin: const EdgeInsets.only(bottom: 16),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? const Color(0xFF2A2A2A).withAlpha(217)
+                  : Colors.white.withAlpha(128),
+              borderRadius: BorderRadius.circular(16),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
+              boxShadow: isDarkMode
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(51),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(25),
+                        blurRadius: 6,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
-            color: isDarkMode ? Colors.grey.shade800 : Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -199,13 +219,33 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
           ),
 
           // 缓存设置
-          Card(
+          Container(
             margin: const EdgeInsets.only(bottom: 16),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? const Color(0xFF2A2A2A).withAlpha(217)
+                  : Colors.white.withAlpha(128),
+              borderRadius: BorderRadius.circular(16),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
+              boxShadow: isDarkMode
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(51),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(25),
+                        blurRadius: 6,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
-            color: isDarkMode ? Colors.grey.shade800 : Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -282,13 +322,33 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
           ),
 
           // 网络设置
-          Card(
+          Container(
             margin: const EdgeInsets.only(bottom: 16),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? const Color(0xFF2A2A2A).withAlpha(217)
+                  : Colors.white.withAlpha(128),
+              borderRadius: BorderRadius.circular(16),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
+              boxShadow: isDarkMode
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(51),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(25),
+                        blurRadius: 6,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
-            color: isDarkMode ? Colors.grey.shade800 : Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -358,13 +418,33 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
           ),
 
           // 语言和地区
-          Card(
+          Container(
             margin: const EdgeInsets.only(bottom: 16),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? const Color(0xFF2A2A2A).withAlpha(217)
+                  : Colors.white.withAlpha(128),
+              borderRadius: BorderRadius.circular(16),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
+              boxShadow: isDarkMode
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(51),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(25),
+                        blurRadius: 6,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
-            color: isDarkMode ? Colors.grey.shade800 : Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -412,13 +492,33 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
           ),
 
           // 实验性功能
-          Card(
+          Container(
             margin: const EdgeInsets.only(bottom: 16),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? const Color(0xFF2A2A2A).withAlpha(217)
+                  : Colors.white.withAlpha(128),
+              borderRadius: BorderRadius.circular(16),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
+              boxShadow: isDarkMode
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(51),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(25),
+                        blurRadius: 6,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
-            color: isDarkMode ? Colors.grey.shade800 : Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -663,8 +763,8 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
 
   void _showLanguageSelector(BuildContext context, bool isDarkMode) {
     final currentTheme = ref.read(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
     final activeColor = isDarkMode ? themeColor.withAlpha(204) : themeColor;
 

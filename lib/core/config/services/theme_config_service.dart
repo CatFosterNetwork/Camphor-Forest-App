@@ -12,7 +12,6 @@ import '../../services/custom_theme_service.dart';
 /// 负责主题配置的加载、保存和管理
 class ThemeConfigService {
   static const String _configKey = 'theme_config';
-  static const String _legacyConfigKey = 'config';
 
   final SharedPreferences _prefs;
   final CustomThemeService _customThemeService;
@@ -22,16 +21,26 @@ class ThemeConfigService {
   /// 加载主题配置
   Future<ThemeConfig> loadConfig() async {
     try {
+      debugPrint('ThemeConfigService: 开始加载主题配置...');
+
       // 首先尝试加载新格式的配置
       final configJson = _prefs.getString(_configKey);
+      debugPrint('ThemeConfigService: 新格式配置数据: $configJson');
+
       if (configJson != null) {
         final config = ThemeConfig.fromJson(jsonDecode(configJson));
-        debugPrint('ThemeConfigService: 成功加载主题配置');
+        debugPrint(
+          'ThemeConfigService: 成功加载主题配置 - 深色模式: ${config.isDarkMode}, 主题模式: ${config.themeMode}',
+        );
         return config;
       }
 
-      // 如果新配置不存在，尝试从旧配置迁移
-      return await _migrateFromLegacyConfig();
+      debugPrint('ThemeConfigService: 新格式配置不存在，使用默认配置');
+      // 如果新配置不存在，使用默认配置并保存
+      const defaultConfig = ThemeConfig.defaultConfig;
+      await saveConfig(defaultConfig);
+      debugPrint('ThemeConfigService: 已保存默认主题配置');
+      return defaultConfig;
     } catch (e) {
       debugPrint('ThemeConfigService: 加载主题配置失败，使用默认配置: $e');
       return ThemeConfig.defaultConfig;
@@ -42,8 +51,22 @@ class ThemeConfigService {
   Future<void> saveConfig(ThemeConfig config) async {
     try {
       final configJson = jsonEncode(config.toJson());
-      await _prefs.setString(_configKey, configJson);
-      debugPrint('ThemeConfigService: 主题配置已保存');
+      debugPrint('ThemeConfigService: 准备保存主题配置: $configJson');
+
+      final success = await _prefs.setString(_configKey, configJson);
+      debugPrint(
+        'ThemeConfigService: SharedPreferences.setString 返回值: $success',
+      );
+
+      // 立即验证保存是否成功
+      final savedConfig = _prefs.getString(_configKey);
+      if (savedConfig == configJson) {
+        debugPrint('ThemeConfigService: 主题配置保存成功，验证通过');
+      } else {
+        debugPrint('ThemeConfigService: 警告 - 保存的配置验证失败');
+        debugPrint('  期望: $configJson');
+        debugPrint('  实际: $savedConfig');
+      }
     } catch (e) {
       debugPrint('ThemeConfigService: 保存主题配置失败: $e');
       throw Exception('保存主题配置失败: $e');
@@ -179,32 +202,6 @@ class ThemeConfigService {
   }
 
   // ===== 私有方法 =====
-
-  /// 从旧配置迁移
-  Future<ThemeConfig> _migrateFromLegacyConfig() async {
-    try {
-      final legacyConfigJson = _prefs.getString(_legacyConfigKey);
-      if (legacyConfigJson != null) {
-        final legacyConfig =
-            jsonDecode(legacyConfigJson) as Map<String, dynamic>;
-
-        // 创建新的ThemeConfig，只提取主题相关的字段
-        final themeConfig = ThemeConfig.fromJson(legacyConfig);
-
-        // 保存到新的存储键
-        await saveConfig(themeConfig);
-
-        debugPrint('ThemeConfigService: 成功从旧配置迁移主题设置');
-        return themeConfig;
-      }
-    } catch (e) {
-      debugPrint('ThemeConfigService: 旧配置迁移失败: $e');
-    }
-
-    // 如果迁移失败，返回默认配置
-    debugPrint('ThemeConfigService: 使用默认主题配置');
-    return ThemeConfig.defaultConfig;
-  }
 
   // ===== 便利方法 =====
 

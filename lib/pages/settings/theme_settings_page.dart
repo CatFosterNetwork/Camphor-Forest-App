@@ -22,18 +22,40 @@ class ThemeSettingsPage extends ConsumerWidget {
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: false, // 主题设置使用纯色背景，便于查看主题效果
-      forceStatusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark, // 强制状态栏图标适配
-      appBar: ThemeAwareAppBar(
-        title: '主题设置',
-      ),
+      forceStatusBarIconBrightness: isDarkMode
+          ? Brightness.light
+          : Brightness.dark, // 强制状态栏图标适配
+      appBar: ThemeAwareAppBar(title: '主题设置'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // 深色/浅色模式切换
-          Card(
-            color: isDarkMode 
-                ? Colors.grey.shade800 
-                : Colors.white,
+          Container(
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? const Color(0xFF2A2A2A).withAlpha(217)
+                  : Colors.white.withAlpha(128),
+              borderRadius: BorderRadius.circular(16),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
+              boxShadow: isDarkMode
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(51),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(25),
+                        blurRadius: 6,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -77,31 +99,66 @@ class ThemeSettingsPage extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (_, _) => const Text('加载主题模式失败'),
                   ),
                 ],
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 预设主题选择
-          _buildPresetThemeSection(ref, customThemesAsync, selectedThemeCode, isDarkMode, context),
-          
+          _buildPresetThemeSection(
+            ref,
+            customThemesAsync,
+            selectedThemeCode,
+            isDarkMode,
+            context,
+          ),
+
           const SizedBox(height: 16),
-          
+
           // 自定义主题管理
-          _buildCustomThemeSection(ref, customThemesAsync, selectedThemeCode, isDarkMode, context),
-          
+          _buildCustomThemeSection(
+            ref,
+            customThemesAsync,
+            selectedThemeCode,
+            isDarkMode,
+            context,
+          ),
+
           const SizedBox(height: 24),
-          
+
           // 预览区域
-          Card(
-            color: isDarkMode 
-                ? Colors.grey.shade800 
-                : Colors.white,
+          Container(
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? const Color(0xFF2A2A2A).withAlpha(217)
+                  : Colors.white.withAlpha(128),
+              borderRadius: BorderRadius.circular(16),
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
+              boxShadow: isDarkMode
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(51),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(25),
+                        blurRadius: 6,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -125,7 +182,7 @@ class ThemeSettingsPage extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildThemeModeOption(
     WidgetRef ref,
     ThemeMode mode,
@@ -135,13 +192,13 @@ class ThemeSettingsPage extends ConsumerWidget {
     bool isDarkMode,
   ) {
     final isSelected = currentThemeMode == mode.name;
-    
+
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(
         icon,
-        color: isSelected 
-            ? (isDarkMode ? Colors.blue.shade300 : Colors.blue) 
+        color: isSelected
+            ? (isDarkMode ? Colors.blue.shade300 : Colors.blue)
             : (isDarkMode ? Colors.white70 : Colors.black54),
       ),
       title: Text(
@@ -151,33 +208,31 @@ class ThemeSettingsPage extends ConsumerWidget {
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
-      trailing: isSelected 
+      trailing: isSelected
           ? Icon(
               Icons.check,
               color: isDarkMode ? Colors.blue.shade300 : Colors.blue,
             )
           : null,
-                        onTap: () => ref.read(themeConfigNotifierProvider.notifier).setThemeMode(mode.name),
+      onTap: () => ref
+          .read(themeConfigNotifierProvider.notifier)
+          .setThemeMode(mode.name),
     );
   }
-  
 
-  
   Widget _buildPreviewArea(WidgetRef ref, bool isDarkMode) {
     final customTheme = ref.watch(selectedCustomThemeProvider);
     final themeMode = ref.watch(themeModeProvider);
-    
+
     if (customTheme == null) {
       return const SizedBox(height: 100);
     }
-    
+
     return Container(
       height: 200,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDarkMode ? Colors.white12 : Colors.black12,
-        ),
+        border: Border.all(color: isDarkMode ? Colors.white12 : Colors.black12),
       ),
       child: Column(
         children: [
@@ -198,8 +253,8 @@ class ThemeSettingsPage extends ConsumerWidget {
                   themeMode == 'light'
                       ? Icons.light_mode
                       : themeMode == 'dark'
-                          ? Icons.dark_mode
-                          : Icons.settings_brightness,
+                      ? Icons.dark_mode
+                      : Icons.settings_brightness,
                   size: 16,
                   color: isDarkMode ? Colors.white70 : Colors.black54,
                 ),
@@ -208,10 +263,10 @@ class ThemeSettingsPage extends ConsumerWidget {
                   themeMode == 'light'
                       ? '浅色模式'
                       : themeMode == 'dark'
-                          ? '深色模式'
-                          : themeMode == 'system'
-                              ? '跟随系统'
-                              : '自动',
+                      ? '深色模式'
+                      : themeMode == 'system'
+                      ? '跟随系统'
+                      : '自动',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDarkMode ? Colors.white70 : Colors.black54,
@@ -229,7 +284,7 @@ class ThemeSettingsPage extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // 预览内容
           Expanded(
             child: Container(
@@ -297,7 +352,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                                     '高等数学 | 8:00-9:40',
                                     style: TextStyle(
                                       fontSize: 10,
-                                      color: customTheme.foregColor.withAlpha(178),
+                                      color: customTheme.foregColor.withAlpha(
+                                        178,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -307,9 +364,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // 颜色色块展示
                     Row(
                       children: [
@@ -322,31 +379,36 @@ class ThemeSettingsPage extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        ...customTheme.colorList.take(6).map((color) => 
-                          Container(
-                            width: 16,
-                            height: 16,
-                            margin: const EdgeInsets.only(right: 3),
-                            decoration: BoxDecoration(
-                              color: color,
-                              borderRadius: BorderRadius.circular(3),
-                              border: Border.all(
-                                color: Colors.white.withAlpha(76),
-                                width: 0.5,
+                        ...customTheme.colorList
+                            .take(6)
+                            .map(
+                              (color) => Container(
+                                width: 16,
+                                height: 16,
+                                margin: const EdgeInsets.only(right: 3),
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  borderRadius: BorderRadius.circular(3),
+                                  border: Border.all(
+                                    color: Colors.white.withAlpha(76),
+                                    width: 0.5,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // 时间和日期颜色展示
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: customTheme.foregColor.withAlpha(26),
                             borderRadius: BorderRadius.circular(6),
@@ -362,7 +424,10 @@ class ThemeSettingsPage extends ConsumerWidget {
                         ),
                         const SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: customTheme.weekColor.withAlpha(26),
                             borderRadius: BorderRadius.circular(6),
@@ -390,16 +455,38 @@ class ThemeSettingsPage extends ConsumerWidget {
 
   // 预设主题选择区域
   Widget _buildPresetThemeSection(
-    WidgetRef ref, 
-    AsyncValue<List<theme_model.Theme>> customThemesAsync, 
-    String selectedThemeCode, 
-    bool isDarkMode, 
-    BuildContext context
+    WidgetRef ref,
+    AsyncValue<List<theme_model.Theme>> customThemesAsync,
+    String selectedThemeCode,
+    bool isDarkMode,
+    BuildContext context,
   ) {
-    return Card(
-      color: isDarkMode 
-                ? Colors.grey.shade800 
-                : Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? const Color(0xFF2A2A2A).withAlpha(217)
+            : Colors.white.withAlpha(128),
+        borderRadius: BorderRadius.circular(16),
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+            : null,
+        boxShadow: isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withAlpha(51),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withAlpha(25),
+                  blurRadius: 6,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -420,9 +507,14 @@ class ThemeSettingsPage extends ConsumerWidget {
                   loading: () => const SizedBox(),
                   error: (_, _) => const SizedBox(),
                   data: (themes) {
-                    final presetThemes = themes.where((theme) => !theme.code.startsWith('custom')).toList();
+                    final presetThemes = themes
+                        .where((theme) => !theme.code.startsWith('custom'))
+                        .toList();
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.green.withAlpha(26),
                         borderRadius: BorderRadius.circular(12),
@@ -453,18 +545,26 @@ class ThemeSettingsPage extends ConsumerWidget {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => Text(
                 '加载主题失败: $error',
-                style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
+                ),
               ),
               data: (themes) {
-                final presetThemes = themes.where((theme) => !theme.code.startsWith('custom')).toList();
+                final presetThemes = themes
+                    .where((theme) => !theme.code.startsWith('custom'))
+                    .toList();
                 return Column(
-                  children: presetThemes.map((theme) => _buildThemeSelectionTile(
-                    theme, 
-                    selectedThemeCode == theme.code,
-                    isDarkMode,
-                    () => _selectTheme(ref, theme),
-                    showDelete: false,
-                  )).toList(),
+                  children: presetThemes
+                      .map(
+                        (theme) => _buildThemeSelectionTile(
+                          theme,
+                          selectedThemeCode == theme.code,
+                          isDarkMode,
+                          () => _selectTheme(ref, theme),
+                          showDelete: false,
+                        ),
+                      )
+                      .toList(),
                 );
               },
             ),
@@ -476,16 +576,38 @@ class ThemeSettingsPage extends ConsumerWidget {
 
   // 自定义主题管理区域
   Widget _buildCustomThemeSection(
-    WidgetRef ref, 
-    AsyncValue<List<theme_model.Theme>> customThemesAsync, 
-    String selectedThemeCode, 
-    bool isDarkMode, 
-    BuildContext context
+    WidgetRef ref,
+    AsyncValue<List<theme_model.Theme>> customThemesAsync,
+    String selectedThemeCode,
+    bool isDarkMode,
+    BuildContext context,
   ) {
-    return Card(
-      color: isDarkMode 
-                ? Colors.grey.shade800 
-                : Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? const Color(0xFF2A2A2A).withAlpha(217)
+            : Colors.white.withAlpha(128),
+        borderRadius: BorderRadius.circular(16),
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+            : null,
+        boxShadow: isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withAlpha(51),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withAlpha(25),
+                  blurRadius: 6,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -508,9 +630,14 @@ class ThemeSettingsPage extends ConsumerWidget {
                       loading: () => const SizedBox(),
                       error: (_, _) => const SizedBox(),
                       data: (themes) {
-                        final customThemes = themes.where((theme) => theme.code.startsWith('custom')).toList();
+                        final customThemes = themes
+                            .where((theme) => theme.code.startsWith('custom'))
+                            .toList();
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.orange.withAlpha(26),
                             borderRadius: BorderRadius.circular(12),
@@ -534,7 +661,10 @@ class ThemeSettingsPage extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
@@ -548,9 +678,11 @@ class ThemeSettingsPage extends ConsumerWidget {
               loading: () => const SizedBox(),
               error: (_, _) => const SizedBox(),
               data: (themes) {
-                final customThemes = themes.where((theme) => theme.code.startsWith('custom')).toList();
+                final customThemes = themes
+                    .where((theme) => theme.code.startsWith('custom'))
+                    .toList();
                 return Text(
-                  customThemes.isEmpty 
+                  customThemes.isEmpty
                       ? '您还没有创建任何自定义主题'
                       : '您创建的个性化主题，可以自由编辑和删除',
                   style: TextStyle(
@@ -565,20 +697,28 @@ class ThemeSettingsPage extends ConsumerWidget {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => Text(
                 '加载主题失败: $error',
-                style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
+                ),
               ),
               data: (themes) {
-                final customThemes = themes.where((theme) => theme.code.startsWith('custom')).toList();
-                
+                final customThemes = themes
+                    .where((theme) => theme.code.startsWith('custom'))
+                    .toList();
+
                 if (customThemes.isEmpty) {
                   return Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
+                      color: isDarkMode
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade300,
+                        color: isDarkMode
+                            ? Colors.grey.shade600
+                            : Colors.grey.shade300,
                         style: BorderStyle.solid,
                         width: 2,
                       ),
@@ -588,7 +728,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                         Icon(
                           Icons.palette_outlined,
                           size: 48,
-                          color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade500,
+                          color: isDarkMode
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade500,
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -596,7 +738,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                            color: isDarkMode
+                                ? Colors.grey.shade400
+                                : Colors.grey.shade600,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -604,7 +748,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                           '点击右上角"创建"按钮开始设计您的专属主题',
                           style: TextStyle(
                             fontSize: 14,
-                            color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
+                            color: isDarkMode
+                                ? Colors.grey.shade500
+                                : Colors.grey.shade500,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -612,17 +758,21 @@ class ThemeSettingsPage extends ConsumerWidget {
                     ),
                   );
                 }
-                
+
                 return Column(
-                  children: customThemes.map((theme) => _buildThemeSelectionTile(
-                    theme, 
-                    selectedThemeCode == theme.code,
-                    isDarkMode,
-                    () => _selectTheme(ref, theme),
-                    showDelete: true,
-                    onDelete: () => _deleteTheme(ref, theme, context),
-                    onEdit: () => _editTheme(context, theme),
-                  )).toList(),
+                  children: customThemes
+                      .map(
+                        (theme) => _buildThemeSelectionTile(
+                          theme,
+                          selectedThemeCode == theme.code,
+                          isDarkMode,
+                          () => _selectTheme(ref, theme),
+                          showDelete: true,
+                          onDelete: () => _deleteTheme(ref, theme, context),
+                          onEdit: () => _editTheme(context, theme),
+                        ),
+                      )
+                      .toList(),
                 );
               },
             ),
@@ -634,19 +784,41 @@ class ThemeSettingsPage extends ConsumerWidget {
 
   // 主题选择瓦片
   Widget _buildThemeSelectionTile(
-    theme_model.Theme theme, 
-    bool isSelected, 
+    theme_model.Theme theme,
+    bool isSelected,
     bool isDarkMode,
     VoidCallback onTap, {
     bool showDelete = false,
     VoidCallback? onDelete,
     VoidCallback? onEdit,
   }) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      color: isSelected 
-          ? (isDarkMode ? Colors.blue.shade900 : Colors.blue.shade50)
-          : (isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? (isDarkMode ? Colors.blue.shade900 : Colors.blue.shade50)
+            : (isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100),
+        borderRadius: BorderRadius.circular(12),
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+            : null,
+        boxShadow: isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withAlpha(38),
+                  blurRadius: 12,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withAlpha(19),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -668,17 +840,17 @@ class ThemeSettingsPage extends ConsumerWidget {
                         width: 1,
                       ),
                       gradient: LinearGradient(
-                        colors: theme.colorList.isNotEmpty 
-                            ? theme.colorList 
+                        colors: theme.colorList.isNotEmpty
+                            ? theme.colorList
                             : [theme.backColor, theme.foregColor],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(width: 12),
-                  
+
                   // 主题名称和标签
                   Expanded(
                     child: Column(
@@ -692,16 +864,21 @@ class ThemeSettingsPage extends ConsumerWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: isDarkMode ? Colors.white : Colors.black,
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: theme.code.startsWith('custom') 
+                                color: theme.code.startsWith('custom')
                                     ? Colors.orange.withAlpha(51)
                                     : Colors.green.withAlpha(51),
                                 borderRadius: BorderRadius.circular(8),
@@ -710,7 +887,7 @@ class ThemeSettingsPage extends ConsumerWidget {
                                 theme.code.startsWith('custom') ? '自定义' : '预设',
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: theme.code.startsWith('custom') 
+                                  color: theme.code.startsWith('custom')
                                       ? Colors.orange.shade700
                                       : Colors.green.shade700,
                                   fontWeight: FontWeight.w500,
@@ -722,7 +899,7 @@ class ThemeSettingsPage extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  
+
                   // 操作按钮
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -758,7 +935,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                           padding: const EdgeInsets.only(left: 4),
                           child: Icon(
                             Icons.check_circle,
-                            color: isDarkMode ? Colors.blue.shade300 : Colors.blue,
+                            color: isDarkMode
+                                ? Colors.blue.shade300
+                                : Colors.blue,
                             size: 20,
                           ),
                         ),
@@ -766,7 +945,7 @@ class ThemeSettingsPage extends ConsumerWidget {
                   ),
                 ],
               ),
-              
+
               // 颜色列表行
               const SizedBox(height: 12),
               Row(
@@ -775,25 +954,33 @@ class ThemeSettingsPage extends ConsumerWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        ...theme.colorList.take(8).map((color) => Container(
-                          width: 14,
-                          height: 14,
-                          margin: const EdgeInsets.only(right: 4),
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isDarkMode ? Colors.white24 : Colors.black12,
-                              width: 0.5,
+                        ...theme.colorList
+                            .take(8)
+                            .map(
+                              (color) => Container(
+                                width: 14,
+                                height: 14,
+                                margin: const EdgeInsets.only(right: 4),
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isDarkMode
+                                        ? Colors.white24
+                                        : Colors.black12,
+                                    width: 0.5,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        )),
                         if (theme.colorList.length > 8)
                           Container(
                             width: 14,
                             height: 14,
                             decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.white24 : Colors.black12,
+                              color: isDarkMode
+                                  ? Colors.white24
+                                  : Colors.black12,
                               shape: BoxShape.circle,
                             ),
                             child: Center(
@@ -801,7 +988,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                                 '•••',
                                 style: TextStyle(
                                   fontSize: 6,
-                                  color: isDarkMode ? Colors.white60 : Colors.black45,
+                                  color: isDarkMode
+                                      ? Colors.white60
+                                      : Colors.black45,
                                   height: 1,
                                 ),
                               ),
@@ -835,7 +1024,11 @@ class ThemeSettingsPage extends ConsumerWidget {
   }
 
   // 删除主题
-  void _deleteTheme(WidgetRef ref, theme_model.Theme theme, BuildContext context) async {
+  void _deleteTheme(
+    WidgetRef ref,
+    theme_model.Theme theme,
+    BuildContext context,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -858,7 +1051,7 @@ class ThemeSettingsPage extends ConsumerWidget {
       try {
         final manager = ref.read(customThemeManagerProvider.notifier);
         final success = await manager.deleteTheme(theme.code);
-        
+
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -867,11 +1060,12 @@ class ThemeSettingsPage extends ConsumerWidget {
               behavior: SnackBarBehavior.floating,
             ),
           );
-          
+
           // 如果删除的是当前选中的主题，回到默认主题
           final selectedThemeCode = ref.read(selectedThemeCodeProvider);
           if (selectedThemeCode == theme.code) {
-            await ref.read(selectedThemeCodeProvider.notifier)
+            await ref
+                .read(selectedThemeCodeProvider.notifier)
                 .setThemeCode('classic-theme-1'); // 回到你好西大人主题
           }
         } else {

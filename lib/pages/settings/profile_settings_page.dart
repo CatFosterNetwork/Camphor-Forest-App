@@ -42,8 +42,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     final user = authState.user;
 
     // 获取主题色，如果没有主题则使用默认蓝色
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
     final activeColor = isDarkMode ? themeColor.withAlpha(204) : themeColor;
 
@@ -61,8 +61,35 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               padding: const EdgeInsets.all(16),
               children: [
                 // 个人信息卡片
-                Card(
-                  color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? const Color(0xFF2A2A2A).withAlpha(217)
+                        : Colors.white.withAlpha(128),
+                    borderRadius: BorderRadius.circular(16),
+                    border: isDarkMode
+                        ? Border.all(
+                            color: Colors.white.withAlpha(26),
+                            width: 1,
+                          )
+                        : null,
+                    boxShadow: isDarkMode
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: Colors.grey.withAlpha(51),
+                              blurRadius: 20,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 8),
+                            ),
+                            BoxShadow(
+                              color: Colors.grey.withAlpha(25),
+                              blurRadius: 6,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -202,8 +229,35 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                 // 注：密码修改和指纹登录功能已按要求移除
 
                 // 隐私设置
-                Card(
-                  color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? const Color(0xFF2A2A2A).withAlpha(217)
+                        : Colors.white.withAlpha(128),
+                    borderRadius: BorderRadius.circular(16),
+                    border: isDarkMode
+                        ? Border.all(
+                            color: Colors.white.withAlpha(26),
+                            width: 1,
+                          )
+                        : null,
+                    boxShadow: isDarkMode
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: Colors.grey.withAlpha(51),
+                              blurRadius: 20,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 8),
+                            ),
+                            BoxShadow(
+                              color: Colors.grey.withAlpha(25),
+                              blurRadius: 6,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(

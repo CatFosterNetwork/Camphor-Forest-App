@@ -310,6 +310,11 @@ class CourseDetailModal extends StatelessWidget {
   /// 构建课程属性项（带颜色，与其他详情项UI一致）
   Widget _buildCourseAttributeItem(String label, String value) {
     final typeColor = _getCourseAttributeColor(value);
+    // 在深色模式下使用更明亮的图标颜色
+    final iconColor = isDarkMode ? Colors.blue.shade300 : courseColor;
+    final iconBackgroundColor = isDarkMode
+        ? Colors.blue.shade300.withAlpha(26)
+        : courseColor.withAlpha(26);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -320,10 +325,10 @@ class CourseDetailModal extends StatelessWidget {
             margin: const EdgeInsets.only(top: 2), // 向下微调图标位置以对齐文本中心
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: courseColor.withAlpha(26),
+              color: iconBackgroundColor,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(Icons.school, size: 16, color: courseColor),
+            child: Icon(Icons.school, size: 16, color: iconColor),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -380,6 +385,12 @@ class CourseDetailModal extends StatelessWidget {
   }
 
   Widget _buildCompactDetailItem(String label, String value, IconData icon) {
+    // 在深色模式下使用更明亮的图标颜色
+    final iconColor = isDarkMode ? Colors.blue.shade300 : courseColor;
+    final iconBackgroundColor = isDarkMode
+        ? Colors.blue.shade300.withAlpha(26)
+        : courseColor.withAlpha(26);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -389,10 +400,10 @@ class CourseDetailModal extends StatelessWidget {
             margin: const EdgeInsets.only(top: 2), // 向下微调图标位置以对齐文本中心
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: courseColor.withAlpha(26),
+              color: iconBackgroundColor,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, size: 16, color: courseColor),
+            child: Icon(icon, size: 16, color: iconColor),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -426,6 +437,15 @@ class CourseDetailModal extends StatelessWidget {
 
   /// 构建统计数据查看按钮
   Widget _buildStatisticsButton(BuildContext context) {
+    // 在深色模式下使用更明亮的颜色
+    final buttonColor = isDarkMode ? Colors.blue.shade300 : courseColor;
+    final buttonBackgroundColor = isDarkMode
+        ? Colors.blue.shade300.withAlpha(51)
+        : courseColor.withAlpha(26);
+    final buttonBorderColor = isDarkMode
+        ? Colors.blue.shade300.withAlpha(128)
+        : courseColor.withAlpha(128);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: GestureDetector(
@@ -441,23 +461,21 @@ class CourseDetailModal extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDarkMode
-                ? courseColor.withAlpha(51)
-                : courseColor.withAlpha(26),
+            color: buttonBackgroundColor,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: courseColor.withAlpha(128), width: 1),
+            border: Border.all(color: buttonBorderColor, width: 1),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.analytics_outlined, color: courseColor, size: 16),
+              Icon(Icons.analytics_outlined, color: buttonColor, size: 16),
               const SizedBox(width: 8),
               Text(
                 '点此处查看课程统计数据',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: courseColor,
+                  color: buttonColor,
                 ),
               ),
             ],

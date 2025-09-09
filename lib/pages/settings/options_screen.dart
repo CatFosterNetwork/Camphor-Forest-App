@@ -17,21 +17,43 @@ class OptionsScreen extends ConsumerWidget {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
 
     return ThemeAwareScaffold(
-      useBackground: true, // 启用背景，与主题保持一致
+      useBackground: false, // 设置页面使用纯色背景，保持专业感
       pageType: PageType.settings,
-      forceStatusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark, // 强制状态栏图标适配
-      appBar: ThemeAwareAppBar(
-        title: '选项',
-      ),
+      forceStatusBarIconBrightness: isDarkMode
+          ? Brightness.light
+          : Brightness.dark, // 强制状态栏图标适配
+      appBar: ThemeAwareAppBar(title: '选项'),
       body: Column(
         children: [
           // 设置选项卡片
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Card(
-              color: isDarkMode 
-                  ? Colors.grey.shade800 
-                  : Colors.white,
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? const Color(0xFF2A2A2A).withAlpha(217)
+                    : Colors.white.withAlpha(128),
+                borderRadius: BorderRadius.circular(16),
+                border: isDarkMode
+                    ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                    : null,
+                boxShadow: isDarkMode
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.grey.withAlpha(51),
+                          blurRadius: 20,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 8),
+                        ),
+                        BoxShadow(
+                          color: Colors.grey.withAlpha(25),
+                          blurRadius: 6,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Column(
@@ -86,10 +108,10 @@ class OptionsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // 填充空间，让按钮区域位于底部
           const Spacer(),
-          
+
           // 同步配置区域
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -103,8 +125,8 @@ class OptionsScreen extends ConsumerWidget {
                   child: ElevatedButton(
                     onPressed: () => _downloadConfig(context, ref),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDarkMode 
-                          ? Colors.blue.withAlpha(204) 
+                      backgroundColor: isDarkMode
+                          ? Colors.blue.withAlpha(204)
                           : Colors.blue,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
@@ -120,7 +142,7 @@ class OptionsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                
+
                 // 上传本地配置
                 Container(
                   width: double.infinity,
@@ -129,8 +151,8 @@ class OptionsScreen extends ConsumerWidget {
                   child: ElevatedButton(
                     onPressed: () => _uploadConfig(context, ref),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDarkMode 
-                          ? Colors.green.withAlpha(204) 
+                      backgroundColor: isDarkMode
+                          ? Colors.green.withAlpha(204)
                           : Colors.green,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
@@ -149,7 +171,7 @@ class OptionsScreen extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // 退出登录
           Padding(
             padding: const EdgeInsets.all(16),
@@ -159,8 +181,8 @@ class OptionsScreen extends ConsumerWidget {
               child: ElevatedButton(
                 onPressed: () => _showLogoutDialog(context, ref),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isDarkMode 
-                      ? Colors.red.withAlpha(230) 
+                  backgroundColor: isDarkMode
+                      ? Colors.red.withAlpha(230)
                       : Colors.red,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -169,10 +191,7 @@ class OptionsScreen extends ConsumerWidget {
                 ),
                 child: const Text(
                   '退出登录',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -242,10 +261,10 @@ class OptionsScreen extends ConsumerWidget {
 
       // 模拟下载配置
       await Future.delayed(const Duration(seconds: 2));
-      
+
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('下载成功'),
@@ -257,7 +276,7 @@ class OptionsScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('下载失败: $e'),
@@ -288,10 +307,10 @@ class OptionsScreen extends ConsumerWidget {
 
       // 模拟上传配置
       await Future.delayed(const Duration(seconds: 2));
-      
+
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('上传成功'),
@@ -303,7 +322,7 @@ class OptionsScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('上传失败: $e'),
@@ -331,10 +350,7 @@ class OptionsScreen extends ConsumerWidget {
               Navigator.of(context).pop();
               await _logout(context, ref);
             },
-            child: const Text(
-              '确定',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('确定', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -344,11 +360,11 @@ class OptionsScreen extends ConsumerWidget {
   Future<void> _logout(BuildContext context, WidgetRef ref) async {
     // 执行登出逻辑
     await ref.logout();
-    
+
     // 导航到登录页面
     if (context.mounted) {
       context.go(RouteConstants.login);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('已退出登录'),

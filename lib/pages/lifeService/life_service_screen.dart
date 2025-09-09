@@ -15,7 +15,6 @@ class LifeServiceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     // 定义功能列表
     final List<LifeServiceItem> functionList = [
       LifeServiceItem(
@@ -56,25 +55,16 @@ class LifeServiceScreen extends ConsumerWidget {
     ];
 
     return ThemeAwareScaffold(
-      pageType: PageType.settings,  // 使用设置页面类型，获得浅灰色背景
-      useBackground: false,  // 使用纯色背景，保持专业感
-      appBar: ThemeAwareAppBar(
-        title: '生活服务',
-      ),
+      pageType: PageType.settings, // 使用设置页面类型，获得浅灰色背景
+      useBackground: false, // 使用纯色背景，保持专业感
+      appBar: ThemeAwareAppBar(title: '生活服务'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // 功能列表卡片
-          Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: LifeServiceList(items: functionList),
-          ),
+          LifeServiceList(items: functionList),
         ],
       ),
     );
   }
-
 }

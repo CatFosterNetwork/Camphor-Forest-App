@@ -209,8 +209,32 @@ class _CustomThemeSettingsPageState
 
   // 主题基本信息
   Widget _buildThemeBasicInfo(bool isDarkMode) {
-    return Card(
-      color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? const Color(0xFF2A2A2A).withAlpha(217)
+            : Colors.white.withAlpha(128),
+        borderRadius: BorderRadius.circular(16),
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+            : null,
+        boxShadow: isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withAlpha(51),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withAlpha(25),
+                  blurRadius: 6,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -308,8 +332,32 @@ class _CustomThemeSettingsPageState
 
   // 图片设置
   Widget _buildImageSettings(bool isDarkMode) {
-    return Card(
-      color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? const Color(0xFF2A2A2A).withAlpha(217)
+            : Colors.white.withAlpha(128),
+        borderRadius: BorderRadius.circular(16),
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+            : null,
+        boxShadow: isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withAlpha(51),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withAlpha(25),
+                  blurRadius: 6,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -447,8 +495,32 @@ class _CustomThemeSettingsPageState
 
   // 颜色设置
   Widget _buildColorSettings(bool isDarkMode) {
-    return Card(
-      color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? const Color(0xFF2A2A2A).withAlpha(217)
+            : Colors.white.withAlpha(128),
+        borderRadius: BorderRadius.circular(16),
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+            : null,
+        boxShadow: isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withAlpha(51),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withAlpha(25),
+                  blurRadius: 6,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -711,8 +783,32 @@ class _CustomThemeSettingsPageState
 
   // 主题预览
   Widget _buildThemePreview(bool isDarkMode) {
-    return Card(
-      color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? const Color(0xFF2A2A2A).withAlpha(217)
+            : Colors.white.withAlpha(128),
+        borderRadius: BorderRadius.circular(16),
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+            : null,
+        boxShadow: isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey.withAlpha(51),
+                  blurRadius: 20,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withAlpha(25),
+                  blurRadius: 6,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
