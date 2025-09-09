@@ -187,14 +187,26 @@ class HistoryClassTableSelector extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: isCurrentSemester
-            ? theme.primaryColor.withOpacity(0.1)
+            ? (isDarkMode
+                  ? Colors.white.withOpacity(0.15) // 深色模式下增加不透明度
+                  : theme.primaryColor.withOpacity(0.1))
             : (isDarkMode
-                  ? Colors.grey.shade800.withOpacity(0.5)
+                  ? Colors.grey.shade800.withOpacity(0.5) // 深色模式下增加不透明度
                   : Colors.grey.shade50),
         borderRadius: BorderRadius.circular(12),
         border: isCurrentSemester
-            ? Border.all(color: theme.primaryColor.withOpacity(0.3), width: 1)
-            : null,
+            ? Border.all(
+                color: isDarkMode
+                    ? Colors.white.withOpacity(0.3) // 深色模式下增加边框不透明度
+                    : theme.primaryColor.withOpacity(0.3),
+                width: 1,
+              )
+            : (isDarkMode
+                  ? Border.all(
+                      color: Colors.grey.shade700,
+                      width: 0.5,
+                    ) // 深色模式下为未选中项添加边框
+                  : null),
       ),
       child: Material(
         color: Colors.transparent,
@@ -218,17 +230,26 @@ class HistoryClassTableSelector extends ConsumerWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     color: isCurrentSemester
-                        ? theme.primaryColor.withOpacity(0.2)
+                        ? (isDarkMode
+                              ? Colors.white.withOpacity(0.2) // 深色模式下增加不透明度
+                              : theme.primaryColor.withOpacity(0.2))
                         : (isDarkMode
-                              ? Colors.grey.shade700
+                              ? Colors.grey.shade700.withOpacity(
+                                  0.8,
+                                ) // 深色模式下增加不透明度
                               : Colors.grey.shade200),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.calendar_month,
                     color: isCurrentSemester
-                        ? theme.primaryColor
-                        : (isDarkMode ? Colors.white54 : Colors.black54),
+                        ? (isDarkMode
+                              ? Colors
+                                    .white // 深色模式下使用纯白色
+                              : theme.primaryColor)
+                        : (isDarkMode
+                              ? Colors.white70
+                              : Colors.black54), // 深色模式下提高对比度
                     size: 20,
                   ),
                 ),
@@ -246,8 +267,13 @@ class HistoryClassTableSelector extends ConsumerWidget {
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: isCurrentSemester
-                              ? theme.primaryColor
-                              : (isDarkMode ? Colors.white : Colors.black),
+                              ? (isDarkMode
+                                    ? Colors
+                                          .white // 深色模式下选中项使用纯白色
+                                    : theme.primaryColor)
+                              : (isDarkMode
+                                    ? Colors.white.withOpacity(0.87)
+                                    : Colors.black), // 深色模式下提高对比度
                         ),
                       ),
                     ],
@@ -262,17 +288,24 @@ class HistoryClassTableSelector extends ConsumerWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.primaryColor.withOpacity(0.1),
+                      color: isDarkMode
+                          ? Colors.white.withOpacity(0.2) // 深色模式下使用白色背景
+                          : theme.primaryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: theme.primaryColor.withOpacity(0.3),
+                        color: isDarkMode
+                            ? Colors.white.withOpacity(0.5) // 深色模式下使用白色边框
+                            : theme.primaryColor.withOpacity(0.3),
                       ),
                     ),
                     child: Text(
                       '当前',
                       style: TextStyle(
                         fontSize: 12,
-                        color: theme.primaryColor,
+                        color: isDarkMode
+                            ? Colors
+                                  .white // 深色模式下使用纯白色文字
+                            : theme.primaryColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -280,7 +313,9 @@ class HistoryClassTableSelector extends ConsumerWidget {
                 else
                   Icon(
                     Icons.chevron_right,
-                    color: isDarkMode ? Colors.white38 : Colors.black26,
+                    color: isDarkMode
+                        ? Colors.white54
+                        : Colors.black26, // 深色模式下提高对比度
                     size: 20,
                   ),
               ],

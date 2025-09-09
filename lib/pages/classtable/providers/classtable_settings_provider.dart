@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -73,6 +74,10 @@ class ClassTableSettingsNotifier
         ),
       ) {
     _loadData();
+    // 延迟初始化历史课表，确保成绩数据有机会加载
+    _scheduleHistoryInitialization();
+    // 监听成绩数据变化
+    _listenToGradeChanges();
   }
 
   /// 加载数据
@@ -86,6 +91,137 @@ class ClassTableSettingsNotifier
     } catch (e) {
       state = state.copyWith(isLoading: false, error: '加载数据失败: $e');
       debugPrint('❌ 加载课程表设置数据失败: $e');
+    }
+  }
+
+  /// 调度历史课表初始化
+  void _scheduleHistoryInitialization() {
+    // 延迟3秒执行，给成绩数据加载留出时间
+    Timer(const Duration(seconds: 3), () {
+      _checkAndInitializeHistory();
+    });
+  }
+
+  /// 检查并初始化历史课表
+  Future<void> _checkAndInitializeHistory() async {
+    try {
+      // 如果历史课表数量少于2个，尝试从成绩数据初始化
+      if (state.historyClassTables.length < 2) {
+        debugPrint(
+          '📅 延迟检查：历史课表数量为 ${state.historyClassTables.length}，尝试从成绩数据初始化',
+        );
+
+        final gradeState = _ref.read(gradeProvider);
+        if (gradeState.gradeDetails.isNotEmpty) {
+          debugPrint('📅 发现成绩数据 ${gradeState.gradeDetails.length} 条，开始提取历史课表');
+
+          final gradeBasedTables = await _extractHistoryFromGradeDetails(
+            gradeState.gradeDetails,
+          );
+          if (gradeBasedTables.isNotEmpty) {
+            // 合并现有和新提取的历史课表
+            final existingMap = <String, HistoryClassTable>{};
+            for (final table in state.historyClassTables) {
+              existingMap['${table.xnm}-${table.xqm}'] = table;
+            }
+            for (final table in gradeBasedTables) {
+              existingMap['${table.xnm}-${table.xqm}'] = table;
+            }
+
+            final mergedTables = existingMap.values.toList();
+
+            // 确保当前学期在列表中
+            final finalTables = await _ensureCurrentSemesterInHistory(
+              mergedTables,
+            );
+
+            // 排序
+            finalTables.sort((a, b) {
+              final aYear = int.tryParse(a.xnm) ?? 0;
+              final bYear = int.tryParse(b.xnm) ?? 0;
+              if (aYear == bYear) {
+                return a.xqm.compareTo(b.xqm);
+              }
+              return bYear.compareTo(aYear);
+            });
+
+            // 更新状态并保存
+            state = state.copyWith(historyClassTables: finalTables);
+            await _saveHistoryClassTablesData(finalTables);
+            debugPrint('📅 延迟初始化完成，现有 ${finalTables.length} 个历史课表');
+          }
+        } else {
+          debugPrint('📅 延迟检查时仍无成绩数据，稍后再试');
+          // 如果还是没有成绩数据，再延迟5秒重试一次
+          Timer(const Duration(seconds: 5), () {
+            _checkAndInitializeHistory();
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ 延迟初始化历史课表失败: $e');
+    }
+  }
+
+  /// 监听成绩数据变化
+  void _listenToGradeChanges() {
+    // 监听成绩数据变化，当成绩数据加载完成时自动初始化历史课表
+    _ref.listen<GradeState>(gradeProvider, (previous, next) {
+      // 如果从没有成绩数据变为有成绩数据，且历史课表数量少于2个
+      if ((previous?.gradeDetails.isEmpty ?? true) &&
+          next.gradeDetails.isNotEmpty &&
+          state.historyClassTables.length < 2) {
+        debugPrint('📅 检测到成绩数据加载完成，开始自动初始化历史课表');
+        Future.microtask(() => _autoInitializeFromGrades(next.gradeDetails));
+      }
+    });
+  }
+
+  /// 从成绩数据自动初始化历史课表
+  Future<void> _autoInitializeFromGrades(List<GradeDetail> gradeDetails) async {
+    try {
+      debugPrint('📅 自动初始化：从 ${gradeDetails.length} 条成绩数据提取历史课表');
+
+      final gradeBasedTables = await _extractHistoryFromGradeDetails(
+        gradeDetails,
+      );
+      if (gradeBasedTables.isNotEmpty) {
+        // 合并现有和新提取的历史课表
+        final existingMap = <String, HistoryClassTable>{};
+        for (final table in state.historyClassTables) {
+          existingMap['${table.xnm}-${table.xqm}'] = table;
+        }
+        for (final table in gradeBasedTables) {
+          existingMap['${table.xnm}-${table.xqm}'] = table;
+        }
+
+        final mergedTables = existingMap.values.toList();
+
+        // 确保当前学期在列表中
+        final finalTables = await _ensureCurrentSemesterInHistory(mergedTables);
+
+        // 排序
+        finalTables.sort((a, b) {
+          final aYear = int.tryParse(a.xnm) ?? 0;
+          final bYear = int.tryParse(b.xnm) ?? 0;
+          if (aYear == bYear) {
+            return a.xqm.compareTo(b.xqm);
+          }
+          return bYear.compareTo(aYear);
+        });
+
+        // 更新状态并保存
+        state = state.copyWith(historyClassTables: finalTables);
+        await _saveHistoryClassTablesData(finalTables);
+        debugPrint('📅 自动初始化完成，现有 ${finalTables.length} 个历史课表');
+
+        // 输出历史课表列表
+        for (final table in finalTables) {
+          debugPrint('   - ${table.displayName} (${table.xnm}-${table.xqm})');
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ 自动初始化历史课表失败: $e');
     }
   }
 

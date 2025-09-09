@@ -215,10 +215,12 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
                       onPressed: () => Navigator.of(context).pop(),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: isDarkMode
-                            ? Colors.white70
+                            ? Colors.white
                             : Colors.black54,
                         side: BorderSide(
-                          color: isDarkMode ? Colors.white38 : Colors.black26,
+                          color: isDarkMode
+                              ? Colors.white.withOpacity(0.6)
+                              : Colors.black26, // 深色模式下提高边框对比度
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -233,21 +235,27 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _saveCourse,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.primaryColor,
-                        foregroundColor: Colors.white,
+                        backgroundColor: isDarkMode
+                            ? Colors.white
+                            : theme.primaryColor, // 深色模式下使用白色背景
+                        foregroundColor: isDarkMode
+                            ? Colors.black
+                            : Colors.white, // 深色模式下使用黑色文字
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       child: _isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                                  isDarkMode
+                                      ? Colors.black
+                                      : Colors.white, // 深色模式下使用黑色
                                 ),
                               ),
                             )
@@ -296,7 +304,7 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
             ),
             filled: true,
             fillColor: isDarkMode
-                ? Colors.grey.shade800.withOpacity(0.5)
+                ? Colors.white.withOpacity(0.1)
                 : Colors.grey.shade100,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -350,15 +358,22 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
                   _selectedWeekday = index;
                 });
               },
-              selectedColor: theme.primaryColor.withOpacity(0.2),
-              checkmarkColor: theme.primaryColor,
+              selectedColor: isDarkMode
+                  ? Colors.white.withOpacity(0.2) // 深色模式下使用白色
+                  : theme.primaryColor.withOpacity(0.2),
+              checkmarkColor: isDarkMode
+                  ? Colors
+                        .white // 深色模式下使用纯白色
+                  : theme.primaryColor,
               labelStyle: TextStyle(
                 color: isSelected
-                    ? theme.primaryColor
+                    ? (isDarkMode
+                          ? Colors.white
+                          : theme.primaryColor) // 深色模式下选中项使用白色
                     : (isDarkMode ? Colors.white70 : Colors.black54),
               ),
               backgroundColor: isDarkMode
-                  ? Colors.grey.shade800.withOpacity(0.5)
+                  ? Colors.grey.shade800.withOpacity(0.8) // 增加不透明度
                   : Colors.grey.shade100,
             );
           }).toList(),
@@ -448,7 +463,7 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
           decoration: InputDecoration(
             filled: true,
             fillColor: isDarkMode
-                ? Colors.grey.shade800.withOpacity(0.5)
+                ? Colors.white.withOpacity(0.1)
                 : Colors.grey.shade100,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -459,7 +474,9 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
               vertical: 8,
             ),
           ),
-          dropdownColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
+          dropdownColor: isDarkMode
+              ? Colors.grey.shade900
+              : Colors.white, // 深色模式下使用更深的颜色
           items: items.map((item) {
             return DropdownMenuItem<int>(value: item, child: Text('第$item节'));
           }).toList(),
@@ -497,7 +514,12 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
               },
               child: Text(
                 _selectedWeeks.length == 20 ? '取消全选' : '全选',
-                style: TextStyle(fontSize: 12, color: theme.primaryColor),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDarkMode
+                      ? Colors.white
+                      : theme.primaryColor, // 深色模式下使用白色
+                ),
               ),
             ),
           ],
@@ -526,16 +548,23 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
                   }
                 });
               },
-              selectedColor: theme.primaryColor.withOpacity(0.2),
-              checkmarkColor: theme.primaryColor,
+              selectedColor: isDarkMode
+                  ? Colors.white.withOpacity(0.2) // 深色模式下使用白色
+                  : theme.primaryColor.withOpacity(0.2),
+              checkmarkColor: isDarkMode
+                  ? Colors
+                        .white // 深色模式下使用纯白色
+                  : theme.primaryColor,
               labelStyle: TextStyle(
                 color: isSelected
-                    ? theme.primaryColor
+                    ? (isDarkMode
+                          ? Colors.white
+                          : theme.primaryColor) // 深色模式下选中项使用白色
                     : (isDarkMode ? Colors.white70 : Colors.black54),
                 fontSize: 12,
               ),
               backgroundColor: isDarkMode
-                  ? Colors.grey.shade800.withOpacity(0.5)
+                  ? Colors.grey.shade800.withOpacity(0.8) // 增加不透明度
                   : Colors.grey.shade100,
             );
           }),
@@ -723,7 +752,9 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
                   });
                 }
               },
-              dropdownColor: isDarkMode ? Colors.grey[800] : Colors.white,
+              dropdownColor: isDarkMode
+                  ? Colors.grey.shade900
+                  : Colors.white, // 深色模式下使用更深的颜色
               icon: Icon(
                 Icons.arrow_drop_down,
                 color: isDarkMode ? Colors.white70 : Colors.black54,

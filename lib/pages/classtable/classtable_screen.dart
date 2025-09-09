@@ -691,11 +691,14 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   /// 构建Material风格的ActionSheet
   Widget _buildMaterialActionSheet(BuildContext context) {
     final theme = Theme.of(context);
+    final isDarkMode = ref.read(effectiveIsDarkModeProvider);
 
     return Container(
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: isDarkMode
+            ? Colors.grey.shade900
+            : Colors.white, // 使用与其他modal一致的颜色
         borderRadius: BorderRadius.circular(16),
       ),
       child: SafeArea(
@@ -708,7 +711,9 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withOpacity(0.3),
+                color: isDarkMode
+                    ? Colors.white38
+                    : Colors.black26, // 使用与其他modal一致的颜色
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -720,6 +725,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                 '课表设置',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
+                  color: isDarkMode ? Colors.white : Colors.black, // 明确设置文字颜色
                 ),
               ),
             ),
@@ -758,8 +764,13 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               child: FilledButton(
                 onPressed: () => Navigator.pop(context),
                 style: FilledButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondary,
-                  foregroundColor: theme.colorScheme.onSecondary,
+                  backgroundColor: isDarkMode
+                      ? Colors.white.withOpacity(0.2) // 深色模式下使用半透明白色
+                      : theme.colorScheme.secondary,
+                  foregroundColor: isDarkMode
+                      ? Colors
+                            .white // 深色模式下使用纯白色文字
+                      : theme.colorScheme.onSecondary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -785,17 +796,23 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
+    final isDarkMode = ref.read(effectiveIsDarkModeProvider);
 
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primaryContainer,
+          color: isDarkMode
+              ? Colors.white.withOpacity(0.1) // 深色模式下使用半透明白色
+              : theme.colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
-          color: theme.colorScheme.onPrimaryContainer,
+          color: isDarkMode
+              ? Colors
+                    .white // 深色模式下使用纯白色
+              : theme.colorScheme.onPrimaryContainer,
           size: 24,
         ),
       ),
@@ -803,17 +820,22 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
         title,
         style: theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w500,
+          color: isDarkMode ? Colors.white : null, // 深色模式下明确设置文字颜色
         ),
       ),
       subtitle: Text(
         subtitle,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.7),
+          color: isDarkMode
+              ? Colors.white.withOpacity(0.7) // 深色模式下使用半透明白色
+              : theme.colorScheme.onSurface.withOpacity(0.7),
         ),
       ),
       trailing: Icon(
         Icons.chevron_right_rounded,
-        color: theme.colorScheme.onSurface.withOpacity(0.5),
+        color: isDarkMode
+            ? Colors.white.withOpacity(0.5) // 深色模式下使用半透明白色
+            : theme.colorScheme.onSurface.withOpacity(0.5),
       ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
