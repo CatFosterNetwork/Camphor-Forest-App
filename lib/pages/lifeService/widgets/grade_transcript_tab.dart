@@ -71,8 +71,8 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     return SingleChildScrollView(
@@ -500,19 +500,28 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
 
   /// 预览成绩单
   Future<void> _previewTranscript(int index, Color themeColor) async {
+    // 显示加载对话框
+    _showLoadingDialog('正在生成预览...');
+    
     try {
-      _showSnackBar('正在生成预览...', themeColor);
-
       final apiService = ref.read(apiServiceProvider);
       final selectedTranscript = _transcriptTypes[index];
       final isDarkMode = ref.read(effectiveIsDarkModeProvider);
 
+      // 设置30秒超时
       final result = await apiService.studyCertificate({
         'fileProperty': selectedTranscript.fileProperty,
         'jd': _jdType,
         'pjf': _pjfType,
         'pm': _pmType,
-      });
+      }).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => throw Exception('请求超时，请稍后再试'),
+      );
+
+      if (mounted) {
+        Navigator.of(context).pop(); // 关闭加载对话框
+      }
 
       if (result['success'] == true) {
         final data = result['data'];
@@ -533,6 +542,9 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
         _showSnackBar('预览生成失败，请稍后再试', themeColor);
       }
     } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop(); // 关闭加载对话框
+      }
       _showSnackBar('预览生成失败: $e', themeColor);
     }
   }
@@ -632,11 +644,39 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
     ).hasMatch(email);
   }
 
+  /// 显示加载对话框
+  void _showLoadingDialog(String message) {
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // 不允许点击外部关闭
+        builder: (context) => AlertDialog(
+          content: Row(
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(width: 16),
+              Expanded(child: Text(message)),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
   /// 显示提示消息
   void _showSnackBar(String message, Color themeColor) {
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: themeColor),
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('确定'),
+            ),
+          ],
+        ),
       );
     }
   }

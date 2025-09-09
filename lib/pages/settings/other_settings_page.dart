@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 // import 'package:device_info_plus/device_info_plus.dart'; // 暂时不使用
 
 import '../../core/config/providers/theme_config_provider.dart';
@@ -599,37 +600,17 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     );
   }
 
-  void _showClearCacheDialog(BuildContext context, bool isDarkMode) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
-        title: Text(
-          '清理缓存',
-          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-        ),
-        content: Text(
-          '确定要清理所有缓存数据吗？这将清除临时文件和图片缓存。',
-          style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              '取消',
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _performCacheClear(context, isDarkMode);
-            },
-            child: const Text('确定', style: TextStyle(color: Colors.orange)),
-          ),
-        ],
-      ),
+  void _showClearCacheDialog(BuildContext context, bool isDarkMode) async {
+    final result = await FlutterPlatformAlert.showAlert(
+      windowTitle: '清理缓存',
+      text: '确定要清理所有缓存数据吗？这将清除临时文件和图片缓存。',
+      alertStyle: AlertButtonStyle.okCancel,
+      iconStyle: IconStyle.none,
     );
+
+    if (result == AlertButton.okButton) {
+      _performCacheClear(context, isDarkMode);
+    }
   }
 
   /// 执行真实的缓存清理
@@ -652,24 +633,22 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
         _calculateCacheSize();
 
         // 显示结果
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('缓存清理完成！释放了 ${_formatBytes(result.clearedSize)}'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
+        FlutterPlatformAlert.showAlert(
+          windowTitle: '清理完成',
+          text: '缓存清理完成！释放了 ${_formatBytes(result.clearedSize)}',
+          alertStyle: AlertButtonStyle.ok,
+          iconStyle: IconStyle.none,
         );
       }
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭进度对话框
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('缓存清理失败: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
+        FlutterPlatformAlert.showAlert(
+          windowTitle: '清理失败',
+          text: '缓存清理失败: $e',
+          alertStyle: AlertButtonStyle.ok,
+          iconStyle: IconStyle.none,
         );
       }
     }
