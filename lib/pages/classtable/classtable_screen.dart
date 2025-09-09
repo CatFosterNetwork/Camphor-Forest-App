@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 
@@ -33,6 +34,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   int _currentWeek = 1;
   bool _isLoading = false;
   bool _isRefreshing = false;
+  bool _isRefreshSuccess = false;
 
   // 添加动画控制器
   late AnimationController _refreshAnimController;
@@ -397,7 +399,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                 transparent: true,
                 foregroundColor: isDarkMode
                     ? const Color(0xFFBFC2C9)
-                    : (currentTheme?.foregColor ?? Colors.black),
+                    : (currentTheme.foregColor ?? Colors.black),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.calendar_month),
@@ -406,7 +408,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                     tooltip: '选择周次',
                     color: isDarkMode
                         ? const Color(0xFFBFC2C9)
-                        : (currentTheme?.foregColor ?? Colors.black),
+                        : (currentTheme.foregColor ?? Colors.black),
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -481,8 +483,8 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                             _showActionMenu(context);
                           },
                           backgroundColor:
-                              (currentTheme?.colorList.isNotEmpty == true
-                                      ? currentTheme!.colorList.first
+                              (currentTheme.colorList.isNotEmpty == true
+                                      ? currentTheme.colorList.first
                                       : Colors.blue)
                                   .withAlpha(153),
                           child: const Icon(
@@ -514,81 +516,73 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                 child: FloatingActionButton(
                                   heroTag: "refresh",
                                   onPressed: () async {
+                                    if (_isRefreshing || _isRefreshSuccess) return;
+
                                     setState(() {
                                       _isRefreshing = true;
+                                      _isRefreshSuccess =
+                                          false; // Ensure checkmark is hidden
                                     });
-                                    _refreshAnimController.forward().then((_) {
-                                      _refreshAnimController.reverse();
-                                      setState(() {
-                                        _isRefreshing = false;
-                                      });
+                                    _refreshAnimController.forward(); // Start animation visually
 
-                                      // 显示刷新成功提示
+                                    try {
+                                      // Await the provider that fetches from remote. This solves the race condition.
+                                      await ref.refresh(
+                                          forceRefreshClassTableProvider(
+                                        (xnm: _currentXnm, xqm: _currentXqm),
+                                      ).future);
+
+                                      // Now that the cache is updated, invalidate the UI provider.
+                                      ref.invalidate(classTableProvider(
+                                        (xnm: _currentXnm, xqm: _currentXqm),
+                                      ));
+
+                                      // Update state to show success
                                       if (mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.check_circle,
-                                                  color: Colors.white,
-                                                  size: 20,
-                                                ),
-                                                SizedBox(width: 8),
-                                                Text('课表刷新成功'),
-                                              ],
-                                            ),
-                                            backgroundColor:
-                                                Colors.green.shade600,
-                                            duration: const Duration(
-                                              seconds: 2,
-                                            ),
-                                            behavior: SnackBarBehavior.floating,
-                                            margin: const EdgeInsets.all(16),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                        );
+                                        HapticFeedback.mediumImpact();
+                                        setState(() {
+                                          _isRefreshSuccess = true;
+                                        });
+
+                                        // After 2 seconds, hide the checkmark
+                                        Future.delayed(
+                                            const Duration(seconds: 2), () {
+                                          if (mounted) {
+                                            setState(
+                                                () => _isRefreshSuccess = false);
+                                          }
+                                        });
                                       }
-                                    });
-
-                                    // 使用强制刷新provider来确保从远程获取最新数据
-                                    // 强制刷新会清除缓存并从远程获取数据
-                                    ref.invalidate(
-                                      forceRefreshClassTableProvider((
-                                        xnm: _currentXnm,
-                                        xqm: _currentXqm,
-                                      )),
-                                    );
-
-                                    // 刷新普通provider以保持数据一致性
-                                    ref.invalidate(
-                                      classTableProvider((
-                                        xnm: _currentXnm,
-                                        xqm: _currentXqm,
-                                      )),
-                                    );
+                                    } catch (e) {
+                                      debugPrint('课表刷新失败: $e');
+                                      // Optionally show an error snackbar or change icon to an error icon
+                                    } finally {
+                                      // This block runs whether refresh succeeded or failed
+                                      if (mounted) {
+                                        // Stop the animation and reset the refreshing state
+                                        _refreshAnimController.reset();
+                                        setState(() {
+                                          _isRefreshing = false;
+                                        });
+                                      }
+                                    }
                                   },
                                   backgroundColor:
-                                      (currentTheme?.colorList.isNotEmpty ==
-                                                  true
-                                              ? currentTheme!.colorList.first
-                                              : Colors.blue)
+                                      (currentTheme.colorList.isNotEmpty ==
+                                              true
+                                          ? currentTheme.colorList.first
+                                          : Colors.blue)
                                           .withAlpha(204),
-                                  child: Transform.rotate(
-                                    angle: _isRefreshing
-                                        ? _refreshRotateAnimation.value
-                                        : 0.0,
-                                    child: const Icon(
-                                      Icons.refresh,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                                  child: _isRefreshSuccess
+                                      ? const Icon(Icons.check,
+                                          color: Colors.white)
+                                      : Transform.rotate(
+                                          angle: _isRefreshing
+                                              ? _refreshRotateAnimation.value
+                                              : 0.0,
+                                          child: const Icon(Icons.refresh,
+                                              color: Colors.white),
+                                        ),
                                 ),
                               ),
                             );

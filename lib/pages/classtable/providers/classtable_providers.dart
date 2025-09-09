@@ -28,28 +28,14 @@ final _baseClassTableProvider =
           await repo.fetchRemote(params.xnm, params.xqm);
     });
 
-/// 强制从远程刷新课表数据的 Provider
-/// 使用 record 传参：({'xnm': '2024', 'xqm': '12'})
-final _forceRefreshClassTableProvider =
-    FutureProvider.family<ClassTable, ({String xnm, String xqm})>((
-      ref,
-      params,
-    ) async {
-      final repo = ref.watch(classTableRepositoryProvider);
-      // 强制从远程获取数据，不使用本地缓存
-      return await repo.fetchRemote(params.xnm, params.xqm);
-    });
-
-/// 强制刷新的增强课表数据 Provider
+/// 强制从远程刷新课表数据的 Provider.
 final forceRefreshClassTableProvider =
     FutureProvider.family<ClassTable, ({String xnm, String xqm})>((
       ref,
       params,
     ) async {
-      // 强制从远程获取基础课表数据
-      final baseTable = await ref.watch(
-        _forceRefreshClassTableProvider(params).future,
-      );
+      final repo = ref.watch(classTableRepositoryProvider);
+      final baseTable = await repo.fetchRemote(params.xnm, params.xqm);
 
       return await _enhanceClassTableWithGradeAndCustomData(
         ref,

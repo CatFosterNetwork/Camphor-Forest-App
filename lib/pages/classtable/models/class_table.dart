@@ -219,7 +219,10 @@ class ClassTable {
             int weekday = 7; // 默认周日
             final day = item['day']?.toString();
             if (day != null && day.isNotEmpty) {
-              weekday = int.tryParse(day) ?? 7; // 解析失败时仍然使用周日
+              final parsedDay = int.tryParse(day) ?? 7;
+              // 确保weekday在有效范围内（1-7），超出范围的统一放到周日
+              weekday = (parsedDay >= 1 && parsedDay <= 7) ? parsedDay : 7;
+              debugPrint('实践课程day字段值: $day, 解析后weekday: $weekday');
             }
 
             // 创建课程对象
@@ -267,7 +270,8 @@ class ClassTable {
 
   /// 获取指定周次的课表数据
   Map<int, List<Course>>? getWeekSchedule(int week) {
-    return weekTable[week];
+    final schedule = weekTable[week];
+    return schedule;
   }
 
   /// 获取全学期所有课程（扁平化结构）
