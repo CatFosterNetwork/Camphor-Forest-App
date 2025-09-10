@@ -59,8 +59,8 @@ class _ExpenseBindDialogState extends ConsumerState<ExpenseBindDialog> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final themeColor = ref.watch(selectedCustomThemeProvider);
-    final mainColor = themeColor?.colorList.isNotEmpty == true
-        ? themeColor!.colorList[0]
+    final mainColor = themeColor.colorList.isNotEmpty == true
+        ? themeColor.colorList[0]
         : Colors.blue;
 
     final backgroundColor = isDarkMode ? const Color(0xFF2A2A2A) : Colors.white;

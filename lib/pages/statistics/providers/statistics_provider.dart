@@ -90,7 +90,7 @@ final selectedSemesterProvider = StateProvider<SemesterInfo>((ref) {
     return SemesterInfo(
       xnm: '${currentYear - 1}',
       xqm: '12',
-      displayName: '${currentYear}年春季学期',
+      displayName: '$currentYear年春季学期',
     );
   } else {
     // 7-12月为秋季学期，xqm=3，xnm=currentYear
@@ -115,7 +115,7 @@ final availableSemestersProvider = Provider<List<SemesterInfo>>((ref) {
     SemesterInfo(
       xnm: '${currentYear - 1}',
       xqm: '12',
-      displayName: '${currentYear}年春季学期',
+      displayName: '$currentYear年春季学期',
     ),
     // 上一学年秋季学期
     SemesterInfo(

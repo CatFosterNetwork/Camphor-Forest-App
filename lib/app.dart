@@ -28,8 +28,8 @@ class CamphorForestApp extends ConsumerWidget {
       debugPrint('🏠[$timestamp] App级别主题信息:');
       debugPrint('  - themeMode: $themeMode');
       debugPrint('  - isDarkMode: $isDarkMode');
-      debugPrint('  - currentTheme: ${currentTheme?.title ?? 'null'}');
-      debugPrint('  - currentTheme.code: ${currentTheme?.code ?? 'null'}');
+      debugPrint('  - currentTheme: ${currentTheme.title}');
+      debugPrint('  - currentTheme.code: ${currentTheme.code}');
       debugPrint(
         '  - MaterialApp.themeMode: ${_convertStringToThemeMode(themeMode)}',
       );

@@ -47,8 +47,8 @@ class _GradeQueryScreenState extends ConsumerState<GradeQueryScreen>
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final gradeState = ref.watch(gradeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     return ThemeAwareScaffold(

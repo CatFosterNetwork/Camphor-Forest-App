@@ -24,8 +24,8 @@ class LifeServiceListItem extends ConsumerWidget {
     final currentTheme = ref.watch(selectedCustomThemeProvider);
 
     // 获取主题色，如果没有主题则使用默认蓝色
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     return Material(

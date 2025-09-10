@@ -55,8 +55,8 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final themeColor = ref.watch(selectedCustomThemeProvider);
-    final mainColor = themeColor?.colorList.isNotEmpty == true 
-        ? themeColor!.colorList[0] 
+    final mainColor = themeColor.colorList.isNotEmpty == true 
+        ? themeColor.colorList[0] 
         : Colors.blue;
     
     final textColor = isDarkMode ? Colors.white : Colors.black87;

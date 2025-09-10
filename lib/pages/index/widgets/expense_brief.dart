@@ -22,8 +22,8 @@ class ExpenseBrief extends ConsumerWidget {
 
     // 获取主题色
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     final textColor = darkMode ? Colors.white70 : Colors.black87;

@@ -40,8 +40,8 @@ class _ClassroomBriefState extends ConsumerState<ClassroomBrief> {
   Widget build(BuildContext context) {
     // 获取主题色
     final currentTheme = ref.watch(selectedCustomThemeProvider);
-    final themeColor = currentTheme?.colorList.isNotEmpty == true
-        ? currentTheme!.colorList[0]
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
         : Colors.blue;
 
     final textColor = widget.darkMode ? Colors.white70 : Colors.black87;

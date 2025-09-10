@@ -388,7 +388,7 @@ class _CustomClassTableScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -533,7 +533,7 @@ class _CustomClassTableScreenState
   String _formatSemesterTitle() {
     final year = int.tryParse(_selectedXnm) ?? DateTime.now().year;
     if (_selectedXqm == '3') {
-      return '${year}年秋季自定义课表';
+      return '$year年秋季自定义课表';
     } else if (_selectedXqm == '12') {
       return '${year + 1}年春季自定义课表';
     } else {
@@ -558,7 +558,7 @@ class _CustomClassTableScreenState
     final currentXqm = currentMonth < 7 ? '12' : '3';
     final currentYear2 = int.tryParse(currentXnm) ?? currentYear;
     final currentDisplayName = currentXqm == '3'
-        ? '${currentYear2}年秋季学期'
+        ? '$currentYear2年秋季学期'
         : '${currentYear2 + 1}年春季学期';
     availableSemesters['$currentXnm-$currentXqm'] = currentDisplayName;
 
@@ -574,7 +574,7 @@ class _CustomClassTableScreenState
       if (!availableSemesters.containsKey(key)) {
         final year = int.tryParse(course.xnm) ?? currentYear;
         final displayName = course.xqm == '3'
-            ? '${year}年秋季学期'
+            ? '$year年秋季学期'
             : '${year + 1}年春季学期';
         availableSemesters[key] = displayName;
       }

@@ -366,9 +366,9 @@ class HistoryClassTableSelector extends ConsumerWidget {
     if (xqm == '12') {
       return '${year + 1}年春季学期';
     } else if (xqm == '3') {
-      return '${year}年秋季学期';
+      return '$year年秋季学期';
     } else {
-      return '${year}年夏季学期';
+      return '$year年夏季学期';
     }
   }
 }
