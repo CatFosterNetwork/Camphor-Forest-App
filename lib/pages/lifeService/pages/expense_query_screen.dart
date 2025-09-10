@@ -32,8 +32,8 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final themeColor = ref.watch(selectedCustomThemeProvider);
-    final mainColor = themeColor?.colorList.isNotEmpty == true 
-        ? themeColor!.colorList[0] 
+    final mainColor = themeColor.colorList.isNotEmpty == true 
+        ? themeColor.colorList[0] 
         : Colors.blue;
     
     final expenseState = ref.watch(expenseProvider);
@@ -41,7 +41,7 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
     
     // 获取亚克力效果设置
-    final useAcrylicEffect = themeColor?.indexMessageBoxBlur ?? false;
+    final useAcrylicEffect = themeColor.indexMessageBoxBlur;
 
     return ThemeAwareScaffold(
       pageType: PageType.indexPage,

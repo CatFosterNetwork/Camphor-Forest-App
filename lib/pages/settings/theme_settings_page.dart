@@ -226,10 +226,6 @@ class ThemeSettingsPage extends ConsumerWidget {
     final customTheme = ref.watch(selectedCustomThemeProvider);
     final themeMode = ref.watch(themeModeProvider);
 
-    if (customTheme == null) {
-      return const SizedBox(height: 100);
-    }
-
     return Container(
       height: 200,
       decoration: BoxDecoration(

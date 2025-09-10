@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/constants/app_themes.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../widgets/app_background.dart';
 import 'providers/classtable_settings_provider.dart';

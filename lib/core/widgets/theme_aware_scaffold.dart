@@ -77,15 +77,15 @@ class ThemeAwareScaffold extends ConsumerWidget {
       // 根据页面类型选择不同的背景
       switch (pageType) {
         case PageType.classtable:
-          imageUrl = backgroundImage ?? currentTheme?.img ?? '';
-          bgBlur = currentTheme?.classTableBackgroundBlur ?? false;
+          imageUrl = backgroundImage ?? currentTheme.img;
+          bgBlur = currentTheme.classTableBackgroundBlur;
           break;
         case PageType.indexPage:
         case PageType.loginPage:
         case PageType.settings:
         case PageType.other:
-          imageUrl = backgroundImage ?? currentTheme?.indexBackgroundImg ?? '';
-          bgBlur = currentTheme?.indexBackgroundBlur ?? false;
+          imageUrl = backgroundImage ?? currentTheme.indexBackgroundImg;
+          bgBlur = currentTheme.indexBackgroundBlur;
           break;
       }
 
@@ -153,7 +153,7 @@ class ThemeAwareScaffold extends ConsumerWidget {
         case PageType.other:
           // 其他页面使用主题色或默认浅灰色
           scaffoldBackgroundColor =
-              currentTheme?.backColor ?? Colors.grey.shade50;
+              currentTheme.backColor;
           break;
       }
     }
@@ -221,8 +221,8 @@ class ThemeAwareAppBar extends ConsumerWidget implements PreferredSizeWidget {
       bgColor =
           backgroundColor ??
           (isDarkMode
-              ? (currentTheme?.backColor.withAlpha(230) ?? Colors.grey.shade900)
-              : (currentTheme?.backColor ?? Colors.white));
+              ? (currentTheme.backColor.withAlpha(230))
+              : (currentTheme.backColor));
     }
 
     // 确定前景颜色 - 确保在浅色模式下有足够对比度

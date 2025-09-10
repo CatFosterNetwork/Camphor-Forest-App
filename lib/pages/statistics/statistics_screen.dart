@@ -74,7 +74,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   String _formatSemesterDisplay(String xnm, String xqm) {
     final year = int.tryParse(xnm) ?? DateTime.now().year;
     if (xqm == '3') {
-      return '${year}年秋季学期';
+      return '$year年秋季学期';
     } else if (xqm == '12') {
       return '${year + 1}年春季学期';
     }

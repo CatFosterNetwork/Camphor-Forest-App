@@ -32,7 +32,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   bool _hasAutoCalculatedWeek = false;
 
   int _currentWeek = 1;
-  bool _isLoading = false;
+  final bool _isLoading = false;
   bool _isRefreshing = false;
   bool _isRefreshSuccess = false;
 
@@ -212,11 +212,11 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
     // 如果是历史学期，只显示学期名称
     final year = int.tryParse(_currentXnm) ?? DateTime.now().year;
     if (_currentXqm == '3') {
-      return '${year}年秋季学期';
+      return '$year年秋季学期';
     } else if (_currentXqm == '12') {
       return '${year + 1}年春季学期';
     } else {
-      return '${_currentXnm}-${_currentXqm}学期';
+      return '$_currentXnm-$_currentXqm学期';
     }
   }
 
@@ -399,7 +399,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                 transparent: true,
                 foregroundColor: isDarkMode
                     ? const Color(0xFFBFC2C9)
-                    : (currentTheme.foregColor ?? Colors.black),
+                    : (currentTheme.foregColor),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.calendar_month),
@@ -408,7 +408,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                     tooltip: '选择周次',
                     color: isDarkMode
                         ? const Color(0xFFBFC2C9)
-                        : (currentTheme.foregColor ?? Colors.black),
+                        : (currentTheme.foregColor),
                   ),
                   const SizedBox(width: 8),
                 ],
