@@ -1,68 +1,111 @@
 // lib/pages/school_navigation/providers/bus_provider.dart
 
 import 'dart:async';
+import 'dart:convert';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/bus_models.dart';
+import '../../../core/constants/bus_line.dart' as constants;
+import '../../../core/models/bus_line_model.dart' as models;
 
 final busLinesProvider = FutureProvider<List<BusLine>>((ref) async {
-  // 模拟网络延迟
-  await Future.delayed(const Duration(milliseconds: 500));
-
-  // 返回模拟数据
-  return BusLine.getMockData();
+  // 使用完整的配置文件数据，转换为页面所需格式
+  return _convertFromConstants(constants.busLines);
 });
+
+List<BusLine> _convertFromConstants(List<models.BusLine> constantLines) {
+  return constantLines.map((line) {
+    // 转换路线点
+    final route = line.busLine.map((point) {
+      final parts = point.split(',');
+      if (parts.length == 2) {
+        return RoutePoint(
+          latitude: double.tryParse(parts[0]) ?? 0,
+          longitude: double.tryParse(parts[1]) ?? 0,
+        );
+      }
+      return RoutePoint(latitude: 0, longitude: 0);
+    }).toList();
+
+    // 转换站点
+    final stops = line.busPoint.map((point) {
+      return BusStop(
+        name: point.name,
+        latitude: double.tryParse(point.lat) ?? 0,
+        longitude: double.tryParse(point.lng) ?? 0,
+      );
+    }).toList();
+
+    return BusLine(
+      id: line.id,
+      name: line.name,
+      color: line.color,
+      route: route,
+      stops: stops,
+    );
+  }).toList();
+}
 
 final realTimeBusDataProvider = StreamProvider<List<BusData>>((ref) async* {
-  // 模拟实时数据流
-  yield BusData.getMockData();
+  final channel = WebSocketChannel.connect(
+    Uri.parse('wss://youche.jhcampus.net:8914'),
+  );
 
-  // 每5秒更新一次数据
-  await for (final _ in Stream.periodic(const Duration(seconds: 5))) {
-    yield _generateUpdatedBusData();
-  }
+  // 定时上报心跳/订阅消息，参数含义参考小程序：
+  // 格式："1,1915111,0,0,<timestamp>,189,0"
+  Timer? timer;
+  timer = Timer.periodic(const Duration(seconds: 2), (_) {
+    final ts = (DateTime.now().millisecondsSinceEpoch / 1000).floor();
+    final payload = '1,1915111,0,0,$ts,189,0';
+    channel.sink.add(payload);
+  });
+
+  ref.onDispose(() {
+    timer?.cancel();
+    channel.sink.close();
+  });
+
+  yield* channel.stream
+      .where((event) => event is String && event.contains('|'))
+      .map((event) {
+        final raw = event as String;
+        final parts = raw.split('|');
+        if (parts.length < 2) return <BusData>[];
+        final dataJson = parts[1];
+        try {
+          final List<dynamic> arr = json.decode(dataJson);
+          final buses = <BusData>[];
+          for (final item in arr) {
+            if (item is String) {
+              final fields = item.split(',');
+              if (fields.length >= 9) {
+                // 索引解析：0:id, 1:speed, 2:lng, 3:lat, 6:direction, 8:lineID
+                final id = fields[0];
+                final speed = double.tryParse(fields[1]) ?? 0;
+                final lng = double.tryParse(fields[2]) ?? 0;
+                final lat = double.tryParse(fields[3]) ?? 0;
+                final direction = double.tryParse(fields[6]) ?? 0;
+                final lineId = fields[8];
+                buses.add(
+                  BusData(
+                    id: id,
+                    lineId: lineId,
+                    latitude: lat,
+                    longitude: lng,
+                    speed: speed,
+                    direction: direction,
+                  ),
+                );
+              }
+            }
+          }
+          return buses;
+        } catch (_) {
+          return <BusData>[];
+        }
+      });
 });
-
-List<BusData> _generateUpdatedBusData() {
-  // 生成更新的公交车位置数据
-  final random = DateTime.now().millisecondsSinceEpoch;
-
-  return [
-    BusData(
-      id: 'bus_001',
-      lineId: '1',
-      latitude: 29.82067 + (random % 100) / 100000,
-      longitude: 106.42478 + (random % 100) / 100000,
-      speed: 20.0 + (random % 20),
-      direction: (random % 360).toDouble(),
-    ),
-    BusData(
-      id: 'bus_002',
-      lineId: '2',
-      latitude: 29.82067 + (random % 150) / 100000,
-      longitude: 106.42478 + (random % 150) / 100000,
-      speed: 25.0 + (random % 15),
-      direction: (random % 360).toDouble(),
-    ),
-    BusData(
-      id: 'bus_003',
-      lineId: '3',
-      latitude: 29.82067 + (random % 120) / 100000,
-      longitude: 106.42478 + (random % 120) / 100000,
-      speed: 30.0 + (random % 10),
-      direction: (random % 360).toDouble(),
-    ),
-    if (random % 3 == 0) // 随机添加额外的车辆
-      BusData(
-        id: 'bus_004',
-        lineId: '4',
-        latitude: 29.82067 + (random % 80) / 100000,
-        longitude: 106.42478 + (random % 80) / 100000,
-        speed: 15.0 + (random % 25),
-        direction: (random % 360).toDouble(),
-      ),
-  ];
-}
 
 final selectedBusLineProvider = StateProvider<int?>((ref) => null);
 

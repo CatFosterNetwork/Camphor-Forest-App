@@ -6,11 +6,17 @@ import android.os.Bundle
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import io.flutter.embedding.android.FlutterActivity
+import com.baidu.mapapi.SDKInitializer
 
 class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        // 初始化百度地图SDK全局上下文（修复 you have not supplyed the global app context）
+        // 必须先同意隐私政策，再初始化SDK
+        SDKInitializer.setAgreePrivacy(applicationContext, true)
+        SDKInitializer.initialize(applicationContext)
+
         // 启用edge-to-edge显示
         WindowCompat.setDecorFitsSystemWindows(window, false)
         

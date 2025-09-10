@@ -63,127 +63,44 @@ class BusLine {
           RoutePoint(latitude: 29.82267, longitude: 106.42678),
         ],
       ),
-      BusLine(
-        id: '2',
-        name: '2号线',
-        color: '929296',
-        stops: [
-          BusStop(name: '教学楼', latitude: 29.81967, longitude: 106.42378),
-          BusStop(name: '图书馆', latitude: 29.82067, longitude: 106.42478),
-          BusStop(name: '体育馆', latitude: 29.82167, longitude: 106.42578),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81967, longitude: 106.42378),
-          RoutePoint(latitude: 29.82067, longitude: 106.42478),
-          RoutePoint(latitude: 29.82167, longitude: 106.42578),
-        ],
-      ),
-      BusLine(
-        id: '3',
-        name: '3号线',
-        color: 'f19f39',
-        stops: [
-          BusStop(name: '南门', latitude: 29.81867, longitude: 106.42278),
-          BusStop(name: '中心广场', latitude: 29.82067, longitude: 106.42478),
-          BusStop(name: '北门', latitude: 29.82267, longitude: 106.42678),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81867, longitude: 106.42278),
-          RoutePoint(latitude: 29.82067, longitude: 106.42478),
-          RoutePoint(latitude: 29.82267, longitude: 106.42678),
-        ],
-      ),
-      BusLine(
-        id: '4',
-        name: '4号线',
-        color: 'ff00ff',
-        stops: [
-          BusStop(name: '食堂', latitude: 29.81967, longitude: 106.42178),
-          BusStop(name: '宿舍区', latitude: 29.82167, longitude: 106.42378),
-          BusStop(name: '实验楼', latitude: 29.82367, longitude: 106.42578),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81967, longitude: 106.42178),
-          RoutePoint(latitude: 29.82167, longitude: 106.42378),
-          RoutePoint(latitude: 29.82367, longitude: 106.42578),
-        ],
-      ),
-      BusLine(
-        id: '5',
-        name: '5号线',
-        color: 'ff2323',
-        stops: [
-          BusStop(name: '行政楼', latitude: 29.81767, longitude: 106.42078),
-          BusStop(name: '音乐厅', latitude: 29.82067, longitude: 106.42278),
-          BusStop(name: '美术馆', latitude: 29.82367, longitude: 106.42478),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81767, longitude: 106.42078),
-          RoutePoint(latitude: 29.82067, longitude: 106.42278),
-          RoutePoint(latitude: 29.82367, longitude: 106.42478),
-        ],
-      ),
-      BusLine(
-        id: '6',
-        name: '6号线',
-        color: '00bfff',
-        stops: [
-          BusStop(name: '医院', latitude: 29.81667, longitude: 106.41978),
-          BusStop(name: '超市', latitude: 29.82067, longitude: 106.42178),
-          BusStop(name: '银行', latitude: 29.82467, longitude: 106.42378),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81667, longitude: 106.41978),
-          RoutePoint(latitude: 29.82067, longitude: 106.42178),
-          RoutePoint(latitude: 29.82467, longitude: 106.42378),
-        ],
-      ),
-      BusLine(
-        id: '7',
-        name: '7号线',
-        color: 'ff69b4',
-        stops: [
-          BusStop(name: '东门', latitude: 29.81967, longitude: 106.41878),
-          BusStop(name: '操场', latitude: 29.82167, longitude: 106.42078),
-          BusStop(name: '西门', latitude: 29.82367, longitude: 106.42278),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81967, longitude: 106.41878),
-          RoutePoint(latitude: 29.82167, longitude: 106.42078),
-          RoutePoint(latitude: 29.82367, longitude: 106.42278),
-        ],
-      ),
-      BusLine(
-        id: '8',
-        name: '8号线',
-        color: '6a5acd',
-        stops: [
-          BusStop(name: '停车场', latitude: 29.81867, longitude: 106.41778),
-          BusStop(name: '邮局', latitude: 29.82167, longitude: 106.41978),
-          BusStop(name: '招待所', latitude: 29.82467, longitude: 106.42178),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81867, longitude: 106.41778),
-          RoutePoint(latitude: 29.82167, longitude: 106.41978),
-          RoutePoint(latitude: 29.82467, longitude: 106.42178),
-        ],
-      ),
-      BusLine(
-        id: '9',
-        name: '经管专线',
-        color: '00d499',
-        stops: [
-          BusStop(name: '经管学院', latitude: 29.81767, longitude: 106.41678),
-          BusStop(name: '商学院', latitude: 29.82067, longitude: 106.41878),
-          BusStop(name: '经济学院', latitude: 29.82367, longitude: 106.42078),
-        ],
-        route: [
-          RoutePoint(latitude: 29.81767, longitude: 106.41678),
-          RoutePoint(latitude: 29.82067, longitude: 106.41878),
-          RoutePoint(latitude: 29.82367, longitude: 106.42078),
-        ],
-      ),
     ];
+  }
+
+  // Convert from WeChat busLine.ts structure
+  static List<BusLine> fromWeChatConfig(List<dynamic> wechatLines) {
+    final result = <BusLine>[];
+    for (final line in wechatLines) {
+      final id = (line['id'] ?? '').toString();
+      final name = (line['name'] ?? '').toString();
+      final color = (line['color'] ?? '').toString();
+      final List<RoutePoint> route = [];
+      final List<BusStop> stops = [];
+      final List<dynamic>? busLine = line['bus_line'] as List<dynamic>?;
+      final List<dynamic>? busPoint = line['bus_point'] as List<dynamic>?;
+      if (busLine != null) {
+        for (final p in busLine) {
+          final s = p.toString();
+          final parts = s.split(',');
+          if (parts.length == 2) {
+            final lat = double.tryParse(parts[0]) ?? 0;
+            final lng = double.tryParse(parts[1]) ?? 0;
+            route.add(RoutePoint(latitude: lat, longitude: lng));
+          }
+        }
+      }
+      if (busPoint != null) {
+        for (final pt in busPoint) {
+          final name = (pt['name'] ?? '').toString();
+          final lat = double.tryParse((pt['lat'] ?? '0').toString()) ?? 0;
+          final lng = double.tryParse((pt['lng'] ?? '0').toString()) ?? 0;
+          stops.add(BusStop(name: name, latitude: lat, longitude: lng));
+        }
+      }
+      result.add(
+        BusLine(id: id, name: name, color: color, stops: stops, route: route),
+      );
+    }
+    return result;
   }
 }
 
@@ -266,35 +183,5 @@ class BusData {
       'speed': speed,
       'direction': direction,
     };
-  }
-
-  // 生成模拟数据
-  static List<BusData> getMockData() {
-    return [
-      BusData(
-        id: 'bus_001',
-        lineId: '1',
-        latitude: 29.82067,
-        longitude: 106.42478,
-        speed: 25.0,
-        direction: 45.0,
-      ),
-      BusData(
-        id: 'bus_002',
-        lineId: '2',
-        latitude: 29.82067,
-        longitude: 106.42478,
-        speed: 30.0,
-        direction: 90.0,
-      ),
-      BusData(
-        id: 'bus_003',
-        lineId: '3',
-        latitude: 29.82067,
-        longitude: 106.42478,
-        speed: 20.0,
-        direction: 135.0,
-      ),
-    ];
   }
 }

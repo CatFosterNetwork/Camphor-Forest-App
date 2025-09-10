@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId = "social.swu.camphor_forest"
-        minSdk = 21 // 支持Android 5.0+，覆盖95%+用户
+        minSdk = 22 // 支持Android 5.0+，覆盖95%+用户
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -77,5 +77,8 @@ dependencies {
     
     // 性能优化
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
+    
+    // 百度地图 SDK
+    implementation("com.baidu.lbsyun:BaiduMapSDK_Map:7.6.4")
 }
 

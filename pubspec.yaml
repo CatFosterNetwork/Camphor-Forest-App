@@ -66,6 +66,10 @@ dependencies:
   fl_chart: ^0.69.0
   webview_flutter: ^4.7.0
   flutter_platform_alert: ^0.8.0
+  flutter_baidu_mapapi_map: ^3.9.5
+  flutter_baidu_mapapi_base: ^3.9.5
+  apple_maps_flutter: ^1.4.0
+  map_launcher: ^4.4.2
 
 
 dev_dependencies:
@@ -86,6 +90,7 @@ flutter:
     - assets/icons/swulogo.svg
     - assets/splash_logo.png
     - lib/pages/login/userAgreement.txt
+    - files/
 
 flutter_icons:
   android: true
