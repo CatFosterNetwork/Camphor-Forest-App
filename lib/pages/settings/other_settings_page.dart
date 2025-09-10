@@ -1,6 +1,7 @@
 // lib/pages/settings/other_settings_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 import 'dart:async';
@@ -280,12 +281,18 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                           SizedBox(
                             width: 12,
                             height: 12,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: isDarkMode
-                                  ? Colors.white70
-                                  : Colors.black54,
-                            ),
+                            child: Platform.isIOS
+                                ? CupertinoActivityIndicator(
+                                    color: isDarkMode
+                                        ? Colors.white70
+                                        : Colors.black54,
+                                  )
+                                : CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: isDarkMode
+                                        ? Colors.white70
+                                        : Colors.black54,
+                                  ),
                           ),
                           const SizedBox(width: 8),
                         ],
@@ -601,14 +608,14 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
   }
 
   void _showClearCacheDialog(BuildContext context, bool isDarkMode) async {
-    final result = await FlutterPlatformAlert.showAlert(
+    final result = await FlutterPlatformAlert.showCustomAlert(
       windowTitle: '清理缓存',
       text: '确定要清理所有缓存数据吗？这将清除临时文件和图片缓存。',
-      alertStyle: AlertButtonStyle.okCancel,
-      iconStyle: IconStyle.none,
+      positiveButtonTitle: '确定',
+      negativeButtonTitle: '取消',
     );
 
-    if (result == AlertButton.okButton) {
+    if (result == CustomButton.positiveButton) {
       _performCacheClear(context, isDarkMode);
     }
   }
@@ -731,16 +738,97 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     bool isDarkMode,
     Color themeColor,
   ) {
-    showDialog(
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => NetworkDiagnosticDialog(
+          isDarkMode: isDarkMode,
+          themeColor: themeColor,
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => NetworkDiagnosticDialog(
+          isDarkMode: isDarkMode,
+          themeColor: themeColor,
+        ),
+      );
+    }
+  }
+
+  void _showLanguageSelector(BuildContext context, bool isDarkMode) {
+    if (Platform.isIOS) {
+      _showIOSLanguageSelector(context);
+    } else {
+      _showAndroidLanguageSelector(context, isDarkMode);
+    }
+  }
+
+  void _showIOSLanguageSelector(BuildContext context) {
+    showCupertinoModalPopup(
       context: context,
-      builder: (context) => NetworkDiagnosticDialog(
-        isDarkMode: isDarkMode,
-        themeColor: themeColor,
+      builder: (context) => CupertinoActionSheet(
+        title: const Text(
+          '选择语言',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        message: const Text(
+          '当前语言：简体中文',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // TODO: 实现语言切换逻辑
+            },
+            child: const Text(
+              '简体中文',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // TODO: 实现语言切换逻辑
+            },
+            child: const Text(
+              'English',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text(
+            '取消',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: CupertinoColors.destructiveRed,
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  void _showLanguageSelector(BuildContext context, bool isDarkMode) {
+  void _showAndroidLanguageSelector(BuildContext context, bool isDarkMode) {
     final currentTheme = ref.read(selectedCustomThemeProvider);
     final themeColor = currentTheme.colorList.isNotEmpty == true
         ? currentTheme.colorList[0]
@@ -945,128 +1033,259 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: widget.isDarkMode
-          ? const Color(0xFF202125)
-          : Colors.white,
-      title: Text(
-        '网络诊断',
-        style: TextStyle(
-          color: widget.isDarkMode ? Colors.white : Colors.black,
+    final content = _buildDialogContent();
+    
+    if (Platform.isIOS) {
+      return CupertinoAlertDialog(
+        title: const Text(
+          '网络诊断',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-      ),
-      content: Column(
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: content,
+        ),
+        actions: [
+          if (_result != null && !_isLoading) ...[
+            CupertinoDialogAction(
+              onPressed: _performNetworkDiagnostic,
+              child: const Text(
+                '重新检测',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: CupertinoColors.activeBlue,
+                ),
+              ),
+            ),
+          ],
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              '关闭',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return AlertDialog(
+        backgroundColor: widget.isDarkMode
+            ? const Color(0xFF202125)
+            : Colors.white,
+        title: Text(
+          '网络诊断',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: widget.isDarkMode ? Colors.white : Colors.black,
+          ),
+        ),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: content,
+        ),
+        actions: [
+          if (_result != null && !_isLoading) ...[
+            TextButton(
+              onPressed: _performNetworkDiagnostic,
+              child: Text(
+                '重新检测',
+                style: TextStyle(
+                  color: widget.themeColor,
+                ),
+              ),
+            ),
+          ],
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              '关闭',
+              style: TextStyle(
+                color: widget.isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget _buildDialogContent() {
+    if (_isLoading) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // 左侧图标，固定宽度
+                  SizedBox(
+                    width: 24,
+                    child: Icon(
+                      Platform.isIOS ? CupertinoIcons.wifi : Icons.network_check,
+                      size: 18,
+                      color: Platform.isIOS 
+                          ? (widget.isDarkMode ? Colors.white.withOpacity(0.6) : Colors.black.withOpacity(0.6))
+                          : (widget.isDarkMode ? Colors.white54 : Colors.black54),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // 中间文本
+                  Expanded(
+                    child: Text(
+                      '正在检查网络连接...',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Platform.isIOS
+                            ? (widget.isDarkMode ? Colors.white.withOpacity(0.85) : Colors.black87)
+                            : (widget.isDarkMode ? Colors.white70 : Colors.black87),
+                      ),
+                    ),
+                  ),
+                  // 右侧指示器
+                  Platform.isIOS
+                      ? const CupertinoActivityIndicator()
+                      : SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: widget.themeColor,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+            if (!Platform.isIOS) ...[
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                color: widget.themeColor,
+                backgroundColor: widget.isDarkMode
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade300,
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    if (_result == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (_isLoading) ...[
-            Text(
-              '正在检查网络连接...',
-              style: TextStyle(
-                color: widget.isDarkMode ? Colors.white70 : Colors.black54,
-              ),
-            ),
-            const SizedBox(height: 16),
-            LinearProgressIndicator(
-              color: widget.themeColor,
-              backgroundColor: widget.isDarkMode
-                  ? Colors.grey.shade700
-                  : Colors.grey.shade300,
-            ),
-            const SizedBox(height: 16),
-          ] else if (_result != null) ...[
+          _buildResultItem(
+            '网络连接',
+            _result!.isConnected ? '已连接' : '未连接',
+            _result!.isConnected,
+            Platform.isIOS ? CupertinoIcons.wifi : Icons.wifi,
+          ),
+          _buildResultItem(
+            '连接类型',
+            _result!.connectionType,
+            _result!.isConnected,
+            Platform.isIOS ? CupertinoIcons.device_phone_portrait : Icons.router,
+          ),
+          _buildResultItem(
+            '服务器连接',
+            _result!.serverReachable ? '正常' : (_result!.error ?? '失败'),
+            _result!.serverReachable,
+            Platform.isIOS ? CupertinoIcons.cloud : Icons.cloud,
+          ),
+          if (_result!.latency != null)
             _buildResultItem(
-              '网络连接',
-              _result!.isConnected ? '已连接' : '未连接',
-              _result!.isConnected,
+              '延迟',
+              '${_result!.latency}ms',
+              _result!.latency! < 500,
+              Platform.isIOS ? CupertinoIcons.speedometer : Icons.speed,
             ),
-            const SizedBox(height: 8),
-            _buildResultItem(
-              '连接类型',
-              _result!.connectionType,
-              _result!.isConnected,
-            ),
-            const SizedBox(height: 8),
-            _buildResultItem(
-              '服务器连接',
-              _result!.serverReachable ? '正常' : (_result!.error ?? '失败'),
-              _result!.serverReachable,
-            ),
-            if (_result!.latency != null) ...[
-              const SizedBox(height: 8),
-              _buildResultItem(
-                '延迟',
-                '${_result!.latency}ms',
-                _result!.latency! < 500, // 延迟小于500ms为良好
-              ),
-            ],
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(
-                  Icons.refresh,
-                  size: 16,
-                  color: widget.isDarkMode ? Colors.white70 : Colors.black54,
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: _performNetworkDiagnostic,
-                  child: Text(
-                    '重新检测',
-                    style: TextStyle(
-                      color: widget.themeColor,
-                      fontSize: 14,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(
-            '关闭',
-            style: TextStyle(
-              color: widget.isDarkMode ? Colors.white : Colors.black,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
-  Widget _buildResultItem(String label, String value, bool isGood) {
+  Widget _buildResultItem(String label, String value, bool isGood, IconData icon) {
     Color statusColor;
-    if (isGood) {
-      statusColor = widget.isDarkMode
-          ? Colors.green.shade300
-          : Colors.green.shade700;
+    Color iconColor;
+    
+    if (Platform.isIOS) {
+      statusColor = isGood 
+          ? CupertinoColors.systemGreen 
+          : CupertinoColors.destructiveRed;
+      iconColor = widget.isDarkMode 
+          ? Colors.white.withOpacity(0.6)
+          : Colors.black.withOpacity(0.6);
     } else {
-      statusColor = widget.isDarkMode
-          ? Colors.red.shade300
-          : Colors.red.shade700;
+      if (isGood) {
+        statusColor = widget.isDarkMode
+            ? Colors.green.shade300
+            : Colors.green.shade700;
+      } else {
+        statusColor = widget.isDarkMode
+            ? Colors.red.shade300
+            : Colors.red.shade700;
+      }
+      iconColor = widget.isDarkMode ? Colors.white54 : Colors.black54;
     }
 
-    return Row(
-      children: [
-        Text(
-          '• $label: ',
-          style: TextStyle(
-            color: widget.isDarkMode ? Colors.white70 : Colors.black54,
-            fontWeight: FontWeight.w500,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 左侧图标，固定宽度
+          SizedBox(
+            width: 24,
+            child: Icon(
+              icon,
+              size: 18,
+              color: iconColor,
+            ),
           ),
-        ),
-        Expanded(
-          child: Text(
+          const SizedBox(width: 12),
+          // 标签文字，左对齐
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              color: Platform.isIOS
+                  ? (widget.isDarkMode ? Colors.white.withOpacity(0.85) : Colors.black87)
+                  : (widget.isDarkMode ? Colors.white70 : Colors.black87),
+              fontWeight: Platform.isIOS ? FontWeight.w500 : FontWeight.w500,
+            ),
+          ),
+          // 弹性空间
+          const Spacer(),
+          // 右侧状态值
+          Text(
             value,
-            style: TextStyle(color: statusColor, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 16,
+              color: statusColor, 
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1155,11 +1374,7 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: widget.isDarkMode
-          ? const Color(0xFF202125)
-          : Colors.white,
-      content: FadeTransition(
+    final content = FadeTransition(
         opacity: _fadeAnimation,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1226,7 +1441,17 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
             ),
           ],
         ),
-      ),
-    );
+      );
+
+    return Platform.isIOS
+        ? CupertinoAlertDialog(
+            content: content,
+          )
+        : AlertDialog(
+            backgroundColor: widget.isDarkMode
+                ? const Color(0xFF202125)
+                : Colors.white,
+            content: content,
+          );
   }
 }

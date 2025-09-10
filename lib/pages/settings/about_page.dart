@@ -1,6 +1,7 @@
 // lib/pages/settings/about_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -269,13 +270,40 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   void _showOfficialGroup(BuildContext context) {
     final isDarkMode = ref.read(effectiveIsDarkModeProvider);
 
+    if (Platform.isIOS) {
+      _showIOSOfficialGroup(context, isDarkMode);
+    } else {
+      _showAndroidOfficialGroup(context, isDarkMode);
+    }
+  }
+
+  /// iOS 原生样式的官方群对话框 - 使用全屏模态页面
+  void _showIOSOfficialGroup(BuildContext context, bool isDarkMode) {
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => _IOSQRCodeViewer(
+          isDarkMode: isDarkMode,
+          onOpenQQGroup: _openQQGroup,
+          onShowActions: () => _showQRCodeActions(context, isDarkMode),
+        ),
+      ),
+    );
+  }
+
+  /// Android 样式的官方群对话框
+  void _showAndroidOfficialGroup(BuildContext context, bool isDarkMode) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
         title: Text(
           '官方Q群',
-          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -358,7 +386,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               '点击打开QQ群，长按保存图片或扫描',
               style: TextStyle(
                 fontSize: 14,
-                color: isDarkMode ? Colors.white70 : Colors.black54,
+                color: isDarkMode ? Colors.white.withOpacity(0.8) : Colors.black54,
               ),
               textAlign: TextAlign.center,
             ),
@@ -463,6 +491,94 @@ class _AboutPageState extends ConsumerState<AboutPage> {
 
   /// 显示二维码操作菜单
   void _showQRCodeActions(BuildContext context, bool isDarkMode) {
+    if (Platform.isIOS) {
+      _showIOSQRCodeActions(context);
+    } else {
+      _showAndroidQRCodeActions(context, isDarkMode);
+    }
+  }
+
+  /// iOS 原生样式的二维码操作菜单
+  void _showIOSQRCodeActions(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: const Text(
+          '二维码操作',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        message: const Text(
+          '选择您要执行的操作',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _openQQGroup();
+            },
+            child: const Text(
+              '打开QQ群',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              final isDarkMode = ref.read(effectiveIsDarkModeProvider);
+              _saveQRCodeImage(isDarkMode);
+            },
+            child: const Text(
+              '保存图片',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _openSystemScanner();
+            },
+            child: const Text(
+              '扫描二维码',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text(
+            '取消',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: CupertinoColors.destructiveRed,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Android 样式的二维码操作菜单
+  void _showAndroidQRCodeActions(BuildContext context, bool isDarkMode) {
     showModalBottomSheet(
       context: context,
       backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
@@ -550,11 +666,19 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   void _saveQRCodeImage(bool isDarkMode) async {
     try {
       // 显示保存进度对话框
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => _buildSaveProgressDialog(isDarkMode),
-      );
+      if (Platform.isIOS) {
+        showCupertinoDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => _buildSaveProgressDialog(isDarkMode),
+        );
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => _buildSaveProgressDialog(isDarkMode),
+        );
+      }
 
       final String imageUrl = isDarkMode
           ? 'https://data.swu.social/service/qrcode_dark.JPG'
@@ -626,20 +750,42 @@ class _AboutPageState extends ConsumerState<AboutPage> {
 
   /// 构建保存进度对话框
   Widget _buildSaveProgressDialog(bool isDarkMode) {
-    return AlertDialog(
-      backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircularProgressIndicator(color: Colors.blue),
-          const SizedBox(height: 16),
-          Text(
-            '正在保存二维码...',
-            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+    if (Platform.isIOS) {
+      return CupertinoAlertDialog(
+        content: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CupertinoActivityIndicator(radius: 12),
+              SizedBox(height: 16),
+              Text(
+                '正在保存二维码...',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    } else {
+      return AlertDialog(
+        backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: Colors.blue),
+            const SizedBox(height: 16),
+            Text(
+              '正在保存二维码...',
+              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   /// 打开系统二维码扫描器
@@ -694,5 +840,166 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         );
       }
     }
+  }
+}
+
+/// iOS 原生风格的二维码查看器
+class _IOSQRCodeViewer extends StatelessWidget {
+  final bool isDarkMode;
+  final VoidCallback onOpenQQGroup;
+  final VoidCallback onShowActions;
+
+  const _IOSQRCodeViewer({
+    required this.isDarkMode,
+    required this.onOpenQQGroup,
+    required this.onShowActions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemBackground,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        border: null,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text(
+            '完成',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: CupertinoColors.activeBlue,
+            ),
+          ),
+        ),
+        middle: const Text(
+          '官方Q群',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: onShowActions,
+          child: const Icon(
+            CupertinoIcons.ellipsis_circle,
+            color: CupertinoColors.activeBlue,
+            size: 24,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // 二维码图片
+              Center(
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 320,
+                    maxHeight: 400,
+                  ),
+                  child: GestureDetector(
+                    onTap: onOpenQQGroup,
+                    onLongPress: onShowActions,
+                    child: CachedImage(
+                      imageUrl: isDarkMode
+                          ? 'https://data.swu.social/service/qrcode_dark.JPG'
+                          : 'https://data.swu.social/service/qrcode_light.JPG',
+                      fit: BoxFit.contain,
+                      placeholder: Container(
+                        width: 280,
+                        height: 350,
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey6,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CupertinoActivityIndicator(radius: 16),
+                              SizedBox(height: 16),
+                              Text(
+                                '正在加载二维码...',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: CupertinoColors.secondaryLabel,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      errorWidget: Container(
+                        width: 280,
+                        height: 350,
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey6,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                CupertinoIcons.exclamationmark_triangle_fill,
+                                color: CupertinoColors.systemRed,
+                                size: 48,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                '二维码加载失败',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: CupertinoColors.label,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                '请检查网络连接后重试',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: CupertinoColors.secondaryLabel,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // 简洁提示
+              Center(
+                child: Text(
+                  '轻点打开QQ群 · 长按查看选项',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDarkMode 
+                        ? Colors.white.withOpacity(0.5) 
+                        : Colors.black.withOpacity(0.5),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

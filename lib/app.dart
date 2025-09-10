@@ -12,6 +12,24 @@ import 'core/services/navigation_service.dart';
 
 import 'core/models/theme_model.dart' as theme_model;
 
+/// iOS PingFang SC 字体配置
+const List<String> _iosFontFallback = [
+  'PingFang SC',
+  'SF Pro Text',
+  'SF Pro Display',
+  '.SF UI Text',
+  'Helvetica Neue',
+];
+
+/// 创建iOS字体样式
+TextStyle _createIOSTextStyle({FontWeight? fontWeight}) {
+  return TextStyle(
+    fontFamily: 'PingFang SC',
+    fontWeight: fontWeight,
+    fontFamilyFallback: _iosFontFallback,
+  );
+}
+
 class CamphorForestApp extends ConsumerWidget {
   const CamphorForestApp({super.key});
 
@@ -158,6 +176,16 @@ class CamphorForestApp extends ConsumerWidget {
       scaffoldBackgroundColor: isDarkMode
           ? const Color(0xFF202125)
           : (customTheme?.backColor ?? CupertinoColors.systemBackground),
+      textTheme: CupertinoTextThemeData(
+        textStyle: _createIOSTextStyle(),
+        actionTextStyle: _createIOSTextStyle(),
+        tabLabelTextStyle: _createIOSTextStyle(),
+        navTitleTextStyle: _createIOSTextStyle(fontWeight: FontWeight.w600),
+        navLargeTitleTextStyle: _createIOSTextStyle(fontWeight: FontWeight.w700),
+        navActionTextStyle: _createIOSTextStyle(),
+        pickerTextStyle: _createIOSTextStyle(),
+        dateTimePickerTextStyle: _createIOSTextStyle(),
+      ),
     );
   }
 }

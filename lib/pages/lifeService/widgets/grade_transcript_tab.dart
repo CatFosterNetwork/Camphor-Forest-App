@@ -1,7 +1,9 @@
 // lib/pages/lifeService/widgets/grade_transcript_tab.dart
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../../core/models/grade_models.dart';
@@ -666,18 +668,26 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
   /// 显示提示消息
   void _showSnackBar(String message, Color themeColor) {
     if (mounted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('确定'),
-            ),
-          ],
-        ),
-      );
+      if (Platform.isIOS) {
+        FlutterPlatformAlert.showAlert(
+          windowTitle: '提示',
+          text: message,
+          alertStyle: AlertButtonStyle.ok,
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('确定'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 }

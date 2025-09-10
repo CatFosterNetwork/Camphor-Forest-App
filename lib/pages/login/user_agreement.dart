@@ -1,5 +1,7 @@
 // lib/pages/login/user_agreement.dart
 
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,25 +125,36 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                 // 协议内容
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
+                    margin: const EdgeInsets.fromLTRB(20, 12, 20, 24),
                     decoration: BoxDecoration(
                       color: isDarkMode
-                          ? Colors
-                                .black // 纯黑背景
+                          ? const Color(0xFF1C1C1E) // iOS深色模式背景色
                           : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: isDarkMode 
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.black.withOpacity(0.08),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                          spreadRadius: -4,
+                        ),
+                      ],
+                      border: Border.all(
+                        color: isDarkMode 
+                            ? Colors.white.withOpacity(0.05)
+                            : Colors.black.withOpacity(0.04),
+                        width: 0.5,
+                      ),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(20),
                       child: Stack(
                         children: [
                           if (htmlContent != null)
                             WebViewWidget(controller: webViewController),
-                          if (isLoading)
-                            const Center(child: CircularProgressIndicator()),
+                          if (isLoading) _buildLoadingIndicator(),
                         ],
                       ),
                     ),
@@ -155,26 +168,167 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, bool isDarkMode) {
+  /// 构建平台适配的加载指示器
+  Widget _buildLoadingIndicator() {
+    final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
+    
     return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(
-              Icons.arrow_back,
-              color: isDarkMode ? Colors.white : Colors.black,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            isDarkMode 
+                ? const Color(0xFF1C1C1E).withOpacity(0.95)
+                : Colors.white.withOpacity(0.95),
+            isDarkMode 
+                ? const Color(0xFF1C1C1E).withOpacity(0.98)
+                : Colors.white.withOpacity(0.98),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28),
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          decoration: BoxDecoration(
+            color: isDarkMode 
+                ? const Color(0xFF2C2C2E)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: isDarkMode
+                    ? Colors.black.withOpacity(0.4)
+                    : Colors.black.withOpacity(0.12),
+                blurRadius: 28,
+                offset: const Offset(0, 8),
+                spreadRadius: -6,
+              ),
+            ],
+            border: Border.all(
+              color: isDarkMode 
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.06),
+              width: 0.5,
             ),
           ),
-          const SizedBox(width: 8),
-          Text(
-            '用户协议',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: isDarkMode ? Colors.white : Colors.black,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 平台分离的加载指示器
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  color: isDarkMode
+                      ? Colors.white.withOpacity(0.04)
+                      : Colors.blue.withOpacity(0.08),
+                ),
+                child: Center(
+                  child: Platform.isIOS
+                      ? const CupertinoActivityIndicator(
+                          radius: 14,
+                          color: CupertinoColors.activeBlue,
+                        )
+                      : SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: isDarkMode 
+                                ? Colors.blue[400]
+                                : Colors.blue[600],
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '正在加载用户协议',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isDarkMode 
+                      ? Colors.white.withOpacity(0.85)
+                      : Colors.black87,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: -0.2,
+                  height: 1.3,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '请稍候...',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDarkMode 
+                      ? Colors.white.withOpacity(0.5)
+                      : Colors.black54,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: -0.1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, bool isDarkMode) {
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: isDarkMode 
+            ? Colors.black.withOpacity(0.8)
+            : Colors.white.withOpacity(0.9),
+        border: Border(
+          bottom: BorderSide(
+            color: isDarkMode 
+                ? Colors.white.withOpacity(0.08)
+                : Colors.black.withOpacity(0.08),
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          // 统一设计的返回按钮
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: isDarkMode 
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.black.withOpacity(0.06),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                borderRadius: BorderRadius.circular(18),
+                child: Icon(
+                  Platform.isIOS ? CupertinoIcons.back : Icons.arrow_back,
+                  color: isDarkMode ? Colors.white : Colors.black87,
+                  size: 18,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              '用户协议',
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: isDarkMode ? Colors.white : Colors.black87,
+                letterSpacing: -0.3,
+                height: 1.2,
+              ),
             ),
           ),
         ],
@@ -350,55 +504,167 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
 
     // 从 mailto: 链接中提取邮箱地址
     final emailAddress = emailUrl.replaceFirst('mailto:', '').split('?')[0];
+    final isDarkMode = ref.read(effectiveIsDarkModeProvider);
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('无法打开邮件应用'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('请手动复制邮箱地址并在您的邮件应用中联系我们：'),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDarkMode 
+                ? const Color(0xFF2C2C2E)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: isDarkMode
+                    ? Colors.black.withOpacity(0.5)
+                    : Colors.black.withOpacity(0.15),
+                blurRadius: 32,
+                offset: const Offset(0, 12),
+                spreadRadius: -8,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      emailAddress,
-                      style: const TextStyle(
-                        fontFamily: 'monospace',
-                        fontWeight: FontWeight.bold,
+            ],
+            border: Border.all(
+              color: isDarkMode 
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.black.withOpacity(0.08),
+              width: 0.5,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 标题
+              Text(
+                '无法打开邮件应用',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: isDarkMode ? Colors.white : Colors.black87,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // 描述
+              Text(
+                '请手动复制邮箱地址并在您的邮件应用中联系我们：',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDarkMode 
+                      ? Colors.white.withOpacity(0.7)
+                      : Colors.black54,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // 邮箱地址容器
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.grey.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDarkMode 
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.black.withOpacity(0.06),
+                    width: 0.5,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        emailAddress,
+                        style: TextStyle(
+                          fontFamily: 'SF Mono',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isDarkMode ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: emailAddress));
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('邮箱地址已复制到剪贴板'),
+                              backgroundColor: isDarkMode 
+                                  ? const Color(0xFF2C2C2E)
+                                  : Colors.black87,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Platform.isIOS 
+                                ? CupertinoIcons.doc_on_clipboard
+                                : Icons.copy_rounded,
+                            size: 18,
+                            color: isDarkMode 
+                                ? Colors.blue[400]
+                                : Colors.blue[600],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // 确定按钮
+              SizedBox(
+                width: double.infinity,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isDarkMode 
+                            ? Colors.blue[400]
+                            : Colors.blue[600],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        '确定',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          letterSpacing: -0.2,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: emailAddress));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('邮箱地址已复制到剪贴板')),
-                      );
-                    },
-                    icon: const Icon(Icons.copy),
-                    tooltip: '复制邮箱地址',
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('确定'),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -407,54 +673,170 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
   void _showUrlFallback(String url) {
     if (!mounted) return;
 
+    final isDarkMode = ref.read(effectiveIsDarkModeProvider);
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('无法打开链接'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('请手动复制链接地址并在浏览器中访问：'),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDarkMode 
+                ? const Color(0xFF2C2C2E)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: isDarkMode
+                    ? Colors.black.withOpacity(0.5)
+                    : Colors.black.withOpacity(0.15),
+                blurRadius: 32,
+                offset: const Offset(0, 12),
+                spreadRadius: -8,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      url,
-                      style: const TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 12,
+            ],
+            border: Border.all(
+              color: isDarkMode 
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.black.withOpacity(0.08),
+              width: 0.5,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 标题
+              Text(
+                '无法打开链接',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: isDarkMode ? Colors.white : Colors.black87,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // 描述
+              Text(
+                '请手动复制链接地址并在浏览器中访问：',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDarkMode 
+                      ? Colors.white.withOpacity(0.7)
+                      : Colors.black54,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // URL容器
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.grey.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDarkMode 
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.black.withOpacity(0.06),
+                    width: 0.5,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        url,
+                        style: TextStyle(
+                          fontFamily: 'SF Mono',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: isDarkMode ? Colors.white : Colors.black87,
+                          height: 1.3,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: url));
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('链接已复制到剪贴板'),
+                              backgroundColor: isDarkMode 
+                                  ? const Color(0xFF2C2C2E)
+                                  : Colors.black87,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Platform.isIOS 
+                                ? CupertinoIcons.doc_on_clipboard
+                                : Icons.copy_rounded,
+                            size: 18,
+                            color: isDarkMode 
+                                ? Colors.blue[400]
+                                : Colors.blue[600],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // 确定按钮
+              SizedBox(
+                width: double.infinity,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isDarkMode 
+                            ? Colors.blue[400]
+                            : Colors.blue[600],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        '确定',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          letterSpacing: -0.2,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: url));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('链接已复制到剪贴板')),
-                      );
-                    },
-                    icon: const Icon(Icons.copy),
-                    tooltip: '复制链接',
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('确定'),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

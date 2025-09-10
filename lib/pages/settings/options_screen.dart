@@ -1,8 +1,12 @@
 // lib/pages/settings/options_screen.dart
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/providers/auth_provider.dart';
@@ -248,15 +252,25 @@ class OptionsScreen extends ConsumerWidget {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('正在下载...'),
-            ],
-          ),
-        ),
+        builder: (context) => Platform.isIOS
+            ? CupertinoAlertDialog(
+                content: const Row(
+                  children: [
+                    CupertinoActivityIndicator(),
+                    SizedBox(width: 16),
+                    Text('正在下载...'),
+                  ],
+                ),
+              )
+            : const AlertDialog(
+                content: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 16),
+                    Text('正在下载...'),
+                  ],
+                ),
+              ),
       );
 
       // 模拟下载配置
@@ -294,15 +308,25 @@ class OptionsScreen extends ConsumerWidget {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('正在上传...'),
-            ],
-          ),
-        ),
+        builder: (context) => Platform.isIOS
+            ? CupertinoAlertDialog(
+                content: const Row(
+                  children: [
+                    CupertinoActivityIndicator(),
+                    SizedBox(width: 16),
+                    Text('正在上传...'),
+                  ],
+                ),
+              )
+            : const AlertDialog(
+                content: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 16),
+                    Text('正在上传...'),
+                  ],
+                ),
+              ),
       );
 
       // 模拟上传配置
@@ -334,27 +358,17 @@ class OptionsScreen extends ConsumerWidget {
     }
   }
 
-  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('提示'),
-        content: const Text('确定退出登录吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _logout(context, ref);
-            },
-            child: const Text('确定', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
+  void _showLogoutDialog(BuildContext context, WidgetRef ref) async {
+    final result = await FlutterPlatformAlert.showCustomAlert(
+      windowTitle: '提示',
+      text: '确定退出登录吗？',
+      positiveButtonTitle: '确定',
+      negativeButtonTitle: '取消',
     );
+
+    if (result == CustomButton.positiveButton) {
+      await _logout(context, ref);
+    }
   }
 
   Future<void> _logout(BuildContext context, WidgetRef ref) async {

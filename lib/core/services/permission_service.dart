@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 /// 权限类型枚举
 enum AppPermissionType {

@@ -1,9 +1,12 @@
 // lib/pages/settings/custom_theme_settings_page.dart
 
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../core/providers/permission_provider.dart';
 
@@ -143,36 +146,13 @@ class _CustomThemeSettingsPageState
                   ),
                 ),
               ),
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'save') {
-                  _saveTheme();
-                } else if (value == 'reset') {
-                  _resetTheme();
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'save',
-                  child: Row(
-                    children: [
-                      Icon(Icons.save),
-                      SizedBox(width: 8),
-                      Text('保存主题'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'reset',
-                  child: Row(
-                    children: [
-                      Icon(Icons.refresh),
-                      SizedBox(width: 8),
-                      Text('重置更改'),
-                    ],
-                  ),
-                ),
-              ],
+            IconButton(
+              onPressed: _showOptionsMenu,
+              icon: Icon(
+                Platform.isIOS 
+                    ? CupertinoIcons.ellipsis_circle
+                    : Icons.more_vert,
+              ),
             ),
           ],
         ),
@@ -1237,27 +1217,151 @@ class _CustomThemeSettingsPageState
     }
   }
 
-  void _resetTheme() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('重置更改'),
-        content: const Text('确定要放弃所有未保存的更改吗？'),
-        actions: [
-          TextButton(
+  /// 显示平台适配的选项菜单
+  void _showOptionsMenu() {
+    if (Platform.isIOS) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _saveTheme();
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(CupertinoIcons.floppy_disk, color: CupertinoColors.activeBlue),
+                  SizedBox(width: 8),
+                  Text(
+                    '保存主题',
+                    style: TextStyle(
+                      color: CupertinoColors.activeBlue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetTheme();
+              },
+              isDestructiveAction: true,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(CupertinoIcons.refresh, color: CupertinoColors.destructiveRed),
+                  SizedBox(width: 8),
+                  Text(
+                    '重置更改',
+                    style: TextStyle(
+                      color: CupertinoColors.destructiveRed,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
+            child: const Text(
+              '取消',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _initializeTheme();
-            },
-            child: const Text('重置', style: TextStyle(color: Colors.red)),
+        ),
+      );
+    } else {
+      showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) => Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.save, color: Colors.blue),
+                title: const Text(
+                  '保存主题',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _saveTheme();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.refresh, color: Colors.red),
+                title: const Text(
+                  '重置更改',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.red,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _resetTheme();
+                },
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    foregroundColor: Colors.black,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text(
+                    '取消',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      );
+    }
+  }
+
+  void _resetTheme() async {
+    final result = await FlutterPlatformAlert.showCustomAlert(
+      windowTitle: '重置更改',
+      text: '确定要放弃所有未保存的更改吗？',
+      positiveButtonTitle: '重置',
+      negativeButtonTitle: '取消',
     );
+
+    if (result == CustomButton.positiveButton) {
+      _initializeTheme();
+    }
   }
 
   Future<bool> _handleBackPress() async {
@@ -1265,25 +1369,14 @@ class _CustomThemeSettingsPageState
       return true;
     }
 
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('未保存的更改'),
-        content: const Text('您有未保存的更改，确定要离开吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('离开', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
+    final result = await FlutterPlatformAlert.showCustomAlert(
+      windowTitle: '未保存的更改',
+      text: '您有未保存的更改，确定要离开吗？',
+      positiveButtonTitle: '离开',
+      negativeButtonTitle: '取消',
     );
 
-    return result ?? false;
+    return result == CustomButton.positiveButton;
   }
 
   theme_model.Theme _getDefaultTheme() {
