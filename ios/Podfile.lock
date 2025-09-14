@@ -1,7 +1,21 @@
 PODS:
+  - apple_maps_flutter (0.0.1):
+    - Flutter
+  - BaiduMapKit/Base (6.6.4)
+  - BaiduMapKit/Map (6.6.4):
+    - BaiduMapKit/Base
+  - BaiduMapKit/Utils (6.6.4):
+    - BaiduMapKit/Base
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_baidu_mapapi_base (3.9.0):
+    - BaiduMapKit/Utils (= 6.6.4)
+    - Flutter
+  - flutter_baidu_mapapi_map (3.9.0):
+    - BaiduMapKit/Map (= 6.6.4)
+    - Flutter
+    - flutter_baidu_mapapi_base
   - flutter_native_splash (2.4.3):
     - Flutter
   - flutter_platform_alert (0.0.1):
@@ -15,6 +29,8 @@ PODS:
     - Flutter
     - TOCropViewController (~> 2.7.4)
   - image_picker_ios (0.0.1):
+    - Flutter
+  - map_launcher (0.0.1):
     - Flutter
   - package_info_plus (0.4.5):
     - Flutter
@@ -37,14 +53,18 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - apple_maps_flutter (from `.symlinks/plugins/apple_maps_flutter/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
+  - flutter_baidu_mapapi_base (from `.symlinks/plugins/flutter_baidu_mapapi_base/ios`)
+  - flutter_baidu_mapapi_map (from `.symlinks/plugins/flutter_baidu_mapapi_map/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_platform_alert (from `.symlinks/plugins/flutter_platform_alert/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - gal (from `.symlinks/plugins/gal/darwin`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - map_launcher (from `.symlinks/plugins/map_launcher/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -55,13 +75,20 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - BaiduMapKit
     - TOCropViewController
 
 EXTERNAL SOURCES:
+  apple_maps_flutter:
+    :path: ".symlinks/plugins/apple_maps_flutter/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
+  flutter_baidu_mapapi_base:
+    :path: ".symlinks/plugins/flutter_baidu_mapapi_base/ios"
+  flutter_baidu_mapapi_map:
+    :path: ".symlinks/plugins/flutter_baidu_mapapi_map/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   flutter_platform_alert:
@@ -74,6 +101,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_cropper/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
+  map_launcher:
+    :path: ".symlinks/plugins/map_launcher/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -90,14 +119,19 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
+  apple_maps_flutter: 2237d66a8e242082a2d88134af372f7b3375d7a6
+  BaiduMapKit: 84991811cb07b24c6ead7d59022c13245427782c
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_baidu_mapapi_base: 24dd82034374c6f52a73e90316834c63ff8d4f64
+  flutter_baidu_mapapi_map: f799cc1bb3d39196b8d3d59399ca8635e690bd44
   flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
   flutter_platform_alert: bf3b5fcd4ac14bd637e20527e9c471633071afd3
   flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
   gal: baecd024ebfd13c441269ca7404792a7152fde89
   image_cropper: 5f162dcf988100dc1513f9c6b7eb42cd6fbf9156
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  map_launcher: 8051ad5783913cafce93f2414c6858f2904fd8df
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
@@ -107,6 +141,6 @@ SPEC CHECKSUMS:
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
   webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
 
-PODFILE CHECKSUM: cd2450a525c950f51011386cc1ddca5592ff14c7
+PODFILE CHECKSUM: 6571a210d10d584578a7f707f4c2c815c019722d
 
 COCOAPODS: 1.16.2
