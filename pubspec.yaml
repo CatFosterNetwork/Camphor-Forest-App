@@ -70,6 +70,9 @@ dependencies:
   flutter_baidu_mapapi_base: ^3.9.5
   apple_maps_flutter: ^1.4.0
   map_launcher: ^4.4.2
+  geolocator: ^13.0.1
+  sensors_plus: ^6.0.1
+  web_socket_channel: ^3.0.3
 
 
 dev_dependencies:
@@ -87,6 +90,7 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - assets/icons/bus/
     - assets/icons/swulogo.svg
     - assets/splash_logo.png
     - lib/pages/login/userAgreement.txt

@@ -45,63 +45,6 @@ class BusLine {
     return BusLine(id: '', name: '', color: '', stops: [], route: []);
   }
 
-  // 生成模拟数据
-  static List<BusLine> getMockData() {
-    return [
-      BusLine(
-        id: '1',
-        name: '1号线',
-        color: '3983f6',
-        stops: [
-          BusStop(name: '梅园', latitude: 29.82067, longitude: 106.42478),
-          BusStop(name: '桂园', latitude: 29.82167, longitude: 106.42578),
-          BusStop(name: '竹园', latitude: 29.82267, longitude: 106.42678),
-        ],
-        route: [
-          RoutePoint(latitude: 29.82067, longitude: 106.42478),
-          RoutePoint(latitude: 29.82167, longitude: 106.42578),
-          RoutePoint(latitude: 29.82267, longitude: 106.42678),
-        ],
-      ),
-    ];
-  }
-
-  // Convert from WeChat busLine.ts structure
-  static List<BusLine> fromWeChatConfig(List<dynamic> wechatLines) {
-    final result = <BusLine>[];
-    for (final line in wechatLines) {
-      final id = (line['id'] ?? '').toString();
-      final name = (line['name'] ?? '').toString();
-      final color = (line['color'] ?? '').toString();
-      final List<RoutePoint> route = [];
-      final List<BusStop> stops = [];
-      final List<dynamic>? busLine = line['bus_line'] as List<dynamic>?;
-      final List<dynamic>? busPoint = line['bus_point'] as List<dynamic>?;
-      if (busLine != null) {
-        for (final p in busLine) {
-          final s = p.toString();
-          final parts = s.split(',');
-          if (parts.length == 2) {
-            final lat = double.tryParse(parts[0]) ?? 0;
-            final lng = double.tryParse(parts[1]) ?? 0;
-            route.add(RoutePoint(latitude: lat, longitude: lng));
-          }
-        }
-      }
-      if (busPoint != null) {
-        for (final pt in busPoint) {
-          final name = (pt['name'] ?? '').toString();
-          final lat = double.tryParse((pt['lat'] ?? '0').toString()) ?? 0;
-          final lng = double.tryParse((pt['lng'] ?? '0').toString()) ?? 0;
-          stops.add(BusStop(name: name, latitude: lat, longitude: lng));
-        }
-      }
-      result.add(
-        BusLine(id: id, name: name, color: color, stops: stops, route: route),
-      );
-    }
-    return result;
-  }
 }
 
 class RoutePoint {

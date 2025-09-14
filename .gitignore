@@ -20,6 +20,7 @@ migrate_working_dir/
 
 # VS Code（多数团队会提交 .vscode，按需注释）
 .vscode/
+*.code-workspace
 
 # ---------- Flutter / Dart / Pub ----------
 .dart_tool/

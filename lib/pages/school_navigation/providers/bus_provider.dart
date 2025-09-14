@@ -6,46 +6,12 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/bus_models.dart';
-import '../../../core/constants/bus_line.dart' as constants;
-import '../../../core/models/bus_line_model.dart' as models;
+import '../../../core/constants/bus_line_constants.dart';
 
 final busLinesProvider = FutureProvider<List<BusLine>>((ref) async {
-  // 使用完整的配置文件数据，转换为页面所需格式
-  return _convertFromConstants(constants.busLines);
+  // 直接使用已优化的数据格式
+  return BusLinesData.getBusLinesData();
 });
-
-List<BusLine> _convertFromConstants(List<models.BusLine> constantLines) {
-  return constantLines.map((line) {
-    // 转换路线点
-    final route = line.busLine.map((point) {
-      final parts = point.split(',');
-      if (parts.length == 2) {
-        return RoutePoint(
-          latitude: double.tryParse(parts[0]) ?? 0,
-          longitude: double.tryParse(parts[1]) ?? 0,
-        );
-      }
-      return RoutePoint(latitude: 0, longitude: 0);
-    }).toList();
-
-    // 转换站点
-    final stops = line.busPoint.map((point) {
-      return BusStop(
-        name: point.name,
-        latitude: double.tryParse(point.lat) ?? 0,
-        longitude: double.tryParse(point.lng) ?? 0,
-      );
-    }).toList();
-
-    return BusLine(
-      id: line.id,
-      name: line.name,
-      color: line.color,
-      route: route,
-      stops: stops,
-    );
-  }).toList();
-}
 
 final realTimeBusDataProvider = StreamProvider<List<BusData>>((ref) async* {
   final channel = WebSocketChannel.connect(

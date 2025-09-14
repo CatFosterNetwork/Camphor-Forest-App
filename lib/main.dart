@@ -24,6 +24,10 @@ void main() async {
   if (defaultTargetPlatform == TargetPlatform.android) {
     // 同意隐私
     bmf_base.BMFMapSDK.setAgreePrivacy(true);
+    bmf_base.BMFMapSDK.setApiKeyAndCoordType(
+      'sda006XNA24mpvl67FB2d7wYwxGHp7VR',
+      bmf_base.BMF_COORD_TYPE.COMMON,
+    );
   }
 
   await initialization();
