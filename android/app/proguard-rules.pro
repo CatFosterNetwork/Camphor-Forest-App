@@ -58,6 +58,15 @@
 -dontwarn com.google.android.play.core.tasks.OnSuccessListener
 -dontwarn com.google.android.play.core.tasks.Task
 
+# 百度地图SDK规则
+-keep class com.baidu.** { *; }
+-keep class mapsdkvi.** { *; }
+-dontwarn com.baidu.**
+
+# Flutter百度地图插件规则
+-keep class io.flutter.plugins.flutter_baidu_mapapi_base.** { *; }
+-keep class io.flutter.plugins.flutter_baidu_mapapi_map.** { *; }
+
 # 移除日志
 -assumenosideeffects class android.util.Log {
     public static *** d(...);

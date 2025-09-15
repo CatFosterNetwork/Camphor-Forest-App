@@ -68,6 +68,12 @@ class _SchoolNavigationScreenState
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+  // 🚀 缓存建筑数据，避免重复计算
+  List<String>? _cachedLocationTypes;
+  Map<String, List<LocationPoint>>? _cachedLocationsByType;
+  List<LocationPoint>? _cachedAllLocations;
+  bool _isBuildingCacheInitialized = false;
+
   // Marker缩放相关参数
   static const double _initialZoomLevel = 16.0; // 初始缩放级别
   static const double _baseScaleFactor = 1.08; // 缩放因子（每级放大8%，适中变化）
@@ -898,7 +904,7 @@ class _SchoolNavigationScreenState
         icon: iconPath, // 使用线路特定的图标
         title: '${line.name} - 车辆${bus.id}', // 显示线路和车辆信息
         subtitle: '速度: ${bus.speed.toStringAsFixed(1)} km/h', // 添加速度信息
-        rotation: bus.direction, // 根据车辆方向旋转图标
+        rotation: -bus.direction, // 校正校车方向角度
         centerOffset: bmf_base.BMFPoint(0, -12), // 调整标记点位置
         zIndex: 25, // 车辆标记层级高于站点
         // 缩放相关设置
@@ -1246,12 +1252,20 @@ class _SchoolNavigationScreenState
 
   // 所有建筑的分类列表
   Widget _buildAllBuildingsGrid(ScrollController scrollController) {
+    // 🚀 确保缓存已初始化
+    _ensureBuildingCacheInitialized();
+
     if (_searchQuery.isNotEmpty) {
       // 搜索模式：显示搜索结果
       return _buildSearchResults(scrollController);
     } else {
-      // 正常模式：显示分类列表
-      final locationTypes = CampusLocations.getAllLocationTypes();
+      // 正常模式：使用缓存的分类列表
+      final locationTypes = _cachedLocationTypes ?? [];
+
+      if (locationTypes.isEmpty) {
+        // 缓存还未准备好，显示加载指示器
+        return const Center(child: CircularProgressIndicator());
+      }
 
       return ListView.builder(
         controller: scrollController,
@@ -1259,7 +1273,7 @@ class _SchoolNavigationScreenState
         itemCount: locationTypes.length,
         itemBuilder: (context, index) {
           final type = locationTypes[index];
-          final locations = CampusLocations.getLocationsByType(type);
+          final locations = _cachedLocationsByType?[type] ?? [];
           return _buildCategorySection(type, locations);
         },
       );
@@ -1268,7 +1282,8 @@ class _SchoolNavigationScreenState
 
   // 搜索结果列表
   Widget _buildSearchResults(ScrollController scrollController) {
-    final allLocations = CampusLocations.getAllLocationPoints();
+    // 🚀 使用缓存的建筑数据
+    final allLocations = _cachedAllLocations ?? [];
     final filteredLocations = allLocations
         .where(
           (location) => location.content.toLowerCase().contains(
@@ -1933,9 +1948,9 @@ class _SchoolNavigationScreenState
         final showResult = await _baiduMapController!.showUserLocation(true);
         debugPrint('🎯 [定位图层] 启用结果: $showResult');
 
-        // 🔧 修复：设置定位模式为Normal（而不是None）
+        // 🔧 设置定位模式为None，只显示位置不跟随视角
         final trackingResult = await _baiduMapController!.setUserTrackingMode(
-          bmf_base.BMFUserTrackingMode.Follow, // 改为Follow模式以显示位置
+          bmf_base.BMFUserTrackingMode.None, // None模式：显示位置但不移动视角
         );
         debugPrint('🎯 [跟踪模式] 设置结果: $trackingResult');
 
@@ -1965,7 +1980,7 @@ class _SchoolNavigationScreenState
       final locationDisplayParam = bmf_map.BMFUserLocationDisplayParam(
         locationViewOffsetX: 0, // X轴偏移
         locationViewOffsetY: 0, // Y轴偏移
-        userTrackingMode: bmf_base.BMFUserTrackingMode.Follow, // 跟随模式
+        userTrackingMode: bmf_base.BMFUserTrackingMode.None, // 不跟随视角模式
         enableDirection: true, // 🧭 启用方向显示（Android独有）
         isAccuracyCircleShow: true, // 显示精度圈
         accuracyCircleFillColor: Colors.blue.withValues(alpha: 0.2), // 精度圈填充色
@@ -2097,7 +2112,6 @@ class _SchoolNavigationScreenState
       _magnetometerSubscription = magnetometerEventStream().listen(
         (MagnetometerEvent event) {
           // 计算设备朝向角度（相对于磁北）
-          // atan2(y, x) 返回弧度，需要转换为角度
           double heading = math.atan2(event.y, event.x) * 180 / math.pi;
 
           // 确保角度在0-360度范围内
@@ -2105,8 +2119,16 @@ class _SchoolNavigationScreenState
             heading += 360;
           }
 
+          // 🧭 朝向校正：逆时针旋转90度
+          heading = (heading - 90 + 360) % 360;
+
+          // 🧭 重庆地区磁偏角校正（约-3度）
+          // 将磁北转换为真北，与高德地图保持一致
+          const double magneticDeclination = -3.0;
+          heading = (heading + magneticDeclination + 360) % 360;
+
           // 平滑处理，避免朝向跳动太频繁
-          if ((heading - _currentDeviceHeading).abs() > 2.0) {
+          if ((heading - _currentDeviceHeading).abs() > 1.0) {
             _currentDeviceHeading = heading;
             debugPrint('🧭 [设备朝向] 磁力计朝向: ${heading.toStringAsFixed(1)}°');
 
@@ -2161,8 +2183,7 @@ class _SchoolNavigationScreenState
         validHeading = deviceHeading;
         headingSource = "磁力计";
       } else if (gpsHeading > 0 && !gpsHeading.isNaN) {
-        // 磁力计无效时使用GPS移动方向
-        validHeading = gpsHeading;
+        validHeading = (gpsHeading - 90 + 360) % 360;
         headingSource = "GPS移动";
       } else {
         // 都无效时使用默认朝向
@@ -2284,13 +2305,20 @@ class _SchoolNavigationScreenState
     }
 
     try {
-      debugPrint('📍 [获取位置] 获取当前位置以移动视角...');
+      Position? position;
 
-      // 获取当前位置
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
-      );
+      // 🚀 优先使用缓存的最后位置，避免重新GPS定位延迟
+      if (_lastGpsPosition != null) {
+        position = _lastGpsPosition!;
+        debugPrint('⚡ [快速定位] 使用缓存位置，无需等待GPS');
+      } else {
+        debugPrint('📍 [获取位置] 缓存位置不存在，获取当前位置...');
+        // 只有在没有缓存位置时才重新获取
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium, // 降低精度要求，提高速度
+          timeLimit: const Duration(seconds: 5), // 缩短超时时间
+        );
+      }
 
       debugPrint(
         '✅ [位置获取] 当前位置: 纬度=${position.latitude.toStringAsFixed(6)}, '
@@ -2651,6 +2679,35 @@ class _SchoolNavigationScreenState
 
     // 限制偏移范围，确保标签不会离得太远或太近
     return math.max(0.00008, math.min(0.0003, offset));
+  }
+
+  // 🚀 确保建筑缓存已初始化
+  void _ensureBuildingCacheInitialized() {
+    if (!_isBuildingCacheInitialized) {
+      _isBuildingCacheInitialized = true;
+      _initializeBuildingCacheSync();
+    }
+  }
+
+  // 🚀 同步初始化建筑数据缓存（首次访问时）
+  void _initializeBuildingCacheSync() {
+    try {
+      _cachedLocationTypes = CampusLocations.getAllLocationTypes();
+      _cachedAllLocations = CampusLocations.getAllLocationPoints();
+      _cachedLocationsByType = {};
+
+      for (final type in _cachedLocationTypes!) {
+        _cachedLocationsByType![type] = CampusLocations.getLocationsByType(
+          type,
+        );
+      }
+
+      debugPrint(
+        '🚀 [建筑缓存] 同步缓存完成: ${_cachedLocationTypes!.length}个分类, ${_cachedAllLocations!.length}个建筑',
+      );
+    } catch (e) {
+      debugPrint('💥 [建筑缓存] 同步初始化失败: $e');
+    }
   }
 
   // 🔄 坐标转换方法：WGS84 → GCJ02（火星坐标系）

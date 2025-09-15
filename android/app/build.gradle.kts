@@ -1,3 +1,13 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+// 读取签名配置
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -35,9 +45,19 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    // 🔐 签名配置
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String? ?: ""
+            keyPassword = keystoreProperties["keyPassword"] as String? ?: ""
+            storeFile = file(keystoreProperties["storeFile"] as String? ?: "")
+            storePassword = keystoreProperties["storePassword"] as String? ?: ""
+        }
+    }
+
     buildTypes {
         release {
-            // 启用代码混淆和资源缩减
+            // ✅ 启用代码混淆和资源缩减（已完善ProGuard规则）
             isMinifyEnabled = true
             isShrinkResources = true
             
@@ -47,9 +67,8 @@ android {
                 "proguard-rules.pro"
             )
             
-            // TODO: 配置正式签名文件
-            // 临时使用debug签名，生产环境需要配置release签名
-            signingConfig = signingConfigs.getByName("debug")
+            // ✅ 使用正式release签名
+            signingConfig = signingConfigs.getByName("release")
             
             // 启用ZIP对齐优化
             isZipAlignEnabled = true
