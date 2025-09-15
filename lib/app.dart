@@ -51,8 +51,6 @@ class CamphorForestApp extends ConsumerWidget {
       debugPrint(
         '  - MaterialApp.themeMode: ${_convertStringToThemeMode(themeMode)}',
       );
-
-      // 状态栏现在由AdaptiveStatusBar声明式管理，无需手动设置
     });
 
     // 平台判断
@@ -181,7 +179,9 @@ class CamphorForestApp extends ConsumerWidget {
         actionTextStyle: _createIOSTextStyle(),
         tabLabelTextStyle: _createIOSTextStyle(),
         navTitleTextStyle: _createIOSTextStyle(fontWeight: FontWeight.w600),
-        navLargeTitleTextStyle: _createIOSTextStyle(fontWeight: FontWeight.w700),
+        navLargeTitleTextStyle: _createIOSTextStyle(
+          fontWeight: FontWeight.w700,
+        ),
         navActionTextStyle: _createIOSTextStyle(),
         pickerTextStyle: _createIOSTextStyle(),
         dateTimePickerTextStyle: _createIOSTextStyle(),

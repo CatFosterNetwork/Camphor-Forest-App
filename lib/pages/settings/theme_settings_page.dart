@@ -24,9 +24,6 @@ class ThemeSettingsPage extends ConsumerWidget {
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: false, // 主题设置使用纯色背景，便于查看主题效果
-      forceStatusBarIconBrightness: isDarkMode
-          ? Brightness.light
-          : Brightness.dark, // 强制状态栏图标适配
       appBar: ThemeAwareAppBar(title: '主题设置'),
       body: ListView(
         padding: const EdgeInsets.all(16),

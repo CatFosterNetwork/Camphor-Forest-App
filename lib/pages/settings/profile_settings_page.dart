@@ -51,9 +51,6 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
     return ThemeAwareScaffold(
       pageType: PageType.settings,
-      forceStatusBarIconBrightness: isDarkMode
-          ? Brightness.light
-          : Brightness.dark, // 强制状态栏图标适配
       appBar: ThemeAwareAppBar(title: '个人资料设置'),
       body: authState.isLoading
           ? const Center(child: CircularProgressIndicator())

@@ -23,9 +23,9 @@ class OptionsScreen extends ConsumerWidget {
     return ThemeAwareScaffold(
       useBackground: false, // 设置页面使用纯色背景，保持专业感
       pageType: PageType.settings,
-      forceStatusBarIconBrightness: isDarkMode
-          ? Brightness.light
-          : Brightness.dark, // 强制状态栏图标适配
+      // forceStatusBarIconBrightness: isDarkMode
+      //     ? Brightness.light
+      //     : Brightness.dark, // 强制状态栏图标适配
       appBar: ThemeAwareAppBar(title: '选项'),
       body: Column(
         children: [

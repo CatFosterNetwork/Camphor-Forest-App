@@ -126,9 +126,6 @@ class _CustomThemeSettingsPageState
       onWillPop: _handleBackPress,
       child: ThemeAwareScaffold(
         pageType: PageType.settings,
-        forceStatusBarIconBrightness: isDarkMode
-            ? Brightness.light
-            : Brightness.dark, // 强制状态栏图标适配
         appBar: AppBar(
           title: Text(isCreateMode ? '创建主题' : '编辑主题'),
           backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,

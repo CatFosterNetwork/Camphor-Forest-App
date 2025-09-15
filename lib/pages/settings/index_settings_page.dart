@@ -108,9 +108,6 @@ class IndexSettingsPage extends ConsumerWidget {
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: false, // 设置页面使用纯色背景，保持专业感
-      forceStatusBarIconBrightness: isDarkMode
-          ? Brightness.light
-          : Brightness.dark, // 强制状态栏图标适配
       appBar: ThemeAwareAppBar(title: '主页设置'),
       body: ListView(
         padding: const EdgeInsets.all(16),

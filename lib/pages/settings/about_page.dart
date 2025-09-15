@@ -64,9 +64,6 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: true, // 使用背景
-      forceStatusBarIconBrightness: isDarkMode
-          ? Brightness.light
-          : Brightness.dark, // 强制状态栏图标适配
       appBar: ThemeAwareAppBar(title: '关于'),
       body: Center(
         child: SizedBox(
