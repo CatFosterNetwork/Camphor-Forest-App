@@ -33,10 +33,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
       // 每次进入页面都默认加载"已提交"状态的反馈
       ref
           .read(feedbackProvider.notifier)
-          .loadFeedbacks(
-            refresh: true,
-            status: 'PENDING',
-          );
+          .loadFeedbacks(refresh: true, status: 'PENDING');
     });
   }
 

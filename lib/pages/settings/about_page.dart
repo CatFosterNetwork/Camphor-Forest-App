@@ -33,6 +33,10 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   String buildNumber = '1';
   String packageName = 'social.swu.camphor_forest';
 
+  // 扫描二维码按钮要打开的HTTPS链接
+  static const String qrCodeScannerUrl =
+      'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah';
+
   @override
   void initState() {
     super.initState();
@@ -383,7 +387,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               '点击打开QQ群，长按保存图片或扫描',
               style: TextStyle(
                 fontSize: 14,
-                color: isDarkMode ? Colors.white.withOpacity(0.8) : Colors.black54,
+                color: isDarkMode
+                    ? Colors.white.withOpacity(0.8)
+                    : Colors.black54,
               ),
               textAlign: TextAlign.center,
             ),
@@ -460,7 +466,10 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       // 发生错误时，尝试复制链接作为备选方案
       try {
         await Clipboard.setData(
-          ClipboardData(text: 'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah '),
+          ClipboardData(
+            text:
+                'https://qm.qq.com/cgi-bin/qm/qr?k=C9I3YXZELhwBSgddJo3AoWSpxnZIFjZ0&jump_from=webapi&authKey=KdVybMFYnwGqo7rsBYJBXijgIhLf46UmYzfXe6qICrndvsK/3bOdOhL+X+fMnmah ',
+          ),
         );
 
         if (mounted) {
@@ -502,17 +511,11 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       builder: (context) => CupertinoActionSheet(
         title: const Text(
           '二维码操作',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
         message: const Text(
           '选择您要执行的操作',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         actions: [
           CupertinoActionSheetAction(
@@ -758,10 +761,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               SizedBox(height: 16),
               Text(
                 '正在保存二维码...',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -785,56 +785,47 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     }
   }
 
-  /// 打开系统二维码扫描器
+  /// 打开二维码扫描链接
   void _openSystemScanner() async {
     try {
-      // 尝试打开不同的扫描应用
-      final List<String> scannerApps = [
-        // ZXing Barcode Scanner
-        'intent://scan/#Intent;scheme=zxing;package=com.google.zxing.client.android;end',
-        // 通用扫描Intent
-        'intent://scan/#Intent;action=com.google.zxing.client.android.SCAN;end',
-        // 相机应用扫描
-        'intent:#Intent;action=android.media.action.IMAGE_CAPTURE;end',
-      ];
+      // 使用 url_launcher 启动 HTTPS 链接
+      final Uri uri = Uri.parse(qrCodeScannerUrl);
 
-      bool scannerOpened = false;
-
-      for (String intentUrl in scannerApps) {
-        try {
-          final Uri scannerUri = Uri.parse(intentUrl);
-          if (await canLaunchUrl(scannerUri)) {
-            await launchUrl(scannerUri);
-            scannerOpened = true;
-            break;
-          }
-        } catch (e) {
-          // 继续尝试下一个
-          continue;
-        }
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication, // 在外部浏览器中打开
+        );
+      } else {
+        // 如果无法打开链接，尝试复制到剪贴板
+        await Clipboard.setData(const ClipboardData(text: qrCodeScannerUrl));
       }
+    } catch (e) {
+      debugPrint('打开二维码链接失败: $e');
 
-      if (!scannerOpened) {
-        // 如果无法打开任何扫描器，提示用户手动操作
+      // 备用方案：复制链接到剪贴板
+      try {
+        await Clipboard.setData(const ClipboardData(text: qrCodeScannerUrl));
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('请使用手机相机或其他扫描应用扫描二维码'),
-              backgroundColor: Colors.blue,
+              content: Text('打开失败，链接已复制到剪贴板'),
+              backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
             ),
           );
         }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('无法打开系统扫描器，请使用其他扫描应用'),
-            backgroundColor: Colors.orange,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+      } catch (clipboardError) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('操作失败，请稍后重试'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
     }
   }
@@ -873,10 +864,7 @@ class _IOSQRCodeViewer extends StatelessWidget {
         ),
         middle: const Text(
           '官方Q群',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -975,23 +963,23 @@ class _IOSQRCodeViewer extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 简洁提示
               Center(
                 child: Text(
                   '轻点打开QQ群 · 长按查看选项',
                   style: TextStyle(
                     fontSize: 13,
-                    color: isDarkMode 
-                        ? Colors.white.withOpacity(0.5) 
+                    color: isDarkMode
+                        ? Colors.white.withOpacity(0.5)
                         : Colors.black.withOpacity(0.5),
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
             ],
           ),

@@ -171,7 +171,7 @@ class ThemeAwareAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     // 确定背景颜色
     final Color bgColor = isDarkMode
-        ? Colors.grey.shade900
+        ? const Color(0xFF202125)
         : Colors.grey.shade50;
 
     // 确定前景颜色 - 确保在浅色模式下有足够对比度
