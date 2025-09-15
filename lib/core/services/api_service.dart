@@ -289,7 +289,6 @@ class ApiService {
     queryParameters: {
       'pageNo': pageNo,
       'pageSize': pageSize,
-      'platform': 'app',
     },
   );
 
@@ -298,7 +297,7 @@ class ApiService {
     required String content,
   }) => _http.post<Map<String, dynamic>>(
     '${ApiConstants.feedback}/$id/reply',
-    data: {'content': content, 'platform': 'app'},
+    data: {'content': content},
     converter: (d) => d as Map<String, dynamic>,
   );
 
