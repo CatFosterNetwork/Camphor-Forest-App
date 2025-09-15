@@ -27,8 +27,8 @@ import '../../pages/settings/about_page.dart';
 import '../../pages/index/index_screen.dart';
 // // —— CampusRecruitment
 // import '../../pages/campus_recruitment/pages/campus_recruitment_screen.dart';
-// // —— BBS
-// import '../../pages/bbs/pages/bbs_screen.dart';
+// —— BBS
+import '../../pages/bbs/bbs_screen.dart';
 // import '../../pages/bbs/pages/article_publish_screen.dart';
 // import '../../pages/bbs/pages/article_detail_screen.dart';
 // // —— ClassTable
@@ -37,10 +37,10 @@ import '../../pages/classtable/custom_classtable_screen.dart';
 // // —— Home / Profile
 // import '../../pages/home/pages/home_screen.dart';
 // import '../../pages/home/pages/modify_personal_info_screen.dart';
-// // —— Feedback
-// import '../../pages/feedback/pages/feedback_screen.dart';
-// import '../../pages/feedback/pages/add_feedback_screen.dart';
-// import '../../pages/feedback/pages/feedback_detail_screen.dart';
+// —— Feedback
+import '../../pages/feedback/feedback_screen.dart';
+import '../../pages/feedback/add_feedback_screen.dart';
+import '../../pages/feedback/feedback_detail_screen.dart';
 // —— LifeService
 import '../../pages/lifeService/life_service_screen.dart';
 import '../../pages/lifeService/pages/exam_query_screen.dart';
@@ -138,6 +138,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       //   path: RouteConstants.campusRecruitment,
       //   builder: (ctx, state) => const CampusRecruitmentScreen(),
       // ),
+      GoRoute(
+        path: RouteConstants.bbs,
+        builder: (ctx, state) => const BBSScreen(),
+      ),
       // GoRoute(
       //   path: RouteConstants.bbs,
       //   builder: (ctx, state) => const BbsScreen(),
@@ -179,25 +183,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       //     ),
       //   ],
       // ),
-      // GoRoute(
-      //   path: RouteConstants.feedback,
-      //   builder: (ctx, state) => const FeedbackScreen(),
-      //   routes: [
-      //     GoRoute(
-      //       path: 'add',
-      //       name: RouteConstants.feedbackAdd,
-      //       builder: (ctx, state) => const AddFeedbackScreen(),
-      //     ),
-      //     GoRoute(
-      //       path: 'detail',
-      //       name: RouteConstants.feedbackDetail,
-      //       builder: (ctx, state) {
-      //         final id = state.queryParams['id'];
-      //         return FeedbackDetailScreen(feedbackId: id);
-      //       },
-      //     ),
-      //   ],
-      // ),
+      GoRoute(
+        path: RouteConstants.feedback,
+        builder: (ctx, state) => const FeedbackScreen(),
+        routes: [
+          GoRoute(
+            path: 'add',
+            name: RouteConstants.feedbackAdd,
+            builder: (ctx, state) => const AddFeedbackScreen(),
+          ),
+          GoRoute(
+            path: 'detail',
+            name: RouteConstants.feedbackDetail,
+            builder: (ctx, state) {
+              final id = state.queryParameters['id'] ?? '';
+              return FeedbackDetailScreen(feedbackId: id);
+            },
+          ),
+        ],
+      ),
       GoRoute(
         path: RouteConstants.lifeService,
         builder: (ctx, state) => const LifeServiceScreen(),

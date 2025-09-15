@@ -252,6 +252,7 @@ class ApiService {
       'pageNo': pageNo,
       'pageSize': pageSize,
       'status': status,
+      'platform': 'app',
     },
   );
 
@@ -266,6 +267,7 @@ class ApiService {
       'title': title,
       'replyEmail': replyEmail,
       'content': content,
+      'platform': 'app',
       if (resourceUrl != null) 'resourceUrl': resourceUrl,
     },
     converter: (d) => d as Map<String, dynamic>,
@@ -277,14 +279,18 @@ class ApiService {
         converter: (d) => d as Map<String, dynamic>,
       );
 
-  Future<List<dynamic>> getFeedbackReplyList({
+  Future<dynamic> getFeedbackReplyList({
     required int id,
     required int pageNo,
     required int pageSize,
-  }) => _http.get<List<dynamic>>(
+  }) => _http.get<dynamic>(
     '${ApiConstants.feedback}/$id/reply',
-    converter: (d) => d as List<dynamic>,
-    queryParameters: {'pageNo': pageNo, 'pageSize': pageSize},
+    converter: (d) => d,
+    queryParameters: {
+      'pageNo': pageNo,
+      'pageSize': pageSize,
+      'platform': 'app',
+    },
   );
 
   Future<Map<String, dynamic>> addFeedbackReply({
@@ -292,7 +298,7 @@ class ApiService {
     required String content,
   }) => _http.post<Map<String, dynamic>>(
     '${ApiConstants.feedback}/$id/reply',
-    data: {'content': content},
+    data: {'content': content, 'platform': 'app'},
     converter: (d) => d as Map<String, dynamic>,
   );
 
@@ -307,12 +313,12 @@ class ApiService {
   Future<void> setFeedbackReject(int id) =>
       _http.put<void>('${ApiConstants.feedback}/$id/reject', converter: (_) {});
 
-  // Future<void> setFeedbackVisibility(int id, bool visibility) =>
-  //     _http.put<void>(
-  //       '${ApiConstants.feedback}/$id/visibility',
-  //       converter: (_) => null,
-  //       queryParameters: {'visibility': visibility},
-  //     );
+  Future<void> setFeedbackVisibility(int id, bool visibility) =>
+      _http.put<void>(
+        '${ApiConstants.feedback}/$id/visibility?visibility=$visibility',
+        converter: (_) => null,
+        data: {},
+      );
 
   Future<Map<String, dynamic>> postConfigToServer(
     Map<String, dynamic> config,
