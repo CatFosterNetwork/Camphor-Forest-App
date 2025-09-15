@@ -31,8 +31,8 @@ class SchoolNavigationScreen extends ConsumerStatefulWidget {
       _SchoolNavigationScreenState();
 }
 
-class _SchoolNavigationScreenState
-    extends ConsumerState<SchoolNavigationScreen> {
+class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
+    with WidgetsBindingObserver {
   int? selectedLineIndex;
   bool showStops = true;
 
@@ -85,6 +85,39 @@ class _SchoolNavigationScreenState
   static const double _baseLabelOffset = 0.00015; // 基础偏移距离
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    debugPrint('🚀 [页面生命周期] SchoolNavigationScreen 初始化');
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    debugPrint('🔄 [应用生命周期] 状态变化: $state');
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        debugPrint('🔄 [应用生命周期] 应用恢复到前台，检查WebSocket连接');
+        // 触发provider重新评估，这会检查WebSocket管理器状态
+        ref.invalidate(realTimeBusDataProvider);
+        break;
+      case AppLifecycleState.paused:
+        debugPrint('🔄 [应用生命周期] 应用进入后台');
+        break;
+      case AppLifecycleState.detached:
+        debugPrint('🔄 [应用生命周期] 应用分离');
+        break;
+      case AppLifecycleState.inactive:
+        debugPrint('🔄 [应用生命周期] 应用不活跃');
+        break;
+      case AppLifecycleState.hidden:
+        debugPrint('🔄 [应用生命周期] 应用隐藏');
+        break;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final busLinesAsync = ref.watch(busLinesProvider);
@@ -111,12 +144,20 @@ class _SchoolNavigationScreenState
 
     // 监听实时车辆数据变化并更新地图标注
     ref.listen(realTimeBusDataProvider, (previous, next) {
+      debugPrint('🎯 [页面监听] realTimeBusDataProvider 状态变化');
+      debugPrint(
+        '🎯 [页面监听] previous: ${previous?.hasValue}, next: ${next.hasValue}',
+      );
+
       if (_baiduMapController != null) {
         next.whenData((newBusData) {
+          debugPrint('🎯 [页面监听] 收到新的校车数据，准备更新地图: ${newBusData.length}辆车');
           busLinesAsync.whenData((busLines) {
             _updateBusMarkersOnBaiduMap(newBusData, busLines);
           });
         });
+      } else {
+        debugPrint('⚠️ [页面监听] 百度地图控制器为空，跳过更新');
       }
       if (_appleMapController != null) {
         next.whenData((newBusData) {
@@ -2922,13 +2963,22 @@ class _SchoolNavigationScreenState
 
   @override
   void dispose() {
+    // 移除应用生命周期观察者
+    WidgetsBinding.instance.removeObserver(this);
+
     // 安全清理地图覆盖物
     _clearBaiduMapOverlaysSafely();
 
     // 🛑 停止位置流监听
     _stopContinuousLocationUpdates();
 
+    // 取消磁力计监听
+    _magnetometerSubscription?.cancel();
+
+    // 清理搜索控制器
     _searchController.dispose();
+
+    debugPrint('🛑 [页面生命周期] SchoolNavigationScreen 销毁');
     super.dispose();
   }
 }
