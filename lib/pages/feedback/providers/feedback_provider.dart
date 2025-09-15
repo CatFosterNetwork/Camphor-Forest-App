@@ -24,7 +24,7 @@ class FeedbackState {
     this.isLoading = false,
     this.hasMore = true,
     this.currentPage = 1,
-    this.currentStatus = '',
+    this.currentStatus = 'PENDING', // 默认为"已提交"状态
     this.searchQuery = '',
     this.error,
   });

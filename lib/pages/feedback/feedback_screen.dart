@@ -22,7 +22,7 @@ class FeedbackScreen extends ConsumerStatefulWidget {
 class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  String _selectedStatus = '';
+  String _selectedStatus = '已提交'; // 默认选择"已提交"
 
   @override
   void initState() {
@@ -30,7 +30,13 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
     _scrollController.addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(feedbackProvider.notifier).loadFeedbacks(refresh: true);
+      // 每次进入页面都默认加载"已提交"状态的反馈
+      ref
+          .read(feedbackProvider.notifier)
+          .loadFeedbacks(
+            refresh: true,
+            status: 'PENDING',
+          );
     });
   }
 
