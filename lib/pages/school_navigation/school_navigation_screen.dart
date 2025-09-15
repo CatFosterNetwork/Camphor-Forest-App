@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:permission_handler/permission_handler.dart';
+import '../../core/services/permission_service.dart';
+import 'package:permission_handler/permission_handler.dart'
+    show openAppSettings;
 import 'package:geolocator/geolocator.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:map_launcher/map_launcher.dart';
@@ -1894,37 +1896,28 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     try {
       debugPrint('🔒 [权限检查] 开始检查定位权限...');
 
-      // 检查定位权限
-      final status = await Permission.location.status;
-      debugPrint('📋 [权限状态] 当前权限状态: $status');
+      // 使用全局权限管理器请求位置权限
+      final result = await PermissionService.requestPermission(
+        AppPermissionType.location,
+        context: mounted ? context : null,
+        showRationale: true,
+      );
+      debugPrint('📋 [权限状态] 权限请求结果: ${result.isGranted}');
 
-      if (status.isDenied) {
-        debugPrint('❓ [权限请求] 权限被拒绝，正在请求权限...');
-        // 请求权限
-        final result = await Permission.location.request();
-        debugPrint('📝 [权限结果] 权限请求结果: $result');
-
-        if (result.isGranted) {
-          debugPrint('✅ [权限通过] 用户授予了定位权限');
-          setState(() {
-            _isLocationEnabled = true;
-          });
-          _enableUserLocation();
-        } else {
-          debugPrint('❌ [权限拒绝] 用户拒绝了定位权限');
-          _showLocationPermissionDialog();
-        }
-      } else if (status.isGranted) {
-        debugPrint('✅ [权限已有] 定位权限已经授予');
+      if (result.isGranted) {
+        debugPrint('✅ [权限通过] 用户授予了定位权限');
         setState(() {
           _isLocationEnabled = true;
         });
         _enableUserLocation();
-      } else if (status.isPermanentlyDenied) {
-        debugPrint('🚫 [永久拒绝] 定位权限被永久拒绝');
-        _showLocationPermissionDialog();
       } else {
-        debugPrint('⚠️ [未知状态] 未知的权限状态: $status');
+        debugPrint('❌ [权限拒绝] 权限请求失败: ${result.errorMessage}');
+        setState(() {
+          _isLocationEnabled = false;
+        });
+        if (result.isPermanentlyDenied) {
+          _showLocationPermissionDialog();
+        }
       }
     } catch (e) {
       debugPrint('💥 [权限错误] 请求定位权限失败: $e');

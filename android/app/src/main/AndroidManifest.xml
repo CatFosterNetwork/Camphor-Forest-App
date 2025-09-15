@@ -7,14 +7,22 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     
     <!-- 存储权限（Android 12及以下） -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" />
     
     <!-- 媒体权限（Android 13+） -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     
     <!-- 相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
+    
+    <!-- 声明功能特性为可选 -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
     
     <application 
         android:label="${appName}" 

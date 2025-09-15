@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
+import '../../core/providers/permission_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
 import 'providers/feedback_provider.dart';
 import 'widgets/image_upload_widget.dart';
@@ -23,7 +24,6 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -44,40 +44,28 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
   }
 
   Future<void> _pickImage() async {
-    try {
-      final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+    if (!mounted) return;
 
-      if (image != null && mounted) {
-        ref.read(addFeedbackProvider.notifier).addImage(File(image.path));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('选择图片失败: $e'), backgroundColor: Colors.red),
-        );
-      }
+    // 使用全局权限管理器选择图片
+    final imagePath = await ref
+        .read(permissionProvider.notifier)
+        .pickImage(context: context, source: ImageSource.gallery);
+
+    if (imagePath != null && mounted) {
+      ref.read(addFeedbackProvider.notifier).addImage(File(imagePath));
     }
   }
 
   Future<void> _takePhoto() async {
-    try {
-      final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-      );
+    if (!mounted) return;
 
-      if (image != null && mounted) {
-        ref.read(addFeedbackProvider.notifier).addImage(File(image.path));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('拍照失败: $e'), backgroundColor: Colors.red),
-        );
-      }
+    // 使用全局权限管理器拍照
+    final imagePath = await ref
+        .read(permissionProvider.notifier)
+        .pickImage(context: context, source: ImageSource.camera);
+
+    if (imagePath != null && mounted) {
+      ref.read(addFeedbackProvider.notifier).addImage(File(imagePath));
     }
   }
 

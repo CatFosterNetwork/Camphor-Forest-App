@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'permission_service.dart';
 import 'package:path_provider/path_provider.dart';
 // photo_view dependency removed - using simple InteractiveViewer
 
@@ -43,7 +43,9 @@ class PreviewService {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100,
+                    color: isDarkMode
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade100,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),
@@ -71,7 +73,7 @@ class PreviewService {
                     ],
                   ),
                 ),
-                
+
                 // 图片预览区域
                 Expanded(
                   child: Container(
@@ -88,7 +90,9 @@ class PreviewService {
                             return Icon(
                               Icons.error,
                               size: 64,
-                              color: isDarkMode ? Colors.white54 : Colors.black54,
+                              color: isDarkMode
+                                  ? Colors.white54
+                                  : Colors.black54,
                             );
                           },
                         ),
@@ -96,12 +100,14 @@ class PreviewService {
                     ),
                   ),
                 ),
-                
+
                 // 底部按钮
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100,
+                    color: isDarkMode
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade100,
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(16),
                       bottomRight: Radius.circular(16),
@@ -112,7 +118,11 @@ class PreviewService {
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            await _saveImageToGallery(context, imageData, title);
+                            await _saveImageToGallery(
+                              context,
+                              imageData,
+                              title,
+                            );
                           },
                           icon: const Icon(Icons.download),
                           label: const Text('保存到相册'),
@@ -130,12 +140,19 @@ class PreviewService {
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade300,
-                          foregroundColor: isDarkMode ? Colors.white : Colors.black,
+                          backgroundColor: isDarkMode
+                              ? Colors.grey.shade600
+                              : Colors.grey.shade300,
+                          foregroundColor: isDarkMode
+                              ? Colors.white
+                              : Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
                         ),
                         child: const Text('关闭'),
                       ),
@@ -172,10 +189,17 @@ class PreviewService {
     String title,
   ) async {
     try {
-      // 请求存储权限
-      final status = await Permission.storage.request();
-      if (!status.isGranted) {
-        _showSnackBar(context, '需要存储权限才能保存图片', isError: true);
+      // 使用全局权限管理器请求存储权限
+      final result = await PermissionService.requestStoragePermission(
+        context: context,
+        showRationale: true,
+      );
+      if (!result.isGranted) {
+        _showSnackBar(
+          context,
+          result.errorMessage ?? '需要存储权限才能保存图片',
+          isError: true,
+        );
         return;
       }
 
@@ -207,7 +231,11 @@ class PreviewService {
   }
 
   /// 显示SnackBar
-  static void _showSnackBar(BuildContext context, String message, {bool isError = false}) {
+  static void _showSnackBar(
+    BuildContext context,
+    String message, {
+    bool isError = false,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
