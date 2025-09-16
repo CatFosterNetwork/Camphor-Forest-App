@@ -315,7 +315,7 @@ class ApiService {
   Future<void> setFeedbackVisibility(int id, bool visibility) =>
       _http.put<void>(
         '${ApiConstants.feedback}/$id/visibility?visibility=$visibility',
-        converter: (_) => null,
+        converter: (_) {},
         data: {},
       );
 

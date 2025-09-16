@@ -113,7 +113,7 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
       );
 
       debugPrint(
-        '[Feedback] API响应已接收: ${response.toString().length > 200 ? response.toString().substring(0, 200) + "..." : response.toString()}',
+        '[Feedback] API响应已接收: ${response.toString().length > 200 ? "${response.toString().substring(0, 200)}..." : response.toString()}',
       );
 
       final feedbackResponse = FeedbackListResponse.fromJson(response);
