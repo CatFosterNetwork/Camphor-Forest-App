@@ -82,9 +82,14 @@ class WebSocketManager {
   }
 
   void _handleMessage(dynamic event) {
+    // 增加原始数据打印，用于调试任何类型的传入消息
+    debugPrint('📥 [WebSocket管理器] 收到原始事件: $event');
     try {
       if (event is String && event.contains('|')) {
-        debugPrint('📥 [WebSocket管理器] 收到数据: ${event.substring(0, 100)}...');
+        // 增加长度检查，避免RangeError
+        final logMessage =
+            event.length > 100 ? '${event.substring(0, 100)}...' : event;
+        debugPrint('📥 [WebSocket管理器] 收到有效数据: $logMessage');
         final parts = event.split('|');
         if (parts.length < 2) return;
 
