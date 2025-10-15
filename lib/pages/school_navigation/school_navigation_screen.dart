@@ -3,13 +3,13 @@
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/services/permission_service.dart';
-import 'package:permission_handler/permission_handler.dart'
-    show openAppSettings;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:map_launcher/map_launcher.dart';
@@ -49,11 +49,18 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   final List<bmf_map.BMFMarker> _locationMarkers = [];
   final List<bmf_map.BMFText> _stationLabels = []; // 存储站点名称标签
 
+  // Apple Maps 覆盖物（iOS平台）
+  final List<apple.Polyline> _applePolylines = [];
+  final List<apple.Annotation> _appleBusStopAnnotations = [];
+  final List<apple.Annotation> _appleBusAnnotations = [];
+  final List<apple.Annotation> _appleLocationAnnotations = [];
+  
+  // Apple Maps 用户定位相关（保留用于将来扩展）
+  // bool _appleMapLocationEnabled = false;
+
   // 建筑定位状态
   LocationPoint? _selectedLocation;
 
-  // 用户位置状态
-  bool _isLocationEnabled = false;
 
   // 位置流监听
   StreamSubscription<Position>? _positionStreamSubscription;
@@ -86,11 +93,126 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   static const double _labelZoomFactor = 1.02; // 标签缩放因子（每级放大2%）
   static const double _baseLabelOffset = 0.00015; // 基础偏移距离
 
+  // 缓存自定义图标
+  apple.BitmapDescriptor? _appleLocationPinIcon;
+  apple.BitmapDescriptor? _appleBusStopIcon;
+  final Map<String, apple.BitmapDescriptor> _appleBusIcons = {};
+  Future<void>? _iconsFuture;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // 仅在iOS平台预加载图标
+    if (Platform.isIOS) {
+      _iconsFuture = _loadCustomAppleMapIcons();
+    }
     debugPrint('🚀 [页面生命周期] SchoolNavigationScreen 初始化');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 图标加载逻辑已移至 initState
+  }
+
+  // 预加载Apple Maps自定义图标
+  Future<void> _loadCustomAppleMapIcons() async {
+    if (!mounted) return;
+    try {
+
+      _appleLocationPinIcon = await _loadAndScaleAppleMapIcon(
+        'assets/icons/location_pin.png',
+        scale: 2.5,
+      );
+      _appleBusStopIcon = await _loadAndScaleAppleMapIcon(
+        'assets/icons/bus_stop.png',
+        scale: 1.6,
+      );
+
+      // 预加载所有校车图标 - 使用实际的线路ID
+      final supportedLineIds = BusIconUtils.getSupportedLineIds();
+      for (final lineIdStr in supportedLineIds) {
+        try {
+          final iconPath = BusIconUtils.getBusIconPath(lineIdStr);
+          _appleBusIcons[lineIdStr] = await _loadAndScaleAppleMapIcon(
+            iconPath,
+            scale: 2,
+          );
+          debugPrint('🍎 [图标预加载] 线路$lineIdStr: $iconPath');
+        } catch (e) {
+          debugPrint('🍎 [图标预加载失败] 线路$lineIdStr: $e');
+        }
+      }
+      debugPrint('🍎 [图标加载] Apple Maps 自定义图标加载完成');
+    } catch (e) {
+      debugPrint('🍎 [图标加载失败] $e');
+      // 重新抛出异常，以便 FutureBuilder 可以捕获并显示错误状态
+      rethrow;
+    }
+  }
+
+  // Helper function to load and scale an image for Apple Maps
+  Future<apple.BitmapDescriptor> _loadAndScaleAppleMapIcon(String assetPath,
+      {double scale = 1.0}) async {
+    final ByteData data = await rootBundle.load(assetPath);
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+    );
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    final ui.Image image = fi.image;
+
+    final int newWidth = (image.width * scale).round();
+    final int newHeight = (image.height * scale).round();
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..filterQuality = FilterQuality.high;
+
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Rect.fromLTWH(0, 0, newWidth.toDouble(), newHeight.toDouble()),
+      paint,
+    );
+
+    final ui.Image newImage =
+        await pictureRecorder.endRecording().toImage(newWidth, newHeight);
+    final ByteData? byteData =
+        await newImage.toByteData(format: ui.ImageByteFormat.png);
+
+    return apple.BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+  }
+
+  // 安全获取校车图标的方法
+  apple.BitmapDescriptor _getAppleBusIcon(String lineId) {
+    // 首先尝试从缓存中获取
+    if (_appleBusIcons.containsKey(lineId)) {
+      return _appleBusIcons[lineId]!;
+    }
+    
+    // 如果缓存中没有，尝试异步加载（但这次返回默认图标）
+    _loadMissingBusIcon(lineId);
+    
+    debugPrint('🍎 [图标警告] 线路$lineId的图标未找到，使用默认图标');
+    return apple.BitmapDescriptor.defaultAnnotation;
+  }
+
+  // 异步加载缺失的校车图标
+  Future<void> _loadMissingBusIcon(String lineId) async {
+    if (_appleBusIcons.containsKey(lineId)) return;
+    
+    try {
+      final iconPath = BusIconUtils.getBusIconPath(lineId);
+      final icon = await _loadAndScaleAppleMapIcon(iconPath, scale: 2);
+      _appleBusIcons[lineId] = icon;
+      debugPrint('🍎 [图标补载] 成功加载线路$lineId的图标');
+      
+      // 触发地图刷新
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('🍎 [图标补载失败] 线路$lineId: $e');
+    }
   }
 
   @override
@@ -151,23 +273,25 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         '🎯 [页面监听] previous: ${previous?.hasValue}, next: ${next.hasValue}',
       );
 
-      if (_baiduMapController != null) {
-        next.whenData((newBusData) {
-          debugPrint('🎯 [页面监听] 收到新的校车数据，准备更新地图: ${newBusData.length}辆车');
-          busLinesAsync.whenData((busLines) {
-            _updateBusMarkersOnBaiduMap(newBusData, busLines);
-          });
-        });
-      } else {
-        debugPrint('⚠️ [页面监听] 百度地图控制器为空，跳过更新');
-      }
-      if (_appleMapController != null) {
-        next.whenData((newBusData) {
-          busLinesAsync.whenData((busLines) {
-            _updateBusMarkersOnAppleMap(newBusData, busLines);
-          });
-        });
-      }
+      // 当收到新的校车数据时
+      next.whenData((newBusData) {
+        // 确保线路数据也已加载完成
+        final busLines = busLinesAsync.value;
+        if (busLines == null) {
+          debugPrint('⚠️ [页面监听] 线路数据尚未加载，无法更新车辆标注');
+          return;
+        }
+
+        debugPrint(
+            '🎯 [页面监听] 收到新的校车数据，准备更新地图: ${newBusData.length}辆车');
+
+        // 根据平台更新地图
+        if (Platform.isAndroid && _baiduMapController != null) {
+          _updateBusMarkersOnBaiduMap(newBusData, busLines);
+        } else if (Platform.isIOS && _appleMapController != null) {
+          _updateBusMarkersOnAppleMap(newBusData, busLines);
+        }
+      });
     });
 
     // 监听深色模式变化，动态更新地图样式
@@ -191,8 +315,36 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         children: [
           // 全屏地图背景
           busLinesAsync.when(
-            data: (busLines) =>
-                _buildFullScreenMap(busLines, busDataAsync.value ?? []),
+            data: (busLines) {
+              // 仅针对iOS平台，在图标加载完成前显示加载动画
+              if (Platform.isIOS) {
+                return FutureBuilder<void>(
+                  future: _iconsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        return _buildErrorWidget(
+                            snapshot.error ?? '图标加载失败', isDarkMode);
+                      }
+                      // 图标加载完成，显示地图
+                      return _buildFullScreenMap(
+                          busLines, busDataAsync.value ?? []);
+                    } else {
+                      // 图标正在加载，显示加载动画
+                      return Container(
+                        color: isDarkMode
+                            ? Colors.grey.shade900
+                            : Colors.grey.shade100,
+                        child: const Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                  },
+                );
+              } else {
+                // 对于Android平台，直接显示地图
+                return _buildFullScreenMap(busLines, busDataAsync.value ?? []);
+              }
+            },
             loading: () => Container(
               color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
               child: const Center(child: CircularProgressIndicator()),
@@ -349,10 +501,24 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
           zoom: 16,
         ),
         mapType: apple.MapType.standard, // 始终使用标准地图，让系统自动适配深色模式
+        myLocationEnabled: true, // 启用用户位置显示
+        myLocationButtonEnabled: false, // 禁用内置定位按钮，使用自定义按钮
+        compassEnabled: true, // 启用指南针
+        trafficEnabled: false, // 禁用交通流量图层
+        annotations: {
+          ..._appleBusStopAnnotations,
+          ..._appleBusAnnotations,
+          ..._appleLocationAnnotations
+        }.toSet(),
+        polylines: _applePolylines.toSet(),
         onMapCreated: (controller) async {
           _appleMapController = controller;
+          await _requestLocationPermission();
           await _drawBusLinesOnAppleMap(busLines, isDarkMode);
           _updateBusMarkersOnAppleMap(busData, busLines);
+        },
+        onTap: (apple.LatLng position) {
+          debugPrint('🍎 [地图点击] 点击位置: ${position.latitude}, ${position.longitude}');
         },
       );
     }
@@ -765,19 +931,32 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   ) async {
     if (_appleMapController == null) return;
 
-    // Apple Maps 的绘制逻辑（简化版本，因为API限制）
-    // 这里主要处理站点标注
-    if (showStops) {
-      final linesToDraw = selectedLineIndex != null
-          ? [busLines[selectedLineIndex!]]
-          : busLines;
+    // 清除之前的覆盖物
+    await _clearAppleMapOverlays();
 
-      for (int i = 0; i < linesToDraw.length; i++) {
-        // 在Apple Maps上添加站点标注
-        // 注意：Apple Maps的折线绘制需要不同的API
-        // TODO: 实现 Apple Maps 的站点标注 for line $i
+    // 绘制选中的线路或所有线路
+    if (selectedLineIndex != null) {
+      // 只绘制选中的线路，并高亮显示
+      final selectedLine = busLines[selectedLineIndex!];
+      await _drawBusRoutePolylineOnAppleMap(selectedLine, isDarkMode, selectedLineIndex!);
+
+      // 绘制站点标注（如果开启显示站点）
+      if (showStops) {
+        await _drawBusStopAnnotationsOnAppleMap(selectedLine, isDarkMode);
+      }
+    } else {
+      // 绘制所有线路，都不高亮
+      for (int i = 0; i < busLines.length; i++) {
+        await _drawBusRoutePolylineOnAppleMap(busLines[i], isDarkMode, i);
+
+        // 绘制站点标注（如果开启显示站点）
+        if (showStops) {
+          await _drawBusStopAnnotationsOnAppleMap(busLines[i], isDarkMode);
+        }
       }
     }
+    
+    debugPrint('🍎 [Apple Maps] 已绘制 ${busLines.length} 条公交线路');
   }
 
   // 绘制公交路线折线
@@ -841,7 +1020,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       debugPrint('🚏 [站点${i + 1}] ${line.name}线 - ${stop.name}');
 
       final stationName = stop.name.isNotEmpty ? stop.name : '站点${i + 1}';
-      final stationSubtitle = '${line.name}线 • 点击查看详情';
+      final stationSubtitle = '${line.name} • 点击查看详情';
       final stationId = 'bus_stop_${line.id}_$i';
 
       debugPrint(
@@ -978,40 +1157,67 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   void _updateBusMarkersOnAppleMap(
     List<BusData> busData,
     List<BusLine> busLines,
-  ) {
+  ) async {
     if (_appleMapController == null) return;
 
-    // TODO: 实现Apple Maps的车辆标注更新
-    // Apple Maps API相对简单，可以使用类似的逻辑
-    // 1. 清除现有标注
-    // 2. 为每辆车创建新的标注，使用对应线路的图标
-    // 3. 添加到地图上
+    try {
+      // Start with a clean list for bus annotations
+      _appleBusAnnotations.clear();
 
-    // 🚌 根据选中的线路过滤车辆数据（与百度地图保持一致）
-    List<BusData> filteredBusData;
-    if (selectedLineIndex != null) {
-      // 只显示选中线路的车辆
-      final selectedLine = busLines[selectedLineIndex!];
-      filteredBusData = busData
-          .where((bus) => bus.lineId == selectedLine.id)
-          .toList();
+      if (busData.isEmpty) {
+        setState(() {});
+        return;
+      }
+
+      // Filter bus data based on selected line
+      List<BusData> filteredBusData;
+      if (selectedLineIndex != null) {
+        final selectedLine = busLines[selectedLineIndex!];
+        filteredBusData = busData
+            .where((bus) => bus.lineId == selectedLine.id)
+            .toList();
+      } else {
+        filteredBusData = busData;
+      }
+
+      if (filteredBusData.isEmpty) {
+        setState(() {});
+        return;
+      }
+
+      // Create new annotations
+      for (final bus in filteredBusData) {
+        final line = busLines.firstWhere(
+          (line) => line.id == bus.lineId,
+          orElse: () => busLines.first,
+        );
+
+        final position = apple.LatLng(bus.latitude, bus.longitude);
+
+        final annotation = apple.Annotation(
+          annotationId: apple.AnnotationId('bus_${bus.id}'),
+          position: position,
+          infoWindow: apple.InfoWindow(
+            title: '${line.name} - 车辆${bus.id}',
+            snippet: '速度: ${bus.speed.toStringAsFixed(1)} km/h • 点击查看详情',
+            onTap: () {
+              debugPrint('🍎 [车辆点击] 点击了车辆: ${bus.id}');
+              _showBusInfoDialog(bus, line);
+            },
+          ),
+          icon: _getAppleBusIcon(bus.lineId),
+        );
+        _appleBusAnnotations.add(annotation);
+      }
+
+      // Trigger a rebuild to display the new annotations
+      setState(() {});
+
       debugPrint(
-        '🚌 [Apple地图车辆过滤] 选中线路: ${selectedLine.name}, 过滤后车辆数: ${filteredBusData.length}/${busData.length}',
+        '🍎 [车辆完成] 已更新 ${_appleBusAnnotations.length} 个车辆标注到Apple Maps',
       );
-    } else {
-      // 显示所有车辆
-      filteredBusData = busData;
-      debugPrint('🚌 [Apple地图车辆过滤] 显示所有线路车辆: ${filteredBusData.length}');
-    }
-
-    debugPrint('Apple地图校车标记更新: ${filteredBusData.length}辆车');
-    for (final bus in filteredBusData) {
-      final line = busLines.firstWhere(
-        (line) => line.id == bus.lineId,
-        orElse: () => busLines.first,
-      );
-      final iconPath = BusIconUtils.getBusIconPath(bus.lineId);
-      debugPrint('车辆${bus.id} 线路${line.name} 图标: $iconPath');
+    } catch (e) {
+      debugPrint('🍎 [车辆异常] Apple Maps车辆标注更新失败: $e');
     }
   }
 
@@ -1078,6 +1284,296 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       _locationMarkers.clear();
       _stationLabels.clear();
     }
+  }
+
+  // ===================== Apple Maps 实现 =====================
+
+  // 清除Apple Maps覆盖物
+  Future<void> _clearAppleMapOverlays() async {
+    setState(() {
+      _applePolylines.clear();
+      _appleBusStopAnnotations.clear();
+      _appleBusAnnotations.clear();
+      _appleLocationAnnotations.clear();
+    });
+    debugPrint('🍎 [清理] Apple Maps覆盖物已清除');
+  }
+
+  // Apple Maps绘制公交路线折线
+  Future<void> _drawBusRoutePolylineOnAppleMap(
+    BusLine line,
+    bool isDarkMode,
+    int lineIndex,
+  ) async {
+    if (_appleMapController == null) return;
+
+    try {
+      // 转换坐标点为Apple Maps格式
+      final coordinates = line.route
+          .map((point) => apple.LatLng(point.latitude, point.longitude))
+          .toList();
+
+      final lineColor = Color(int.parse('0xFF${line.color}'));
+
+      // 判断当前线路是否被选中
+      final isSelected = selectedLineIndex == lineIndex;
+
+      // 为选中线路使用更高亮的样式，考虑深色模式
+      Color highlightColor;
+      double strokeWidth;
+
+      if (isSelected) {
+        // 选中时使用更鲜艳的颜色和更粗的线条
+        highlightColor = isDarkMode
+            ? lineColor.withOpacity(1.0) // 深色模式下完全不透明
+            : lineColor.withOpacity(0.95); // 浅色模式下略微透明
+        strokeWidth = 6.0; // 选中线路更粗
+      } else {
+        // 未选中时使用半透明和细一些的线条
+        highlightColor = isDarkMode
+            ? lineColor.withOpacity(0.7) // 深色模式下保持可见
+            : lineColor.withOpacity(0.5); // 浅色模式下更透明
+        strokeWidth = 4.0; // 未选中线路细一些
+      }
+
+      // 创建Apple Maps折线
+      final polyline = apple.Polyline(
+        polylineId: apple.PolylineId('bus_line_${line.id}'),
+        points: coordinates,
+        color: highlightColor,
+        width: strokeWidth.round(),
+        patterns: [], // 实线
+      );
+
+      _applePolylines.add(polyline);
+      setState(() {}); // Trigger rebuild
+      debugPrint(
+        '🍎 [折线] ${line.name}线折线已添加，选中状态: $isSelected, 坐标点数: ${coordinates.length}',
+      );
+    } catch (e) {
+      debugPrint('🍎 [折线异常] 绘制${line.name}线折线失败: $e');
+    }
+  }
+
+  // Apple Maps绘制公交站点标注
+  Future<void> _drawBusStopAnnotationsOnAppleMap(
+    BusLine line,
+    bool isDarkMode,
+  ) async {
+    if (_appleMapController == null) return;
+
+    try {
+      List<apple.Annotation> annotations = [];
+
+      for (int i = 0; i < line.stops.length; i++) {
+        final stop = line.stops[i];
+        final position = apple.LatLng(stop.latitude, stop.longitude);
+
+        final stationName = stop.name.isNotEmpty ? stop.name : '站点${i + 1}';
+        final stationSubtitle = '${line.name} • 点击导航';
+        final annotationId = 'bus_stop_${line.id}_$i';
+
+        // 创建Apple Maps标注
+        final annotation = apple.Annotation(
+          annotationId: apple.AnnotationId(annotationId),
+          position: position,
+          infoWindow: apple.InfoWindow(
+            title: stationName,
+            snippet: stationSubtitle,
+            onTap: () {
+              debugPrint('🍎 [站点点击] 点击了站点: $stationName');
+              _showStationNavigationDialog(stationName, position);
+            },
+          ),
+          icon: _appleBusStopIcon ?? apple.BitmapDescriptor.defaultAnnotation,
+        );
+
+        annotations.add(annotation);
+        _appleBusStopAnnotations.add(annotation);
+
+        debugPrint('🍎 [站点] ${line.name}线站点${i + 1}: $stationName 已创建');
+      }
+
+      setState(() {}); // Trigger rebuild
+      debugPrint(
+        '🍎 [站点完成] ${line.name}线已添加 ${annotations.length} 个站点标注',
+      );
+    } catch (e) {
+      debugPrint('🍎 [站点异常] 绘制${line.name}线站点标注失败: $e');
+    }
+  }
+
+  // Apple Maps启用用户定位
+  Future<void> _enableAppleMapUserLocation() async {
+    try {
+      debugPrint('🍎 [用户定位] 开始启用Apple Maps用户定位...');
+
+      // Apple Maps会自动处理用户定位权限和显示
+      // myLocationEnabled: true 已在地图初始化时设置
+
+      debugPrint('✅ [Apple定位] Apple Maps用户定位已启用');
+    } catch (e) {
+      debugPrint('💥 [Apple定位失败] 启用Apple Maps用户定位失败: $e');
+    }
+  }
+
+  // 从颜色获取色调值（用于Apple Maps标记）- 暂时不使用
+  // double _getHueFromColor(Color color) {
+  //   // 将Color转换为HSV，然后获取H（色调）值
+  //   final hsl = HSLColor.fromColor(color);
+  //   return hsl.hue;
+  // }
+
+  // 显示站点导航对话框
+  void _showStationNavigationDialog(String stationName, apple.LatLng position) {
+    if (!mounted) return;
+
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
+        title: Text(
+          stationName,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '公交站点',
+              style: TextStyle(
+                fontSize: 14,
+                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '坐标: ${position.latitude.toStringAsFixed(6)}, ${position.longitude.toStringAsFixed(6)}',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              '取消',
+              style: TextStyle(
+                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // 创建LocationPoint对象用于导航
+              final locationPoint = LocationPoint(
+                id: DateTime.now().millisecondsSinceEpoch,
+                content: stationName,
+                latitude: position.latitude,
+                longitude: position.longitude,
+              );
+              _navigateToLocationWithMapLauncher(locationPoint);
+            },
+            icon: const Icon(Icons.navigation, color: Colors.white),
+            label: const Text('导航', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 显示车辆信息对话框
+  void _showBusInfoDialog(BusData bus, BusLine line) {
+    if (!mounted) return;
+
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
+        title: Text(
+          '${line.name} - 车辆${bus.id}',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoRow('线路', line.name, isDarkMode),
+            _buildInfoRow('车辆编号', bus.id.toString(), isDarkMode),
+            _buildInfoRow('当前速度', '${bus.speed.toStringAsFixed(1)} km/h', isDarkMode),
+            _buildInfoRow('行驶方向', '${bus.direction.toStringAsFixed(1)}°', isDarkMode),
+            _buildInfoRow('位置坐标', 
+              '${bus.latitude.toStringAsFixed(6)}, ${bus.longitude.toStringAsFixed(6)}', 
+              isDarkMode,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              '关闭',
+              style: TextStyle(
+                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 构建信息行
+  Widget _buildInfoRow(String label, String value, bool isDarkMode) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // 安全清理地图覆盖物（用于dispose）
@@ -1652,6 +2148,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
           await availableMaps.first.showDirections(
             destination: Coords(location.latitude, location.longitude),
             destinationTitle: location.content,
+            directionsMode: DirectionsMode.walking,
           );
         } else {
           // 多个导航应用，让用户选择
@@ -1761,6 +2258,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
                           location.longitude,
                         ),
                         destinationTitle: location.content,
+                        directionsMode: DirectionsMode.walking,
                       );
                     } catch (e) {
                       debugPrint('启动 ${map.mapName} 失败: $e');
@@ -1783,19 +2281,19 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     final longitude = location.longitude;
     final name = Uri.encodeComponent(location.content);
 
-    // 构建不同导航应用的 URL（按优先级排序）
+    // 构建不同导航应用的 URL（按优先级排序，优先步行）
     final urls = [
-      // 百度地图（Android 优先）
-      if (Platform.isAndroid)
-        'geo:$latitude,$longitude?q=$latitude,$longitude($name)',
-      // Apple 地图（iOS 优先）
-      if (Platform.isIOS) 'maps://maps.apple.com/?daddr=$latitude,$longitude',
-      // 高德地图
-      'amapuri://route/plan/?dlat=$latitude&dlon=$longitude&dname=$name&dev=0&t=0',
-      // 腾讯地图
-      'qqmap://map/routeplan?type=drive&tocoord=$latitude,$longitude&toname=$name',
-      // Google 地图
-      'google.navigation:q=$latitude,$longitude',
+      // Apple 地图（iOS 优先，指定步行模式）
+      if (Platform.isIOS)
+        'maps://maps.apple.com/?daddr=$latitude,$longitude&dirflg=w',
+      // 百度地图（指定步行模式）
+      'baidumap://map/direction?destination=latlng:$latitude,$longitude|name:$name&mode=walking&coord_type=gcj02',
+      // 高德地图（指定步行模式）
+      'amapuri://route/plan/?dlat=$latitude&dlon=$longitude&dname=$name&dev=0&t=2',
+      // 腾讯地图（指定步行模式）
+      'qqmap://map/routeplan?type=walk&tocoord=$latitude,$longitude&toname=$name',
+      // Google 地图（指定步行模式）
+      'google.navigation:q=$latitude,$longitude&mode=w',
       // 通用地图链接（兜底）
       'geo:$latitude,$longitude?q=$latitude,$longitude($name)',
     ];
@@ -1886,13 +2384,55 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   Future<void> _markLocationOnAppleMap(LocationPoint location) async {
     if (_appleMapController == null) return;
 
-    // Apple Maps 的位置标注实现
-    // 由于 API 限制，这里是简化版本
-    // TODO: 实现 Apple Maps 的位置标注功能
+    try {
+      // 清除之前的位置标注
+      if (_appleLocationAnnotations.isNotEmpty) {
+        final locationCount = _appleLocationAnnotations.length;
+        _appleLocationAnnotations.clear();
+        debugPrint('🍎 [位置清理] 已清除 $locationCount 个位置标注');
+      }
+
+      final position = apple.LatLng(location.latitude, location.longitude);
+
+      // 创建位置标注
+      final annotation = apple.Annotation(
+        annotationId: apple.AnnotationId('location_${location.id}'),
+        position: position,
+        infoWindow: apple.InfoWindow(
+          title: location.content,
+          snippet: '校园建筑 • 点击导航',
+          onTap: () {
+            debugPrint('🍎 [位置点击] 点击了建筑: ${location.content}');
+            _navigateToLocationWithMapLauncher(location);
+          },
+        ),
+        // 使用自定义的大头针图标
+        icon: _appleLocationPinIcon ?? apple.BitmapDescriptor.defaultAnnotation,
+      );
+
+      _appleLocationAnnotations.add(annotation);
+
+      setState(() {}); // Trigger rebuild
+      // 移动地图中心到该位置
+      await _appleMapController!.animateCamera(
+        apple.CameraUpdate.newLatLng(position),
+      );
+
+      debugPrint('🍎 [位置标注] 已标记建筑: ${location.content}');
+
+      // 显示信息提示
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('已定位到 ${location.content}')),
+        );
+      }
+    } catch (e) {
+      debugPrint('🍎 [位置异常] Apple Maps位置标注失败: $e');
+    }
   }
 
   // 请求定位权限
-  Future<void> _requestLocationPermission() async {
+  Future<bool> _requestLocationPermission() async {
     try {
       debugPrint('🔒 [权限检查] 开始检查定位权限...');
 
@@ -1906,21 +2446,18 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
       if (result.isGranted) {
         debugPrint('✅ [权限通过] 用户授予了定位权限');
-        setState(() {
-          _isLocationEnabled = true;
-        });
         _enableUserLocation();
+        return true;
       } else {
         debugPrint('❌ [权限拒绝] 权限请求失败: ${result.errorMessage}');
-        setState(() {
-          _isLocationEnabled = false;
-        });
         if (result.isPermanentlyDenied) {
           _showLocationPermissionDialog();
         }
+        return false;
       }
     } catch (e) {
       debugPrint('💥 [权限错误] 请求定位权限失败: $e');
+      return false;
     }
   }
 
@@ -1976,25 +2513,27 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
   // 启用用户定位
   void _enableUserLocation() async {
-    if (_baiduMapController != null) {
+    if (Platform.isAndroid && _baiduMapController != null) {
       try {
         // 🔧 修复：先启用定位图层
         final showResult = await _baiduMapController!.showUserLocation(true);
-        debugPrint('🎯 [定位图层] 启用结果: $showResult');
+        debugPrint('🎯 [百度定位图层] 启用结果: $showResult');
 
         // 🔧 设置定位模式为None，只显示位置不跟随视角
         final trackingResult = await _baiduMapController!.setUserTrackingMode(
           bmf_base.BMFUserTrackingMode.None, // None模式：显示位置但不移动视角
         );
-        debugPrint('🎯 [跟踪模式] 设置结果: $trackingResult');
+        debugPrint('🎯 [百度跟踪模式] 设置结果: $trackingResult');
 
         // 🔧 修复：配置定位显示参数
         await _configureLocationDisplay();
 
-        debugPrint('✅ [定位启用] 用户定位功能已启用');
+        debugPrint('✅ [百度定位] 用户定位功能已启用');
       } catch (e) {
-        debugPrint('💥 [定位失败] 启用用户定位失败: $e');
+        debugPrint('💥 [百度定位失败] 启用用户定位失败: $e');
       }
+    } else if (Platform.isIOS && _appleMapController != null) {
+      await _enableAppleMapUserLocation();
     }
   }
 
@@ -2051,11 +2590,23 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     try {
       debugPrint('🎯 [自动定位] 开始自动定位流程...');
 
-      // 自动请求定位权限
-      await _requestLocationPermission();
+      // 直接检查系统权限状态，而不是依赖本地变量
+      final status = await Permission.location.status;
+      bool permissionGranted = status.isGranted;
+
+      // 如果权限被拒绝，则尝试请求
+      if (status.isDenied) {
+        debugPrint('🚫 [自动定位] 定位权限被拒绝，正在请求...');
+        permissionGranted = await _requestLocationPermission();
+      } else if (status.isPermanentlyDenied) {
+        debugPrint('🚫 [自动定位] 定位权限被永久拒绝，跳过自动定位');
+        return;
+      } else {
+        debugPrint('✅ [自动定位] 系统权限已授予，无需重新请求');
+      }
 
       // 如果权限获取成功，启动持续定位
-      if (_isLocationEnabled) {
+      if (permissionGranted) {
         debugPrint('✅ [自动定位] 权限已获取，启动持续定位...');
         await _startContinuousLocationUpdates();
       } else {
@@ -2184,7 +2735,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   // 📍 处理位置更新
   Future<void> _handleLocationUpdate(Position position) async {
     try {
-      // 保存最后的GPS位置
+      // 保存最后的GPS位置 (WGS-84)
       _lastGpsPosition = position;
 
       debugPrint(
@@ -2194,91 +2745,58 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         '移动方向=${position.heading.toStringAsFixed(1)}°',
       );
 
-      // 更新用户位置到地图
-      await _updateUserLocationToMap(position);
+      // 针对不同平台更新位置
+      if (Platform.isAndroid && _baiduMapController != null) {
+        // 🔄 坐标转换：WGS84 → GCJ02（火星坐标系）
+        final gcj02Coordinate = _convertWGS84ToGCJ02(
+          position.latitude,
+          position.longitude,
+        );
+
+        // 创建BMFLocation对象，包含移动方向
+        final bmfLocation = bmf_map.BMFLocation(
+          coordinate: gcj02Coordinate,
+          altitude: position.altitude,
+          course: position.heading, // 🧭 使用处理后的有效朝向
+          speed: position.speed,
+          timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
+        );
+
+        // 创建设备朝向对象（罗盘方向）
+        final bmfHeading = bmf_map.BMFHeading(
+          trueHeading: position.heading, // 🧭 设备朝向（真北方向）
+          magneticHeading: position.heading, // 磁北方向（简化处理）
+          headingAccuracy: 5.0, // 朝向精度
+          timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
+        );
+
+        // 创建用户位置对象，同时包含位置和朝向信息
+        final userLocation = bmf_map.BMFUserLocation(
+          location: bmfLocation,
+          heading: bmfHeading, // 🧭 传递设备朝向信息
+          updating: true,
+        );
+
+        // 更新位置数据到地图
+        final result = await _baiduMapController!.updateLocationData(
+          userLocation,
+        );
+
+        if (result) {
+          debugPrint(
+            '✅ [位置更新] Android位置和朝向数据已更新到地图',
+          );
+        } else {
+          debugPrint('❌ [位置更新] Android位置数据更新失败');
+        }
+      } else if (Platform.isIOS && _appleMapController != null) {
+        // Apple Maps myLocationEnabled 会自动处理位置更新，我们无需手动操作
+        debugPrint(
+          '🍎 [位置更新] iOS平台接收到新位置，myLocationEnabled会自动处理',
+        );
+      }
     } catch (e) {
       debugPrint('💥 [位置更新失败] $e');
-    }
-  }
-
-  // 🔄 更新用户位置到地图（通用方法）
-  Future<void> _updateUserLocationToMap(Position position) async {
-    try {
-      // 🧭 处理朝向数据：优先使用磁力计朝向，GPS朝向作为备用
-      double deviceHeading = _currentDeviceHeading; // 磁力计获取的设备朝向
-      double gpsHeading = position.heading; // GPS移动方向
-
-      // 选择最佳朝向：优先使用磁力计朝向
-      double validHeading;
-      String headingSource;
-
-      if (deviceHeading != 0.0) {
-        // 使用磁力计朝向（设备实际朝向）
-        validHeading = deviceHeading;
-        headingSource = "磁力计";
-      } else if (gpsHeading > 0 && !gpsHeading.isNaN) {
-        validHeading = (gpsHeading - 90 + 360) % 360;
-        headingSource = "GPS移动";
-      } else {
-        // 都无效时使用默认朝向
-        validHeading = 0.0;
-        headingSource = "默认";
-      }
-
-      debugPrint('🧭 [朝向处理] 朝向来源: $headingSource');
-      debugPrint(
-        '🧭 [朝向处理] GPS朝向: ${gpsHeading.toStringAsFixed(1)}°, 磁力计朝向: ${deviceHeading.toStringAsFixed(1)}°',
-      );
-      debugPrint('🧭 [朝向处理] 最终朝向: ${validHeading.toStringAsFixed(1)}°');
-
-      // 🔄 坐标转换：WGS84 → GCJ02（火星坐标系）
-      final gcj02Coordinate = _convertWGS84ToGCJ02(
-        position.latitude,
-        position.longitude,
-      );
-
-      // 创建BMFLocation对象，包含移动方向
-      final bmfLocation = bmf_map.BMFLocation(
-        coordinate: gcj02Coordinate,
-        altitude: position.altitude,
-        course: validHeading, // 🧭 使用处理后的有效朝向
-        speed: position.speed,
-        timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
-      );
-
-      // 创建设备朝向对象（罗盘方向）
-      final bmfHeading = bmf_map.BMFHeading(
-        trueHeading: validHeading, // 🧭 设备朝向（真北方向）
-        magneticHeading: validHeading, // 磁北方向（简化处理）
-        headingAccuracy: 5.0, // 朝向精度
-        timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
-      );
-
-      // 创建用户位置对象，同时包含位置和朝向信息
-      final userLocation = bmf_map.BMFUserLocation(
-        location: bmfLocation,
-        heading: bmfHeading, // 🧭 传递设备朝向信息
-        updating: true,
-      );
-
-      // 更新位置数据到地图
-      final result = await _baiduMapController!.updateLocationData(
-        userLocation,
-      );
-
-      if (result) {
-        debugPrint(
-          '✅ [位置更新] 位置和朝向数据已更新到地图\n'
-          '   GPS朝向: ${gpsHeading.toStringAsFixed(1)}°\n'
-          '   磁力计朝向: ${deviceHeading.toStringAsFixed(1)}°\n'
-          '   朝向来源: $headingSource\n'
-          '   最终朝向: ${validHeading.toStringAsFixed(1)}°',
-        );
-      } else {
-        debugPrint('❌ [位置更新] 位置数据更新失败');
-      }
-    } catch (e) {
-      debugPrint('💥 [位置更新到地图失败] $e');
     }
   }
 
@@ -2290,7 +2808,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
     try {
       debugPrint('🧭 [朝向更新] 仅更新朝向，使用最后GPS位置');
-      await _updateUserLocationToMap(_lastGpsPosition!);
+      await _handleLocationUpdate(_lastGpsPosition!);
     } catch (e) {
       debugPrint('💥 [朝向更新失败] $e');
     }
@@ -2327,48 +2845,75 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   void _locateUser() async {
     debugPrint('🎯 [定位按钮] 用户点击了定位按钮 - 移动视角到用户中心');
 
-    if (!_isLocationEnabled) {
-      debugPrint('🚫 [定位权限] 定位权限未启用，请求权限...');
-      await _requestLocationPermission();
+    // 直接检查当前权限状态，而不是依赖 _isLocationEnabled
+    final status = await Permission.location.status;
+    bool permissionGranted = status.isGranted;
+
+    // 如果权限被拒绝，则尝试请求
+    if (status.isDenied) {
+      debugPrint('🚫 [定位权限] 定位权限被拒绝，正在请求...');
+      permissionGranted = await _requestLocationPermission();
+    } else if (status.isPermanentlyDenied) {
+      debugPrint('🚫 [定位权限] 定位权限被永久拒绝，显示设置对话框...');
+      _showLocationPermissionDialog();
       return;
     }
 
-    if (_baiduMapController == null) {
-      debugPrint('❌ [地图控制器] 地图控制器为空');
-      return;
-    }
+    // 如果最终权限被授予，则执行定位
+    if (permissionGranted) {
+      try {
+        Position? position;
 
-    try {
-      Position? position;
+        // 🚀 优先使用缓存的最后 WGS-84 位置
+        if (_lastGpsPosition != null) {
+          position = _lastGpsPosition!;
+          debugPrint('⚡ [快速定位] 使用缓存WGS-84位置');
+        } else {
+          debugPrint('📍 [获取位置] 缓存位置不存在，获取当前WGS-84位置...');
+          position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.medium,
+            timeLimit: const Duration(seconds: 5),
+          );
+        }
 
-      // 🚀 优先使用缓存的最后位置，避免重新GPS定位延迟
-      if (_lastGpsPosition != null) {
-        position = _lastGpsPosition!;
-        debugPrint('⚡ [快速定位] 使用缓存位置，无需等待GPS');
-      } else {
-        debugPrint('📍 [获取位置] 缓存位置不存在，获取当前位置...');
-        // 只有在没有缓存位置时才重新获取
-        position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium, // 降低精度要求，提高速度
-          timeLimit: const Duration(seconds: 5), // 缩短超时时间
+        debugPrint(
+          '✅ [WGS-84坐标] 纬度=${position.latitude.toStringAsFixed(6)}, '
+          '经度=${position.longitude.toStringAsFixed(6)}',
         );
+
+        if (Platform.isAndroid && _baiduMapController != null) {
+          // 仅在Android平台进行坐标转换 WGS84 → GCJ02
+          final gcj02Coordinate = _convertWGS84ToGCJ02(
+            position.latitude,
+            position.longitude,
+          );
+          debugPrint(
+            '✅ [GCJ-02转换] 纬度=${gcj02Coordinate.latitude.toStringAsFixed(6)}, '
+            '经度=${gcj02Coordinate.longitude.toStringAsFixed(6)}',
+          );
+          await _moveMapToLocation(gcj02Coordinate);
+
+        } else if (Platform.isIOS && _appleMapController != null) {
+          // 修正：根据实际测试，iOS平台在中国区同样需要进行坐标转换
+          final gcj02Coordinate = _convertWGS84ToGCJ02(
+            position.latitude,
+            position.longitude,
+          );
+          debugPrint(
+            '🍎 [GCJ-02转换] 纬度=${gcj02Coordinate.latitude.toStringAsFixed(6)}, '
+            '经度=${gcj02Coordinate.longitude.toStringAsFixed(6)}',
+          );
+          final location = apple.LatLng(gcj02Coordinate.latitude, gcj02Coordinate.longitude);
+          await _appleMapController!.animateCamera(
+            apple.CameraUpdate.newLatLngZoom(location, 18.0),
+          );
+          debugPrint('🍎 [定位] Apple Maps已移动到用户GCJ-02位置');
+        }
+      } catch (e) {
+        debugPrint('❌ [定位失败] 错误详情: $e');
       }
-
-      debugPrint(
-        '✅ [位置获取] 当前位置: 纬度=${position.latitude.toStringAsFixed(6)}, '
-        '经度=${position.longitude.toStringAsFixed(6)}',
-      );
-
-      // 坐标转换：WGS84 → GCJ02
-      final gcj02Coordinate = _convertWGS84ToGCJ02(
-        position.latitude,
-        position.longitude,
-      );
-
-      // 移动地图视角到用户位置
-      await _moveMapToLocation(gcj02Coordinate);
-    } catch (e) {
-      debugPrint('❌ [定位失败] 错误详情: $e');
+    } else {
+      debugPrint('🤷 [定位取消] 用户未授予定位权限');
     }
   }
 
@@ -2961,6 +3506,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
     // 安全清理地图覆盖物
     _clearBaiduMapOverlaysSafely();
+    _clearAppleMapOverlaysSafely();
 
     // 🛑 停止位置流监听
     _stopContinuousLocationUpdates();
@@ -2971,7 +3517,46 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     // 清理搜索控制器
     _searchController.dispose();
 
+    // 清理Apple Maps图标缓存
+    _clearAppleIconsCache();
+
     debugPrint('🛑 [页面生命周期] SchoolNavigationScreen 销毁');
     super.dispose();
+  }
+
+  // 清理Apple Maps图标缓存
+  void _clearAppleIconsCache() {
+    try {
+      _appleLocationPinIcon = null;
+      _appleBusStopIcon = null;
+      _appleBusIcons.clear();
+      debugPrint('🍎 [缓存清理] Apple Maps图标缓存已清理');
+    } catch (e) {
+      debugPrint('🍎 [缓存清理异常] $e');
+    }
+  }
+
+  // 安全清理Apple Maps覆盖物（用于dispose）
+  void _clearAppleMapOverlaysSafely() {
+    try {
+      debugPrint('🍎 [安全清理] 开始安全清理Apple Maps覆盖物...');
+
+      // 只清理本地列表，不调用可能已失效的地图API
+      final polylineCount = _applePolylines.length;
+      final busStopCount = _appleBusStopAnnotations.length;
+      final busCount = _appleBusAnnotations.length;
+      final locationCount = _appleLocationAnnotations.length;
+
+      _applePolylines.clear();
+      _appleBusStopAnnotations.clear();
+      _appleBusAnnotations.clear();
+      _appleLocationAnnotations.clear();
+
+      debugPrint(
+        '🍎 [安全清理完成] 折线: $polylineCount, 站点: $busStopCount, 车辆: $busCount, 位置: $locationCount',
+      );
+    } catch (e) {
+      debugPrint('🍎 [安全清理异常] 安全清理Apple Maps覆盖物时出现异常: $e');
+    }
   }
 }
