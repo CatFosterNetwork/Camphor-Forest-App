@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/config/providers/theme_config_provider.dart';
 import 'core/navigation/app_router.dart';
 import 'core/services/navigation_service.dart';
+import 'core/services/widget_update_listener.dart';
 
 import 'core/models/theme_model.dart' as theme_model;
 
@@ -40,6 +41,9 @@ class CamphorForestApp extends ConsumerWidget {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final currentTheme = ref.watch(selectedCustomThemeProvider);
 
+    // 设置小组件自动更新监听器
+    WidgetUpdateListener.setupListeners(ref);
+
     // 使用统一的状态栏服务管理状态栏样式
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final timestamp = DateTime.now().toString().substring(11, 23);
@@ -51,6 +55,9 @@ class CamphorForestApp extends ConsumerWidget {
       debugPrint(
         '  - MaterialApp.themeMode: ${_convertStringToThemeMode(themeMode)}',
       );
+
+      // App启动时触发一次小组件更新
+      WidgetUpdateListener.triggerUpdate(ref);
     });
 
     // 平台判断

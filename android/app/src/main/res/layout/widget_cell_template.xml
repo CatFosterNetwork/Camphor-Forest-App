@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_columnWeight="1"
+    android:layout_rowWeight="1"
+    android:layout_margin="1dp"
+    android:background="@drawable/cell_background"
+    android:padding="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/cell_course_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="课程名称"
+            android:textColor="#333333"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/cell_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="教室"
+            android:textColor="#666666"
+            android:textSize="7sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center" />
+    </LinearLayout>
+</FrameLayout>
+

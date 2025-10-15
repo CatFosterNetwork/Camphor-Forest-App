@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +12,7 @@ import '../../classtable/constants/semester.dart';
 import '../../classtable/models/course.dart';
 
 /// 主页课表简要组件
-class ClassTableBrief extends ConsumerWidget {
+class ClassTableBrief extends ConsumerStatefulWidget {
   final bool blur;
   final bool darkMode;
 
@@ -22,7 +23,48 @@ class ClassTableBrief extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ClassTableBrief> createState() => _ClassTableBriefState();
+}
+
+class _ClassTableBriefState extends ConsumerState<ClassTableBrief> {
+  Timer? _updateTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startUpdateTimer();
+  }
+
+  @override
+  void dispose() {
+    _updateTimer?.cancel();
+    super.dispose();
+  }
+
+  /// 启动定时器，每分钟更新一次
+  void _startUpdateTimer() {
+    // 计算到下一分钟的秒数
+    final now = DateTime.now();
+    final secondsUntilNextMinute = 60 - now.second;
+
+    // 先等到下一分钟整点
+    Future.delayed(Duration(seconds: secondsUntilNextMinute), () {
+      if (mounted) {
+        setState(() {}); // 触发重建
+        // 然后每分钟更新一次
+        _updateTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+          if (mounted) {
+            setState(() {}); // 触发重建
+          } else {
+            timer.cancel();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final xnm = GradeNotifier.getCurrentXnm();
     final xqm = GradeNotifier.getCurrentSemester();
 
@@ -52,7 +94,7 @@ class ClassTableBrief extends ConsumerWidget {
   Widget _applyContainerStyle(Widget child) {
     Widget styledChild = Container(
       decoration: BoxDecoration(
-        color: darkMode
+        color: widget.darkMode
             ? Colors.grey.shade900.withAlpha(230)
             : Colors.white.withAlpha(230),
         borderRadius: BorderRadius.circular(16),
@@ -67,18 +109,18 @@ class ClassTableBrief extends ConsumerWidget {
       child: child,
     );
 
-    if (blur) {
+    if (widget.blur) {
       styledChild = ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: darkMode
+              color: widget.darkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: darkMode
+              border: widget.darkMode
                   ? Border.all(color: Colors.white.withAlpha(26), width: 1)
                   : null,
             ),
@@ -135,7 +177,7 @@ class ClassTableBrief extends ConsumerWidget {
           child: CircularProgressIndicator(
             strokeWidth: 2,
             valueColor: AlwaysStoppedAnimation<Color>(
-              darkMode ? Colors.white70 : Colors.black54,
+              widget.darkMode ? Colors.white70 : Colors.black54,
             ),
           ),
         ),
@@ -156,7 +198,9 @@ class ClassTableBrief extends ConsumerWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: darkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+            color: widget.darkMode
+                ? Colors.grey.shade400
+                : Colors.grey.shade600,
           ),
         ),
         const SizedBox(height: 8),
@@ -164,7 +208,9 @@ class ClassTableBrief extends ConsumerWidget {
           '点击重试',
           style: TextStyle(
             fontSize: 14,
-            color: darkMode ? Colors.grey.shade500 : Colors.grey.shade500,
+            color: widget.darkMode
+                ? Colors.grey.shade500
+                : Colors.grey.shade500,
           ),
         ),
         const SizedBox(height: 20),
@@ -199,7 +245,7 @@ class ClassTableBrief extends ConsumerWidget {
     int currentDay,
     List<Course>? courses,
   ) {
-    final textColor = darkMode ? Colors.white : Colors.black87;
+    final textColor = widget.darkMode ? Colors.white : Colors.black87;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -270,8 +316,8 @@ class ClassTableBrief extends ConsumerWidget {
 
   /// 构建单个课程项
   Widget _buildCourseItem(Course course, bool isActive, bool isPast) {
-    final textColor = darkMode ? Colors.white : Colors.black87;
-    final fadedColor = darkMode
+    final textColor = widget.darkMode ? Colors.white : Colors.black87;
+    final fadedColor = widget.darkMode
         ? const Color(0xFF9d9fa2)
         : Colors.grey.shade500;
 
@@ -303,18 +349,8 @@ class ClassTableBrief extends ConsumerWidget {
             ),
           ),
 
-          // 状态指示线
-          Container(
-            width: 2,
-            height: 24,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: isActive
-                  ? Colors.green.withAlpha(153)
-                  : Colors.grey.withAlpha(102),
-            ),
-          ),
+          // 状态指示线（百分比条）
+          _buildCourseIndicator(course, isActive, isPast),
 
           // 时间和地点 - 居中对齐，占1/3宽度
           Expanded(
@@ -349,15 +385,72 @@ class ClassTableBrief extends ConsumerWidget {
     );
   }
 
+  /// 构建课程指示器（百分比条）
+  Widget _buildCourseIndicator(Course course, bool isActive, bool isPast) {
+    // 判断是否正在上课
+    final isOngoing = _isCourseOngoing(course);
+
+    if (isOngoing) {
+      // 正在上课：显示百分比进度条
+      final progress = _getCourseProgress(course);
+      return Container(
+        width: 2,
+        height: 24,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: Column(
+          children: [
+            // 已过去部分（灰色）
+            Expanded(
+              flex: (progress * 100).toInt(),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  color: Colors.grey.withAlpha(102),
+                ),
+              ),
+            ),
+            // 剩余部分（绿色）
+            Expanded(
+              flex: ((1 - progress) * 100).toInt(),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(12),
+                  ),
+                  color: Colors.green.withAlpha(153),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // 未开始或已结束：显示单色指示线
+      return Container(
+        width: 2,
+        height: 24,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: isActive
+              ? Colors.green.withAlpha(153)
+              : Colors.grey.withAlpha(102),
+        ),
+      );
+    }
+  }
+
   /// 构建无课状态
   Widget _buildNoCourseState() {
-    final statusColor = darkMode
+    final statusColor = widget.darkMode
         ? const Color(0xFF9d9fa2)
         : Colors.grey.shade500;
-    final subtitleColor = darkMode
+    final subtitleColor = widget.darkMode
         ? const Color(0xFF9d9fa2)
         : Colors.grey.shade500;
-    final textColor = darkMode ? Colors.white70 : Colors.black87;
+    final textColor = widget.darkMode ? Colors.white70 : Colors.black87;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -413,8 +506,8 @@ class ClassTableBrief extends ConsumerWidget {
   bool _isCourseActive(Course course, int currentPeriod) {
     if (currentPeriod == -1) return false; // 一天课程已结束
 
-    final startPeriod = course.periods.isNotEmpty ? course.periods.first : 1;
-    return currentPeriod <= startPeriod;
+    final endPeriod = course.periods.isNotEmpty ? course.periods.last : 1;
+    return currentPeriod <= endPeriod;
   }
 
   /// 判断课程是否已过
@@ -423,6 +516,67 @@ class ClassTableBrief extends ConsumerWidget {
 
     final endPeriod = course.periods.isNotEmpty ? course.periods.last : 1;
     return currentPeriod > endPeriod;
+  }
+
+  /// 判断课程是否正在进行中（已开始但未结束）
+  bool _isCourseOngoing(Course course) {
+    final now = TimeOfDay.now();
+    final currentMinutes = now.hour * 60 + now.minute;
+
+    final periods = course.periods;
+    if (periods.isEmpty) return false;
+
+    final startPeriod = periods.first;
+    final endPeriod = periods.last;
+
+    // 获取开始和结束时间
+    final startTime = PeriodTimes.times[startPeriod];
+    final endTime = PeriodTimes.times[endPeriod];
+
+    if (startTime == null || endTime == null) return false;
+
+    final startParts = startTime.begin.split(':');
+    final startMinutes =
+        int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
+
+    final endParts = endTime.end.split(':');
+    final endMinutes = int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
+
+    // 当前时间在课程时间段内
+    return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+  }
+
+  /// 获取课程进度百分比（0.0 - 1.0）
+  double _getCourseProgress(Course course) {
+    final now = TimeOfDay.now();
+    final currentMinutes = now.hour * 60 + now.minute;
+
+    final periods = course.periods;
+    if (periods.isEmpty) return 0.0;
+
+    final startPeriod = periods.first;
+    final endPeriod = periods.last;
+
+    final startTime = PeriodTimes.times[startPeriod];
+    final endTime = PeriodTimes.times[endPeriod];
+
+    if (startTime == null || endTime == null) return 0.0;
+
+    final startParts = startTime.begin.split(':');
+    final startMinutes =
+        int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
+
+    final endParts = endTime.end.split(':');
+    final endMinutes = int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
+
+    final totalMinutes = endMinutes - startMinutes;
+    if (totalMinutes <= 0) return 0.0;
+
+    final elapsedMinutes = currentMinutes - startMinutes;
+    final progress = elapsedMinutes / totalMinutes;
+
+    // 确保在 0.0 - 1.0 范围内
+    return progress.clamp(0.0, 1.0);
   }
 
   /// 转换星期几文本

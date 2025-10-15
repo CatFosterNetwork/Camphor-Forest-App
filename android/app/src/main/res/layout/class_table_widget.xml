@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="12dp">
+
+    <!-- 标题栏：日期和星期 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:id="@+id/widget_weekday"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="10月15日"
+            android:textColor="@color/widget_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="星期三"
+            android:textColor="@color/widget_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 分隔线 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/widget_outline"
+        android:layout_marginBottom="6dp" />
+
+    <!-- 课程列表（每节课独立显示） -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- 课程1 -->
+        <LinearLayout
+            android:id="@+id/course_container_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp"
+            android:visibility="gone">
+            
+            <!-- 课程名称（左侧，占2/3） -->
+            <TextView
+                android:id="@+id/course_name_1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/widget_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <!-- 状态指示线（使用TextView代替View） -->
+            <TextView
+                android:id="@+id/course_indicator_1"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/widget_outline" />
+
+            <!-- 时间和地点（右侧，占1/3） -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:gravity="center">
+                
+                <TextView
+                    android:id="@+id/course_time_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/course_location_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 课程2 -->
+        <LinearLayout
+            android:id="@+id/course_container_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp"
+            android:visibility="gone">
+            
+            <TextView
+                android:id="@+id/course_name_2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/widget_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/course_indicator_2"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/widget_outline" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:gravity="center">
+                
+                <TextView
+                    android:id="@+id/course_time_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/course_location_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 课程3 -->
+        <LinearLayout
+            android:id="@+id/course_container_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp"
+            android:visibility="gone">
+            
+            <TextView
+                android:id="@+id/course_name_3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/widget_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/course_indicator_3"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/widget_outline" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:gravity="center">
+                
+                <TextView
+                    android:id="@+id/course_time_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/course_location_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 课程4 -->
+        <LinearLayout
+            android:id="@+id/course_container_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp"
+            android:visibility="gone">
+            
+            <TextView
+                android:id="@+id/course_name_4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/widget_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/course_indicator_4"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/widget_outline" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:gravity="center">
+                
+                <TextView
+                    android:id="@+id/course_time_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/course_location_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 课程5 -->
+        <LinearLayout
+            android:id="@+id/course_container_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp"
+            android:visibility="gone">
+            
+            <TextView
+                android:id="@+id/course_name_5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/widget_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/course_indicator_5"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/widget_outline" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:gravity="center">
+                
+                <TextView
+                    android:id="@+id/course_time_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/course_location_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 无课程提示 -->
+        <TextView
+            android:id="@+id/no_course_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="今天没有课程"
+            android:textColor="@color/widget_text_secondary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:visibility="visible" />
+
+    </LinearLayout>
+</LinearLayout>

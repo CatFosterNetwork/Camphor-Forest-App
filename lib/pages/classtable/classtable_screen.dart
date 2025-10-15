@@ -14,6 +14,7 @@ import 'providers/classtable_settings_provider.dart';
 import 'constants/semester.dart';
 import 'models/course.dart';
 import '../../core/models/theme_model.dart' as custom_theme_model;
+import '../../core/services/widget_service.dart';
 import 'package:go_router/go_router.dart';
 
 class ClassTableScreen extends ConsumerStatefulWidget {
@@ -388,6 +389,17 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
           debugPrint('当前第$_currentWeek周没有课程');
         }
 
+        // 更新小组件数据（仅在当前学期时更新）
+        if (isCurrentSemester && courses.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            WidgetService.updateClassTableWidget(
+              courses: courses,
+              currentWeek: _currentWeek,
+              semesterStart: semesterStart,
+            );
+          });
+        }
+
         return Stack(
           children: [
             ThemeAwareScaffold(
@@ -397,9 +409,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               appBar: ThemeAwareAppBar(
                 title: _formatAppBarTitle(),
                 transparent: true,
-                foregroundColor: isDarkMode
-                    ? const Color(0xFFBFC2C9)
-                    : (currentTheme.foregColor),
+                foregroundColor: const Color(0xFFBFC2C9),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.calendar_month),
@@ -516,26 +526,33 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                 child: FloatingActionButton(
                                   heroTag: "refresh",
                                   onPressed: () async {
-                                    if (_isRefreshing || _isRefreshSuccess) return;
+                                    if (_isRefreshing || _isRefreshSuccess)
+                                      return;
 
                                     setState(() {
                                       _isRefreshing = true;
                                       _isRefreshSuccess =
                                           false; // Ensure checkmark is hidden
                                     });
-                                    _refreshAnimController.forward(); // Start animation visually
+                                    _refreshAnimController
+                                        .forward(); // Start animation visually
 
                                     try {
                                       // Await the provider that fetches from remote. This solves the race condition.
-                                      await ref.refresh(
-                                          forceRefreshClassTableProvider(
-                                        (xnm: _currentXnm, xqm: _currentXqm),
-                                      ).future);
+                                      final _ = await ref.refresh(
+                                        forceRefreshClassTableProvider((
+                                          xnm: _currentXnm,
+                                          xqm: _currentXqm,
+                                        )).future,
+                                      );
 
                                       // Now that the cache is updated, invalidate the UI provider.
-                                      ref.invalidate(classTableProvider(
-                                        (xnm: _currentXnm, xqm: _currentXqm),
-                                      ));
+                                      ref.invalidate(
+                                        classTableProvider((
+                                          xnm: _currentXnm,
+                                          xqm: _currentXqm,
+                                        )),
+                                      );
 
                                       // Update state to show success
                                       if (mounted) {
@@ -546,12 +563,15 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
 
                                         // After 2 seconds, hide the checkmark
                                         Future.delayed(
-                                            const Duration(seconds: 2), () {
-                                          if (mounted) {
-                                            setState(
-                                                () => _isRefreshSuccess = false);
-                                          }
-                                        });
+                                          const Duration(seconds: 2),
+                                          () {
+                                            if (mounted) {
+                                              setState(
+                                                () => _isRefreshSuccess = false,
+                                              );
+                                            }
+                                          },
+                                        );
                                       }
                                     } catch (e) {
                                       debugPrint('课表刷新失败: $e');
@@ -568,20 +588,23 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                     }
                                   },
                                   backgroundColor:
-                                      (currentTheme.colorList.isNotEmpty ==
-                                              true
-                                          ? currentTheme.colorList.first
-                                          : Colors.blue)
+                                      (currentTheme.colorList.isNotEmpty == true
+                                              ? currentTheme.colorList.first
+                                              : Colors.blue)
                                           .withAlpha(204),
                                   child: _isRefreshSuccess
-                                      ? const Icon(Icons.check,
-                                          color: Colors.white)
+                                      ? const Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                        )
                                       : Transform.rotate(
                                           angle: _isRefreshing
                                               ? _refreshRotateAnimation.value
                                               : 0.0,
-                                          child: const Icon(Icons.refresh,
-                                              color: Colors.white),
+                                          child: const Icon(
+                                            Icons.refresh,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                 ),
                               ),

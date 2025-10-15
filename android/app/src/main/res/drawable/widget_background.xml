@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material Design 3风格的Widget背景 - 使用系统颜色 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/widget_surface" />
+    <corners android:radius="16dp" />
+</shape>
+

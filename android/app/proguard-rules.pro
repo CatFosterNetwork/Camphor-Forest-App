@@ -67,6 +67,15 @@
 -keep class io.flutter.plugins.flutter_baidu_mapapi_base.** { *; }
 -keep class io.flutter.plugins.flutter_baidu_mapapi_map.** { *; }
 
+# 保留小组件相关类
+-keep class * extends android.appwidget.AppWidgetProvider {
+    *;
+}
+-keep class social.swu.camphor_forest.ClassTableWidgetProvider { *; }
+
+# 保留home_widget插件相关
+-keep class es.antonborri.home_widget.** { *; }
+
 # 移除日志
 -assumenosideeffects class android.util.Log {
     public static *** d(...);

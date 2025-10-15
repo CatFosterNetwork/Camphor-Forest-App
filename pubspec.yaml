@@ -73,6 +73,7 @@ dependencies:
   geolocator: ^13.0.1
   sensors_plus: ^6.0.1
   web_socket_channel: ^3.0.3
+  home_widget: ^0.8.1
 
 
 dev_dependencies:

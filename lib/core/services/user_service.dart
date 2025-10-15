@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:camphor_forest/core/models/user_model.dart';
 import 'package:camphor_forest/core/services/api_service.dart';
 import 'package:camphor_forest/core/config/services/unified_config_service.dart';
+import 'package:camphor_forest/core/services/widget_service.dart';
 
 class UserService {
   static const _userInfoKey = 'userInfo';
@@ -41,9 +43,7 @@ class UserService {
     debugPrint('💾 仅从本地缓存加载用户信息');
 
     // 从本地存储加载用户信息
-    final localUserInfo = await _secureStorage.read(
-      key: _userInfoKey,
-    );
+    final localUserInfo = await _secureStorage.read(key: _userInfoKey);
     if (localUserInfo != null) {
       try {
         final cachedUser = UserModel.fromJson(jsonDecode(localUserInfo));
@@ -114,11 +114,9 @@ class UserService {
       // 使用新的配置系统获取用户偏好
       final allConfigs = await _configService.getAllConfigs();
       final autoRenewalEnabled = allConfigs.appConfig.autoRenewalCheckInService;
-      
+
       debugPrint('🔍 JWT 过期检查配置: $autoRenewalEnabled');
-      final res = await _apiService.getJwtIsExpired(
-        autoRenewalEnabled,
-      );
+      final res = await _apiService.getJwtIsExpired(autoRenewalEnabled);
       final isExpired = !res['success'];
       debugPrint('🔑 JWT 过期状态: ${isExpired ? '已过期' : '有效'}');
       return isExpired;
@@ -193,7 +191,10 @@ class UserService {
       key: _userInfoKey,
       value: jsonEncode(_userInfo.toJson()),
     ); // 使用 secureStorage 保存用户信息
-    await _secureStorage.write(key: jwtKey, value: _jwt); // 使用 secureStorage 保存 JWT
+    await _secureStorage.write(
+      key: jwtKey,
+      value: _jwt,
+    ); // 使用 secureStorage 保存 JWT
     debugPrint('👤 已保存用户信息: ${_userInfo.name}');
     debugPrint('🔐 已保存 JWT: ${_jwt.isNotEmpty ? '有效' : '无效'}');
   }
@@ -258,25 +259,48 @@ class UserService {
         debugPrint('🍪 Cookie: $cookie');
         final jwtPart = cookie
             .split(';')
-            .firstWhere((row) => row.trim().startsWith('DoorKey='), orElse: () => '');
+            .firstWhere(
+              (row) => row.trim().startsWith('DoorKey='),
+              orElse: () => '',
+            );
 
         if (jwtPart.isNotEmpty) {
           _jwt = jwtPart.trim();
           debugPrint('🔑 JWT 提取成功: ${_jwt.substring(0, 20)}...');
           await saveUser();
+
+          // 清空上一个账号的课表缓存数据
+          debugPrint('🗑️ 清空旧账号的缓存数据');
+          final prefs = await SharedPreferences.getInstance();
+          final keys = prefs.getKeys();
+          for (final key in keys) {
+            if (key.startsWith('classTable-') ||
+                key.startsWith('grade') ||
+                key.startsWith('custom') ||
+                key.contains('course')) {
+              await prefs.remove(key);
+              debugPrint('🗑️ 删除缓存: $key');
+            }
+          }
+
           // 获取用户信息
           await getUser();
           // 获取配置
           final configRes = await _apiService.getConfig();
-          if (configRes['code'] == 200 && configRes['data']?['settings'] != null) {
-            final serverSettings = Map<String, dynamic>.from(configRes['data']['settings']);
+          if (configRes['code'] == 200 &&
+              configRes['data']?['settings'] != null) {
+            final serverSettings = Map<String, dynamic>.from(
+              configRes['data']['settings'],
+            );
             // 确保autoSync为false（如旧系统逻辑）
             serverSettings['autoSync'] = false;
-            
+
             debugPrint('⚙️ 更新配置: $serverSettings');
-            
+
             // 使用新配置系统保存配置
-            final result = await _configService.initialize(apiData: serverSettings);
+            final result = await _configService.initialize(
+              apiData: serverSettings,
+            );
             if (result.success) {
               debugPrint('✅ 配置更新成功');
             } else {
@@ -313,6 +337,32 @@ class UserService {
       await _secureStorage.write(key: 'weather', value: weather);
       debugPrint('💾 恢复 weather: $weather');
     }
+
+    // 清空SharedPreferences中的课表缓存数据
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+    debugPrint('🔍 当前SharedPreferences中的所有键: $keys');
+    for (final key in keys) {
+      // 匹配成绩缓存键（如果有）
+      // 匹配自定义课程缓存键（如果有）
+      if (key.startsWith('classTable-') ||
+          key.startsWith('grade') ||
+          key.startsWith('custom') ||
+          key.contains('course') ||
+          key.contains('class')) {
+        await prefs.remove(key);
+        debugPrint('🗑️ 删除缓存: $key');
+      }
+    }
+
+    // 清空桌面小组件数据
+    try {
+      await WidgetService.clearClassTableWidget();
+      debugPrint('🔄 桌面小组件数据已清空');
+    } catch (e) {
+      debugPrint('⚠️ 清空桌面小组件失败: $e');
+    }
+
     // 重置配置到默认状态
     final result = await _configService.resetAllConfigs();
     if (result.success) {

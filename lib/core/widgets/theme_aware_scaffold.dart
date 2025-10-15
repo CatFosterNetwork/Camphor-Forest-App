@@ -170,9 +170,17 @@ class ThemeAwareAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
 
     // 确定背景颜色
-    final Color bgColor = isDarkMode
-        ? const Color(0xFF202125)
-        : Colors.grey.shade50;
+    final Color bgColor;
+    if (transparent) {
+      // 如果设置为透明，使用完全透明的背景
+      bgColor = Colors.transparent;
+    } else if (backgroundColor != null) {
+      // 如果传入了自定义背景色，使用自定义背景色
+      bgColor = backgroundColor!;
+    } else {
+      // 默认背景色
+      bgColor = isDarkMode ? const Color(0xFF202125) : Colors.grey.shade50;
+    }
 
     // 确定前景颜色 - 确保在浅色模式下有足够对比度
     final Color fgColor;

@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId = "social.swu.camphor_forest"
-        minSdk = 22 // 支持Android 5.0+，覆盖95%+用户
+        minSdk = 23 // 支持Android 5.0+，覆盖95%+用户
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

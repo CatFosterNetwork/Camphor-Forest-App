@@ -11,7 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'package:camphor_forest/core/constants/route_constants.dart';
 import 'package:camphor_forest/core/providers/core_providers.dart'; // ← apiServiceProvider
 import 'package:camphor_forest/core/providers/auth_provider.dart';
+import 'package:camphor_forest/core/providers/grade_provider.dart';
 import 'package:camphor_forest/core/widgets/theme_aware_scaffold.dart';
+import 'package:camphor_forest/pages/classtable/providers/classtable_providers.dart';
 
 /// 登录页面，提供用户身份验证和交互界面
 ///
@@ -164,8 +166,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       // 根据登录结果处理
       if (ok) {
-        // 登录成功，导航到主页
-        debugPrint('🟢 登录成功，跳转到主页');
+        // 登录成功，清除所有缓存的provider数据
+        debugPrint('🟢 登录成功，清除缓存并跳转到主页');
+        // 清除课表相关的provider缓存
+        ref.invalidate(classTableRepositoryProvider);
+        // 清除成绩provider缓存
+        ref.invalidate(gradeProvider);
+
         if (!mounted) return;
         context.go(RouteConstants.index);
       } else {
