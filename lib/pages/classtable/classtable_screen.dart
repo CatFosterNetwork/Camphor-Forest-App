@@ -314,14 +314,18 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               Text('加载失败 $e'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // 使用强制刷新确保从远程获取数据
-                  ref.invalidate(
-                    forceRefreshClassTableProvider((
-                      xnm: _currentXnm,
-                      xqm: _currentXqm,
-                    )),
-                  );
+                  try {
+                    await ref.refresh(
+                      forceRefreshClassTableProvider((
+                        xnm: _currentXnm,
+                        xqm: _currentXqm,
+                      )).future,
+                    );
+                  } catch (err) {
+                    debugPrint('强制刷新课表失败: $err');
+                  }
 
                   // 刷新普通provider
                   ref.invalidate(
@@ -539,7 +543,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
 
                                     try {
                                       // Await the provider that fetches from remote. This solves the race condition.
-                                      final _ = await ref.refresh(
+                                      await ref.refresh(
                                         forceRefreshClassTableProvider((
                                           xnm: _currentXnm,
                                           xqm: _currentXqm,
