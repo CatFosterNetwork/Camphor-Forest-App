@@ -11,6 +11,7 @@ import '../../core/widgets/theme_aware_scaffold.dart';
 import '../../core/widgets/cached_image.dart';
 import '../../core/providers/core_providers.dart';
 import '../../core/services/image_service.dart';
+import '../../core/services/image_cache_service.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
   const ProfileSettingsPage({super.key});
@@ -21,6 +22,9 @@ class ProfileSettingsPage extends ConsumerStatefulWidget {
 }
 
 class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
+  /// 头像上传中状态
+  bool _isUploadingAvatar = false;
+
   /// 强制刷新用户数据
   Future<void> _refreshUserData() async {
     try {
@@ -105,46 +109,69 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         // 头像 - 使用缓存组件
                         Center(
                           child: GestureDetector(
-                            onTap: () => _showAvatarUploadDialog(
-                              context,
-                              ref,
-                              themeColor,
-                            ),
+                            onTap: _isUploadingAvatar
+                                ? null
+                                : () => _showAvatarUploadDialog(
+                                    context,
+                                    ref,
+                                    themeColor,
+                                  ),
                             child: Stack(
                               children: [
-                                CachedAvatar(
-                                  imageUrl: user?.avatarUrl,
-                                  radius: 50,
-                                  backgroundColor: Colors.grey.shade300,
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 50,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: themeColor,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: isDarkMode
-                                            ? Colors.grey.shade800
-                                            : Colors.white,
-                                        width: 2,
+                                // 头像或加载动画
+                                _isUploadingAvatar
+                                    ? Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  themeColor,
+                                                ),
+                                          ),
+                                        ),
+                                      )
+                                    : CachedAvatar(
+                                        imageUrl: user?.avatarUrl,
+                                        radius: 50,
+                                        backgroundColor: Colors.grey.shade300,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 50,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                // 相机图标
+                                if (!_isUploadingAvatar)
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: themeColor,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: isDarkMode
+                                              ? Colors.grey.shade800
+                                              : Colors.white,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.white,
+                                        size: 16,
                                       ),
                                     ),
-                                    child: const Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
                                   ),
-                                ),
                               ],
                             ),
                           ),
@@ -449,44 +476,20 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         source: source,
       );
 
-      // 如果用户取消了裁剪，直接返回
+      // 如果用户取消了裁剪，返回
       if (processedImageFile == null) {
         debugPrint('❌ 用户取消了图片选择或裁剪');
-        return; // 用户取消了裁剪操作，不显示任何提示
+        return;
       }
 
       debugPrint('✅ 图片处理完成: ${processedImageFile.path}');
       debugPrint('📊 文件大小: ${await processedImageFile.length()} bytes');
 
-      // 2. 显示上传进度
-      if (context.mounted) {
-        final isDarkMode = ref.read(effectiveIsDarkModeProvider);
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            backgroundColor: isDarkMode
-                ? const Color(0xFF202125)
-                : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
-            ),
-            content: Row(
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    '正在上传头像...',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+      // 3. 开始上传，设置加载状态
+      if (mounted) {
+        setState(() {
+          _isUploadingAvatar = true;
+        });
       }
 
       // 3. 生成文件名
@@ -535,38 +538,73 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         final success = response['success'] ?? false;
         debugPrint('✅ 用户信息更新${success ? "成功" : "失败"}');
 
-        if (context.mounted) {
-          Navigator.of(context).pop(); // 关闭进度对话框
+        // 6. API成功后，立即更新本地状态
+        debugPrint('🔄 第5步：更新本地状态...');
+        if (success) {
+          try {
+            final currentUser = authState.user;
+            if (currentUser != null) {
+              debugPrint('👤 当前用户: ${currentUser.name}');
 
-          if (success) {
-            // 6. API成功后，立即更新本地状态
-            debugPrint('🔄 第5步：更新本地状态...');
-            try {
-              final currentUser = authState.user;
-              if (currentUser != null) {
-                debugPrint('👤 当前用户: ${currentUser.name}');
-                // 直接使用新的avatarUrl
-                final updatedUser = currentUser.copyWith(avatarUrl: avatarUrl);
-                debugPrint('🔄 更新用户头像URL...');
-                ref.updateUser(updatedUser);
-
-                debugPrint('✅ 本地状态更新完成');
-              } else {
-                debugPrint('⚠️ 当前用户为null');
+              // 清除旧头像的缓存（包括所有可能的URL变体）
+              final imageCacheService = ImageCacheService();
+              if (currentUser.avatarUrl.isNotEmpty) {
+                // 移除旧URL的缓存
+                final oldUrl = currentUser.avatarUrl.split('?').first; // 去除时间戳
+                await imageCacheService.removeFromCache(oldUrl);
+                await imageCacheService.removeFromCache(currentUser.avatarUrl);
+                debugPrint('🗑️ 已清除旧头像缓存');
               }
-            } catch (e) {
-              debugPrint('❌ 更新用户状态失败: $e');
-            }
 
-            // 7. 显示成功提示
+              // 清除新头像URL的缓存（以防万一）
+              await imageCacheService.removeFromCache(avatarUrl);
+
+              // 添加时间戳参数强制刷新
+              final timestamp = DateTime.now().millisecondsSinceEpoch;
+              final avatarUrlWithTimestamp = '$avatarUrl?t=$timestamp';
+
+              // 更新用户信息
+              final updatedUser = currentUser.copyWith(
+                avatarUrl: avatarUrlWithTimestamp,
+              );
+              debugPrint('🔄 更新用户头像URL（带时间戳）: $avatarUrlWithTimestamp');
+              ref.updateUser(updatedUser);
+
+              debugPrint('✅ 本地状态更新完成');
+            } else {
+              debugPrint('⚠️ 当前用户为null');
+            }
+          } catch (e) {
+            debugPrint('❌ 更新用户状态失败: $e');
+          }
+
+          // 关闭加载状态
+          if (mounted) {
+            setState(() {
+              _isUploadingAvatar = false;
+            });
+          }
+
+          // 7. 显示成功提示
+          if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('头像上传成功'),
                 backgroundColor: Colors.green,
                 behavior: SnackBarBehavior.floating,
+                duration: Duration(seconds: 2),
               ),
             );
-          } else {
+          }
+        } else {
+          // 关闭加载状态
+          if (mounted) {
+            setState(() {
+              _isUploadingAvatar = false;
+            });
+          }
+
+          if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('头像上传失败，请重试'),
@@ -578,9 +616,16 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         }
       }
     } catch (e) {
-      if (context.mounted) {
-        Navigator.of(context).pop(); // 关闭进度对话框
+      debugPrint('❌ 上传过程发生错误: $e');
 
+      // 关闭加载状态
+      if (mounted) {
+        setState(() {
+          _isUploadingAvatar = false;
+        });
+      }
+
+      if (context.mounted) {
         // 特殊处理SSL证书错误
         String errorMessage = '上传失败';
         if (e.toString().contains('CERTIFICATE_VERIFY_FAILED') ||
