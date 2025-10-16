@@ -1,15 +1,14 @@
 // lib/pages/lifeService/widgets/grade_transcript_tab.dart
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../../core/models/grade_models.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/services/preview_service.dart';
 import '../../../core/services/permission_service.dart';
+import '../../../core/widgets/theme_aware_dialog.dart';
 
 /// 成绩单Tab页
 class GradeTranscriptTab extends ConsumerStatefulWidget {
@@ -504,22 +503,24 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
   Future<void> _previewTranscript(int index, Color themeColor) async {
     // 显示加载对话框
     _showLoadingDialog('正在生成预览...');
-    
+
     try {
       final apiService = ref.read(apiServiceProvider);
       final selectedTranscript = _transcriptTypes[index];
       final isDarkMode = ref.read(effectiveIsDarkModeProvider);
 
       // 设置30秒超时
-      final result = await apiService.studyCertificate({
-        'fileProperty': selectedTranscript.fileProperty,
-        'jd': _jdType,
-        'pjf': _pjfType,
-        'pm': _pmType,
-      }).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw Exception('请求超时，请稍后再试'),
-      );
+      final result = await apiService
+          .studyCertificate({
+            'fileProperty': selectedTranscript.fileProperty,
+            'jd': _jdType,
+            'pjf': _pjfType,
+            'pm': _pmType,
+          })
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('请求超时，请稍后再试'),
+          );
 
       if (mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
@@ -668,26 +669,7 @@ class _GradeTranscriptTabState extends ConsumerState<GradeTranscriptTab> {
   /// 显示提示消息
   void _showSnackBar(String message, Color themeColor) {
     if (mounted) {
-      if (Platform.isIOS) {
-        FlutterPlatformAlert.showAlert(
-          windowTitle: '提示',
-          text: message,
-          alertStyle: AlertButtonStyle.ok,
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('确定'),
-              ),
-            ],
-          ),
-        );
-      }
+      ThemeAwareDialog.showAlertDialog(context, title: '提示', message: message);
     }
   }
 }

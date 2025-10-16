@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 import 'providers/classtable_settings_provider.dart';
 import 'models/custom_course_model.dart';
 import 'widgets/add_custom_course_dialog.dart';
@@ -501,32 +502,25 @@ class _CustomClassTableScreenState
   }
 
   /// 删除课程
-  void _deleteCourse(CustomCourse course) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('删除课程'),
-        content: Text('确定要删除课程"${course.title}"吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ref
-                  .read(classTableSettingsProvider.notifier)
-                  .deleteCustomCourse(course.id);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text('已删除课程"${course.title}"')));
-            },
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+  void _deleteCourse(CustomCourse course) async {
+    final result = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '删除课程',
+      message: '确定要删除课程"${course.title}"吗？',
+      positiveText: '删除',
+      negativeText: '取消',
     );
+
+    if (result) {
+      ref
+          .read(classTableSettingsProvider.notifier)
+          .deleteCustomCourse(course.id);
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('已删除课程"${course.title}"')));
+      }
+    }
   }
 
   /// 格式化学期标题

@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../core/providers/permission_provider.dart';
-
 import '../../core/config/providers/theme_config_provider.dart';
-
 import '../../core/models/theme_model.dart' as theme_model;
 import '../../core/widgets/theme_aware_scaffold.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 
 class CustomThemeSettingsPage extends ConsumerStatefulWidget {
   final String? themeId; // 'create' 或 具体的主题代码
@@ -67,7 +65,9 @@ class _CustomThemeSettingsPageState
 
   Future<void> _createNewTheme() async {
     final currentTheme = ref.read(selectedCustomThemeProvider);
-    final baseTheme = currentTheme ?? _getDefaultTheme();
+    final baseTheme = currentTheme.colorList.isNotEmpty
+        ? currentTheme
+        : _getDefaultTheme();
 
     final service = ref.read(customThemeServiceProvider);
     final uniqueCode = await service.generateUniqueThemeCode('custom');
@@ -96,7 +96,9 @@ class _CustomThemeSettingsPageState
 
   Future<void> _loadDefaultTheme() async {
     final currentTheme = ref.read(selectedCustomThemeProvider);
-    customTheme = _copyTheme(currentTheme ?? _getDefaultTheme());
+    customTheme = _copyTheme(
+      currentTheme.colorList.isNotEmpty ? currentTheme : _getDefaultTheme(),
+    );
     isCreateMode = true;
   }
 
@@ -146,7 +148,7 @@ class _CustomThemeSettingsPageState
             IconButton(
               onPressed: _showOptionsMenu,
               icon: Icon(
-                Platform.isIOS 
+                Platform.isIOS
                     ? CupertinoIcons.ellipsis_circle
                     : Icons.more_vert,
               ),
@@ -1008,11 +1010,28 @@ class _CustomThemeSettingsPageState
 
     updateControllersFromColor(currentColor);
 
+    final isDarkMode = ref.read(effectiveIsDarkModeProvider);
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('选择颜色'),
+          backgroundColor: Platform.isIOS
+              ? null
+              : (isDarkMode ? const Color(0xFF202125) : Colors.white),
+          shape: Platform.isIOS
+              ? null
+              : RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          title: Text(
+            '选择颜色',
+            style: Platform.isIOS
+                ? null
+                : TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                  ),
+          ),
           content: SizedBox(
             width: double.maxFinite,
             child: SingleChildScrollView(
@@ -1145,16 +1164,44 @@ class _CustomThemeSettingsPageState
               ),
             ),
           ),
+          actionsPadding: Platform.isIOS
+              ? null
+              : const EdgeInsets.fromLTRB(8, 0, 8, 8),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
+              style: Platform.isIOS
+                  ? null
+                  : TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+              child: Text(
+                '取消',
+                style: Platform.isIOS
+                    ? null
+                    : TextStyle(
+                        color: isDarkMode ? Colors.white70 : Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
                 onColorChanged(selectedColor);
                 Navigator.of(context).pop();
               },
+              style: Platform.isIOS
+                  ? null
+                  : ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
               child: const Text('确定'),
             ),
           ],
@@ -1229,7 +1276,10 @@ class _CustomThemeSettingsPageState
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(CupertinoIcons.floppy_disk, color: CupertinoColors.activeBlue),
+                  Icon(
+                    CupertinoIcons.floppy_disk,
+                    color: CupertinoColors.activeBlue,
+                  ),
                   SizedBox(width: 8),
                   Text(
                     '保存主题',
@@ -1251,7 +1301,10 @@ class _CustomThemeSettingsPageState
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(CupertinoIcons.refresh, color: CupertinoColors.destructiveRed),
+                  Icon(
+                    CupertinoIcons.refresh,
+                    color: CupertinoColors.destructiveRed,
+                  ),
                   SizedBox(width: 8),
                   Text(
                     '重置更改',
@@ -1293,10 +1346,7 @@ class _CustomThemeSettingsPageState
                 leading: const Icon(Icons.save, color: Colors.blue),
                 title: const Text(
                   '保存主题',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -1334,10 +1384,7 @@ class _CustomThemeSettingsPageState
                   ),
                   child: const Text(
                     '取消',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -1349,14 +1396,15 @@ class _CustomThemeSettingsPageState
   }
 
   void _resetTheme() async {
-    final result = await FlutterPlatformAlert.showCustomAlert(
-      windowTitle: '重置更改',
-      text: '确定要放弃所有未保存的更改吗？',
-      positiveButtonTitle: '重置',
-      negativeButtonTitle: '取消',
+    final result = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '重置更改',
+      message: '确定要放弃所有未保存的更改吗？',
+      positiveText: '重置',
+      negativeText: '取消',
     );
 
-    if (result == CustomButton.positiveButton) {
+    if (result) {
       _initializeTheme();
     }
   }
@@ -1366,14 +1414,15 @@ class _CustomThemeSettingsPageState
       return true;
     }
 
-    final result = await FlutterPlatformAlert.showCustomAlert(
-      windowTitle: '未保存的更改',
-      text: '您有未保存的更改，确定要离开吗？',
-      positiveButtonTitle: '离开',
-      negativeButtonTitle: '取消',
+    final result = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '未保存的更改',
+      message: '您有未保存的更改，确定要离开吗？',
+      positiveText: '离开',
+      negativeText: '取消',
     );
 
-    return result == CustomButton.positiveButton;
+    return result;
   }
 
   theme_model.Theme _getDefaultTheme() {

@@ -14,6 +14,7 @@ import 'user_preferences_service.dart';
 import 'config_sync_service.dart';
 import '../../services/custom_theme_service.dart';
 import '../../services/api_service.dart';
+import '../../models/theme_model.dart' as theme_model;
 
 /// 统一配置服务
 /// 合并了 ConfigManager + ConfigInitializationService 的功能
@@ -134,27 +135,31 @@ class UnifiedConfigService {
       );
     }
 
+    // 从原始 API 数据中提取自定义主题（单一数据源）
+    List<theme_model.Theme> customThemes = [];
+
+    // 支持嵌套和扁平两种格式
+    Map<String, dynamic>? themeConfigData;
+    if (repairedData.containsKey('themeConfig')) {
+      themeConfigData = repairedData['themeConfig'] as Map<String, dynamic>?;
+    } else if (repairedData.containsKey('theme-customThemes')) {
+      themeConfigData = repairedData;
+    }
+
+    if (themeConfigData != null &&
+        themeConfigData['theme-customThemes'] != null) {
+      final customThemesData = themeConfigData['theme-customThemes'] as List;
+      customThemes = customThemesData
+          .map((json) => theme_model.Theme.fromJson(json))
+          .toList();
+    }
+
     // 保存自定义主题到 CustomThemeService
-    final themeConfig = distributionResult.themeConfig!;
-
-    // 过滤掉预设主题，只保留真正的自定义主题
-    final realCustomThemes = themeConfig.customThemes.where((theme) {
-      if (theme.isPreset) {
-        debugPrint(
-          'UnifiedConfigService: ⚠️ 检测到预设主题 ${theme.code}，已跳过保存（预设主题应从 assets 加载）',
-        );
-      }
-      return theme.isCustom;
-    }).toList();
-
-    // 使用 replaceAllCustomThemes 替换整个列表
     try {
-      await _customThemeService.replaceAllCustomThemes(realCustomThemes);
-      debugPrint(
-        'UnifiedConfigService: 已替换所有自定义主题，共 ${realCustomThemes.length} 个',
-      );
-      if (realCustomThemes.isNotEmpty) {
-        for (final theme in realCustomThemes) {
+      await _customThemeService.replaceAllCustomThemes(customThemes);
+      debugPrint('UnifiedConfigService: 已替换所有自定义主题，共 ${customThemes.length} 个');
+      if (customThemes.isNotEmpty) {
+        for (final theme in customThemes) {
           debugPrint('  - ${theme.title} (${theme.code})');
         }
       } else {
@@ -267,10 +272,17 @@ class UnifiedConfigService {
     try {
       final allConfigs = await getAllConfigs();
 
+      // 动态获取自定义主题（单一数据源）
+      final customThemes = await _customThemeService.getCustomThemes();
+
       // 使用嵌套格式
       final nestedSyncData = <String, dynamic>{
         'appConfig': allConfigs.appConfig.toJson(),
-        'themeConfig': allConfigs.themeConfig.toJson(),
+        'themeConfig': {
+          ...allConfigs.themeConfig.toJson(),
+          // 动态添加自定义主题列表
+          'theme-customThemes': customThemes.map((t) => t.toJson()).toList(),
+        },
         'userPreferences': allConfigs.userPreferences.toJson(),
       };
 
@@ -288,23 +300,33 @@ class UnifiedConfigService {
       nestedSyncData['_uploadSource'] = 'flutter';
       nestedSyncData['_uploadTime'] = DateTime.now().toIso8601String();
 
+      debugPrint('UnifiedConfigService: 上传 ${customThemes.length} 个自定义主题');
+
       // 上传配置，返回处理后的数据（图片URL已替换）
       final processedData = await _syncService.uploadConfigs(nestedSyncData);
 
       // 将上传后的配置（包含图片URL）更新回本地
       if (processedData['themeConfig'] != null) {
-        final updatedThemeConfig = ThemeConfig.fromJson(
-          processedData['themeConfig'] as Map<String, dynamic>,
-        );
+        final themeConfigData =
+            processedData['themeConfig'] as Map<String, dynamic>;
+
+        // 1. 保存 ThemeConfig（不包含 customThemes）
+        final updatedThemeConfig = ThemeConfig.fromJson(themeConfigData);
         await _themeConfigService.saveConfig(updatedThemeConfig);
         debugPrint('UnifiedConfigService: 已更新本地主题配置（图片URL）');
 
-        // 同步更新自定义主题到 CustomThemeService
-        final realCustomThemes = updatedThemeConfig.customThemes.where((theme) {
-          return theme.isCustom;
-        }).toList();
-        await _customThemeService.replaceAllCustomThemes(realCustomThemes);
-        debugPrint('UnifiedConfigService: 已更新本地自定义主题列表（图片URL）');
+        // 2. 单独保存自定义主题到 CustomThemeService
+        if (themeConfigData['theme-customThemes'] != null) {
+          final customThemesData =
+              themeConfigData['theme-customThemes'] as List;
+          final customThemes = customThemesData
+              .map((json) => theme_model.Theme.fromJson(json))
+              .toList();
+          await _customThemeService.replaceAllCustomThemes(customThemes);
+          debugPrint(
+            'UnifiedConfigService: 已更新本地自定义主题列表，共 ${customThemes.length} 个（图片URL）',
+          );
+        }
       }
 
       await _userPreferencesService.markSynced();

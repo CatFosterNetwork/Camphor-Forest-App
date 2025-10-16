@@ -7,11 +7,11 @@ import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 // import 'package:device_info_plus/device_info_plus.dart'; // 暂时不使用
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 
 class OtherSettingsPage extends ConsumerStatefulWidget {
   const OtherSettingsPage({super.key});
@@ -311,7 +311,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () =>
-                          _showClearCacheDialog(context, isDarkMode),
+                          _showClearCacheDialog(context, isDarkMode, ref),
                       icon: const Icon(Icons.cleaning_services),
                       label: const Text('清理缓存'),
                       style: ElevatedButton.styleFrom(
@@ -605,21 +605,30 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     );
   }
 
-  void _showClearCacheDialog(BuildContext context, bool isDarkMode) async {
-    final result = await FlutterPlatformAlert.showCustomAlert(
-      windowTitle: '清理缓存',
-      text: '确定要清理所有缓存数据吗？这将清除临时文件和图片缓存。',
-      positiveButtonTitle: '确定',
-      negativeButtonTitle: '取消',
+  void _showClearCacheDialog(
+    BuildContext context,
+    bool isDarkMode,
+    WidgetRef ref,
+  ) async {
+    final result = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '清理缓存',
+      message: '确定要清理所有缓存数据吗？这将清除临时文件和图片缓存。',
+      positiveText: '确定',
+      negativeText: '取消',
     );
 
-    if (result == CustomButton.positiveButton) {
-      _performCacheClear(context, isDarkMode);
+    if (result) {
+      _performCacheClear(context, isDarkMode, ref);
     }
   }
 
   /// 执行真实的缓存清理
-  Future<void> _performCacheClear(BuildContext context, bool isDarkMode) async {
+  Future<void> _performCacheClear(
+    BuildContext context,
+    bool isDarkMode,
+    WidgetRef ref,
+  ) async {
     // 显示清理进度对话框
     showDialog(
       context: context,
@@ -638,22 +647,20 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
         _calculateCacheSize();
 
         // 显示结果
-        FlutterPlatformAlert.showAlert(
-          windowTitle: '清理完成',
-          text: '缓存清理完成！释放了 ${_formatBytes(result.clearedSize)}',
-          alertStyle: AlertButtonStyle.ok,
-          iconStyle: IconStyle.none,
+        await ThemeAwareDialog.showAlertDialog(
+          context,
+          title: '清理完成',
+          message: '缓存清理完成！释放了 ${_formatBytes(result.clearedSize)}',
         );
       }
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭进度对话框
 
-        FlutterPlatformAlert.showAlert(
-          windowTitle: '清理失败',
-          text: '缓存清理失败: $e',
-          alertStyle: AlertButtonStyle.ok,
-          iconStyle: IconStyle.none,
+        await ThemeAwareDialog.showAlertDialog(
+          context,
+          title: '清理失败',
+          message: '缓存清理失败: $e',
         );
       }
     }
@@ -769,17 +776,11 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
       builder: (context) => CupertinoActionSheet(
         title: const Text(
           '选择语言',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
         message: const Text(
           '当前语言：简体中文',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         actions: [
           CupertinoActionSheetAction(
@@ -837,10 +838,16 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         title: Text(
           '选择语言',
-          style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        contentPadding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -849,6 +856,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                 '简体中文',
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
+                  fontSize: 16,
                 ),
               ),
               value: 'zh_CN',
@@ -856,6 +864,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
               activeColor: activeColor,
               onChanged: (value) {
                 Navigator.of(context).pop();
+                // TODO: 实现语言切换逻辑
               },
             ),
             RadioListTile<String>(
@@ -863,6 +872,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                 'English',
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
+                  fontSize: 16,
                 ),
               ),
               value: 'en_US',
@@ -870,6 +880,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
               activeColor: activeColor,
               onChanged: (value) {
                 Navigator.of(context).pop();
+                // TODO: 实现语言切换逻辑
               },
             ),
           ],
@@ -877,9 +888,16 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
             child: Text(
               '取消',
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              style: TextStyle(
+                color: isDarkMode ? Colors.white70 : Colors.black87,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -1032,15 +1050,12 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
   @override
   Widget build(BuildContext context) {
     final content = _buildDialogContent();
-    
+
     if (Platform.isIOS) {
       return CupertinoAlertDialog(
         title: const Text(
           '网络诊断',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
         ),
         content: Padding(
           padding: const EdgeInsets.only(top: 8.0),
@@ -1078,36 +1093,49 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
         backgroundColor: widget.isDarkMode
             ? const Color(0xFF202125)
             : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         title: Text(
           '网络诊断',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
             color: widget.isDarkMode ? Colors.white : Colors.black,
           ),
         ),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: content,
-        ),
+        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+        content: content,
+        actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         actions: [
           if (_result != null && !_isLoading) ...[
             TextButton(
               onPressed: _performNetworkDiagnostic,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
               child: Text(
                 '重新检测',
                 style: TextStyle(
                   color: widget.themeColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
           ],
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
             child: Text(
               '关闭',
               style: TextStyle(
-                color: widget.isDarkMode ? Colors.white : Colors.black,
+                color: widget.isDarkMode ? Colors.white70 : Colors.black87,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -1132,11 +1160,17 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
                   SizedBox(
                     width: 24,
                     child: Icon(
-                      Platform.isIOS ? CupertinoIcons.wifi : Icons.network_check,
+                      Platform.isIOS
+                          ? CupertinoIcons.wifi
+                          : Icons.network_check,
                       size: 18,
-                      color: Platform.isIOS 
-                          ? (widget.isDarkMode ? Colors.white.withOpacity(0.6) : Colors.black.withOpacity(0.6))
-                          : (widget.isDarkMode ? Colors.white54 : Colors.black54),
+                      color: Platform.isIOS
+                          ? (widget.isDarkMode
+                                ? Colors.white.withOpacity(0.6)
+                                : Colors.black.withOpacity(0.6))
+                          : (widget.isDarkMode
+                                ? Colors.white54
+                                : Colors.black54),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1148,8 +1182,12 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: Platform.isIOS
-                            ? (widget.isDarkMode ? Colors.white.withOpacity(0.85) : Colors.black87)
-                            : (widget.isDarkMode ? Colors.white70 : Colors.black87),
+                            ? (widget.isDarkMode
+                                  ? Colors.white.withOpacity(0.85)
+                                  : Colors.black87)
+                            : (widget.isDarkMode
+                                  ? Colors.white70
+                                  : Colors.black87),
                       ),
                     ),
                   ),
@@ -1201,7 +1239,9 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
             '连接类型',
             _result!.connectionType,
             _result!.isConnected,
-            Platform.isIOS ? CupertinoIcons.device_phone_portrait : Icons.router,
+            Platform.isIOS
+                ? CupertinoIcons.device_phone_portrait
+                : Icons.router,
           ),
           _buildResultItem(
             '服务器连接',
@@ -1221,15 +1261,20 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
     );
   }
 
-  Widget _buildResultItem(String label, String value, bool isGood, IconData icon) {
+  Widget _buildResultItem(
+    String label,
+    String value,
+    bool isGood,
+    IconData icon,
+  ) {
     Color statusColor;
     Color iconColor;
-    
+
     if (Platform.isIOS) {
-      statusColor = isGood 
-          ? CupertinoColors.systemGreen 
+      statusColor = isGood
+          ? CupertinoColors.systemGreen
           : CupertinoColors.destructiveRed;
-      iconColor = widget.isDarkMode 
+      iconColor = widget.isDarkMode
           ? Colors.white.withOpacity(0.6)
           : Colors.black.withOpacity(0.6);
     } else {
@@ -1251,14 +1296,7 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 左侧图标，固定宽度
-          SizedBox(
-            width: 24,
-            child: Icon(
-              icon,
-              size: 18,
-              color: iconColor,
-            ),
-          ),
+          SizedBox(width: 24, child: Icon(icon, size: 18, color: iconColor)),
           const SizedBox(width: 12),
           // 标签文字，左对齐
           Text(
@@ -1266,7 +1304,9 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
             style: TextStyle(
               fontSize: 16,
               color: Platform.isIOS
-                  ? (widget.isDarkMode ? Colors.white.withOpacity(0.85) : Colors.black87)
+                  ? (widget.isDarkMode
+                        ? Colors.white.withOpacity(0.85)
+                        : Colors.black87)
                   : (widget.isDarkMode ? Colors.white70 : Colors.black87),
               fontWeight: Platform.isIOS ? FontWeight.w500 : FontWeight.w500,
             ),
@@ -1278,7 +1318,7 @@ class _NetworkDiagnosticDialogState extends State<NetworkDiagnosticDialog> {
             value,
             style: TextStyle(
               fontSize: 16,
-              color: statusColor, 
+              color: statusColor,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1373,78 +1413,76 @@ class _CacheClearProgressDialogState extends State<CacheClearProgressDialog>
   @override
   Widget build(BuildContext context) {
     final content = FadeTransition(
-        opacity: _fadeAnimation,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 清理图标
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.orange.withAlpha(26),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Icon(
-                Icons.cleaning_services,
-                color: Colors.orange,
-                size: 30,
-              ),
+      opacity: _fadeAnimation,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 清理图标
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.orange.withAlpha(26),
+              borderRadius: BorderRadius.circular(30),
             ),
-            const SizedBox(height: 20),
-
-            // 标题
-            Text(
-              '正在清理缓存',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: widget.isDarkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // 进度指示器
-            LinearProgressIndicator(
+            child: Icon(
+              Icons.cleaning_services,
               color: Colors.orange,
-              backgroundColor: widget.isDarkMode
-                  ? Colors.grey.shade700
-                  : Colors.grey.shade300,
+              size: 30,
             ),
-            const SizedBox(height: 16),
+          ),
+          const SizedBox(height: 20),
 
-            // 当前步骤
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: Text(
-                _steps[_currentStep],
-                key: ValueKey(_currentStep),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: widget.isDarkMode ? Colors.white70 : Colors.black54,
-                ),
-                textAlign: TextAlign.center,
-              ),
+          // 标题
+          Text(
+            '正在清理缓存',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: widget.isDarkMode ? Colors.white : Colors.black,
             ),
-            const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 16),
 
-            // 提示文字
-            Text(
-              '请稍等，正在清理应用缓存...',
+          // 进度指示器
+          LinearProgressIndicator(
+            color: Colors.orange,
+            backgroundColor: widget.isDarkMode
+                ? Colors.grey.shade700
+                : Colors.grey.shade300,
+          ),
+          const SizedBox(height: 16),
+
+          // 当前步骤
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              _steps[_currentStep],
+              key: ValueKey(_currentStep),
               style: TextStyle(
-                fontSize: 12,
-                color: widget.isDarkMode ? Colors.white54 : Colors.black38,
+                fontSize: 14,
+                color: widget.isDarkMode ? Colors.white70 : Colors.black54,
               ),
               textAlign: TextAlign.center,
             ),
-          ],
-        ),
-      );
+          ),
+          const SizedBox(height: 8),
+
+          // 提示文字
+          Text(
+            '请稍等，正在清理应用缓存...',
+            style: TextStyle(
+              fontSize: 12,
+              color: widget.isDarkMode ? Colors.white54 : Colors.black38,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
 
     return Platform.isIOS
-        ? CupertinoAlertDialog(
-            content: content,
-          )
+        ? CupertinoAlertDialog(content: content)
         : AlertDialog(
             backgroundColor: widget.isDarkMode
                 ? const Color(0xFF202125)

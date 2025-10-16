@@ -11,6 +11,7 @@ import '../models/theme_config.dart';
 import '../services/theme_config_service.dart';
 import '../../models/theme_model.dart' as theme_model;
 import '../../services/custom_theme_service.dart';
+import '../../services/dynamic_color_service.dart';
 
 /// 主题配置服务提供者
 final themeConfigServiceProvider = Provider<ThemeConfigService>((ref) {
@@ -296,12 +297,12 @@ final currentThemeProvider = Provider<theme_model.Theme>((ref) {
 
   return configAsync.when(
     data: (config) {
-      // 如果配置中已有主题对象，直接使用
-      if (config.currentTheme != null) {
-        return config.currentTheme!;
+      // 如果使用预设主题，直接使用 selectedTheme
+      if (config.selectedTheme != null && !config.isUsingCustomTheme) {
+        return config.selectedTheme!;
       }
 
-      // 如果配置中没有主题对象，从主题列表中查找
+      // 如果使用自定义主题，从主题列表中查找
       return themesAsync.when(
         data: (themes) {
           final foundTheme = themes.where(
@@ -353,14 +354,12 @@ final isUsingCustomThemeProvider = Provider<bool>((ref) {
   );
 });
 
-/// 自定义主题列表提供者
-final customThemesListProvider = Provider<List<theme_model.Theme>>((ref) {
-  final configAsync = ref.watch(themeConfigNotifierProvider);
-  return configAsync.when(
-    data: (config) => config.customThemes,
-    loading: () => [],
-    error: (_, _) => [],
-  );
+/// 自定义主题列表提供者（从 CustomThemeService 单一数据源获取）
+final customThemesListProvider = FutureProvider<List<theme_model.Theme>>((
+  ref,
+) async {
+  final service = ref.watch(customThemeServiceProvider);
+  return service.getCustomThemes();
 });
 
 /// 所有可用主题提供者
@@ -631,7 +630,26 @@ class CustomThemeManager
         debugPrint('    * ${theme.title} (${theme.code})');
       }
 
-      final allThemes = [...presetThemes, ...customThemes];
+      // 检查是否支持系统动态主题（Android 12+）
+      final dynamicColorService = DynamicColorService();
+      if (!dynamicColorService.isInitialized) {
+        await dynamicColorService.initialize();
+      }
+
+      List<theme_model.Theme> allThemes = [...presetThemes];
+
+      // 如果支持动态颜色，添加系统动态主题到预设主题列表的开头
+      if (dynamicColorService.isSupported) {
+        final systemTheme = DynamicColorService().createSystemTheme();
+        if (systemTheme != null) {
+          allThemes.insert(0, systemTheme);
+          debugPrint('CustomThemeManager: ✅ 添加系统动态主题（Android 12+）');
+        }
+      }
+
+      // 添加自定义主题
+      allThemes.addAll(customThemes);
+
       state = AsyncValue.data(allThemes);
 
       debugPrint('CustomThemeManager: ✅ 主题加载完成，共 ${allThemes.length} 个');
@@ -687,20 +705,32 @@ class CustomThemeManager
 
   Future<bool> deleteTheme(String themeCode) async {
     try {
+      // 删除主题（单一数据源）
       await _service.deleteCustomTheme(themeCode);
+
+      // 重新加载主题列表（触发响应式更新）
       await loadThemes();
+
+      debugPrint('CustomThemeManager: ✅ 已删除主题 $themeCode');
       return true;
     } catch (e) {
+      debugPrint('CustomThemeManager: ❌ 删除主题失败: $e');
       return false;
     }
   }
 
   Future<bool> saveTheme(theme_model.Theme theme) async {
     try {
+      // 保存主题（单一数据源）
       await _service.saveCustomTheme(theme);
+
+      // 重新加载主题列表（触发响应式更新）
       await loadThemes();
+
+      debugPrint('CustomThemeManager: ✅ 已保存主题 ${theme.title}');
       return true;
     } catch (e) {
+      debugPrint('CustomThemeManager: ❌ 保存主题失败: $e');
       return false;
     }
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
+import '../../../core/widgets/theme_aware_dialog.dart';
 import '../models/feedback_models.dart' as feedback_models;
 
 /// Feedback admin controls widget
@@ -255,26 +256,17 @@ class _FeedbackAdminControlsState extends ConsumerState<FeedbackAdminControls> {
     BuildContext context,
     String message,
     VoidCallback onConfirm,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('提示'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              onConfirm();
-            },
-            child: const Text('确定'),
-          ),
-        ],
-      ),
+  ) async {
+    final result = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '提示',
+      message: message,
+      positiveText: '确定',
+      negativeText: '取消',
     );
+
+    if (result) {
+      onConfirm();
+    }
   }
 }

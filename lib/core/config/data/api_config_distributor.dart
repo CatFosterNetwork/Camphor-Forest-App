@@ -131,13 +131,13 @@ class ApiConfigDistributor {
       nested['themeConfig'].remove('theme-customTheme');
     }
 
-    // 🔧 校验并修复颜色模式：将 "auto" 映射为 "system"
+    // 校验颜色模式：将 "auto" 映射为 "system"
     if (nested['themeConfig']['theme-colorMode'] == 'auto') {
       nested['themeConfig']['theme-colorMode'] = 'system';
       debugPrint('ApiConfigDistributor: [扁平转嵌套] 将颜色模式 "auto" 转换为 "system"');
     }
 
-    // 🔧 确保 selectedThemeCode 存在
+    // 确保 selectedThemeCode 存在
     if (!nested['themeConfig'].containsKey('selectedThemeCode')) {
       // 检查是否使用自定义主题（微信端逻辑：title === "自定义"）
       final themeTheme = nested['themeConfig']['theme-theme'];
@@ -226,7 +226,7 @@ class ApiConfigDistributor {
     Theme? selectedTheme;
     List<Theme> customThemes = [];
 
-    // 🔧 校验并修复颜色模式：将 "auto" 映射为 "system"
+    // 校验颜色模式：将 "auto" 映射为 "system"
     if (themeConfigData['theme-colorMode'] == 'auto') {
       themeConfigData['theme-colorMode'] = 'system';
       debugPrint('ApiConfigDistributor: 将颜色模式 "auto" 转换为 "system"');
@@ -247,19 +247,11 @@ class ApiConfigDistributor {
           themeConfigData['theme-theme'],
         );
 
-        // 🔧 修复：如果主题数据中缺少 code，使用 selectedThemeCode
+        // 如果主题数据中缺少 code，使用 selectedThemeCode
         if (!themeData.containsKey('code') || themeData['code'] == null) {
           themeData['code'] = selectedThemeCode;
           debugPrint(
             'ApiConfigDistributor: 主题数据缺少 code 字段，使用 selectedThemeCode: $selectedThemeCode',
-          );
-        }
-
-        // 🔧 修复：如果主题数据中缺少 title，尝试从预设主题名称推断
-        if (!themeData.containsKey('title') || themeData['title'] == null) {
-          themeData['title'] = _getThemeTitle(selectedThemeCode);
-          debugPrint(
-            'ApiConfigDistributor: 主题数据缺少 title 字段，推断为: ${themeData['title']}',
           );
         }
 
@@ -335,22 +327,8 @@ class ApiConfigDistributor {
       themeMode: _getString(themeConfigData, 'theme-colorMode', 'system'),
       isDarkMode: _getBool(themeConfigData, 'theme-darkMode', false),
       selectedTheme: selectedTheme,
-      customThemes: customThemes,
       selectedThemeCode: selectedThemeCode,
     );
-  }
-
-  /// 根据主题代码推断主题标题
-  static String _getThemeTitle(String code) {
-    final themeNames = {
-      'classic-theme-1': '你好西大人',
-      'classic-theme-2': '夏日晚霞',
-      'classic-theme-3': '古典优雅',
-      'classic-theme-4': '现代简约',
-      'classic-theme-5': '森林绿意',
-      'custom': '自定义主题',
-    };
-    return themeNames[code] ?? '未命名主题';
   }
 
   /// 创建用户偏好配置

@@ -3385,7 +3385,7 @@ mso-bidi-font-family:宋体;color:#666666;mso-ansi-language:EN-US'>”</span></s
 				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169167'><span
 						style='mso-bookmark:_Hlk177169559'><span lang=EN-US style='font-size:11.0pt;
 font-family:"Helvetica Neue";mso-fareast-font-family:宋体;mso-bidi-font-family:
-宋体;color:#666666;mso-ansi-language:EN-US'>WeChat App</span></span></span></span><span
+宋体;color:#666666;mso-ansi-language:EN-US'>App</span></span></span></span><span
 				style='mso-bookmark:_Hlk177169768'><span style='mso-bookmark:_Hlk177169167'><span
 						style='mso-bookmark:_Hlk177169559'><span style='font-size:11.0pt;font-family:
 宋体;mso-ascii-font-family:"Helvetica Neue";mso-hansi-font-family:"Helvetica Neue";

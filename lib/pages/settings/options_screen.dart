@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/config/providers/unified_config_service_provider.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 import '../../core/constants/route_constants.dart';
 
 /// 刷新所有配置相关的 Provider
@@ -263,41 +263,15 @@ class OptionsScreen extends ConsumerWidget {
 
       if (hasChanges) {
         // 如果本地配置已修改，显示确认对话框
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) => Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: const Text('覆盖本地配置？'),
-                  content: const Text('检测到本地配置已被修改。\n下载服务器配置将覆盖您的本地配置，是否继续？'),
-                  actions: [
-                    CupertinoDialogAction(
-                      isDestructiveAction: true,
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('取消'),
-                    ),
-                    CupertinoDialogAction(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('继续下载'),
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: const Text('覆盖本地配置？'),
-                  content: const Text('检测到本地配置已被修改。\n下载服务器配置将覆盖您的本地配置，是否继续？'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('取消'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('继续下载'),
-                    ),
-                  ],
-                ),
+        final result = await ThemeAwareDialog.showConfirmDialog(
+          context,
+          title: '覆盖本地配置？',
+          message: '检测到本地配置已被修改。\n下载服务器配置将覆盖您的本地配置，是否继续？',
+          positiveText: '继续下载',
+          negativeText: '取消',
         );
 
-        if (confirmed != true) {
+        if (!result) {
           return; // 用户取消
         }
       }
@@ -305,6 +279,7 @@ class OptionsScreen extends ConsumerWidget {
       if (!context.mounted) return;
 
       // 显示加载对话框
+      final isDarkMode = ref.read(effectiveIsDarkModeProvider);
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -318,12 +293,25 @@ class OptionsScreen extends ConsumerWidget {
                   ],
                 ),
               )
-            : const AlertDialog(
+            : AlertDialog(
+                backgroundColor: isDarkMode
+                    ? const Color(0xFF202125)
+                    : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
                 content: Row(
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(width: 16),
-                    Text('正在从服务器下载配置...'),
+                    const CircularProgressIndicator(),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        '正在从服务器下载配置...',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -375,6 +363,7 @@ class OptionsScreen extends ConsumerWidget {
   Future<void> _uploadConfig(BuildContext context, WidgetRef ref) async {
     try {
       // 显示加载对话框
+      final isDarkMode = ref.read(effectiveIsDarkModeProvider);
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -388,12 +377,25 @@ class OptionsScreen extends ConsumerWidget {
                   ],
                 ),
               )
-            : const AlertDialog(
+            : AlertDialog(
+                backgroundColor: isDarkMode
+                    ? const Color(0xFF202125)
+                    : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
                 content: Row(
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(width: 16),
-                    Text('正在上传配置到服务器...'),
+                    const CircularProgressIndicator(),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        '正在上传配置到服务器...',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -440,14 +442,15 @@ class OptionsScreen extends ConsumerWidget {
   }
 
   void _showLogoutDialog(BuildContext context, WidgetRef ref) async {
-    final result = await FlutterPlatformAlert.showCustomAlert(
-      windowTitle: '提示',
-      text: '确定退出登录吗？',
-      positiveButtonTitle: '确定',
-      negativeButtonTitle: '取消',
+    final result = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '提示',
+      message: '确定退出登录吗？',
+      positiveText: '确定',
+      negativeText: '取消',
     );
 
-    if (result == CustomButton.positiveButton) {
+    if (result) {
       await _logout(context, ref);
     }
   }

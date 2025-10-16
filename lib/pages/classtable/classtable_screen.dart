@@ -409,7 +409,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               appBar: ThemeAwareAppBar(
                 title: _formatAppBarTitle(),
                 transparent: true,
-                foregroundColor: const Color(0xFFBFC2C9),
+                foregroundColor: isDarkMode ? const Color(0xFFBFC2C9) : currentTheme.foregColor,
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.calendar_month),

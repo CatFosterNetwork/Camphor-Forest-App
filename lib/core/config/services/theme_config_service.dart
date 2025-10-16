@@ -117,25 +117,31 @@ class ThemeConfigService {
     // 如果没有提供主题对象，尝试查找
     if (finalTheme == null) {
       if (ThemeUtils.isCustomTheme(themeCode)) {
-        // 从自定义主题列表查找
-        finalTheme = currentConfig.getCustomThemeByCode(themeCode);
-        debugPrint(
-          'ThemeConfigService: 从列表查找自定义主题 $themeCode: ${finalTheme != null ? "找到" : "未找到"}',
-        );
+        // 从 CustomThemeService 单一数据源查找
+        final customThemes = await _customThemeService.getCustomThemes();
+        try {
+          finalTheme = customThemes.firstWhere((t) => t.code == themeCode);
+          debugPrint(
+            'ThemeConfigService: 从 CustomThemeService 查找自定义主题 $themeCode: 找到',
+          );
+        } catch (e) {
+          debugPrint(
+            'ThemeConfigService: 从 CustomThemeService 查找自定义主题 $themeCode: 未找到',
+          );
+        }
       }
     }
 
-    // 如果是自定义主题且提供了主题对象，需要同步更新 customThemes 列表
-    ThemeConfig configToUpdate = currentConfig;
+    // 如果是自定义主题且提供了主题对象，保存到 CustomThemeService
     if (finalTheme != null && ThemeUtils.isCustomTheme(themeCode)) {
-      configToUpdate = currentConfig.addOrUpdateCustomTheme(finalTheme);
+      await _customThemeService.saveCustomTheme(finalTheme);
       debugPrint(
-        'ThemeConfigService: 已同步更新 customThemes 列表中的主题: ${finalTheme.title}',
+        'ThemeConfigService: 已保存自定义主题到 CustomThemeService: ${finalTheme.title}',
       );
     }
 
     // 统一更新配置
-    final updatedConfig = configToUpdate.copyWith(
+    final updatedConfig = currentConfig.copyWith(
       selectedThemeCode: themeCode,
       selectedTheme: finalTheme,
       clearSelectedTheme: finalTheme == null,
@@ -156,13 +162,15 @@ class ThemeConfigService {
   /// 设置自定义主题（添加或更新）
   Future<ThemeConfig> setCustomTheme(Theme customTheme) async {
     final currentConfig = await loadConfig();
-    // 添加或更新自定义主题到列表
-    final updatedConfig = currentConfig
-        .addOrUpdateCustomTheme(customTheme)
-        .copyWith(
-          selectedThemeCode: customTheme.code,
-          clearSelectedTheme: true, // 清除预设主题
-        );
+
+    // 保存到 CustomThemeService（单一数据源）
+    await _customThemeService.saveCustomTheme(customTheme);
+
+    // 更新配置
+    final updatedConfig = currentConfig.copyWith(
+      selectedThemeCode: customTheme.code,
+      clearSelectedTheme: true, // 清除预设主题
+    );
     await saveConfig(updatedConfig);
     debugPrint('ThemeConfigService: 设置自定义主题 ${customTheme.code}');
     return updatedConfig;
@@ -190,14 +198,19 @@ class ThemeConfigService {
   Future<Theme?> getThemeByCode(String themeCode) async {
     final config = await loadConfig();
 
-    // 如果是自定义主题，从 customThemes 列表中查找
+    // 如果是自定义主题，从 CustomThemeService 单一数据源查找
     if (ThemeUtils.isCustomTheme(themeCode)) {
-      return config.getCustomThemeByCode(themeCode);
+      final customThemes = await _customThemeService.getCustomThemes();
+      try {
+        return customThemes.firstWhere((t) => t.code == themeCode);
+      } catch (e) {
+        return null;
+      }
     }
 
     // 如果是当前选中的主题，直接返回
     if (themeCode == config.selectedThemeCode) {
-      return config.currentTheme;
+      return config.selectedTheme;
     }
 
     // 从主题列表中查找
@@ -267,18 +280,21 @@ class ThemeConfigService {
   Future<Theme?> getCurrentTheme() async {
     final config = await loadConfig();
 
-    // 使用 ThemeConfig 的 currentTheme 属性
-    if (config.currentTheme != null) {
-      return config.currentTheme;
-    }
-
-    // 如果配置中没有主题，尝试从文件加载
+    // 如果使用自定义主题，从 CustomThemeService 获取
     if (config.isUsingCustomTheme) {
-      return await loadCustomThemeFromFile();
+      final customThemes = await _customThemeService.getCustomThemes();
+      try {
+        return customThemes.firstWhere(
+          (t) => t.code == config.selectedThemeCode,
+        );
+      } catch (e) {
+        debugPrint('ThemeConfigService: 未找到自定义主题 ${config.selectedThemeCode}');
+        return null;
+      }
     }
 
-    // 根据主题代码获取主题
-    return await getThemeByCode(config.selectedThemeCode);
+    // 如果使用预设主题，直接返回 selectedTheme
+    return config.selectedTheme;
   }
 
   /// 切换深色/浅色模式

@@ -74,6 +74,7 @@ dependencies:
   sensors_plus: ^6.0.1
   web_socket_channel: ^3.0.3
   home_widget: ^0.8.1
+  dynamic_color: ^1.7.0
 
 
 dev_dependencies:

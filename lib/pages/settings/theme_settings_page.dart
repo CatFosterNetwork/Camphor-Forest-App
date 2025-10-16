@@ -1,11 +1,10 @@
 // lib/pages/settings/theme_settings_page.dart
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 import '../../core/config/providers/theme_config_provider.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 
 import '../../core/models/theme_model.dart' as theme_model;
 import '../../core/constants/route_constants.dart';
@@ -1036,62 +1035,24 @@ class ThemeSettingsPage extends ConsumerWidget {
   ) async {
     // 检查是否为正在使用的主题
     final selectedThemeCode = ref.read(selectedThemeCodeProvider);
+
     if (selectedThemeCode == theme.code) {
       // 正在使用中，不允许删除
-      if (Platform.isIOS) {
-        await FlutterPlatformAlert.showCustomAlert(
-          windowTitle: '无法删除',
-          text: '主题"${theme.title}"正在使用中，无法删除。\n请先切换到其他主题。',
-          positiveButtonTitle: '确定',
-        );
-      } else {
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('无法删除'),
-            content: Text('主题"${theme.title}"正在使用中，无法删除。\n请先切换到其他主题。'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('确定'),
-              ),
-            ],
-          ),
-        );
-      }
+      await ThemeAwareDialog.showAlertDialog(
+        context,
+        title: '无法删除',
+        message: '主题"${theme.title}"正在使用中，无法删除。\n请先切换到其他主题。',
+      );
       return; // 直接返回，不执行删除
     }
 
-    bool result = false;
-
-    if (Platform.isIOS) {
-      final alertResult = await FlutterPlatformAlert.showCustomAlert(
-        windowTitle: '删除主题',
-        text: '确定要删除主题"${theme.title}"吗？\n此操作不可撤销。',
-        positiveButtonTitle: '删除',
-        negativeButtonTitle: '取消',
-      );
-      result = alertResult == CustomButton.positiveButton;
-    } else {
-      final dialogResult = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('删除主题'),
-          content: Text('确定要删除主题"${theme.title}"吗？\n此操作不可撤销。'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('删除', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        ),
-      );
-      result = dialogResult == true;
-    }
+    final result = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '删除主题',
+      message: '确定要删除主题"${theme.title}"吗？\n此操作不可撤销。',
+      positiveText: '删除',
+      negativeText: '取消',
+    );
 
     if (result) {
       try {

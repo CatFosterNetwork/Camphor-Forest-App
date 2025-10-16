@@ -460,15 +460,29 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
       // 2. 显示上传进度
       if (context.mounted) {
+        final isDarkMode = ref.read(effectiveIsDarkModeProvider);
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => const AlertDialog(
+          builder: (context) => AlertDialog(
+            backgroundColor: isDarkMode
+                ? const Color(0xFF202125)
+                : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
             content: Row(
               children: [
-                CircularProgressIndicator(),
-                SizedBox(width: 16),
-                Text('正在上传头像...'),
+                const CircularProgressIndicator(),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    '正在上传头像...',
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -696,23 +710,54 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
+
     return AlertDialog(
-      title: Text('编辑${widget.field}'),
+      backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      title: Text(
+        '编辑${widget.field}',
+        style: TextStyle(
+          color: isDarkMode ? Colors.white : Colors.black,
+          fontSize: 24,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       content: TextField(
         controller: _controller,
         enabled: !_isSaving, // 保存时禁用输入
+        style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         decoration: InputDecoration(
           labelText: widget.field,
+          labelStyle: TextStyle(
+            color: isDarkMode ? Colors.white70 : Colors.black54,
+          ),
           border: const OutlineInputBorder(),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: isDarkMode ? Colors.white30 : Colors.black26,
+            ),
+          ),
         ),
         keyboardType: widget.field == '邮箱'
             ? TextInputType.emailAddress
             : TextInputType.text,
       ),
+      actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
       actions: [
         TextButton(
           onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: const Text('取消'),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          child: Text(
+            '取消',
+            style: TextStyle(
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
         ElevatedButton(
           onPressed: _isSaving ? null : _saveField,

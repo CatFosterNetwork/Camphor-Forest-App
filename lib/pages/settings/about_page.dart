@@ -298,11 +298,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         title: Text(
           '官方Q群',
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
             color: isDarkMode ? Colors.white : Colors.black,
           ),
         ),
@@ -395,12 +396,20 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             ),
           ],
         ),
+        actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
             child: Text(
               '关闭',
-              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+              style: TextStyle(
+                color: isDarkMode ? Colors.white70 : Colors.black87,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -770,10 +779,11 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     } else {
       return AlertDialog(
         backgroundColor: isDarkMode ? const Color(0xFF202125) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(color: Colors.blue),
+            const CircularProgressIndicator(color: Colors.blue),
             const SizedBox(height: 16),
             Text(
               '正在保存二维码...',
