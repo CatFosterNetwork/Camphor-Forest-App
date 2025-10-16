@@ -1,0 +1,246 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # 获取版本信息
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+      build_number: ${{ steps.get_version.outputs.build_number }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 获取版本号
+        id: get_version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | sed 's/+.*//')
+          BUILD_NUMBER=$(grep 'version:' pubspec.yaml | sed 's/version: //' | sed 's/.*+//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          echo "完整版本: $VERSION+$BUILD_NUMBER"
+
+  # 构建 Android 版本
+  build-android:
+    runs-on: ubuntu-latest
+    needs: version
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Java 环境
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 设置 Flutter 环境
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.3'
+          channel: 'stable'
+          cache: true
+
+      - name: 获取 Flutter 依赖
+        run: flutter pub get
+
+      - name: 运行代码生成
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: 解码 Android 签名密钥
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/release.keystore
+
+      - name: 创建 key.properties 文件
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          storeFile=release.keystore
+          EOF
+
+      - name: 构建 Android APK
+        run: flutter build apk --release --split-per-abi
+
+      - name: 上传 APK 构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: |
+            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-x86_64-release.apk
+
+  # 构建 iOS 版本
+  build-ios:
+    runs-on: macos-latest
+    needs: version
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Flutter 环境
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.3'
+          channel: 'stable'
+          cache: true
+
+      - name: 获取 Flutter 依赖
+        run: flutter pub get
+
+      - name: 运行代码生成
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: 安装 CocoaPods 依赖
+        run: |
+          cd ios
+          pod install
+
+      - name: 导入 Apple 证书和配置文件
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.APPLE_P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # 创建变量
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # 导入证书和配置文件到临时文件
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+
+          # 创建临时 keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # 导入证书到 keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # 应用配置文件
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+      - name: 构建 iOS IPA
+        run: |
+          flutter build ios --release --no-codesign
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath $RUNNER_TEMP/Runner.xcarchive \
+            -sdk iphoneos \
+            -destination generic/platform=iOS \
+            clean archive \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="${{ secrets.APPLE_CODE_SIGN_IDENTITY }}" \
+            PROVISIONING_PROFILE_SPECIFIER="${{ secrets.APPLE_PROVISIONING_PROFILE_SPECIFIER }}" \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
+          
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/Runner.xcarchive \
+            -exportOptionsPlist ios/ExportOptions.plist \
+            -exportPath $RUNNER_TEMP/ipa \
+            -allowProvisioningUpdates
+
+      - name: 上传 IPA 构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: ${{ runner.temp }}/ipa/Runner.ipa
+
+      - name: 清理 keychain
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db || true
+
+  # 发布到 App Store
+  publish-ios:
+    runs-on: macos-latest
+    needs: [version, build-ios]
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 下载 IPA 文件
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-ipa
+          path: ./ipa
+
+      # 或者使用 App Store Connect API Key (推荐)
+      - name: 上传到 App Store Connect (使用 API Key)
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          echo "$API_KEY" > api_key.p8
+          xcrun altool --upload-app \
+            --type ios \
+            --file ./ipa/Runner.ipa \
+            --apiKey "$API_KEY_ID" \
+            --apiIssuer "$API_ISSUER_ID"
+
+  # 创建 GitHub Release
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [version, build-android, build-ios, publish-ios]
+    permissions:
+      contents: write
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 下载所有构建产物
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.version.outputs.version }}
+          name: Release v${{ needs.version.outputs.version }}
+          body: |
+            ## 📱 Camphor Forest v${{ needs.version.outputs.version }}
+            
+            ### 新版本发布
+            
+            构建编号: ${{ needs.version.outputs.build_number }}
+            提交: ${{ github.sha }}
+            
+            ### 📦 下载
+            
+            #### Android
+            - APK (ARM64): `app-arm64-v8a-release.apk`
+            - APK (ARMv7): `app-armeabi-v7a-release.apk`
+            - APK (x86_64): `app-x86_64-release.apk`
+            - App Bundle: `app-release.aab`
+            
+            #### iOS
+            - IPA 文件已上传至 App Store Connect
+            
+            ### 📝 更新日志
+            
+            查看完整更新日志，请访问提交历史。
+            
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/android-apk/*.apk
+            artifacts/android-aab/*.aab
+            artifacts/ios-ipa/*.ipa
+
