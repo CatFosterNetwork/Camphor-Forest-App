@@ -87,8 +87,9 @@ class WebSocketManager {
     try {
       if (event is String && event.contains('|')) {
         // 增加长度检查，避免RangeError
-        final logMessage =
-            event.length > 100 ? '${event.substring(0, 100)}...' : event;
+        final logMessage = event.length > 100
+            ? '${event.substring(0, 100)}...'
+            : event;
         debugPrint('📥 [WebSocket管理器] 收到有效数据: $logMessage');
         final parts = event.split('|');
         if (parts.length < 2) return;
@@ -160,7 +161,9 @@ final busLinesProvider = FutureProvider<List<BusLine>>((ref) async {
 // 全局WebSocket管理器实例
 WebSocketManager? _globalWebSocketManager;
 
-final realTimeBusDataProvider = StreamProvider<List<BusData>>((ref) async* {
+final realTimeBusDataProvider = StreamProvider.autoDispose<List<BusData>>((
+  ref,
+) async* {
   debugPrint('🔄 [Provider] realTimeBusDataProvider 被创建');
 
   // 创建或重用WebSocket管理器
@@ -172,8 +175,9 @@ final realTimeBusDataProvider = StreamProvider<List<BusData>>((ref) async* {
   }
 
   ref.onDispose(() {
-    debugPrint('🛑 [Provider] realTimeBusDataProvider 被销毁');
-    // 注意：这里不立即销毁管理器，让它继续运行以支持重连
+    debugPrint('🛑 [Provider] realTimeBusDataProvider 被销毁，释放 WebSocket 管理器');
+    _globalWebSocketManager?.dispose();
+    _globalWebSocketManager = null;
   });
 
   // 返回管理器的数据流
