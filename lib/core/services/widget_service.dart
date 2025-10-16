@@ -66,6 +66,7 @@ class WidgetService {
       await HomeWidget.updateWidget(
         name: _widgetName,
         androidName: _androidWidgetName,
+        iOSName: _widgetName,
       );
 
       debugPrint('✅ 课表小组件更新成功');
@@ -98,6 +99,7 @@ class WidgetService {
       await HomeWidget.updateWidget(
         name: _widgetName,
         androidName: _androidWidgetName,
+        iOSName: _widgetName,
       );
       debugPrint('✅ 课表小组件数据已清空');
     } catch (e) {
