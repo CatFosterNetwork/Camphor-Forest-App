@@ -37,6 +37,9 @@ final forceRefreshClassTableProvider =
       final repo = ref.watch(classTableRepositoryProvider);
       final baseTable = await repo.fetchRemote(params.xnm, params.xqm);
 
+      // 远程刷新后，确保基础课表数据 Provider 重新拉取更新后的本地缓存
+      ref.invalidate(_baseClassTableProvider(params));
+
       return await _enhanceClassTableWithGradeAndCustomData(
         ref,
         baseTable,
