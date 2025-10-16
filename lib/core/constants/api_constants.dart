@@ -57,8 +57,8 @@ class ApiConstants {
   static String todoById(int id) => '$todo/$id';
 
   // 统一超时配置
-  static const int connectTimeout = 10000;
-  static const int receiveTimeout = 10000;
+  static const int connectTimeout = 60000;
+  static const int receiveTimeout = 60000;
 
   // 全局默认请求头
   static const Map<String, String> defaultHeaders = {
