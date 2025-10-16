@@ -50,24 +50,22 @@ final sharedPreferencesProvider = Provider<SharedPreferences>(
   ),
 );
 
-/// 5. 统一配置服务（用于UserService）- 重新导出新配置系统的provider
-// 注意：实际定义在 unified_config_service_provider.dart
-
-/// 6. UserService（使用新的配置系统）
-final userServiceProvider = FutureProvider<UserService>((ref) async {
-  final storage = ref.watch(secureStorageProvider);
-  // 动态导入配置服务，避免循环依赖
-  final configService = await UnifiedConfigService.create(
-    ref.watch(sharedPreferencesProvider), 
-    ref.watch(customThemeServiceProvider),
-  );
-  final api = ref.watch(apiServiceProvider);
-  return UserService(storage, configService, api);
-});
-
-/// 7. 自定义主题服务
+/// 5. 自定义主题服务
 final customThemeServiceProvider = Provider<CustomThemeService>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return CustomThemeService(prefs);
 });
 
+/// 6. UserService
+/// 配置服务的 Provider 定义在 unified_config_service_provider.dart
+final userServiceProvider = FutureProvider<UserService>((ref) async {
+  final storage = ref.watch(secureStorageProvider);
+  final api = ref.watch(apiServiceProvider);
+  // 通过工厂方法创建配置服务，避免 Provider 循环依赖
+  final configService = await UnifiedConfigService.create(
+    ref.watch(sharedPreferencesProvider),
+    ref.watch(customThemeServiceProvider),
+    api,
+  );
+  return UserService(storage, configService, api);
+});

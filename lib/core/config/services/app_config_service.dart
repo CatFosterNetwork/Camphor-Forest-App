@@ -10,26 +10,42 @@ import '../models/app_config.dart';
 class AppConfigService {
   static const String _configKey = 'app_config';
   static const String _legacyConfigKey = 'config'; // 用于迁移旧配置
-  
+
   final SharedPreferences _prefs;
+
+  /// 内存缓存，减少磁盘读取
+  AppConfig? _cachedConfig;
 
   AppConfigService(this._prefs);
 
   /// 加载应用配置
-  Future<AppConfig> loadConfig() async {
+  /// [forceRefresh] 为 true 时强制从磁盘重新加载
+  Future<AppConfig> loadConfig({bool forceRefresh = false}) async {
     try {
+      // 如果有缓存且不强制刷新，直接返回缓存
+      if (_cachedConfig != null && !forceRefresh) {
+        debugPrint('AppConfigService: 从缓存加载应用配置');
+        return _cachedConfig!;
+      }
+
+      debugPrint('AppConfigService: 开始从磁盘加载应用配置...');
+
       // 首先尝试加载新格式的配置
       final configJson = _prefs.getString(_configKey);
       if (configJson != null) {
         final config = AppConfig.fromJson(jsonDecode(configJson));
+        _cachedConfig = config; // 更新缓存
         debugPrint('AppConfigService: 成功加载应用配置');
         return config;
       }
-      
+
       // 如果新配置不存在，尝试从旧配置迁移
-      return await _migrateFromLegacyConfig();
+      final config = await _migrateFromLegacyConfig();
+      _cachedConfig = config; // 更新缓存
+      return config;
     } catch (e) {
       debugPrint('AppConfigService: 加载应用配置失败，使用默认配置: $e');
+      _cachedConfig = null; // 清除无效缓存
       return AppConfig.defaultConfig;
     }
   }
@@ -37,11 +53,14 @@ class AppConfigService {
   /// 保存应用配置
   Future<void> saveConfig(AppConfig config) async {
     try {
+      _cachedConfig = config; // 先更新缓存
+
       final configJson = jsonEncode(config.toJson());
       await _prefs.setString(_configKey, configJson);
-      debugPrint('AppConfigService: 应用配置已保存');
+      debugPrint('AppConfigService: 应用配置已保存（已更新缓存）');
     } catch (e) {
       debugPrint('AppConfigService: 保存应用配置失败: $e');
+      _cachedConfig = null; // 保存失败时清除缓存
       throw Exception('保存应用配置失败: $e');
     }
   }
@@ -58,11 +77,11 @@ class AppConfigService {
   /// 批量更新配置项
   Future<AppConfig> updateMultipleItems(Map<String, bool> updates) async {
     var currentConfig = await loadConfig();
-    
+
     for (final entry in updates.entries) {
       currentConfig = _updateConfigByKey(currentConfig, entry.key, entry.value);
     }
-    
+
     await saveConfig(currentConfig);
     debugPrint('AppConfigService: 批量更新${updates.length}个配置项');
     return currentConfig;
@@ -104,21 +123,22 @@ class AppConfigService {
     try {
       final legacyConfigJson = _prefs.getString(_legacyConfigKey);
       if (legacyConfigJson != null) {
-        final legacyConfig = jsonDecode(legacyConfigJson) as Map<String, dynamic>;
-        
+        final legacyConfig =
+            jsonDecode(legacyConfigJson) as Map<String, dynamic>;
+
         // 创建新的AppConfig，只提取应用配置相关的字段
         final appConfig = AppConfig.fromJson(legacyConfig);
-        
+
         // 保存到新的存储键
         await saveConfig(appConfig);
-        
+
         debugPrint('AppConfigService: 成功从旧配置迁移应用设置');
         return appConfig;
       }
     } catch (e) {
       debugPrint('AppConfigService: 旧配置迁移失败: $e');
     }
-    
+
     // 如果迁移失败，返回默认配置
     debugPrint('AppConfigService: 使用默认应用配置');
     return AppConfig.defaultConfig;
@@ -142,7 +162,7 @@ class AppConfigService {
         return config.copyWith(showGrades: value);
       case 'index-showIndexServices':
         return config.copyWith(showIndexServices: value);
-        
+
       // 森林功能设置
       case 'forest-showFleaMarket':
         return config.copyWith(showFleaMarket: value);
@@ -160,13 +180,13 @@ class AppConfigService {
         return config.copyWith(showLifeService: value);
       case 'forest-showFeedback':
         return config.copyWith(showFeedback: value);
-        
+
       // 应用基础设置
       case 'autoSync':
         return config.copyWith(autoSync: value);
       case 'autoRenewalCheckInService':
         return config.copyWith(autoRenewalCheckInService: value);
-        
+
       default:
         debugPrint('AppConfigService: 未知的配置键: $key');
         return config;
@@ -179,7 +199,7 @@ class AppConfigService {
   Future<bool> isForestFeatureEnabled(String featureAbbr) async {
     final config = await loadConfig();
     final key = 'forest-show$featureAbbr';
-    
+
     switch (key) {
       case 'forest-showFleaMarket':
         return config.showFleaMarket;
@@ -205,7 +225,7 @@ class AppConfigService {
   /// 检查特定首页功能是否启用
   Future<bool> isIndexFeatureEnabled(String featureKey) async {
     final config = await loadConfig();
-    
+
     switch (featureKey) {
       case 'index-showFinishedTodo':
         return config.showFinishedTodo;

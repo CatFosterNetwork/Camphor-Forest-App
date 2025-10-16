@@ -128,4 +128,44 @@ class CustomThemeService {
 
     return code;
   }
+
+  /// 清空所有自定义主题
+  Future<bool> clearAllCustomThemes() async {
+    try {
+      return await _prefs.remove(_customThemesKey);
+    } catch (e) {
+      debugPrint('清空所有自定义主题失败: $e');
+      return false;
+    }
+  }
+
+  /// 替换所有自定义主题（用于从服务器下载配置）
+  Future<bool> replaceAllCustomThemes(List<Theme> themes) async {
+    try {
+      debugPrint('CustomThemeService: 准备替换所有自定义主题，共 ${themes.length} 个');
+
+      final themesJsonString = json.encode(
+        themes.map((t) => t.toJson()).toList(),
+      );
+
+      final result = await _prefs.setString(_customThemesKey, themesJsonString);
+
+      if (result) {
+        debugPrint('CustomThemeService: ✅ 自定义主题保存成功');
+        // 验证保存结果
+        final saved = await getCustomThemes();
+        debugPrint('CustomThemeService: 验证读取 - 共 ${saved.length} 个主题');
+        for (final theme in saved) {
+          debugPrint('  - ${theme.title} (${theme.code})');
+        }
+      } else {
+        debugPrint('CustomThemeService: ❌ 自定义主题保存失败');
+      }
+
+      return result;
+    } catch (e) {
+      debugPrint('CustomThemeService: 替换所有自定义主题失败: $e');
+      return false;
+    }
+  }
 }

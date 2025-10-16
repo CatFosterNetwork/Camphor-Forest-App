@@ -9,9 +9,18 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
+import '../../core/config/providers/unified_config_service_provider.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
 import '../../core/constants/route_constants.dart';
+
+/// 刷新所有配置相关的 Provider
+void _refreshAllConfigProviders(WidgetRef ref) {
+  ref.invalidate(configInitializationProvider);
+  ref.invalidate(themeConfigNotifierProvider);
+  ref.invalidate(selectedThemeCodeNotifierProvider);
+  ref.invalidate(customThemeManagerProvider);
+}
 
 class OptionsScreen extends ConsumerWidget {
   const OptionsScreen({super.key});
@@ -248,6 +257,53 @@ class OptionsScreen extends ConsumerWidget {
 
   Future<void> _downloadConfig(BuildContext context, WidgetRef ref) async {
     try {
+      // 检查本地配置是否已修改
+      final service = await ref.read(unifiedConfigServiceProvider.future);
+      final hasChanges = await service.hasLocalConfigChanges();
+
+      if (hasChanges) {
+        // 如果本地配置已修改，显示确认对话框
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: const Text('覆盖本地配置？'),
+                  content: const Text('检测到本地配置已被修改。\n下载服务器配置将覆盖您的本地配置，是否继续？'),
+                  actions: [
+                    CupertinoDialogAction(
+                      isDestructiveAction: true,
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('取消'),
+                    ),
+                    CupertinoDialogAction(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('继续下载'),
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: const Text('覆盖本地配置？'),
+                  content: const Text('检测到本地配置已被修改。\n下载服务器配置将覆盖您的本地配置，是否继续？'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('取消'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('继续下载'),
+                    ),
+                  ],
+                ),
+        );
+
+        if (confirmed != true) {
+          return; // 用户取消
+        }
+      }
+
+      if (!context.mounted) return;
+
       // 显示加载对话框
       showDialog(
         context: context,
@@ -258,7 +314,7 @@ class OptionsScreen extends ConsumerWidget {
                   children: [
                     CupertinoActivityIndicator(),
                     SizedBox(width: 16),
-                    Text('正在下载...'),
+                    Text('正在从服务器下载配置...'),
                   ],
                 ),
               )
@@ -267,25 +323,39 @@ class OptionsScreen extends ConsumerWidget {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(width: 16),
-                    Text('正在下载...'),
+                    Text('正在从服务器下载配置...'),
                   ],
                 ),
               ),
       );
 
-      // 模拟下载配置
-      await Future.delayed(const Duration(seconds: 2));
+      // 从服务器下载配置
+      final result = await service.syncFromServer();
 
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('下载成功'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        if (result.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('配置下载成功'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+
+          debugPrint('OptionsScreen: 配置下载成功，刷新所有配置 Provider');
+          _refreshAllConfigProviders(ref);
+          debugPrint('OptionsScreen: 所有配置 Provider 刷新完成');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('配置下载失败: ${result.message}'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (context.mounted) {
@@ -314,7 +384,7 @@ class OptionsScreen extends ConsumerWidget {
                   children: [
                     CupertinoActivityIndicator(),
                     SizedBox(width: 16),
-                    Text('正在上传...'),
+                    Text('正在上传配置到服务器...'),
                   ],
                 ),
               )
@@ -323,25 +393,36 @@ class OptionsScreen extends ConsumerWidget {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(width: 16),
-                    Text('正在上传...'),
+                    Text('正在上传配置到服务器...'),
                   ],
                 ),
               ),
       );
 
-      // 模拟上传配置
-      await Future.delayed(const Duration(seconds: 2));
+      // 上传配置到服务器
+      final service = await ref.read(unifiedConfigServiceProvider.future);
+      final success = await service.syncToServer();
 
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('上传成功'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('配置上传成功'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('配置上传失败，请稍后重试'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (context.mounted) {

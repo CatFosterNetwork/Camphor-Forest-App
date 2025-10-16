@@ -29,8 +29,20 @@ class Theme {
     required this.colorList,
   });
 
+  /// 判断是否为预设主题
+  /// 预设主题的 code 以 'classic-theme-' 开头
+  bool get isPreset => code.startsWith('classic-theme-');
+
+  /// 判断是否为自定义主题
+  /// 自定义主题是非预设主题
+  bool get isCustom => !isPreset;
+
   factory Theme.fromJson(Map<String, dynamic> json) {
-    Color parseRgb(String rgb) {
+    Color parseRgb(String? rgb) {
+      if (rgb == null || rgb.isEmpty) {
+        return const Color(0xFF5A76D0); // 默认蓝色
+      }
+
       try {
         // 处理多种RGB格式：
         // "rgb(35, 88, 168)"
@@ -65,22 +77,40 @@ class Theme {
     }
 
     return Theme(
-      code: json['code'] as String,
-      title: json['title'] as String,
-      img: json['img'] as String,
-      indexBackgroundBlur: json['indexBackgroundBlur'] as bool,
-      indexBackgroundImg: json['indexBackgroundImg'] as String,
-      indexMessageBoxBlur: json['indexMessageBoxBlur'] as bool,
-      backColor: parseRgb(json['backRGB'] as String),
-      foregColor: parseRgb(json['foregRGB'] as String),
-      weekColor: parseRgb(json['weekRGB'] as String),
-      classTableBackgroundBlur: json['classTableBackgroundBlur'] as bool,
-      colorList: (json['colorList'] as List<dynamic>)
-          .map(
-            (hex) =>
-                Color(int.parse((hex as String).replaceFirst('#', '0xff'))),
-          )
-          .toList(),
+      code: json['code'] as String? ?? 'unknown-theme',
+      title: json['title'] as String? ?? '未命名主题',
+      img: json['img'] as String? ?? '',
+      indexBackgroundBlur: json['indexBackgroundBlur'] as bool? ?? false,
+      indexBackgroundImg: json['indexBackgroundImg'] as String? ?? '',
+      indexMessageBoxBlur: json['indexMessageBoxBlur'] as bool? ?? false,
+      backColor: parseRgb(json['backRGB'] as String?),
+      foregColor: parseRgb(json['foregRGB'] as String?),
+      weekColor: parseRgb(json['weekRGB'] as String?),
+      classTableBackgroundBlur:
+          json['classTableBackgroundBlur'] as bool? ?? false,
+      colorList:
+          (json['colorList'] as List<dynamic>?)?.map((hex) {
+            try {
+              return Color(
+                int.parse((hex as String).replaceFirst('#', '0xff')),
+              );
+            } catch (e) {
+              return const Color(0xFF5A76D0); // 解析失败时返回默认颜色
+            }
+          }).toList() ??
+          // 默认渐变色列表
+          [
+            const Color(0xFF2255A3),
+            const Color(0xFF2358A8),
+            const Color(0xFF275BAA),
+            const Color(0xFF2C5FAB),
+            const Color(0xFF3767B0),
+            const Color(0xFF3969B1),
+            const Color(0xFF3D6CB2),
+            const Color(0xFF426FB4),
+            const Color(0xFF4673B6),
+            const Color(0xFF4A76B7),
+          ],
     );
   }
 

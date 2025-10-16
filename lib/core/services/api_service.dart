@@ -286,10 +286,7 @@ class ApiService {
   }) => _http.get<dynamic>(
     '${ApiConstants.feedback}/$id/reply',
     converter: (d) => d,
-    queryParameters: {
-      'pageNo': pageNo,
-      'pageSize': pageSize,
-    },
+    queryParameters: {'pageNo': pageNo, 'pageSize': pageSize},
   );
 
   Future<Map<String, dynamic>> addFeedbackReply({
@@ -414,7 +411,7 @@ class ApiService {
       // 2. 构造 FormData
       debugPrint('📦 第3步：构造FormData...');
       final formData = FormData.fromMap({
-        'key': ossFilePath, // 注意：这里应该是完整的文件路径
+        'key': ossFilePath,
         'policy': policy,
         'q-ak': ak,
         'q-sign-algorithm': algorithm,
@@ -444,7 +441,7 @@ class ApiService {
       debugPrint('🎨 Pic-Operations: $picOperations');
       debugPrint('🌐 上传URL: ${ApiConstants.ossUrl}');
 
-      // 4. 直接使用 Dio 进行文件上传，而不是通过封装的 _http
+      // 3. 直接使用 Dio 进行文件上传
       final dio = (_http as dynamic).dio as Dio;
       final response = await dio.post(
         ApiConstants.ossUrl,

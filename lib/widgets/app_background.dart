@@ -43,10 +43,10 @@ class AppBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> layers = [];
-    
+
     // 确定是否为深色模式
-    final effectiveIsDarkMode = isDarkMode ?? 
-        (Theme.of(context).brightness == Brightness.dark);
+    final effectiveIsDarkMode =
+        isDarkMode ?? (Theme.of(context).brightness == Brightness.dark);
 
     // 深色模式下使用纯色背景
     if (effectiveIsDarkMode) {
@@ -56,9 +56,12 @@ class AppBackground extends StatelessWidget {
       debugPrint('AppBackground: 浅色模式，显示背景图片: $imageUrl');
       // 浅色模式下正常显示背景图片
       if (imageUrl != null && imageUrl!.isNotEmpty) {
-        // 确保URL以http开头，否则使用默认背景
-        if (imageUrl!.startsWith('http://') || imageUrl!.startsWith('https://')) {
-          debugPrint('AppBackground: 使用网络图片: $imageUrl');
+        // 支持网络图片和本地文件路径
+        if (FadeBackground.isLocalPath(imageUrl!) ||
+            imageUrl!.startsWith('http://') ||
+            imageUrl!.startsWith('https://')) {
+          final isLocal = FadeBackground.isLocalPath(imageUrl!);
+          debugPrint('AppBackground: 使用${isLocal ? "本地" : "网络"}图片: $imageUrl');
           layers.add(FadeBackground(imageUrl!));
         } else {
           debugPrint('AppBackground: 无效的URL格式，使用默认背景: $imageUrl');
@@ -67,12 +70,12 @@ class AppBackground extends StatelessWidget {
       } else {
         layers.add(Container(color: Theme.of(context).colorScheme.surface));
       }
-      
+
       // 遮罩层（仅浅色模式）
       if (overlay) {
         layers.add(Container(color: overlayColor));
       }
-      
+
       // 为登录页面在浅色模式下添加额外的深色遮罩以提高对比度
       // 这样可以确保遮罩覆盖整个屏幕，包括状态栏区域
       if (addLightModeOverlay && !effectiveIsDarkMode) {
@@ -85,7 +88,7 @@ class AppBackground extends StatelessWidget {
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
             child: Container(
-                color: Colors.white.withAlpha(128), // 增加背景对比度
+              color: Colors.white.withAlpha(128), // 增加背景对比度
             ),
           ),
         );
@@ -96,10 +99,7 @@ class AppBackground extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
-      child: Stack(
-        fit: StackFit.expand, 
-        children: layers,
-      ),
+      child: Stack(fit: StackFit.expand, children: layers),
     );
   }
 }

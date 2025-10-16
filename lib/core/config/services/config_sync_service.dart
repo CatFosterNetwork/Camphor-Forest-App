@@ -23,7 +23,10 @@ class ConfigSyncService {
   }
 
   /// 上传配置到服务器
-  Future<void> uploadConfigs(Map<String, dynamic> configs) async {
+  /// 返回处理后的配置（图片路径已替换为URL）
+  Future<Map<String, dynamic>> uploadConfigs(
+    Map<String, dynamic> configs,
+  ) async {
     if (_apiService == null) {
       throw Exception('ApiService 未初始化');
     }
@@ -31,12 +34,15 @@ class ConfigSyncService {
     try {
       debugPrint('ConfigSyncService: 开始上传配置...');
 
-      // 处理配置中的图片上传
+      // 处理配置中的图片上传（本地路径会被替换为URL）
       final processedConfigs = await _processConfigImages(configs);
 
       // 上传到服务器
       await _apiService!.postConfigToServer(processedConfigs);
       debugPrint('ConfigSyncService: 配置上传成功');
+
+      // 返回处理后的配置，包含已上传的图片URL
+      return processedConfigs;
     } catch (e) {
       debugPrint('ConfigSyncService: 配置上传失败: $e');
       rethrow;
@@ -75,8 +81,9 @@ class ConfigSyncService {
 
     try {
       final user = await _secureStorage.read(key: 'userInfo');
-      final fileName = "${randomSeedRange(0, 1000000000000000, int.tryParse(user ?? '0'))}-${const Uuid().v4()}.${imagePath.split('.').last}";
-      
+      final fileName =
+          "${randomSeedRange(0, 1000000000000000, int.tryParse(user ?? '0'))}-${const Uuid().v4()}.${imagePath.split('.').last}";
+
       final url = await _apiService!.uploadImage(imagePath, fileName);
       debugPrint('ConfigSyncService: 图片上传成功: $url');
       return url;
@@ -116,60 +123,98 @@ class ConfigSyncService {
   // ===== 私有方法 =====
 
   /// 处理配置中的图片上传
-  Future<Map<String, dynamic>> _processConfigImages(Map<String, dynamic> configs) async {
+  /// 优先处理嵌套格式，兼容扁平格式
+  Future<Map<String, dynamic>> _processConfigImages(
+    Map<String, dynamic> configs,
+  ) async {
     final processedConfigs = Map<String, dynamic>.from(configs);
 
-    // 处理主题配置中的背景图片
-    if (processedConfigs['themeConfig'] != null) {
-      final themeConfig = Map<String, dynamic>.from(processedConfigs['themeConfig']);
-      
-      if (themeConfig['selectedTheme'] != null && themeConfig['selectedTheme']['indexBackgroundImg'] != null) {
-        final imageUrl = themeConfig['selectedTheme']['indexBackgroundImg'] as String;
-        
-        // 只上传本地图片，跳过已经是网络URL的图片
-        if (!imageUrl.startsWith('https://data.swu.social') && 
-            !imageUrl.startsWith('http://www.yumus.cn') &&
-            !imageUrl.startsWith('http')) {
-          try {
-            final uploadedUrl = await uploadImage(imageUrl);
-            themeConfig['selectedTheme']['indexBackgroundImg'] = uploadedUrl;
-            processedConfigs['themeConfig'] = themeConfig;
-            debugPrint('ConfigSyncService: 背景图片已上传并更新URL');
-          } catch (e) {
-            debugPrint('ConfigSyncService: 背景图片上传失败，保持原URL: $e');
-          }
+    // 检测配置格式
+    final isNested =
+        processedConfigs.containsKey('themeConfig') ||
+        processedConfigs.containsKey('appConfig');
+
+    if (isNested) {
+      // 嵌套格式处理（标准格式）
+      debugPrint('ConfigSyncService: 处理嵌套格式的图片...');
+
+      if (processedConfigs['themeConfig'] != null) {
+        final themeConfig = Map<String, dynamic>.from(
+          processedConfigs['themeConfig'],
+        );
+
+        // 处理 theme-theme
+        if (themeConfig['theme-theme'] != null &&
+            themeConfig['theme-theme'] is Map) {
+          await _processThemeImages(themeConfig['theme-theme']);
         }
+
+        // 处理 theme-customThemes（多个自定义主题）
+        if (themeConfig['theme-customThemes'] != null &&
+            themeConfig['theme-customThemes'] is List) {
+          final customThemes = themeConfig['theme-customThemes'] as List;
+          for (int i = 0; i < customThemes.length; i++) {
+            if (customThemes[i] is Map) {
+              await _processThemeImages(customThemes[i]);
+            }
+          }
+          debugPrint('ConfigSyncService: 处理了 ${customThemes.length} 个自定义主题的图片');
+        }
+        // 🔧 向后兼容：处理旧格式 theme-customTheme（单个）
+        else if (themeConfig['theme-customTheme'] != null &&
+            themeConfig['theme-customTheme'] is Map) {
+          await _processThemeImages(themeConfig['theme-customTheme']);
+          debugPrint('ConfigSyncService: 检测到旧格式单个自定义主题');
+        }
+
+        processedConfigs['themeConfig'] = themeConfig;
+      }
+    } else {
+      // 扁平格式处理
+      debugPrint('ConfigSyncService: 处理扁平格式的图片...');
+
+      // 处理 theme-customTheme
+      if (processedConfigs['theme-customTheme'] != null &&
+          processedConfigs['theme-customTheme'] is Map) {
+        final customTheme = Map<String, dynamic>.from(
+          processedConfigs['theme-customTheme'] as Map<String, dynamic>,
+        );
+        await _processThemeImages(customTheme);
+        processedConfigs['theme-customTheme'] = customTheme;
       }
 
-      // 处理自定义主题中的其他图片
-      if (themeConfig['customTheme'] != null) {
-        await _processCustomThemeImages(themeConfig['customTheme']);
+      // 处理 theme-theme
+      if (processedConfigs['theme-theme'] != null &&
+          processedConfigs['theme-theme'] is Map) {
+        final theme = Map<String, dynamic>.from(
+          processedConfigs['theme-theme'] as Map<String, dynamic>,
+        );
+        await _processThemeImages(theme);
+        processedConfigs['theme-theme'] = theme;
       }
     }
 
     return processedConfigs;
   }
 
-  /// 处理自定义主题中的图片
-  Future<void> _processCustomThemeImages(Map<String, dynamic> customTheme) async {
-    final imageFields = [
-      'indexBackgroundImg',
-      'classtableBackgroundImg', 
-      'avatarImg',
-      // 可以添加更多图片字段
-    ];
+  /// 处理主题对象中的图片
+  Future<void> _processThemeImages(Map<String, dynamic> theme) async {
+    final imageFields = ['indexBackgroundImg', 'img'];
 
     for (final field in imageFields) {
-      if (customTheme[field] != null && customTheme[field] is String) {
-        final imageUrl = customTheme[field] as String;
-        
-        if (!imageUrl.startsWith('http')) {
+      if (theme[field] != null && theme[field] is String) {
+        final imageUrl = theme[field] as String;
+
+        // 只上传本地图片，跳过已经是网络URL的图片
+        if (!imageUrl.startsWith('https://data.swu.social') &&
+            !imageUrl.startsWith('http://www.yumus.cn') &&
+            !imageUrl.startsWith('http')) {
           try {
             final uploadedUrl = await uploadImage(imageUrl);
-            customTheme[field] = uploadedUrl;
-            debugPrint('ConfigSyncService: 自定义主题图片 $field 已上传');
+            theme[field] = uploadedUrl;
+            debugPrint('ConfigSyncService: 主题图片 $field 已上传: $uploadedUrl');
           } catch (e) {
-            debugPrint('ConfigSyncService: 自定义主题图片 $field 上传失败: $e');
+            debugPrint('ConfigSyncService: 主题图片 $field 上传失败，保持原URL: $e');
           }
         }
       }
@@ -177,17 +222,35 @@ class ConfigSyncService {
   }
 
   /// 验证配置数据格式
+  /// 支持扁平格式（微信）和嵌套格式（Flutter）
   bool validateConfigFormat(Map<String, dynamic> configs) {
     try {
-      // 基本格式验证
-      if (!configs.containsKey('appConfig') || 
-          !configs.containsKey('themeConfig') || 
-          !configs.containsKey('userPreferences')) {
-        return false;
+      // 检查是否为嵌套格式
+      final hasNestedStructure =
+          configs.containsKey('appConfig') ||
+          configs.containsKey('themeConfig') ||
+          configs.containsKey('userPreferences');
+
+      if (hasNestedStructure) {
+        debugPrint('ConfigSyncService: 验证嵌套格式配置');
+        return true;
       }
 
-      // 可以添加更详细的验证逻辑
-      return true;
+      // 检查是否为扁平格式（微信兼容格式）
+      final hasIndexKeys = configs.keys.any((key) => key.startsWith('index-'));
+      final hasForestKeys = configs.keys.any(
+        (key) => key.startsWith('forest-'),
+      );
+      final hasThemeKeys = configs.keys.any((key) => key.startsWith('theme-'));
+
+      if (hasIndexKeys || hasForestKeys || hasThemeKeys) {
+        debugPrint('ConfigSyncService: 验证扁平格式配置');
+        return true;
+      }
+
+      // 如果都不是，可能是空配置或格式错误
+      debugPrint('ConfigSyncService: 未识别的配置格式');
+      return configs.isEmpty; // 空配置也视为有效
     } catch (e) {
       debugPrint('ConfigSyncService: 配置格式验证失败: $e');
       return false;
@@ -202,10 +265,10 @@ class ConfigSyncService {
     void countFields(Map<String, dynamic> obj, String prefix) {
       obj.forEach((key, value) {
         totalFields++;
-        if (value is String && 
-            (key.toLowerCase().contains('image') || 
-             key.toLowerCase().contains('img') ||
-             key.toLowerCase().contains('background'))) {
+        if (value is String &&
+            (key.toLowerCase().contains('image') ||
+                key.toLowerCase().contains('img') ||
+                key.toLowerCase().contains('background'))) {
           imageFields++;
         } else if (value is Map<String, dynamic>) {
           countFields(value, '$prefix.$key');

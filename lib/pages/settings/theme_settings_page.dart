@@ -502,8 +502,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                   loading: () => const SizedBox(),
                   error: (_, _) => const SizedBox(),
                   data: (themes) {
+                    // 过滤预设主题
                     final presetThemes = themes
-                        .where((theme) => !theme.code.startsWith('custom'))
+                        .where((theme) => theme.isPreset)
                         .toList();
                     return Container(
                       padding: const EdgeInsets.symmetric(
@@ -545,8 +546,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                 ),
               ),
               data: (themes) {
+                // 过滤预设主题
                 final presetThemes = themes
-                    .where((theme) => !theme.code.startsWith('custom'))
+                    .where((theme) => theme.isPreset)
                     .toList();
                 return Column(
                   children: presetThemes
@@ -625,8 +627,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                       loading: () => const SizedBox(),
                       error: (_, _) => const SizedBox(),
                       data: (themes) {
+                        // 过滤自定义主题
                         final customThemes = themes
-                            .where((theme) => theme.code.startsWith('custom'))
+                            .where((theme) => theme.isCustom)
                             .toList();
                         return Container(
                           padding: const EdgeInsets.symmetric(
@@ -673,8 +676,9 @@ class ThemeSettingsPage extends ConsumerWidget {
               loading: () => const SizedBox(),
               error: (_, _) => const SizedBox(),
               data: (themes) {
+                // 过滤自定义主题
                 final customThemes = themes
-                    .where((theme) => theme.code.startsWith('custom'))
+                    .where((theme) => theme.isCustom)
                     .toList();
                 return Text(
                   customThemes.isEmpty
@@ -697,8 +701,9 @@ class ThemeSettingsPage extends ConsumerWidget {
                 ),
               ),
               data: (themes) {
+                // 过滤自定义主题
                 final customThemes = themes
-                    .where((theme) => theme.code.startsWith('custom'))
+                    .where((theme) => theme.isCustom)
                     .toList();
 
                 if (customThemes.isEmpty) {
@@ -873,16 +878,17 @@ class ThemeSettingsPage extends ConsumerWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: theme.code.startsWith('custom')
+                                // 根据主题类型显示不同颜色
+                                color: theme.isCustom
                                     ? Colors.orange.withAlpha(51)
                                     : Colors.green.withAlpha(51),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                theme.code.startsWith('custom') ? '自定义' : '预设',
+                                theme.isCustom ? '自定义' : '预设',
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: theme.code.startsWith('custom')
+                                  color: theme.isCustom
                                       ? Colors.orange.shade700
                                       : Colors.green.shade700,
                                   fontWeight: FontWeight.w500,
@@ -912,16 +918,20 @@ class ThemeSettingsPage extends ConsumerWidget {
                             ),
                           ),
                         ),
-                      if (showDelete && onDelete != null)
-                        InkWell(
-                          onTap: onDelete,
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.delete_outline,
-                              color: Colors.red.shade400,
-                              size: 16,
+                      // 只在主题未被选中时显示删除按钮
+                      if (showDelete && onDelete != null && !isSelected)
+                        Tooltip(
+                          message: '删除主题',
+                          child: InkWell(
+                            onTap: onDelete,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: Colors.red.shade400,
+                                size: 16,
+                              ),
                             ),
                           ),
                         ),
@@ -1024,8 +1034,36 @@ class ThemeSettingsPage extends ConsumerWidget {
     theme_model.Theme theme,
     BuildContext context,
   ) async {
+    // 检查是否为正在使用的主题
+    final selectedThemeCode = ref.read(selectedThemeCodeProvider);
+    if (selectedThemeCode == theme.code) {
+      // 正在使用中，不允许删除
+      if (Platform.isIOS) {
+        await FlutterPlatformAlert.showCustomAlert(
+          windowTitle: '无法删除',
+          text: '主题"${theme.title}"正在使用中，无法删除。\n请先切换到其他主题。',
+          positiveButtonTitle: '确定',
+        );
+      } else {
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('无法删除'),
+            content: Text('主题"${theme.title}"正在使用中，无法删除。\n请先切换到其他主题。'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('确定'),
+              ),
+            ],
+          ),
+        );
+      }
+      return; // 直接返回，不执行删除
+    }
+
     bool result = false;
-    
+
     if (Platform.isIOS) {
       final alertResult = await FlutterPlatformAlert.showCustomAlert(
         windowTitle: '删除主题',
@@ -1068,14 +1106,6 @@ class ThemeSettingsPage extends ConsumerWidget {
               behavior: SnackBarBehavior.floating,
             ),
           );
-
-          // 如果删除的是当前选中的主题，回到默认主题
-          final selectedThemeCode = ref.read(selectedThemeCodeProvider);
-          if (selectedThemeCode == theme.code) {
-            await ref
-                .read(selectedThemeCodeProvider.notifier)
-                .setThemeCode('classic-theme-1'); // 回到你好西大人主题
-          }
         } else {
           throw Exception('删除主题失败');
         }

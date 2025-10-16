@@ -297,11 +297,8 @@ final currentThemeProvider = Provider<theme_model.Theme>((ref) {
   return configAsync.when(
     data: (config) {
       // 如果配置中已有主题对象，直接使用
-      if (config.isUsingCustomTheme && config.customTheme != null) {
-        return config.customTheme!;
-      }
-      if (config.selectedTheme != null) {
-        return config.selectedTheme!;
+      if (config.currentTheme != null) {
+        return config.currentTheme!;
       }
 
       // 如果配置中没有主题对象，从主题列表中查找
@@ -356,13 +353,13 @@ final isUsingCustomThemeProvider = Provider<bool>((ref) {
   );
 });
 
-/// 自定义主题提供者
-final customThemeProvider = Provider<theme_model.Theme?>((ref) {
+/// 自定义主题列表提供者
+final customThemesListProvider = Provider<List<theme_model.Theme>>((ref) {
   final configAsync = ref.watch(themeConfigNotifierProvider);
   return configAsync.when(
-    data: (config) => config.customTheme,
-    loading: () => null,
-    error: (_, _) => null,
+    data: (config) => config.customThemes,
+    loading: () => [],
+    error: (_, _) => [],
   );
 });
 
@@ -561,33 +558,45 @@ class SelectedThemeCodeNotifier extends StateNotifier<String> {
   }
 
   Future<void> setThemeCode(String themeCode) async {
-    state = themeCode;
+    debugPrint('SelectedThemeCodeNotifier: 开始切换主题到: $themeCode');
+
     final service = _ref.read(themeConfigServiceProvider);
 
-    // 获取主题对象
+    // 总是尝试获取主题对象（包括自定义主题）
     theme_model.Theme? theme;
-    if (themeCode != 'custom') {
+    try {
       final themes = await _ref.read(customThemesProvider.future);
       final foundTheme = themes.where((t) => t.code == themeCode);
       theme = foundTheme.isNotEmpty ? foundTheme.first : null;
 
       if (theme != null) {
         debugPrint(
-          'SelectedThemeCodeNotifier: 找到主题对象: ${theme.title} ($themeCode)',
+          'SelectedThemeCodeNotifier: ✅ 找到主题对象: ${theme.title} ($themeCode)',
         );
-        // 确保颜色数据正确
         debugPrint(
           'SelectedThemeCodeNotifier: 主题颜色: backColor=${theme.backColor}, foregColor=${theme.foregColor}, colorList=${theme.colorList.length}个颜色',
         );
       } else {
-        debugPrint('SelectedThemeCodeNotifier: 警告 - 未找到主题对象: $themeCode');
+        debugPrint('SelectedThemeCodeNotifier: ⚠️ 未找到主题对象: $themeCode');
       }
+    } catch (e) {
+      debugPrint('SelectedThemeCodeNotifier: ❌ 获取主题列表失败: $e');
     }
 
+    // 选择主题
     await service.selectTheme(themeCode, theme);
+    debugPrint('SelectedThemeCodeNotifier: ✅ 主题切换完成: $themeCode');
 
-    // 通知主题配置更新
-    _ref.read(themeConfigNotifierProvider.notifier).reload();
+    final newConfig = await service.loadConfig();
+
+    _ref.read(themeConfigNotifierProvider.notifier).state = AsyncValue.data(
+      newConfig,
+    );
+
+    // 更新自己的 state
+    state = newConfig.selectedThemeCode;
+
+    debugPrint('SelectedThemeCodeNotifier: ✅ 已更新配置（无闪烁）');
   }
 }
 
@@ -609,12 +618,25 @@ class CustomThemeManager
   Future<void> loadThemes() async {
     try {
       state = const AsyncValue.loading();
+
       // 获取预设主题和自定义主题
       final customThemes = await _service.getCustomThemes();
       final presetThemes = await _loadPresetThemes();
+
+      debugPrint('CustomThemeManager: 加载主题列表');
+      debugPrint('  - 预设主题: ${presetThemes.length} 个');
+      debugPrint('  - 自定义主题: ${customThemes.length} 个');
+
+      for (final theme in customThemes) {
+        debugPrint('    * ${theme.title} (${theme.code})');
+      }
+
       final allThemes = [...presetThemes, ...customThemes];
       state = AsyncValue.data(allThemes);
+
+      debugPrint('CustomThemeManager: ✅ 主题加载完成，共 ${allThemes.length} 个');
     } catch (e, st) {
+      debugPrint('CustomThemeManager: ❌ 加载主题失败: $e');
       state = AsyncValue.error(e, st);
     }
   }

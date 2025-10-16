@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/theme_config.dart';
 import '../../models/theme_model.dart';
 import '../../services/custom_theme_service.dart';
+import '../../utils/theme_utils.dart';
 
 /// 主题配置服务
 /// 负责主题配置的加载、保存和管理
@@ -16,12 +17,22 @@ class ThemeConfigService {
   final SharedPreferences _prefs;
   final CustomThemeService _customThemeService;
 
+  /// 内存缓存，减少磁盘读取
+  ThemeConfig? _cachedConfig;
+
   ThemeConfigService(this._prefs, this._customThemeService);
 
   /// 加载主题配置
-  Future<ThemeConfig> loadConfig() async {
+  /// [forceRefresh] 为 true 时强制从磁盘重新加载
+  Future<ThemeConfig> loadConfig({bool forceRefresh = false}) async {
     try {
-      debugPrint('ThemeConfigService: 开始加载主题配置...');
+      // 如果有缓存且不强制刷新，直接返回缓存
+      if (_cachedConfig != null && !forceRefresh) {
+        debugPrint('ThemeConfigService: 从缓存加载主题配置');
+        return _cachedConfig!;
+      }
+
+      debugPrint('ThemeConfigService: 开始从磁盘加载主题配置...');
 
       // 首先尝试加载新格式的配置
       final configJson = _prefs.getString(_configKey);
@@ -29,6 +40,7 @@ class ThemeConfigService {
 
       if (configJson != null) {
         final config = ThemeConfig.fromJson(jsonDecode(configJson));
+        _cachedConfig = config; // 更新缓存
         debugPrint(
           'ThemeConfigService: 成功加载主题配置 - 深色模式: ${config.isDarkMode}, 主题模式: ${config.themeMode}',
         );
@@ -43,6 +55,8 @@ class ThemeConfigService {
       return defaultConfig;
     } catch (e) {
       debugPrint('ThemeConfigService: 加载主题配置失败，使用默认配置: $e');
+      // 清除无效缓存
+      _cachedConfig = null;
       return ThemeConfig.defaultConfig;
     }
   }
@@ -50,6 +64,8 @@ class ThemeConfigService {
   /// 保存主题配置
   Future<void> saveConfig(ThemeConfig config) async {
     try {
+      _cachedConfig = config; // 先更新缓存
+
       final configJson = jsonEncode(config.toJson());
       debugPrint('ThemeConfigService: 准备保存主题配置: $configJson');
 
@@ -61,11 +77,12 @@ class ThemeConfigService {
       // 立即验证保存是否成功
       final savedConfig = _prefs.getString(_configKey);
       if (savedConfig == configJson) {
-        debugPrint('ThemeConfigService: 主题配置保存成功，验证通过');
+        debugPrint('ThemeConfigService: 主题配置保存成功，验证通过（已更新缓存）');
       } else {
         debugPrint('ThemeConfigService: 警告 - 保存的配置验证失败');
         debugPrint('  期望: $configJson');
         debugPrint('  实际: $savedConfig');
+        _cachedConfig = null; // 验证失败时清除缓存
       }
     } catch (e) {
       debugPrint('ThemeConfigService: 保存主题配置失败: $e');
@@ -95,38 +112,59 @@ class ThemeConfigService {
   Future<ThemeConfig> selectTheme(String themeCode, Theme? theme) async {
     final currentConfig = await loadConfig();
 
-    // 如果切换到自定义主题
-    if (themeCode == 'custom') {
-      final updatedConfig = currentConfig.copyWith(
-        selectedThemeCode: themeCode,
-        clearSelectedTheme: true, // 清除预设主题
-      );
-      await saveConfig(updatedConfig);
-      debugPrint('ThemeConfigService: 选择自定义主题');
-      return updatedConfig;
+    Theme? finalTheme = theme;
+
+    // 如果没有提供主题对象，尝试查找
+    if (finalTheme == null) {
+      if (ThemeUtils.isCustomTheme(themeCode)) {
+        // 从自定义主题列表查找
+        finalTheme = currentConfig.getCustomThemeByCode(themeCode);
+        debugPrint(
+          'ThemeConfigService: 从列表查找自定义主题 $themeCode: ${finalTheme != null ? "找到" : "未找到"}',
+        );
+      }
     }
 
-    // 如果切换到预设主题
-    final updatedConfig = currentConfig.copyWith(
+    // 如果是自定义主题且提供了主题对象，需要同步更新 customThemes 列表
+    ThemeConfig configToUpdate = currentConfig;
+    if (finalTheme != null && ThemeUtils.isCustomTheme(themeCode)) {
+      configToUpdate = currentConfig.addOrUpdateCustomTheme(finalTheme);
+      debugPrint(
+        'ThemeConfigService: 已同步更新 customThemes 列表中的主题: ${finalTheme.title}',
+      );
+    }
+
+    // 统一更新配置
+    final updatedConfig = configToUpdate.copyWith(
       selectedThemeCode: themeCode,
-      selectedTheme: theme,
-      clearCustomTheme: false, // 保留自定义主题但不使用
+      selectedTheme: finalTheme,
+      clearSelectedTheme: finalTheme == null,
     );
+
     await saveConfig(updatedConfig);
-    debugPrint('ThemeConfigService: 选择主题 $themeCode (${theme?.title})');
+
+    debugPrint(
+      'ThemeConfigService: ✅ 选择主题完成 - '
+      'code: $themeCode, '
+      'selectedTheme: ${finalTheme?.title ?? "null"}, '
+      'isCustom: ${!themeCode.startsWith("classic-theme-")}',
+    );
+
     return updatedConfig;
   }
 
-  /// 设置自定义主题
+  /// 设置自定义主题（添加或更新）
   Future<ThemeConfig> setCustomTheme(Theme customTheme) async {
     final currentConfig = await loadConfig();
-    final updatedConfig = currentConfig.copyWith(
-      customTheme: customTheme,
-      selectedThemeCode: 'custom',
-      clearSelectedTheme: true, // 清除预设主题
-    );
+    // 添加或更新自定义主题到列表
+    final updatedConfig = currentConfig
+        .addOrUpdateCustomTheme(customTheme)
+        .copyWith(
+          selectedThemeCode: customTheme.code,
+          clearSelectedTheme: true, // 清除预设主题
+        );
     await saveConfig(updatedConfig);
-    debugPrint('ThemeConfigService: 设置自定义主题');
+    debugPrint('ThemeConfigService: 设置自定义主题 ${customTheme.code}');
     return updatedConfig;
   }
 
@@ -150,11 +188,19 @@ class ThemeConfigService {
 
   /// 根据主题代码获取主题
   Future<Theme?> getThemeByCode(String themeCode) async {
-    if (themeCode == 'custom') {
-      final config = await loadConfig();
-      return config.customTheme;
+    final config = await loadConfig();
+
+    // 如果是自定义主题，从 customThemes 列表中查找
+    if (ThemeUtils.isCustomTheme(themeCode)) {
+      return config.getCustomThemeByCode(themeCode);
     }
 
+    // 如果是当前选中的主题，直接返回
+    if (themeCode == config.selectedThemeCode) {
+      return config.currentTheme;
+    }
+
+    // 从主题列表中查找
     try {
       final themes = await getAllThemes();
       final foundTheme = themes.where((theme) => theme.code == themeCode);
@@ -221,12 +267,14 @@ class ThemeConfigService {
   Future<Theme?> getCurrentTheme() async {
     final config = await loadConfig();
 
-    if (config.isUsingCustomTheme) {
-      return config.customTheme ?? await loadCustomThemeFromFile();
+    // 使用 ThemeConfig 的 currentTheme 属性
+    if (config.currentTheme != null) {
+      return config.currentTheme;
     }
 
-    if (config.selectedTheme != null) {
-      return config.selectedTheme;
+    // 如果配置中没有主题，尝试从文件加载
+    if (config.isUsingCustomTheme) {
+      return await loadCustomThemeFromFile();
     }
 
     // 根据主题代码获取主题

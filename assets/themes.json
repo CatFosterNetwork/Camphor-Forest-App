@@ -208,7 +208,7 @@
     "colorList": ["#e57373", "#e78080", "#e88282", "#ea8f8f", "#ec9797", "#eea3a3", "#f0aeae", "#f0b1b1", "#f1b5b5", "#f3c1c1"]
   },
   {
-    "code": "theme-1",
+    "code": "classic-theme-17",
     "title": "每日一图",
     "img": "https://www.yumus.cn/api/?target=img&brand=bing&ua=m",
     "indexBackgroundBlur": false,
