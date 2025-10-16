@@ -33,11 +33,15 @@ class ApiConfigDistributor {
       // 从嵌套格式分配用户偏好
       final userPreferences = _createUserPreferences(normalizedData);
 
+      // 提取自定义主题列表（用于 CustomThemeService）
+      final customThemes = _extractCustomThemes(normalizedData);
+
       debugPrint('ApiConfigDistributor: 配置数据分配完成');
       return ConfigDistributionResult.success(
         appConfig: appConfig,
         themeConfig: themeConfig,
         userPreferences: userPreferences,
+        customThemes: customThemes,
       );
     } catch (e, st) {
       debugPrint('ApiConfigDistributor: 配置数据分配失败: $e');
@@ -354,6 +358,69 @@ class ApiConfigDistributor {
     );
   }
 
+  /// 提取自定义主题列表
+  static List<Theme> _extractCustomThemes(Map<String, dynamic> nestedData) {
+    // 提取 themeConfig 部分
+    final themeConfigData = nestedData['themeConfig'] is Map
+        ? nestedData['themeConfig'] as Map<String, dynamic>
+        : <String, dynamic>{};
+
+    List<Theme> customThemes = [];
+
+    // 解析自定义主题列表（支持新旧两种格式）
+    if (themeConfigData.containsKey('theme-customThemes') &&
+        themeConfigData['theme-customThemes'] is List) {
+      // 新格式：数组
+      try {
+        customThemes = (themeConfigData['theme-customThemes'] as List)
+            .map((themeJson) {
+              try {
+                final theme = Theme.fromJson(themeJson as Map<String, dynamic>);
+                // 🔧 过滤掉预设主题（防止服务器数据污染）
+                if (theme.code.startsWith('classic-theme-')) {
+                  debugPrint(
+                    'ApiConfigDistributor: 跳过预设主题 ${theme.code}（不应出现在 customThemes 中）',
+                  );
+                  return null;
+                }
+                return theme;
+              } catch (e) {
+                debugPrint('ApiConfigDistributor: 解析自定义主题失败: $e');
+                return null;
+              }
+            })
+            .whereType<Theme>()
+            .toList();
+        debugPrint(
+          'ApiConfigDistributor: [提取] 自定义主题列表 - ${customThemes.length} 个',
+        );
+      } catch (e) {
+        debugPrint('ApiConfigDistributor: 提取自定义主题列表失败: $e');
+      }
+    } else if (themeConfigData.containsKey('theme-customTheme') &&
+        themeConfigData['theme-customTheme'] != null) {
+      // 旧格式：单个对象 - 向后兼容
+      try {
+        final customThemeData = Map<String, dynamic>.from(
+          themeConfigData['theme-customTheme'],
+        );
+
+        // 🔧 修复：自定义主题的 code 应该是 'custom'
+        if (!customThemeData.containsKey('code') ||
+            customThemeData['code'] == null) {
+          customThemeData['code'] = 'custom';
+        }
+
+        customThemes = [Theme.fromJson(customThemeData)];
+        debugPrint('ApiConfigDistributor: [提取] 检测到旧格式单个自定义主题');
+      } catch (e) {
+        debugPrint('ApiConfigDistributor: 提取旧格式自定义主题失败: $e');
+      }
+    }
+
+    return customThemes;
+  }
+
   /// 创建空的配置（当API数据不可用时）
   static ConfigDistributionResult createDefaultConfigs() {
     debugPrint('ApiConfigDistributor: 创建默认配置');
@@ -657,6 +724,7 @@ class ConfigDistributionResult {
   final AppConfig? appConfig;
   final ThemeConfig? themeConfig;
   final UserPreferences? userPreferences;
+  final List<Theme>? customThemes; // 自定义主题列表
   final Object? error;
   final StackTrace? stackTrace;
 
@@ -666,6 +734,7 @@ class ConfigDistributionResult {
     this.appConfig,
     this.themeConfig,
     this.userPreferences,
+    this.customThemes,
     this.error,
     this.stackTrace,
   });
@@ -675,6 +744,7 @@ class ConfigDistributionResult {
     required AppConfig appConfig,
     required ThemeConfig themeConfig,
     required UserPreferences userPreferences,
+    List<Theme>? customThemes,
   }) {
     return ConfigDistributionResult._(
       success: true,
@@ -682,6 +752,7 @@ class ConfigDistributionResult {
       appConfig: appConfig,
       themeConfig: themeConfig,
       userPreferences: userPreferences,
+      customThemes: customThemes,
     );
   }
 

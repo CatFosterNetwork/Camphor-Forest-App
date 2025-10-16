@@ -135,24 +135,8 @@ class UnifiedConfigService {
       );
     }
 
-    // 从原始 API 数据中提取自定义主题（单一数据源）
-    List<theme_model.Theme> customThemes = [];
-
-    // 支持嵌套和扁平两种格式
-    Map<String, dynamic>? themeConfigData;
-    if (repairedData.containsKey('themeConfig')) {
-      themeConfigData = repairedData['themeConfig'] as Map<String, dynamic>?;
-    } else if (repairedData.containsKey('theme-customThemes')) {
-      themeConfigData = repairedData;
-    }
-
-    if (themeConfigData != null &&
-        themeConfigData['theme-customThemes'] != null) {
-      final customThemesData = themeConfigData['theme-customThemes'] as List;
-      customThemes = customThemesData
-          .map((json) => theme_model.Theme.fromJson(json))
-          .toList();
-    }
+    // ✅ 从 distributionResult 中获取自定义主题列表（已经由 ApiConfigDistributor 解析和过滤）
+    final customThemes = distributionResult.customThemes ?? [];
 
     // 保存自定义主题到 CustomThemeService
     try {
