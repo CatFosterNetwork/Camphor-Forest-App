@@ -530,8 +530,9 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                 child: FloatingActionButton(
                                   heroTag: "refresh",
                                   onPressed: () async {
-                                    if (_isRefreshing || _isRefreshSuccess)
+                                    if (_isRefreshing || _isRefreshSuccess) {
                                       return;
+                                    }
 
                                     setState(() {
                                       _isRefreshing = true;

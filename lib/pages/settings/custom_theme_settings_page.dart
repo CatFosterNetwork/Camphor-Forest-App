@@ -617,7 +617,7 @@ class _CustomThemeSettingsPageState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                        '#${color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -626,7 +626,7 @@ class _CustomThemeSettingsPageState
                         ),
                       ),
                       Text(
-                        'rgb(${color.r}, ${color.g}, ${color.b})',
+                        'rgba(${(color.r / 255.0).toStringAsFixed(2)}, ${(color.g / 255.0).toStringAsFixed(2)}, ${(color.b / 255.0).toStringAsFixed(2)}, ${(color.alpha / 255.0).toStringAsFixed(2)})',
                         style: TextStyle(
                           fontSize: 12,
                           color: isDarkMode ? Colors.white70 : Colors.black54,
@@ -690,7 +690,7 @@ class _CustomThemeSettingsPageState
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                    '#${color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}',
                     style: TextStyle(
                       fontSize: 12,
                       color: isDarkMode ? Colors.white : Colors.black,
@@ -967,12 +967,15 @@ class _CustomThemeSettingsPageState
     final TextEditingController aController = TextEditingController();
 
     void updateControllersFromColor(Color color) {
-      hexController.text =
-          '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+      hexController.text = color
+          .toARGB32()
+          .toRadixString(16)
+          .padLeft(8, '0')
+          .toUpperCase();
       rController.text = color.r.toString();
       gController.text = color.g.toString();
       bController.text = color.b.toString();
-      aController.text = (color.a / 255.0).toStringAsFixed(2);
+      aController.text = (color.alpha / 255.0).toStringAsFixed(2);
     }
 
     void updateColorFromHex(String hex) {
@@ -984,7 +987,6 @@ class _CustomThemeSettingsPageState
         if (cleanHex.length == 8) {
           final int value = int.parse(cleanHex, radix: 16);
           selectedColor = Color(value);
-          onColorChanged(selectedColor);
           updateControllersFromColor(selectedColor);
         }
       } catch (e) {
@@ -1001,7 +1003,6 @@ class _CustomThemeSettingsPageState
         final int alpha = (a * 255).round();
 
         selectedColor = Color.fromARGB(alpha, r, g, b);
-        onColorChanged(selectedColor);
         updateControllersFromColor(selectedColor);
       } catch (e) {
         // 忽略无效的RGBA值
@@ -1044,7 +1045,6 @@ class _CustomThemeSettingsPageState
                     onColorChanged: (color) {
                       setState(() {
                         selectedColor = color;
-                        onColorChanged(color);
                         updateControllersFromColor(color);
                       });
                     },
@@ -1189,20 +1189,29 @@ class _CustomThemeSettingsPageState
                       ),
               ),
             ),
-            ElevatedButton(
+            TextButton(
               onPressed: () {
                 onColorChanged(selectedColor);
                 Navigator.of(context).pop();
               },
               style: Platform.isIOS
                   ? null
-                  : ElevatedButton.styleFrom(
+                  : TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
                       ),
                     ),
-              child: const Text('确定'),
+              child: Text(
+                '确定',
+                style: Platform.isIOS
+                    ? null
+                    : TextStyle(
+                        color: Colors.blue,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+              ),
             ),
           ],
         ),
