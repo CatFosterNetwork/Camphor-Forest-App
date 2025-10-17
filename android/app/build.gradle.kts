@@ -18,9 +18,7 @@ plugins {
 android {
     namespace = "social.swu.camphor_forest"
     compileSdk = flutter.compileSdkVersion
-    // ndkVersion = "29.0.13599879"
-    ndkVersion = "27.0.12077973"
-    // ndkVersion = flutter.ndkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -33,7 +31,7 @@ android {
 
     defaultConfig {
         applicationId = "social.swu.camphor_forest"
-        minSdk = 23 // 支持Android 5.0+，覆盖95%+用户
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
