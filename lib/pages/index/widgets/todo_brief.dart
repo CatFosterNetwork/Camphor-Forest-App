@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../models/todo_item.dart';
 import '../providers/todo_provider.dart';
 import 'todo_edit_modal.dart';
@@ -84,44 +85,40 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   void _showRefreshNotification(bool isSuccess, String message) {
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              isSuccess ? Icons.check_circle : Icons.error,
-              color: Colors.white,
-              size: 20,
+    final backgroundColor =
+        isSuccess ? Colors.green.shade600 : Colors.red.shade600;
+    final duration =
+        Duration(milliseconds: isSuccess ? 2000 : 3000);
+
+    ToastService.show(
+      message,
+      backgroundColor: backgroundColor,
+      textColor: Colors.white,
+      duration: duration,
+    );
+
+    if (!isSuccess) {
+      showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('刷新失败'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _handleRefresh();
+              },
+              child: const Text('重试'),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('取消'),
             ),
           ],
         ),
-        backgroundColor: isSuccess
-            ? Colors.green.shade600
-            : Colors.red.shade600,
-        duration: Duration(milliseconds: isSuccess ? 2000 : 3000),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        margin: const EdgeInsets.all(16),
-        action: isSuccess
-            ? null
-            : SnackBarAction(
-                label: '重试',
-                textColor: Colors.white,
-                onPressed: _handleRefresh,
-              ),
-      ),
-    );
+      );
+    }
   }
 
   /// 处理待办事项完成状态切换，包含位置过渡动画

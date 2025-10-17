@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../../core/providers/core_providers.dart';
@@ -46,9 +47,7 @@ class _ClassroomQueryScreenState extends ConsumerState<ClassroomQueryScreen> {
 
   Future<void> _searchClassrooms() async {
     if (!_isFormComplete()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('请填写完整信息')));
+      ToastService.show('请填写完整信息', backgroundColor: Colors.red);
       return;
     }
 
@@ -115,29 +114,27 @@ class _ClassroomQueryScreenState extends ConsumerState<ClassroomQueryScreen> {
         });
 
         if (_classrooms.isEmpty) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('没有查询到空教室')));
+          ToastService.show('没有查询到空教室');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('查询成功，找到${_classrooms.length}间空教室')),
-          );
+          ToastService.show('查询成功，找到${_classrooms.length}间空教室');
         }
       } else {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['msg']?.toString() ?? '查询失败')),
+        ToastService.show(
+          result['msg']?.toString() ?? '查询失败',
+          backgroundColor: Colors.red,
         );
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('查询失败: $e')));
+      ToastService.show(
+        '查询失败: $e',
+        backgroundColor: Colors.red,
+      );
     }
   }
 

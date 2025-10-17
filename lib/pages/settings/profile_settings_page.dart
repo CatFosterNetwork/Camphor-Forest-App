@@ -13,6 +13,7 @@ import '../../core/providers/core_providers.dart';
 import '../../core/services/image_service.dart';
 import '../../core/services/image_cache_service.dart';
 import '../../core/services/image_upload_service.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
   const ProfileSettingsPage({super.key});
@@ -586,13 +587,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
           // 7. 显示成功提示
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('头像上传成功'),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-                duration: Duration(seconds: 2),
-              ),
+            ToastService.show(
+              '头像上传成功',
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
             );
           }
         } else {
@@ -604,12 +602,9 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           }
 
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('头像上传失败，请重试'),
-                backgroundColor: Colors.red,
-                behavior: SnackBarBehavior.floating,
-              ),
+            ToastService.show(
+              '头像上传失败，请重试',
+              backgroundColor: Colors.red,
             );
           }
         }
@@ -638,13 +633,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               '上传失败: ${e.toString().length > 100 ? "${e.toString().substring(0, 100)}..." : e.toString()}';
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 5), // 延长显示时间
-          ),
+        ToastService.show(
+          errorMessage,
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5), // 延长显示时间
         );
       }
     }
@@ -857,12 +849,9 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
           );
           if (!emailRegex.hasMatch(newValue)) {
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('请输入有效的邮箱地址'),
-                  backgroundColor: Colors.red,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              ToastService.show(
+                '请输入有效的邮箱地址',
+                backgroundColor: Colors.red,
               );
             }
             return;
@@ -892,12 +881,9 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
           break;
         default:
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('不支持编辑${widget.field}'),
-                backgroundColor: Colors.red,
-                behavior: SnackBarBehavior.floating,
-              ),
+            ToastService.show(
+              '不支持编辑${widget.field}',
+              backgroundColor: Colors.red,
             );
           }
           return;
@@ -928,31 +914,22 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
           }
 
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${widget.field}修改成功'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '${widget.field}修改成功',
+            backgroundColor: Colors.green,
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${widget.field}修改失败'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '${widget.field}修改失败',
+            backgroundColor: Colors.red,
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('修改失败: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
+        ToastService.show(
+          '修改失败: $e',
+          backgroundColor: Colors.red,
         );
       }
     } finally {

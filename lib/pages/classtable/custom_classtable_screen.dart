@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
 import '../../core/widgets/theme_aware_dialog.dart';
@@ -516,9 +517,7 @@ class _CustomClassTableScreenState
           .read(classTableSettingsProvider.notifier)
           .deleteCustomCourse(course.id);
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('已删除课程"${course.title}"')));
+        ToastService.show('已删除课程"${course.title}"');
       }
     }
   }

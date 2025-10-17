@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../core/services/permission_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
@@ -993,9 +994,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('无法拨打电话，已复制电话号码')));
+        ToastService.show('无法拨打电话，已复制电话号码');
         await Clipboard.setData(ClipboardData(text: phoneNumber));
       }
     }
@@ -2503,9 +2502,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
     // 显示信息提示
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('已定位到 ${location.content}')));
+      ToastService.show('已定位到 ${location.content}');
     }
   }
 
@@ -2551,9 +2548,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
       // 显示信息提示
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('已定位到 ${location.content}')),
-        );
+        ToastService.show('已定位到 ${location.content}');
       }
     } catch (e) {
       debugPrint('🍎 [位置异常] Apple Maps位置标注失败: $e');

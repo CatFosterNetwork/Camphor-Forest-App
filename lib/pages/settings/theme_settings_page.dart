@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/widgets/theme_aware_dialog.dart';
 
@@ -1060,23 +1061,17 @@ class ThemeSettingsPage extends ConsumerWidget {
         final success = await manager.deleteTheme(theme.code);
 
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('主题删除成功'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '主题删除成功',
+            backgroundColor: Colors.green,
           );
         } else {
           throw Exception('删除主题失败');
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('删除失败: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
+        ToastService.show(
+          '删除失败: $e',
+          backgroundColor: Colors.red,
         );
       }
     }

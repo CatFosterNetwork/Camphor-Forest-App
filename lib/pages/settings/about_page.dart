@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../core/services/permission_service.dart';
 // import 'package:flutter_svg/flutter_svg.dart'; // 暂时不使用SVG
@@ -462,12 +463,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         await Clipboard.setData(ClipboardData(text: webUri.toString()));
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('无法打开QQ群，链接已复制到剪贴板'),
-              backgroundColor: Colors.orange,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '无法打开QQ群，链接已复制到剪贴板',
+            backgroundColor: Colors.orange,
           );
         }
       }
@@ -482,22 +480,16 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         );
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('打开失败，链接已复制到剪贴板'),
-              backgroundColor: Colors.orange,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '打开失败，链接已复制到剪贴板',
+            backgroundColor: Colors.orange,
           );
         }
       } catch (clipboardError) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('操作失败: $e'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '操作失败: $e',
+            backgroundColor: Colors.red,
           );
         }
       }
@@ -818,22 +810,16 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         await Clipboard.setData(const ClipboardData(text: qrCodeScannerUrl));
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('打开失败，链接已复制到剪贴板'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '打开失败，链接已复制到剪贴板',
+            backgroundColor: Colors.red,
           );
         }
       } catch (clipboardError) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('操作失败，请稍后重试'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '操作失败，请稍后重试',
+            backgroundColor: Colors.red,
           );
         }
       }

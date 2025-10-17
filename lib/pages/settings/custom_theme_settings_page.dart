@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../core/providers/permission_provider.dart';
 import '../../core/config/providers/theme_config_provider.dart';
@@ -1243,37 +1244,52 @@ class _CustomThemeSettingsPageState
 
       debugPrint('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
 
+      var shouldUseImage = true;
+
       // 如果图片超过 5MB，提示用户
       if (fileSizeMB > 5) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '图片过大 (${fileSizeMB.toStringAsFixed(1)} MB)！\n'
-                '建议选择小于 5MB 的图片，以确保上传成功。',
-              ),
+        if (!mounted) {
+          shouldUseImage = false;
+        } else {
+          shouldUseImage = await showDialog<bool>(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: const Text('图片体积较大'),
+                  content: Text(
+                    '图片体积为 ${fileSizeMB.toStringAsFixed(1)} MB，超过 5 MB。\n'
+                    '较大的图片可能导致上传失败或处理缓慢，确定仍然使用吗？',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(false),
+                      child: const Text('取消'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(true),
+                      child: const Text('仍然使用'),
+                    ),
+                  ],
+                ),
+              ) ??
+              false;
+
+          if (!shouldUseImage) {
+            ToastService.show(
+              '请选择小于 5MB 的图片，以确保上传成功',
               backgroundColor: Colors.orange,
-              duration: const Duration(seconds: 5),
-              action: SnackBarAction(
-                label: '仍然使用',
-                textColor: Colors.white,
-                onPressed: () {
-                  onImagePicked(imagePath);
-                  setState(() {
-                    hasUnsavedChanges = true;
-                  });
-                },
-              ),
-            ),
-          );
+            );
+          }
         }
-        return;
       }
 
-      onImagePicked(imagePath);
-      setState(() {
-        hasUnsavedChanges = true;
-      });
+      if (shouldUseImage) {
+        onImagePicked(imagePath);
+        if (mounted) {
+          setState(() {
+            hasUnsavedChanges = true;
+          });
+        }
+      }
     }
   }
 
@@ -1294,20 +1310,14 @@ class _CustomThemeSettingsPageState
         isCreateMode = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('主题保存成功'),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
+      ToastService.show(
+        '主题保存成功',
+        backgroundColor: Colors.green,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('保存失败: $e'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
+      ToastService.show(
+        '保存失败: $e',
+        backgroundColor: Colors.red,
       );
     }
   }

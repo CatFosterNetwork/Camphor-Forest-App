@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../models/custom_course_model.dart';
 import '../providers/classtable_settings_provider.dart';
@@ -577,9 +578,7 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
   Future<void> _saveCourse() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedWeeks.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('请至少选择一个上课周次')));
+      ToastService.show('请至少选择一个上课周次');
       return;
     }
 
@@ -625,17 +624,16 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
 
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_isEditMode ? '课程更新成功' : '课程添加成功'),
-            backgroundColor: Colors.green,
-          ),
+        ToastService.show(
+          _isEditMode ? '课程更新成功' : '课程添加成功',
+          backgroundColor: Colors.green,
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
+        ToastService.show(
+          '保存失败: $e',
+          backgroundColor: Colors.red,
         );
       }
     } finally {
@@ -668,20 +666,16 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
                     .deleteCustomCourse(widget.course!.id);
                 if (mounted) {
                   Navigator.of(context).pop(); // 关闭编辑对话框
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('课程删除成功'),
-                      backgroundColor: Colors.green,
-                    ),
+                  ToastService.show(
+                    '课程删除成功',
+                    backgroundColor: Colors.green,
                   );
                 }
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('删除失败: $e'),
-                      backgroundColor: Colors.red,
-                    ),
+                  ToastService.show(
+                    '删除失败: $e',
+                    backgroundColor: Colors.red,
                   );
                 }
               }

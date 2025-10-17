@@ -3,6 +3,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../../core/config/providers/theme_config_provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../lifeService/providers/expense_provider.dart';
@@ -494,37 +495,20 @@ class ExpenseBrief extends ConsumerWidget {
 
             // 显示成功提示
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Row(
-                    children: [
-                      Icon(Icons.check_circle, color: Colors.white),
-                      SizedBox(width: 8),
-                      Text('宿舍绑定成功！'),
-                    ],
-                  ),
-                  backgroundColor: Colors.green,
-                  duration: const Duration(seconds: 2),
-                ),
+              ToastService.show(
+                '宿舍绑定成功！',
+                backgroundColor: Colors.green,
+                duration: const Duration(seconds: 2),
               );
             }
           } catch (e) {
             debugPrint('ExpenseBrief: 绑定失败: $e');
 
             if (context.mounted) {
-              // 显示错误提示
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      const Icon(Icons.error, color: Colors.white),
-                      const SizedBox(width: 8),
-                      Expanded(child: Text('绑定失败: $e')),
-                    ],
-                  ),
-                  backgroundColor: Colors.red,
-                  duration: const Duration(seconds: 3),
-                ),
+              ToastService.show(
+                '绑定失败: $e',
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 3),
               );
             }
           }

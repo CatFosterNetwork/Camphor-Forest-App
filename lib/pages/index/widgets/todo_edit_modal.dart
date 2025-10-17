@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../models/todo_item.dart';
 import '../providers/todo_provider.dart';
 
@@ -860,21 +861,10 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
         // 删除成功后关闭模态框
         _closeModal();
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 8),
-                Text('删除成功'),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+        ToastService.show(
+          '删除成功',
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
         );
       }
     } catch (e) {
@@ -882,21 +872,10 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
         // 添加错误触觉反馈
         HapticFeedback.heavyImpact();
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 8),
-                Text('删除失败：$e'),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+        ToastService.show(
+          '删除失败：$e',
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
         );
       }
     } finally {
@@ -949,21 +928,10 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
         HapticFeedback.lightImpact();
         
         _closeModal();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 8),
-                Text(_isEditing ? '修改成功' : '添加成功'),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+        ToastService.show(
+          _isEditing ? '修改成功' : '添加成功',
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
         );
       }
     } catch (e) {
@@ -971,21 +939,10 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
         // 添加错误触觉反馈
         HapticFeedback.heavyImpact();
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 8),
-                Text('操作失败：$e'),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+        ToastService.show(
+          '操作失败：$e',
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
         );
       }
     } finally {

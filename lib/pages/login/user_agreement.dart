@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../widgets/app_background.dart';
@@ -597,17 +598,11 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                         onTap: () {
                           Clipboard.setData(ClipboardData(text: emailAddress));
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('邮箱地址已复制到剪贴板'),
-                              backgroundColor: isDarkMode 
-                                  ? const Color(0xFF2C2C2E)
-                                  : Colors.black87,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
+                          ToastService.show(
+                            '邮箱地址已复制到剪贴板',
+                            backgroundColor: isDarkMode
+                                ? const Color(0xFF2C2C2E)
+                                : Colors.black87,
                           );
                         },
                         borderRadius: BorderRadius.circular(8),
@@ -769,17 +764,11 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                         onTap: () {
                           Clipboard.setData(ClipboardData(text: url));
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('链接已复制到剪贴板'),
-                              backgroundColor: isDarkMode 
-                                  ? const Color(0xFF2C2C2E)
-                                  : Colors.black87,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
+                          ToastService.show(
+                            '链接已复制到剪贴板',
+                            backgroundColor: isDarkMode
+                                ? const Color(0xFF2C2C2E)
+                                : Colors.black87,
                           );
                         },
                         borderRadius: BorderRadius.circular(8),

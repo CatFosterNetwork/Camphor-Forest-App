@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../providers/classtable_settings_provider.dart';
 import '../models/custom_course_model.dart';
@@ -117,11 +118,9 @@ class HistoryClassTableSelector extends ConsumerWidget {
               ref
                   .read(classTableSettingsProvider.notifier)
                   .refreshHistoryFromGrades();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('正在从成绩数据刷新历史课表...'),
-                  duration: Duration(seconds: 2),
-                ),
+              ToastService.show(
+                '正在从成绩数据刷新历史课表...',
+                duration: const Duration(seconds: 2),
               );
             },
             icon: const Icon(Icons.refresh, size: 16),
@@ -343,18 +342,17 @@ class HistoryClassTableSelector extends ConsumerWidget {
 
         // 显示成功提示
         final displayName = _formatSemesterDisplayName(xnm, xqm);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('已切换到 $displayName'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
+        ToastService.show(
+          '已切换到 $displayName',
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('切换失败: $e'), backgroundColor: Colors.red),
+        ToastService.show(
+          '切换失败: $e',
+          backgroundColor: Colors.red,
         );
       }
     }

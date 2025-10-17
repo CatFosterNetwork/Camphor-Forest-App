@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/providers/auth_provider.dart';
@@ -70,8 +71,9 @@ class _FeedbackDetailScreenState extends ConsumerState<FeedbackDetailScreen> {
     // Listen to errors
     ref.listen(feedbackDetailProvider, (previous, current) {
       if (current.error != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(current.error!), backgroundColor: Colors.red),
+        ToastService.show(
+          current.error!,
+          backgroundColor: Colors.red,
         );
         if (mounted) {
           ref.read(feedbackDetailProvider.notifier).clearError();
@@ -212,9 +214,10 @@ class _FeedbackDetailScreenState extends ConsumerState<FeedbackDetailScreen> {
                     .addReply(feedbackId, content);
 
                 if (!success && mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('回复失败，请重试')));
+                  ToastService.show(
+                    '回复失败，请重试',
+                    backgroundColor: Colors.red,
+                  );
                 }
               }
             },

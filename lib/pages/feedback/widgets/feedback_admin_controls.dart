@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../../core/widgets/theme_aware_dialog.dart';
@@ -41,9 +42,7 @@ class _FeedbackAdminControlsState extends ConsumerState<FeedbackAdminControls> {
     try {
       final success = await widget.onStatusUpdate(status);
       if (!success && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('操作失败，请重试')));
+        ToastService.show('操作失败，请重试', backgroundColor: Colors.red);
       }
     } finally {
       if (mounted) {
@@ -64,9 +63,7 @@ class _FeedbackAdminControlsState extends ConsumerState<FeedbackAdminControls> {
     try {
       final success = await widget.onVisibilityUpdate(visibility);
       if (!success && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('操作失败，请重试')));
+        ToastService.show('操作失败，请重试', backgroundColor: Colors.red);
       }
     } finally {
       if (mounted) {

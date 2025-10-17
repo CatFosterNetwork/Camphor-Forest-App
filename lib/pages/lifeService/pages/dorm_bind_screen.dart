@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../../core/widgets/theme_aware_scaffold.dart';
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../providers/expense_provider.dart';
@@ -423,18 +424,10 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
               _loadCurrentDormInfo();
               
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.white),
-                        const SizedBox(width: 8),
-                        Text('已解除宿舍绑定'),
-                      ],
-                    ),
-                    backgroundColor: Colors.green,
-                    duration: Duration(seconds: 2),
-                  ),
+                ToastService.show(
+                  '已解除宿舍绑定',
+                  backgroundColor: Colors.green,
+                  duration: const Duration(seconds: 2),
                 );
               }
             },

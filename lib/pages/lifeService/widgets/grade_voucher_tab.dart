@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../../core/config/providers/theme_config_provider.dart';
 import '../../../core/models/grade_models.dart';
@@ -560,19 +561,11 @@ class _GradeVoucherTabState extends ConsumerState<GradeVoucherTab> {
 
   /// 显示提示消息
   void _showSnackBar(String message, Color themeColor) {
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('确定'),
-            ),
-          ],
-        ),
-      );
-    }
+    if (!mounted) return;
+    ToastService.show(
+      message,
+      backgroundColor: themeColor,
+      textColor: Colors.white,
+    );
   }
 }

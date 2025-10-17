@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/config/providers/unified_config_service_provider.dart';
@@ -324,24 +325,18 @@ class OptionsScreen extends ConsumerWidget {
         Navigator.of(context).pop(); // 关闭加载对话框
 
         if (result.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('配置下载成功'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '配置下载成功',
+            backgroundColor: Colors.green,
           );
 
           debugPrint('OptionsScreen: 配置下载成功，刷新所有配置 Provider');
           _refreshAllConfigProviders(ref);
           debugPrint('OptionsScreen: 所有配置 Provider 刷新完成');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('配置下载失败: ${result.message}'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '配置下载失败: ${result.message}',
+            backgroundColor: Colors.red,
           );
         }
       }
@@ -349,12 +344,9 @@ class OptionsScreen extends ConsumerWidget {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('下载失败: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
+        ToastService.show(
+          '下载失败: $e',
+          backgroundColor: Colors.red,
         );
       }
     }
@@ -413,20 +405,14 @@ class OptionsScreen extends ConsumerWidget {
           ref.invalidate(customThemeManagerProvider);
           debugPrint('OptionsScreen: 已刷新主题列表 provider（包含云端图片URL）');
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('配置上传成功'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '配置上传成功',
+            backgroundColor: Colors.green,
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('配置上传失败，请稍后重试'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          ToastService.show(
+            '配置上传失败，请稍后重试',
+            backgroundColor: Colors.red,
           );
         }
       }
@@ -434,12 +420,9 @@ class OptionsScreen extends ConsumerWidget {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
 
-        // 使用主题感知对话框显示错误信息
-        await ThemeAwareDialog.showAlertDialog(
-          context,
-          title: '上传失败',
-          message: e.toString().replaceFirst('Exception: ', ''),
-          buttonText: '确定',
+        ToastService.show(
+          '上传失败: $e',
+          backgroundColor: Colors.red,
         );
       }
     }
@@ -467,12 +450,7 @@ class OptionsScreen extends ConsumerWidget {
     if (context.mounted) {
       context.go(RouteConstants.login);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('已退出登录'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ToastService.show('已退出登录');
     }
   }
 }

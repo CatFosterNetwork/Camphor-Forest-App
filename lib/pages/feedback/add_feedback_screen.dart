@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/providers/permission_provider.dart';
@@ -123,8 +124,9 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
         .submitFeedback();
 
     if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('提交成功'), backgroundColor: Colors.green),
+      ToastService.show(
+        '提交成功',
+        backgroundColor: Colors.green,
       );
       context.pop();
     }
@@ -138,8 +140,9 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
     // Listen to form changes
     ref.listen(addFeedbackProvider, (previous, current) {
       if (current.error != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(current.error!), backgroundColor: Colors.red),
+        ToastService.show(
+          current.error!,
+          backgroundColor: Colors.red,
         );
         if (mounted) {
           ref.read(addFeedbackProvider.notifier).clearError();

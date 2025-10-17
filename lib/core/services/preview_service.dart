@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import 'permission_service.dart';
 import 'package:path_provider/path_provider.dart';
 // photo_view dependency removed - using simple InteractiveViewer
@@ -230,27 +231,17 @@ class PreviewService {
     }
   }
 
-  /// 显示SnackBar
+  /// 显示提示信息
   static void _showSnackBar(
     BuildContext context,
     String message, {
     bool isError = false,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              isError ? Icons.error : Icons.check_circle,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 8),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: isError ? Colors.red : Colors.green,
-        duration: const Duration(seconds: 3),
-      ),
+    ToastService.show(
+      message,
+      backgroundColor: isError ? Colors.red : Colors.green,
+      textColor: Colors.white,
+      duration: const Duration(seconds: 3),
     );
   }
 }

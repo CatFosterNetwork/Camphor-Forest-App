@@ -12,6 +12,7 @@ import 'package:camphor_forest/core/constants/route_constants.dart';
 import 'package:camphor_forest/core/providers/core_providers.dart'; // ← apiServiceProvider
 import 'package:camphor_forest/core/providers/auth_provider.dart';
 import 'package:camphor_forest/core/providers/grade_provider.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import 'package:camphor_forest/core/widgets/theme_aware_scaffold.dart';
 import 'package:camphor_forest/pages/classtable/providers/classtable_providers.dart';
 
@@ -47,9 +48,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   // 设备和网络信息
   String _ip = '', _loc = '', _system = '';
-
-  // SnackBar 计数，用于错位浮动显示
-  int _snackCount = 0;
 
   @override
   void initState() {
@@ -142,7 +140,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // 检查用户协议
     if (!_agree) {
-      _showSnackBar('请先同意用户协议', Colors.orange);
+      _showToast('请先同意用户协议', Colors.orange);
       return;
     }
 
@@ -178,13 +176,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else {
         // 登录失败，显示错误提示
         if (!mounted) return;
-        _showSnackBar(err ?? '登录失败，请检查账号和密码', Colors.red);
+        _showToast(err ?? '登录失败，请检查账号和密码', Colors.red);
       }
     } catch (e, st) {
       // 处理异常情况
       debugPrint('🔴 登录异常: $e\n$st');
       if (!mounted) return;
-      _showSnackBar('登录异常：${e.toString()}', Colors.red);
+      _showToast('登录异常：${e.toString()}', Colors.red);
     } finally {
       // 恢复加载状态
       setState(() => _loading = false);
@@ -557,27 +555,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   // 统一使用的圆形按钮尺寸
   static const double _btnSize = 72;
 
-  // 统一显示 SnackBar，并实现堆叠浮动效果
-  void _showSnackBar(String msg, Color bg) {
-    final messenger = ScaffoldMessenger.of(context);
-    final snack = SnackBar(
-      content: Text(msg),
+  // 统一显示提示信息
+  void _showToast(String msg, Color bg) {
+    ToastService.show(
+      msg,
       backgroundColor: bg,
+      textColor: Colors.white,
       duration: const Duration(seconds: 3),
-      behavior: SnackBarBehavior.floating,
-      margin: EdgeInsets.only(
-        bottom: 16.0 + 70.0 * _snackCount,
-        left: 16,
-        right: 16,
-      ),
     );
-
-    // 增加计数并在 SnackBar 关闭后减少
-    _snackCount++;
-    messenger.showSnackBar(snack).closed.then((_) {
-      if (mounted) {
-        setState(() => _snackCount = (_snackCount - 1).clamp(0, 100));
-      }
-    });
   }
 }

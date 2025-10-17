@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../widgets/app_background.dart';
 import 'providers/classtable_settings_provider.dart';
@@ -126,11 +127,9 @@ class _ClassTableSettingsScreenState
               case 'refresh_all':
                 await ref.read(classTableSettingsProvider.notifier).refresh();
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('已刷新所有数据'),
-                      duration: Duration(seconds: 2),
-                    ),
+                  ToastService.show(
+                    '已刷新所有数据',
+                    duration: const Duration(seconds: 2),
                   );
                 }
                 break;
@@ -139,11 +138,9 @@ class _ClassTableSettingsScreenState
                     .read(classTableSettingsProvider.notifier)
                     .refreshHistoryFromGrades();
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('已从成绩数据刷新历史课表'),
-                      duration: Duration(seconds: 2),
-                    ),
+                  ToastService.show(
+                    '已从成绩数据刷新历史课表',
+                    duration: const Duration(seconds: 2),
                   );
                 }
                 break;
