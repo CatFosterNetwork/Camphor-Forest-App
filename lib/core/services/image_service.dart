@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:crypto/crypto.dart';
 import 'image_crop_service.dart';
 
 class ImageService {
@@ -27,7 +26,9 @@ class ImageService {
       if (pickedFile == null) return null;
 
       // 2. 用户手动裁剪为正方形 (1:1比例)
-      final croppedFile = await ImageCropService.cropImageInteractively(pickedFile.path);
+      final croppedFile = await ImageCropService.cropImageInteractively(
+        pickedFile.path,
+      );
       if (croppedFile == null) {
         debugPrint('用户取消了裁剪操作');
         return null; // 用户取消裁剪，返回null
@@ -42,7 +43,7 @@ class ImageService {
 
       // 4. 压缩图
       final compressedFile = await _compressImage(croppedFile.path);
-      
+
       return compressedFile;
     } catch (e) {
       debugPrint('选择和处理图片失败: $e');
@@ -50,15 +51,13 @@ class ImageService {
     }
   }
 
-
-
   /// 压缩图片
   Future<File> _compressImage(String imagePath) async {
     try {
       // 读取图片文件
       final originalFile = File(imagePath);
       final originalBytes = await originalFile.readAsBytes();
-      
+
       // 解码图片
       final originalImage = img.decodeImage(originalBytes);
       if (originalImage == null) {
@@ -68,9 +67,10 @@ class ImageService {
       // 计算新尺寸，保持长宽比，最大尺寸不超过maxImageSize
       int newWidth = originalImage.width;
       int newHeight = originalImage.height;
-      
+
       if (newWidth > maxImageSize || newHeight > maxImageSize) {
-        final ratio = maxImageSize / (newWidth > newHeight ? newWidth : newHeight);
+        final ratio =
+            maxImageSize / (newWidth > newHeight ? newWidth : newHeight);
         newWidth = (newWidth * ratio).round();
         newHeight = (newHeight * ratio).round();
       }
@@ -84,48 +84,27 @@ class ImageService {
       );
 
       // 压缩为JPEG格式，质量为80%
-      final compressedBytes = img.encodeJpg(resizedImage, quality: imageQuality);
+      final compressedBytes = img.encodeJpg(
+        resizedImage,
+        quality: imageQuality,
+      );
 
       // 保存压缩后的图片
       final tempDir = await getTemporaryDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final compressedFile = File('${tempDir.path}/compressed_avatar_$timestamp.jpg');
+      final compressedFile = File(
+        '${tempDir.path}/compressed_avatar_$timestamp.jpg',
+      );
       await compressedFile.writeAsBytes(compressedBytes);
 
-      debugPrint('图片压缩完成: 原大小 ${originalBytes.length} -> 压缩后 ${compressedBytes.length}');
+      debugPrint(
+        '图片压缩完成: 原大小 ${originalBytes.length} -> 压缩后 ${compressedBytes.length}',
+      );
       return compressedFile;
     } catch (e) {
       debugPrint('图片压缩失败: $e');
       // 如果压缩失败，返回原文件
       return File(imagePath);
     }
-  }
-
-  /// 生成文件名
-  String generateFileName(String studentId, String extension) {
-    // `${ramdonNum}-${uuid()}.${extension}`
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = _generateRandom(studentId, timestamp);
-    final uuid = _generateUuid();
-    return '$random-$uuid.$extension';
-  }
-
-  /// 生成随机数
-  int _generateRandom(String studentId, int timestamp) {
-    // 使用studentId作为种子生成随机数
-    final seed = int.tryParse(studentId) ?? timestamp;
-    return (timestamp + seed) % 1000000000000000;
-  }
-
-  /// 生成UUID
-  String _generateUuid() {
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final random = timestamp % 1000000;
-    return md5.convert('$timestamp$random'.codeUnits).toString().substring(0, 8);
-  }
-
-  /// 获取图片文件扩展名
-  String getFileExtension(String filePath) {
-    return filePath.split('.').last.toLowerCase();
   }
 }

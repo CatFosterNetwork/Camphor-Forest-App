@@ -287,30 +287,50 @@ class UnifiedConfigService {
       debugPrint('UnifiedConfigService: 上传 ${customThemes.length} 个自定义主题');
 
       // 上传配置，返回处理后的数据（图片URL已替换）
+      debugPrint('UnifiedConfigService: 📤 开始上传配置...');
       final processedData = await _syncService.uploadConfigs(nestedSyncData);
+      debugPrint('UnifiedConfigService: ✅ 配置上传完成');
 
       // 将上传后的配置（包含图片URL）更新回本地
       if (processedData['themeConfig'] != null) {
         final themeConfigData =
             processedData['themeConfig'] as Map<String, dynamic>;
 
+        debugPrint('UnifiedConfigService: 📝 准备保存处理后的配置到本地...');
+
         // 1. 保存 ThemeConfig（不包含 customThemes）
         final updatedThemeConfig = ThemeConfig.fromJson(themeConfigData);
         await _themeConfigService.saveConfig(updatedThemeConfig);
-        debugPrint('UnifiedConfigService: 已更新本地主题配置（图片URL）');
+        debugPrint('UnifiedConfigService: ✅ 已更新本地主题配置（图片URL）');
 
         // 2. 单独保存自定义主题到 CustomThemeService
         if (themeConfigData['theme-customThemes'] != null) {
           final customThemesData =
               themeConfigData['theme-customThemes'] as List;
+          debugPrint(
+            'UnifiedConfigService: 📋 准备保存 ${customThemesData.length} 个自定义主题...',
+          );
+
+          // 打印每个主题的图片URL
+          for (int i = 0; i < customThemesData.length; i++) {
+            final themeJson = customThemesData[i];
+            debugPrint('UnifiedConfigService: 主题 $i: ${themeJson['title']}');
+            debugPrint('  - img: ${themeJson['img']}');
+            debugPrint(
+              '  - indexBackgroundImg: ${themeJson['indexBackgroundImg']}',
+            );
+          }
+
           final customThemes = customThemesData
               .map((json) => theme_model.Theme.fromJson(json))
               .toList();
           await _customThemeService.replaceAllCustomThemes(customThemes);
           debugPrint(
-            'UnifiedConfigService: 已更新本地自定义主题列表，共 ${customThemes.length} 个（图片URL）',
+            'UnifiedConfigService: ✅ 已更新本地自定义主题列表，共 ${customThemes.length} 个（图片URL）',
           );
         }
+      } else {
+        debugPrint('UnifiedConfigService: ⚠️ processedData 中没有 themeConfig');
       }
 
       await _userPreferencesService.markSynced();
@@ -318,7 +338,7 @@ class UnifiedConfigService {
       return true;
     } catch (e) {
       debugPrint('UnifiedConfigService: 配置同步失败: $e');
-      return false;
+      rethrow;
     }
   }
 
@@ -336,12 +356,6 @@ class UnifiedConfigService {
       final themeConfigChanged =
           currentConfigs.themeConfig.selectedThemeCode !=
           defaultConfigs.themeConfig!.selectedThemeCode;
-
-      // 不再检查自定义主题
-      // 理由：
-      // 1. 如果用户创建了自定义主题并选择了它，selectedThemeCode 会变化
-      // 2. 如果用户只是创建了主题但没选择，这不算"重要修改"
-      // 3. 下载配置时应该完全替换本地自定义主题
 
       final hasChanges = appConfigChanged || themeConfigChanged;
 

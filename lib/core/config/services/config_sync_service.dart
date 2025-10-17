@@ -1,12 +1,12 @@
 // lib/core/config/services/config_sync_service.dart
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../services/api_service.dart';
-import '../../../utils/common.dart';
+import '../../services/image_upload_service.dart';
 
 /// 配置网络同步服务
 /// 从旧的 ConfigService 迁移网络相关功能
@@ -14,12 +14,22 @@ import '../../../utils/common.dart';
 class ConfigSyncService {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   ApiService? _apiService;
+  ImageUploadService? _imageUploadService;
 
-  ConfigSyncService({ApiService? apiService}) : _apiService = apiService;
+  ConfigSyncService({
+    ApiService? apiService,
+    ImageUploadService? imageUploadService,
+  }) : _apiService = apiService,
+       _imageUploadService = imageUploadService;
 
   /// 设置API服务
   void setApiService(ApiService apiService) {
     _apiService = apiService;
+  }
+
+  /// 设置图片上传服务
+  void setImageUploadService(ImageUploadService imageUploadService) {
+    _imageUploadService = imageUploadService;
   }
 
   /// 上传配置到服务器
@@ -80,11 +90,43 @@ class ConfigSyncService {
     }
 
     try {
-      final user = await _secureStorage.read(key: 'userInfo');
-      final fileName =
-          "${randomSeedRange(0, 1000000000000000, int.tryParse(user ?? '0'))}-${const Uuid().v4()}.${imagePath.split('.').last}";
+      // 检查图片文件大小
+      final file = File(imagePath);
+      if (!await file.exists()) {
+        throw Exception('图片文件不存在: $imagePath');
+      }
 
-      final url = await _apiService!.uploadImage(imagePath, fileName);
+      final fileSize = await file.length();
+      final fileSizeMB = fileSize / (1024 * 1024);
+      debugPrint(
+        'ConfigSyncService: 检查图片大小: ${fileSizeMB.toStringAsFixed(2)} MB',
+      );
+
+      // 如果图片超过 5MB，拒绝上传
+      if (fileSizeMB > 5) {
+        throw Exception(
+          '图片体积过大！\n'
+          '最大图片体积: ${fileSizeMB.toStringAsFixed(2)} MB\n'
+          '单张图片体积最大限制: 5 MB',
+        );
+      }
+
+      // 使用 ImageUploadService 生成文件名和上传
+      final imageUploadService =
+          _imageUploadService ?? ImageUploadService(_apiService!);
+
+      // 使用用户信息创建上传上下文
+      final user = await _secureStorage.read(key: 'userInfo');
+      final context = user != null
+          ? ImageUploadContext.fromUserId(user)
+          : ImageUploadContext.empty();
+
+      final url = await imageUploadService.uploadImage(
+        imagePath,
+        context: context,
+        prefix: 'theme',
+      );
+
       debugPrint('ConfigSyncService: 图片上传成功: $url');
       return url;
     } catch (e) {
@@ -147,6 +189,8 @@ class ConfigSyncService {
         if (themeConfig['theme-theme'] != null &&
             themeConfig['theme-theme'] is Map) {
           await _processThemeImages(themeConfig['theme-theme']);
+        } else {
+          debugPrint('ConfigSyncService: ⚠️ theme-theme 不存在或格式错误');
         }
 
         // 处理 theme-customThemes（多个自定义主题）
@@ -160,7 +204,7 @@ class ConfigSyncService {
           }
           debugPrint('ConfigSyncService: 处理了 ${customThemes.length} 个自定义主题的图片');
         }
-        // 🔧 向后兼容：处理旧格式 theme-customTheme（单个）
+        // 处理旧格式 theme-customTheme（单个）
         else if (themeConfig['theme-customTheme'] != null &&
             themeConfig['theme-customTheme'] is Map) {
           await _processThemeImages(themeConfig['theme-customTheme']);
@@ -209,12 +253,18 @@ class ConfigSyncService {
         if (!imageUrl.startsWith('https://data.swu.social') &&
             !imageUrl.startsWith('http://www.yumus.cn') &&
             !imageUrl.startsWith('http')) {
+          debugPrint('ConfigSyncService: ⚠️ 发现本地图片: $field');
+          debugPrint('ConfigSyncService: ⚠️ 路径: $imageUrl');
+
           try {
             final uploadedUrl = await uploadImage(imageUrl);
             theme[field] = uploadedUrl;
-            debugPrint('ConfigSyncService: 主题图片 $field 已上传: $uploadedUrl');
+            debugPrint('ConfigSyncService: ✅ 主题图片 $field 已上传: $uploadedUrl');
           } catch (e) {
-            debugPrint('ConfigSyncService: 主题图片 $field 上传失败，保持原URL: $e');
+            // 图片上传失败，抛出错误阻止配置上传
+            debugPrint('ConfigSyncService: ❌ 主题图片 $field 上传失败: $e');
+            // 直接抛出原始错误，保留详细的错误信息
+            rethrow;
           }
         }
       }

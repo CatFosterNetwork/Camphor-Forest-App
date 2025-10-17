@@ -12,6 +12,7 @@ import '../../core/widgets/cached_image.dart';
 import '../../core/providers/core_providers.dart';
 import '../../core/services/image_service.dart';
 import '../../core/services/image_cache_service.dart';
+import '../../core/services/image_upload_service.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
   const ProfileSettingsPage({super.key});
@@ -492,23 +493,20 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         });
       }
 
-      // 3. 生成文件名
-      debugPrint('📝 第2步：生成文件名...');
+      // 3. 上传图片到OSS
+      debugPrint('☁️ 第3步：上传图片到OSS...');
       final authState = ref.read(authProvider);
       final studentId = authState.user?.studentId ?? '';
-      final extension = imageService.getFileExtension(processedImageFile.path);
-      final fileName = imageService.generateFileName(studentId, extension);
 
-      debugPrint('🆔 学号: $studentId');
-      debugPrint('📎 文件扩展名: $extension');
-      debugPrint('📄 生成的文件名: $fileName');
+      final imageUploadService = ref.read(imageUploadServiceProvider);
+      final uploadContext = studentId.isNotEmpty
+          ? ImageUploadContext.fromStudentId(studentId)
+          : ImageUploadContext.empty();
 
-      // 4. 上传图片到OSS
-      debugPrint('☁️ 第3步：上传图片到OSS...');
-      final apiService = ref.read(apiServiceProvider);
-      final avatarUrl = await apiService.uploadImage(
+      final avatarUrl = await imageUploadService.uploadImage(
         processedImageFile.path,
-        fileName,
+        context: uploadContext,
+        prefix: 'avatar',
       );
 
       debugPrint('🎉 图片上传成功！头像URL: $avatarUrl');
@@ -533,6 +531,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         debugPrint('  - studentId: ${updatedUser.studentId}');
         debugPrint('  - avatarUrl: $avatarUrl');
 
+        final apiService = ref.read(apiServiceProvider);
         final response = await apiService.modifyPersonalInfo(userMap);
         debugPrint('📬 用户信息更新响应: $response');
         final success = response['success'] ?? false;

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/api_service.dart';
+import '../../../core/services/image_upload_service.dart';
 import '../../../core/providers/core_providers.dart';
 import '../models/feedback_models.dart';
 
@@ -529,16 +530,19 @@ class AddFeedbackNotifier extends StateNotifier<AddFeedbackState> {
     state = state.copyWith(isSubmitting: true, error: null);
 
     try {
-      // Upload images first if any
+      // Upload images first if any 
       String? resourceUrl;
       if (state.images.isNotEmpty) {
         final imageUrls = <String, String>{};
+        final imageUploadService = ImageUploadService(_apiService);
 
         for (int i = 0; i < state.images.length; i++) {
           final file = state.images[i];
-          final fileName =
-              'feedback_${DateTime.now().millisecondsSinceEpoch}_$i.${file.path.split('.').last}';
-          final url = await _apiService.uploadImage(file.path, fileName);
+          final url = await imageUploadService.uploadImage(
+            file.path,
+            context: ImageUploadContext.empty(),
+            prefix: 'feedback_$i',
+          );
           imageUrls[i.toString()] = url;
         }
 

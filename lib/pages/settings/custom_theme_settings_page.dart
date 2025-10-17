@@ -1236,6 +1236,40 @@ class _CustomThemeSettingsPageState
     );
 
     if (imagePath != null) {
+      // 检查图片大小
+      final file = File(imagePath);
+      final fileSize = await file.length();
+      final fileSizeMB = fileSize / (1024 * 1024);
+
+      debugPrint('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
+
+      // 如果图片超过 5MB，提示用户
+      if (fileSizeMB > 5) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '图片过大 (${fileSizeMB.toStringAsFixed(1)} MB)！\n'
+                '建议选择小于 5MB 的图片，以确保上传成功。',
+              ),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: '仍然使用',
+                textColor: Colors.white,
+                onPressed: () {
+                  onImagePicked(imagePath);
+                  setState(() {
+                    hasUnsavedChanges = true;
+                  });
+                },
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
       onImagePicked(imagePath);
       setState(() {
         hasUnsavedChanges = true;

@@ -1,6 +1,7 @@
 // lib/core/services/api_service.dart
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:camphor_forest/core/network/http_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -441,6 +442,11 @@ class ApiService {
       debugPrint('🎨 Pic-Operations: $picOperations');
       debugPrint('🌐 上传URL: ${ApiConstants.ossUrl}');
 
+      // 获取文件大小
+      final file = File(filePath);
+      final fileSize = await file.length();
+      debugPrint('📊 文件大小: ${(fileSize / 1024).toStringAsFixed(2)} KB');
+
       // 3. 直接使用 Dio 进行文件上传
       final dio = (_http as dynamic).dio as Dio;
       final response = await dio.post(
@@ -453,7 +459,14 @@ class ApiService {
           },
           responseType: ResponseType.plain, // OSS返回的是XML，不是JSON
           validateStatus: (status) => status != null && status < 500,
+          // 增加上传超时时间：5分钟发送超时，3分钟接收超时
+          sendTimeout: const Duration(minutes: 2),
+          receiveTimeout: const Duration(minutes: 1),
         ),
+        onSendProgress: (sent, total) {
+          final progress = (sent / total * 100).toStringAsFixed(1);
+          debugPrint('📤 上传进度: $progress% ($sent/$total 字节)');
+        },
       );
 
       debugPrint('📬 上传响应状态码: ${response.statusCode}');

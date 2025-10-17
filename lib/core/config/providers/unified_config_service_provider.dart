@@ -83,7 +83,12 @@ class ConfigInitNotifier extends StateNotifier<AsyncValue<ConfigResult>> {
   /// 同步到服务器
   Future<bool> syncToServer() async {
     if (_service == null) return false;
-    return await _service!.syncToServer();
+    try {
+      return await _service!.syncToServer();
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      return false;
+    }
   }
 
   /// 从服务器同步

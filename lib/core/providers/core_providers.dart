@@ -10,6 +10,7 @@ import '../constants/api_constants.dart';
 import '../network/http_client.dart';
 import '../services/api_service.dart';
 import '../services/custom_theme_service.dart';
+import '../services/image_upload_service.dart';
 import '../config/services/unified_config_service.dart';
 
 /// 1. Dio 实例
@@ -56,7 +57,13 @@ final customThemeServiceProvider = Provider<CustomThemeService>((ref) {
   return CustomThemeService(prefs);
 });
 
-/// 6. UserService
+/// 6. ImageUploadService
+final imageUploadServiceProvider = Provider<ImageUploadService>((ref) {
+  final api = ref.watch(apiServiceProvider);
+  return ImageUploadService(api);
+});
+
+/// 7. UserService
 /// 配置服务的 Provider 定义在 unified_config_service_provider.dart
 final userServiceProvider = FutureProvider<UserService>((ref) async {
   final storage = ref.watch(secureStorageProvider);

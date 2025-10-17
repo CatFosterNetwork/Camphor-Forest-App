@@ -434,12 +434,12 @@ class OptionsScreen extends ConsumerWidget {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('上传失败: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
+        // 使用主题感知对话框显示错误信息
+        await ThemeAwareDialog.showAlertDialog(
+          context,
+          title: '上传失败',
+          message: e.toString().replaceFirst('Exception: ', ''),
+          buttonText: '确定',
         );
       }
     }
