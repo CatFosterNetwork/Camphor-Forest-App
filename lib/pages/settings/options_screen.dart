@@ -409,6 +409,10 @@ class OptionsScreen extends ConsumerWidget {
         Navigator.of(context).pop(); // 关闭加载对话框
 
         if (success) {
+          // 刷新主题列表 provider，使其重新加载更新后的数据（包含云端图片URL）
+          ref.invalidate(customThemeManagerProvider);
+          debugPrint('OptionsScreen: 已刷新主题列表 provider（包含云端图片URL）');
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('配置上传成功'),
