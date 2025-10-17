@@ -1,8 +1,9 @@
 // lib/pages/school_navigation/school_navigation_screen.dart
 
 import 'dart:io' show Platform;
-import 'dart:math' as math;
 import 'dart:async';
+import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,16 @@ import '../../core/constants/location.dart';
 import 'models/bus_models.dart';
 import 'providers/bus_provider.dart';
 import 'utils/bus_icon_utils.dart';
+
+class _AppleScaledIconData {
+  _AppleScaledIconData({
+    required this.image,
+    required this.bytes,
+  });
+
+  final ui.Image image;
+  final Uint8List bytes;
+}
 
 class SchoolNavigationScreen extends ConsumerStatefulWidget {
   const SchoolNavigationScreen({super.key});
@@ -93,10 +104,17 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   static const double _labelZoomFactor = 1.02; // 标签缩放因子（每级放大2%）
   static const double _baseLabelOffset = 0.00015; // 基础偏移距离
 
+  static const double _appleBusHeadingBucketSize = 5.0; // Apple Maps车辆朝向量化步长
+  static const double _appleBusIconTargetWidth = 44.0; // Apple Maps车辆图标目标宽度（像素）
+  static const double _appleBusIconRotationOffsetDegrees =
+      0.0; // Apple Maps车辆图标方向校正角度
+
   // 缓存自定义图标
   apple.BitmapDescriptor? _appleLocationPinIcon;
   apple.BitmapDescriptor? _appleBusStopIcon;
-  final Map<String, apple.BitmapDescriptor> _appleBusIcons = {};
+  final Map<String, _AppleScaledIconData> _appleBusIconAssets = {};
+  final Map<String, apple.BitmapDescriptor> _appleBusIconCache = {};
+  int _appleBusAnnotationUpdateId = 0;
   Future<void>? _iconsFuture;
 
   @override
@@ -135,10 +153,13 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       for (final lineIdStr in supportedLineIds) {
         try {
           final iconPath = BusIconUtils.getBusIconPath(lineIdStr);
-          _appleBusIcons[lineIdStr] = await _loadAndScaleAppleMapIcon(
+          final iconData = await _loadAndScaleAppleMapIconData(
             iconPath,
-            scale: 2,
+            targetWidth: _appleBusIconTargetWidth,
           );
+          _appleBusIconAssets[lineIdStr] = iconData;
+          _appleBusIconCache['$lineIdStr|base'] =
+              apple.BitmapDescriptor.fromBytes(iconData.bytes);
           debugPrint('🍎 [图标预加载] 线路$lineIdStr: $iconPath');
         } catch (e) {
           debugPrint('🍎 [图标预加载失败] 线路$lineIdStr: $e');
@@ -152,9 +173,27 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     }
   }
 
-  // Helper function to load and scale an image for Apple Maps
-  Future<apple.BitmapDescriptor> _loadAndScaleAppleMapIcon(String assetPath,
-      {double scale = 1.0}) async {
+  Future<apple.BitmapDescriptor> _loadAndScaleAppleMapIcon(
+    String assetPath, {
+    double scale = 1.0,
+    double? targetWidth,
+    double? targetHeight,
+  }) async {
+    final _AppleScaledIconData iconData = await _loadAndScaleAppleMapIconData(
+      assetPath,
+      scale: scale,
+      targetWidth: targetWidth,
+      targetHeight: targetHeight,
+    );
+    return apple.BitmapDescriptor.fromBytes(iconData.bytes);
+  }
+
+  Future<_AppleScaledIconData> _loadAndScaleAppleMapIconData(
+    String assetPath, {
+    double scale = 1.0,
+    double? targetWidth,
+    double? targetHeight,
+  }) async {
     final ByteData data = await rootBundle.load(assetPath);
     final ui.Codec codec = await ui.instantiateImageCodec(
       data.buffer.asUint8List(),
@@ -162,8 +201,17 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     final ui.FrameInfo fi = await codec.getNextFrame();
     final ui.Image image = fi.image;
 
-    final int newWidth = (image.width * scale).round();
-    final int newHeight = (image.height * scale).round();
+    double computedScale = scale;
+    if (targetWidth != null && targetWidth > 0) {
+      computedScale = targetWidth / image.width;
+    } else if (targetHeight != null && targetHeight > 0) {
+      computedScale = targetHeight / image.height;
+    }
+
+    final int newWidth =
+        math.max(1, (image.width * computedScale).round());
+    final int newHeight =
+        math.max(1, (image.height * computedScale).round());
 
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
@@ -175,40 +223,102 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       Rect.fromLTWH(0, 0, newWidth.toDouble(), newHeight.toDouble()),
       paint,
     );
+    image.dispose();
 
     final ui.Image newImage =
         await pictureRecorder.endRecording().toImage(newWidth, newHeight);
     final ByteData? byteData =
         await newImage.toByteData(format: ui.ImageByteFormat.png);
 
+    return _AppleScaledIconData(
+      image: newImage,
+      bytes: byteData!.buffer.asUint8List(),
+    );
+  }
+
+  Future<apple.BitmapDescriptor> _createRotatedAppleBusIcon(
+    ui.Image baseImage,
+    double headingBucket,
+  ) async {
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder);
+    final Paint paint = Paint()..filterQuality = FilterQuality.high;
+
+    final double width = baseImage.width.toDouble();
+    final double height = baseImage.height.toDouble();
+    final double diagonal =
+        math.sqrt(width * width + height * height);
+    final int canvasSize = diagonal.ceil();
+    final double halfCanvas = canvasSize / 2;
+
+    canvas.translate(halfCanvas, halfCanvas);
+    final double radians =
+        (headingBucket + _appleBusIconRotationOffsetDegrees) *
+            math.pi /
+            180;
+    canvas.rotate(radians);
+    canvas.translate(-width / 2, -height / 2);
+    canvas.drawImage(baseImage, Offset.zero, paint);
+
+    final ui.Image rotatedImage =
+        await recorder.endRecording().toImage(canvasSize, canvasSize);
+    final ByteData? byteData =
+        await rotatedImage.toByteData(format: ui.ImageByteFormat.png);
+    rotatedImage.dispose();
+
     return apple.BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
-  // 安全获取校车图标的方法
-  apple.BitmapDescriptor _getAppleBusIcon(String lineId) {
-    // 首先尝试从缓存中获取
-    if (_appleBusIcons.containsKey(lineId)) {
-      return _appleBusIcons[lineId]!;
+  Future<apple.BitmapDescriptor> _getAppleBusIcon(
+    String lineId,
+    double direction,
+  ) async {
+    final double normalizedDirection = direction.isFinite ? direction : 0.0;
+    final double wrappedHeading =
+        (normalizedDirection % 360 + 360) % 360;
+    final double step =
+        _appleBusHeadingBucketSize > 0 ? _appleBusHeadingBucketSize : 1.0;
+    final int bucketIndex = (wrappedHeading / step).round();
+    final double snappedHeading = (bucketIndex * step) % 360;
+    final String cacheKey = '$lineId|${snappedHeading.toStringAsFixed(1)}';
+
+    if (_appleBusIconCache.containsKey(cacheKey)) {
+      return _appleBusIconCache[cacheKey]!;
     }
-    
-    // 如果缓存中没有，尝试异步加载（但这次返回默认图标）
-    _loadMissingBusIcon(lineId);
-    
-    debugPrint('🍎 [图标警告] 线路$lineId的图标未找到，使用默认图标');
-    return apple.BitmapDescriptor.defaultAnnotation;
+
+    final _AppleScaledIconData? baseIcon = _appleBusIconAssets[lineId];
+    if (baseIcon == null) {
+      await _loadMissingBusIcon(lineId);
+      return _appleBusIconCache['$lineId|base'] ??
+          apple.BitmapDescriptor.defaultAnnotation;
+    }
+
+    try {
+      final apple.BitmapDescriptor descriptor =
+          await _createRotatedAppleBusIcon(baseIcon.image, snappedHeading);
+      _appleBusIconCache[cacheKey] = descriptor;
+      return descriptor;
+    } catch (e) {
+      debugPrint('🍎 [图标旋转异常] 线路$lineId 角度${snappedHeading.toStringAsFixed(1)}°: $e');
+      return _appleBusIconCache['$lineId|base'] ??
+          apple.BitmapDescriptor.defaultAnnotation;
+    }
   }
 
-  // 异步加载缺失的校车图标
   Future<void> _loadMissingBusIcon(String lineId) async {
-    if (_appleBusIcons.containsKey(lineId)) return;
-    
+    if (_appleBusIconAssets.containsKey(lineId)) return;
+
     try {
-      final iconPath = BusIconUtils.getBusIconPath(lineId);
-      final icon = await _loadAndScaleAppleMapIcon(iconPath, scale: 2);
-      _appleBusIcons[lineId] = icon;
+      final String iconPath = BusIconUtils.getBusIconPath(lineId);
+      final _AppleScaledIconData iconData = await _loadAndScaleAppleMapIconData(
+        iconPath,
+        targetWidth: _appleBusIconTargetWidth,
+      );
+      _appleBusIconAssets[lineId] = iconData;
+      _appleBusIconCache['$lineId|base'] =
+          apple.BitmapDescriptor.fromBytes(iconData.bytes);
       debugPrint('🍎 [图标补载] 成功加载线路$lineId的图标');
-      
-      // 触发地图刷新
+
       if (mounted) setState(() {});
     } catch (e) {
       debugPrint('🍎 [图标补载失败] 线路$lineId: $e');
@@ -1160,12 +1270,14 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   ) async {
     if (_appleMapController == null) return;
 
-    try {
-      // Start with a clean list for bus annotations
-      _appleBusAnnotations.clear();
+    final int requestId = ++_appleBusAnnotationUpdateId;
 
+    try {
       if (busData.isEmpty) {
-        setState(() {});
+        if (!mounted || requestId != _appleBusAnnotationUpdateId) return;
+        setState(() {
+          _appleBusAnnotations.clear();
+        });
         return;
       }
 
@@ -1181,22 +1293,28 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       }
 
       if (filteredBusData.isEmpty) {
-        setState(() {});
+        if (!mounted || requestId != _appleBusAnnotationUpdateId) return;
+        setState(() {
+          _appleBusAnnotations.clear();
+        });
         return;
       }
 
-      // Create new annotations
-      for (final bus in filteredBusData) {
+      final List<Future<apple.Annotation>> annotationFutures =
+          filteredBusData.map((bus) async {
         final line = busLines.firstWhere(
           (line) => line.id == bus.lineId,
           orElse: () => busLines.first,
         );
 
         final position = apple.LatLng(bus.latitude, bus.longitude);
+        final icon =
+            await _getAppleBusIcon(bus.lineId, bus.direction);
 
-        final annotation = apple.Annotation(
+        return apple.Annotation(
           annotationId: apple.AnnotationId('bus_${bus.id}'),
           position: position,
+          anchor: const Offset(0.5, 0.5),
           infoWindow: apple.InfoWindow(
             title: '${line.name} - 车辆${bus.id}',
             snippet: '速度: ${bus.speed.toStringAsFixed(1)} km/h • 点击查看详情',
@@ -1205,13 +1323,24 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
               _showBusInfoDialog(bus, line);
             },
           ),
-          icon: _getAppleBusIcon(bus.lineId),
+          icon: icon,
         );
-        _appleBusAnnotations.add(annotation);
+      }).toList();
+
+      final List<apple.Annotation> newAnnotations =
+          await Future.wait(annotationFutures);
+
+      if (!mounted || requestId != _appleBusAnnotationUpdateId) {
+        debugPrint('🍎 [车辆更新] 忽略过期的Apple Maps车辆更新: $requestId');
+        return;
       }
 
       // Trigger a rebuild to display the new annotations
-      setState(() {});
+      setState(() {
+        _appleBusAnnotations
+          ..clear()
+          ..addAll(newAnnotations);
+      });
 
       debugPrint(
         '🍎 [车辆完成] 已更新 ${_appleBusAnnotations.length} 个车辆标注到Apple Maps',
@@ -3529,7 +3658,11 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     try {
       _appleLocationPinIcon = null;
       _appleBusStopIcon = null;
-      _appleBusIcons.clear();
+      for (final entry in _appleBusIconAssets.entries) {
+        entry.value.image.dispose();
+      }
+      _appleBusIconAssets.clear();
+      _appleBusIconCache.clear();
       debugPrint('🍎 [缓存清理] Apple Maps图标缓存已清理');
     } catch (e) {
       debugPrint('🍎 [缓存清理异常] $e');
