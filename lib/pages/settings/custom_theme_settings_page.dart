@@ -626,7 +626,7 @@ class _CustomThemeSettingsPageState
                         ),
                       ),
                       Text(
-                        'rgba(${(color.r / 255.0).toStringAsFixed(2)}, ${(color.g / 255.0).toStringAsFixed(2)}, ${(color.b / 255.0).toStringAsFixed(2)}, ${(color.alpha / 255.0).toStringAsFixed(2)})',
+                        'rgba(${color.red.toString()}, ${color.green.toString()}, ${color.blue.toString()}, ${(color.alpha / 255.0).toStringAsFixed(2)})',
                         style: TextStyle(
                           fontSize: 12,
                           color: isDarkMode ? Colors.white70 : Colors.black54,
@@ -966,16 +966,24 @@ class _CustomThemeSettingsPageState
     final TextEditingController bController = TextEditingController();
     final TextEditingController aController = TextEditingController();
 
-    void updateControllersFromColor(Color color) {
-      hexController.text = color
-          .toARGB32()
-          .toRadixString(16)
-          .padLeft(8, '0')
-          .toUpperCase();
-      rController.text = color.r.toString();
-      gController.text = color.g.toString();
-      bController.text = color.b.toString();
-      aController.text = (color.alpha / 255.0).toStringAsFixed(2);
+    void updateControllersFromColor(
+      Color color, {
+      bool updateHex = true,
+      bool updateRGBA = true,
+    }) {
+      if (updateHex) {
+        hexController.text = color
+            .toARGB32()
+            .toRadixString(16)
+            .padLeft(8, '0')
+            .toUpperCase();
+      }
+      if (updateRGBA) {
+        rController.text = color.red.toString();
+        gController.text = color.green.toString();
+        bController.text = color.blue.toString();
+        aController.text = (color.alpha / 255.0).toStringAsFixed(2);
+      }
     }
 
     void updateColorFromHex(String hex) {
@@ -987,7 +995,7 @@ class _CustomThemeSettingsPageState
         if (cleanHex.length == 8) {
           final int value = int.parse(cleanHex, radix: 16);
           selectedColor = Color(value);
-          updateControllersFromColor(selectedColor);
+          updateControllersFromColor(selectedColor, updateHex: false);
         }
       } catch (e) {
         // 忽略无效的hex值
@@ -1003,7 +1011,7 @@ class _CustomThemeSettingsPageState
         final int alpha = (a * 255).round();
 
         selectedColor = Color.fromARGB(alpha, r, g, b);
-        updateControllersFromColor(selectedColor);
+        updateControllersFromColor(selectedColor, updateRGBA: false);
       } catch (e) {
         // 忽略无效的RGBA值
       }
