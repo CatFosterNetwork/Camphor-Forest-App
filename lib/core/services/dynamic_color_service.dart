@@ -106,14 +106,14 @@ class DynamicColorService {
     // 从系统颜色方案中提取 10 个颜色，用于课表渐变
     return [
       colorScheme.primary,
-      colorScheme.primaryContainer,
       colorScheme.secondary,
-      colorScheme.secondaryContainer,
       colorScheme.tertiary,
-      colorScheme.tertiaryContainer,
       colorScheme.error,
-      colorScheme.errorContainer,
       colorScheme.surface,
+      colorScheme.primaryContainer,
+      colorScheme.secondaryContainer,
+      colorScheme.tertiaryContainer,
+      colorScheme.errorContainer,
       colorScheme.surfaceContainerHighest,
     ];
   }
