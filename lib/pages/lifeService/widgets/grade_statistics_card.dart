@@ -23,7 +23,9 @@ class GradeStatisticsCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800.withAlpha(128) : Colors.white.withAlpha(204),
+        color: isDarkMode
+            ? Colors.grey.shade800.withAlpha(128)
+            : Colors.white.withAlpha(204),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -55,9 +57,9 @@ class GradeStatisticsCard extends ConsumerWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 统计数据网格
           _buildStatisticsGrid(statistics, isDarkMode),
         ],
@@ -93,9 +95,9 @@ class GradeStatisticsCard extends ConsumerWidget {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // 第二行：GPA
         Row(
           children: [
@@ -120,9 +122,9 @@ class GradeStatisticsCard extends ConsumerWidget {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // 第三行：学分统计
         Row(
           children: [
@@ -164,21 +166,14 @@ class GradeStatisticsCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: color.withAlpha(isDarkMode ? 51 : 25),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withAlpha(76),
-          width: 1,
-        ),
+        border: Border.all(color: color.withAlpha(76), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: color,
-                size: 20,
-              ),
+              Icon(icon, color: color, size: 20),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(

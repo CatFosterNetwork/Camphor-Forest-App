@@ -8,31 +8,34 @@ class JsonCompatibilityValidator {
   /// 验证所有用户提供的主题JSON格式
   static Future<bool> validateAllThemes() async {
     debugPrint('🧪 开始验证主题JSON兼容性...\n');
-    
+
     bool allPassed = true;
-    
+
     // 测试默认主题
     allPassed &= await _validateTheme(_getDefaultThemeJson(), '默认主题');
-    
+
     // 测试森林主题
     allPassed &= await _validateTheme(_getForestThemeJson(), '森林主题');
-    
+
     // 测试海洋主题
     allPassed &= await _validateTheme(_getOceanThemeJson(), '海洋主题');
-    
+
     // 测试往返转换
     allPassed &= await _validateRoundTripConversion();
-    
+
     debugPrint(allPassed ? '✅ 所有主题JSON验证通过！' : '❌ 部分主题JSON验证失败！');
     return allPassed;
   }
 
   /// 验证单个主题
-  static Future<bool> _validateTheme(Map<String, dynamic> themeJson, String themeName) async {
+  static Future<bool> _validateTheme(
+    Map<String, dynamic> themeJson,
+    String themeName,
+  ) async {
     try {
       // 测试 fromJson
       final theme = theme_model.Theme.fromJson(themeJson);
-      
+
       // 验证基本属性
       assert(theme.code == themeJson['code']);
       assert(theme.title == themeJson['title']);
@@ -40,30 +43,32 @@ class JsonCompatibilityValidator {
       assert(theme.indexBackgroundBlur == themeJson['indexBackgroundBlur']);
       assert(theme.indexBackgroundImg == themeJson['indexBackgroundImg']);
       assert(theme.indexMessageBoxBlur == themeJson['indexMessageBoxBlur']);
-      assert(theme.classTableBackgroundBlur == themeJson['classTableBackgroundBlur']);
-      
+      assert(
+        theme.classTableBackgroundBlur == themeJson['classTableBackgroundBlur'],
+      );
+
       // 验证颜色解析
       final colorList = themeJson['colorList'] as List<dynamic>;
       assert(theme.colorList.length == colorList.length);
-      
+
       // 测试 toJson
       final outputJson = theme.toJson();
-      
+
       // 验证输出格式
       assert(outputJson.containsKey('backRGB'));
       assert(outputJson.containsKey('foregRGB'));
       assert(outputJson.containsKey('weekRGB'));
       assert(outputJson.containsKey('colorList'));
-      
+
       // 验证RGB格式
       final backRGB = outputJson['backRGB'] as String;
       assert(backRGB.startsWith('rgb(') && backRGB.endsWith(')'));
-      
+
       debugPrint('✅ $themeName 验证通过');
       debugPrint('  - 代码: ${theme.code}');
       debugPrint('  - 颜色数量: ${theme.colorList.length}');
       debugPrint('  - RGB输出: ${outputJson['backRGB']}');
-      
+
       return true;
     } catch (e, stackTrace) {
       debugPrint('❌ $themeName 验证失败: $e');
@@ -76,22 +81,24 @@ class JsonCompatibilityValidator {
   static Future<bool> _validateRoundTripConversion() async {
     try {
       final originalJson = _getDefaultThemeJson();
-      
+
       // JSON -> Theme -> JSON
       final theme = theme_model.Theme.fromJson(originalJson);
       final outputJson = theme.toJson();
-      
+
       // JSON -> Theme -> JSON -> Theme
       final themeRoundTrip = theme_model.Theme.fromJson(outputJson);
-      
+
       // 验证一致性
       assert(theme.code == themeRoundTrip.code);
       assert(theme.title == themeRoundTrip.title);
       assert(theme.backColor.toARGB32() == themeRoundTrip.backColor.toARGB32());
-      assert(theme.foregColor.toARGB32() == themeRoundTrip.foregColor.toARGB32());
+      assert(
+        theme.foregColor.toARGB32() == themeRoundTrip.foregColor.toARGB32(),
+      );
       assert(theme.weekColor.toARGB32() == themeRoundTrip.weekColor.toARGB32());
       assert(theme.colorList.length == themeRoundTrip.colorList.length);
-      
+
       debugPrint('✅ 往返转换一致性验证通过');
       return true;
     } catch (e) {
@@ -114,9 +121,17 @@ class JsonCompatibilityValidator {
       "weekRGB": "rgb(102, 102, 102)",
       "classTableBackgroundBlur": true,
       "colorList": [
-        "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57",
-        "#FF9FF3", "#54A0FF", "#5F27CD", "#00D2D3", "#FF9F43"
-      ]
+        "#FF6B6B",
+        "#4ECDC4",
+        "#45B7D1",
+        "#96CEB4",
+        "#FECA57",
+        "#FF9FF3",
+        "#54A0FF",
+        "#5F27CD",
+        "#00D2D3",
+        "#FF9F43",
+      ],
     };
   }
 
@@ -134,9 +149,17 @@ class JsonCompatibilityValidator {
       "weekRGB": "rgb(85, 107, 47)",
       "classTableBackgroundBlur": true,
       "colorList": [
-        "#228B22", "#32CD32", "#90EE90", "#98FB98", "#00FF7F",
-        "#7CFC00", "#ADFF2F", "#9AFF9A", "#00FA9A", "#3CB371"
-      ]
+        "#228B22",
+        "#32CD32",
+        "#90EE90",
+        "#98FB98",
+        "#00FF7F",
+        "#7CFC00",
+        "#ADFF2F",
+        "#9AFF9A",
+        "#00FA9A",
+        "#3CB371",
+      ],
     };
   }
 
@@ -154,9 +177,17 @@ class JsonCompatibilityValidator {
       "weekRGB": "rgb(70, 130, 180)",
       "classTableBackgroundBlur": true,
       "colorList": [
-        "#1E90FF", "#87CEEB", "#4682B4", "#5F9EA0", "#6495ED",
-        "#7B68EE", "#9370DB", "#8A2BE2", "#4169E1", "#0000FF"
-      ]
+        "#1E90FF",
+        "#87CEEB",
+        "#4682B4",
+        "#5F9EA0",
+        "#6495ED",
+        "#7B68EE",
+        "#9370DB",
+        "#8A2BE2",
+        "#4169E1",
+        "#0000FF",
+      ],
     };
   }
 

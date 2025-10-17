@@ -5,24 +5,21 @@ class WeatherModel {
   final String status;
   final WeatherDaily daily;
 
-  WeatherModel({
-    required this.status,
-    required this.daily,
-  });
+  WeatherModel({required this.status, required this.daily});
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
     return WeatherModel(
       status: json['status'] as String,
-      daily: WeatherDaily.fromJson(json['result']['daily'] as Map<String, dynamic>),
+      daily: WeatherDaily.fromJson(
+        json['result']['daily'] as Map<String, dynamic>,
+      ),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'status': status,
-      'result': {
-        'daily': daily.toJson(),
-      },
+      'result': {'daily': daily.toJson()},
     };
   }
 }
@@ -90,12 +87,7 @@ class TemperatureInfo {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'date': date,
-      'max': max,
-      'min': min,
-      'avg': avg,
-    };
+    return {'date': date, 'max': max, 'min': min, 'avg': avg};
   }
 }
 
@@ -104,10 +96,7 @@ class SkyconInfo {
   final String date;
   final String value;
 
-  SkyconInfo({
-    required this.date,
-    required this.value,
-  });
+  SkyconInfo({required this.date, required this.value});
 
   factory SkyconInfo.fromJson(Map<String, dynamic> json) {
     return SkyconInfo(
@@ -117,10 +106,7 @@ class SkyconInfo {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'date': date,
-      'value': value,
-    };
+    return {'date': date, 'value': value};
   }
 }
 

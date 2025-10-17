@@ -10,6 +10,7 @@ import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../core/config/providers/theme_config_provider.dart';
 import '../../core/providers/permission_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 import 'providers/feedback_provider.dart';
 import 'widgets/image_upload_widget.dart';
 
@@ -53,7 +54,7 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
         .pickImage(context: context, source: ImageSource.gallery);
 
     if (imagePath != null && mounted) {
-      ref.read(addFeedbackProvider.notifier).addImage(File(imagePath));
+      await _handleImageSelection(imagePath);
     }
   }
 
@@ -66,7 +67,47 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
         .pickImage(context: context, source: ImageSource.camera);
 
     if (imagePath != null && mounted) {
-      ref.read(addFeedbackProvider.notifier).addImage(File(imagePath));
+      await _handleImageSelection(imagePath);
+    }
+  }
+
+  /// 处理图片选择，检查大小并显示警告
+  Future<void> _handleImageSelection(String imagePath) async {
+    final file = File(imagePath);
+    final fileSize = await file.length();
+    final fileSizeMB = fileSize / (1000 * 1000);
+
+    debugPrint('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
+
+    var shouldUseImage = true;
+
+    // 如果图片超过 5MB，提示用户
+    if (fileSizeMB > 5) {
+      if (!mounted) {
+        shouldUseImage = false;
+      } else {
+        shouldUseImage = await ThemeAwareDialog.showConfirmDialog(
+          context,
+          title: '图片体积较大',
+          message:
+              '图片体积为 ${fileSizeMB.toStringAsFixed(1)} MB，超过 5 MB。\n'
+              '较大的图片可能导致上传失败或处理缓慢，确定仍然使用吗？',
+          negativeText: '取消',
+          positiveText: '仍然使用',
+        );
+
+        if (!shouldUseImage) {
+          ToastService.show(
+            '请选择小于 5MB 的图片，以确保上传成功',
+            backgroundColor: Colors.orange,
+          );
+        }
+      }
+    }
+
+    // 如果应该使用图片，则添加
+    if (shouldUseImage) {
+      ref.read(addFeedbackProvider.notifier).addImage(file);
     }
   }
 
@@ -123,13 +164,34 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
         .read(addFeedbackProvider.notifier)
         .submitFeedback();
 
-    if (success && mounted) {
-      ToastService.show(
-        '提交成功',
-        backgroundColor: Colors.green,
-      );
+    if (!mounted) return;
+
+    if (success) {
+      ToastService.show('提交成功', backgroundColor: Colors.green);
       context.pop();
+    } else {
+      // 显示错误信息
+      final error = ref.read(addFeedbackProvider).error;
+      if (error != null) {
+        // 使用 ThemeAwareDialog 显示详细错误
+        await _showErrorDialog(error);
+      }
     }
+  }
+
+  /// 显示错误对话框
+  Future<void> _showErrorDialog(String error) async {
+    // 清理错误信息
+    final cleanError = error
+        .replaceFirst('Exception: ', '')
+        .replaceFirst('DioException [unknown]: null\nError: ', '');
+
+    await ThemeAwareDialog.showAlertDialog(
+      context,
+      title: '提交失败',
+      message: cleanError,
+      buttonText: '确定',
+    );
   }
 
   @override
@@ -140,10 +202,7 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
     // Listen to form changes
     ref.listen(addFeedbackProvider, (previous, current) {
       if (current.error != null && mounted) {
-        ToastService.show(
-          current.error!,
-          backgroundColor: Colors.red,
-        );
+        ToastService.show(current.error!, backgroundColor: Colors.red);
         if (mounted) {
           ref.read(addFeedbackProvider.notifier).clearError();
         }

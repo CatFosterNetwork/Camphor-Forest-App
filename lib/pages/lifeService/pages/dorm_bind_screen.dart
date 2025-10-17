@@ -34,7 +34,7 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
       final prefs = ref.read(sharedPreferencesProvider);
       final buildingIdStr = prefs.getString('buildingId');
       final roomCode = prefs.getString('roomCode');
-      
+
       if (buildingIdStr != null && roomCode != null) {
         final buildingId = int.tryParse(buildingIdStr);
         if (buildingId != null) {
@@ -56,10 +56,10 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final themeColor = ref.watch(selectedCustomThemeProvider);
-    final mainColor = themeColor.colorList.isNotEmpty == true 
-        ? themeColor.colorList[0] 
+    final mainColor = themeColor.colorList.isNotEmpty == true
+        ? themeColor.colorList[0]
         : Colors.blue;
-    
+
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
 
@@ -69,10 +69,7 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
       appBar: AppBar(
         title: Text(
           '宿舍绑定',
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -84,15 +81,20 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 当前绑定信息卡片
-            _buildCurrentBindCard(mainColor, textColor, subtitleColor, isDarkMode),
-            
+            _buildCurrentBindCard(
+              mainColor,
+              textColor,
+              subtitleColor,
+              isDarkMode,
+            ),
+
             const SizedBox(height: 24),
-            
+
             // 重新绑定说明
             _buildInfoCard(mainColor, textColor, subtitleColor),
-            
+
             const SizedBox(height: 32),
-            
+
             // 操作按钮
             _buildActionButtons(context, mainColor),
           ],
@@ -101,7 +103,12 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
     );
   }
 
-  Widget _buildCurrentBindCard(Color mainColor, Color textColor, Color subtitleColor, bool isDarkMode) {
+  Widget _buildCurrentBindCard(
+    Color mainColor,
+    Color textColor,
+    Color subtitleColor,
+    bool isDarkMode,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -115,11 +122,8 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
             offset: const Offset(0, 4),
           ),
         ],
-        border: isDarkMode 
-            ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              )
+        border: isDarkMode
+            ? Border.all(color: Colors.white.withAlpha(26), width: 1)
             : null,
       ),
       child: Column(
@@ -134,11 +138,7 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
                   color: mainColor.withAlpha(26),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.home,
-                  color: mainColor,
-                  size: 24,
-                ),
+                child: Icon(Icons.home, color: mainColor, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -155,19 +155,16 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
                     ),
                     Text(
                       '您的水电费查询宿舍信息',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: subtitleColor,
-                      ),
+                      style: TextStyle(fontSize: 14, color: subtitleColor),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 宿舍信息
           if (_currentDormInfo != null && _currentRoomCode != null) ...[
             _buildInfoRow('园区', _currentDormInfo!.area, mainColor),
@@ -176,25 +173,22 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
             const SizedBox(height: 12),
             _buildInfoRow('房间号', _currentRoomCode!, mainColor),
             const SizedBox(height: 12),
-            _buildInfoRow('楼栋ID', _currentDormInfo!.buildingId.toString(), mainColor),
+            _buildInfoRow(
+              '楼栋ID',
+              _currentDormInfo!.buildingId.toString(),
+              mainColor,
+            ),
           ] else ...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Center(
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.home_outlined,
-                      size: 48,
-                      color: subtitleColor,
-                    ),
+                    Icon(Icons.home_outlined, size: 48, color: subtitleColor),
                     const SizedBox(height: 12),
                     Text(
                       '暂未绑定宿舍',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: subtitleColor,
-                      ),
+                      style: TextStyle(fontSize: 16, color: subtitleColor),
                     ),
                   ],
                 ),
@@ -212,9 +206,7 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
       decoration: BoxDecoration(
         color: mainColor.withAlpha(13),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: mainColor.withAlpha(51),
-        ),
+        border: Border.all(color: mainColor.withAlpha(51)),
       ),
       child: Row(
         children: [
@@ -251,20 +243,14 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
       decoration: BoxDecoration(
         color: Colors.orange.withAlpha(26),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.orange.withAlpha(76),
-        ),
+        border: Border.all(color: Colors.orange.withAlpha(76)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline,
-                color: Colors.orange,
-                size: 24,
-              ),
+              Icon(Icons.info_outline, color: Colors.orange, size: 24),
               const SizedBox(width: 12),
               Text(
                 '重新绑定说明',
@@ -311,10 +297,7 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
             icon: const Icon(Icons.edit_location),
             label: Text(
               _currentDormInfo != null ? '重新绑定宿舍' : '绑定宿舍',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: mainColor,
@@ -326,10 +309,10 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
             ),
           ),
         ),
-        
+
         if (_currentDormInfo != null) ...[
           const SizedBox(height: 12),
-          
+
           // 解除绑定按钮
           SizedBox(
             width: double.infinity,
@@ -360,7 +343,9 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
         initialDorm: _currentDormInfo,
         initialRoomCode: _currentRoomCode,
         onBind: (buildingId, roomCode) async {
-          await ref.read(expenseProvider.notifier).bindDormitory(buildingId, roomCode);
+          await ref
+              .read(expenseProvider.notifier)
+              .bindDormitory(buildingId, roomCode);
           _loadCurrentDormInfo();
         },
         onCancel: () {
@@ -375,21 +360,15 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
 
   void _showUnbindConfirmation(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Colors.orange,
-              size: 24,
-            ),
+            Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 24),
             const SizedBox(width: 12),
             Text(
               '解除绑定',
@@ -422,7 +401,7 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
               Navigator.of(context).pop();
               await ref.read(expenseProvider.notifier).unbindDormitory();
               _loadCurrentDormInfo();
-              
+
               if (mounted) {
                 ToastService.show(
                   '已解除宿舍绑定',

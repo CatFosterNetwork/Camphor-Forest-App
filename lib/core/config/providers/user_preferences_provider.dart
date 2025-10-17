@@ -14,13 +14,16 @@ final userPreferencesServiceProvider = Provider<UserPreferencesService>((ref) {
 });
 
 /// 用户偏好提供者（异步加载）
-final userPreferencesAsyncProvider = FutureProvider<UserPreferences>((ref) async {
+final userPreferencesAsyncProvider = FutureProvider<UserPreferences>((
+  ref,
+) async {
   final service = ref.watch(userPreferencesServiceProvider);
   return await service.loadPreferences();
 });
 
 /// 用户偏好状态管理器
-class UserPreferencesNotifier extends StateNotifier<AsyncValue<UserPreferences>> {
+class UserPreferencesNotifier
+    extends StateNotifier<AsyncValue<UserPreferences>> {
   final UserPreferencesService _service;
 
   UserPreferencesNotifier(this._service) : super(const AsyncValue.loading()) {
@@ -184,10 +187,13 @@ class UserPreferencesNotifier extends StateNotifier<AsyncValue<UserPreferences>>
 }
 
 /// 用户偏好状态管理提供者
-final userPreferencesNotifierProvider = StateNotifierProvider<UserPreferencesNotifier, AsyncValue<UserPreferences>>((ref) {
-  final service = ref.watch(userPreferencesServiceProvider);
-  return UserPreferencesNotifier(service);
-});
+final userPreferencesNotifierProvider =
+    StateNotifierProvider<UserPreferencesNotifier, AsyncValue<UserPreferences>>(
+      (ref) {
+        final service = ref.watch(userPreferencesServiceProvider);
+        return UserPreferencesNotifier(service);
+      },
+    );
 
 // ===== 派生状态提供者 =====
 
@@ -210,16 +216,8 @@ final notificationSettingsProvider = Provider<Map<String, bool>>((ref) {
       'vibration': prefs.enableVibration,
       'sound': prefs.enableSound,
     },
-    loading: () => {
-      'notifications': true,
-      'vibration': true,
-      'sound': true,
-    },
-    error: (_, _) => {
-      'notifications': true,
-      'vibration': true,
-      'sound': true,
-    },
+    loading: () => {'notifications': true, 'vibration': true, 'sound': true},
+    error: (_, _) => {'notifications': true, 'vibration': true, 'sound': true},
   );
 });
 
@@ -231,14 +229,8 @@ final performanceSettingsProvider = Provider<Map<String, dynamic>>((ref) {
       'cacheLimit': prefs.cacheLimit,
       'dataSaver': prefs.enableDataSaver,
     },
-    loading: () => {
-      'cacheLimit': 100,
-      'dataSaver': false,
-    },
-    error: (_, _) => {
-      'cacheLimit': 100,
-      'dataSaver': false,
-    },
+    loading: () => {'cacheLimit': 100, 'dataSaver': false},
+    error: (_, _) => {'cacheLimit': 100, 'dataSaver': false},
   );
 });
 
@@ -335,6 +327,6 @@ final cacheLimitOptionsProvider = Provider<List<Map<String, dynamic>>>((ref) {
     {'value': 100, 'label': '100 MB'},
     {'value': 200, 'label': '200 MB'},
     {'value': 500, 'label': '500 MB'},
-    {'value': 1024, 'label': '1 GB'},
+    {'value': 1000, 'label': '1 GB'},
   ];
 });

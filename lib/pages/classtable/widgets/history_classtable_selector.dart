@@ -350,10 +350,7 @@ class HistoryClassTableSelector extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ToastService.show(
-          '切换失败: $e',
-          backgroundColor: Colors.red,
-        );
+        ToastService.show('切换失败: $e', backgroundColor: Colors.red);
       }
     }
   }

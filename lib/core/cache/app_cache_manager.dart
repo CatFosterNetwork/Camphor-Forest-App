@@ -16,9 +16,15 @@ class AppCacheManager extends CacheManager {
   static final AppCacheManager instance = AppCacheManager._();
 
   @override
-  Future<FileInfo?> getFileFromCache(String key, {bool ignoreMemCache = false}) async {
-    final fileInfo = await super.getFileFromCache(key, ignoreMemCache: ignoreMemCache);
-    
+  Future<FileInfo?> getFileFromCache(
+    String key, {
+    bool ignoreMemCache = false,
+  }) async {
+    final fileInfo = await super.getFileFromCache(
+      key,
+      ignoreMemCache: ignoreMemCache,
+    );
+
     if (fileInfo != null) {
       // 检查文件是否已过23:59分
       if (_isFileExpiredAt2359(fileInfo.validTill)) {
@@ -30,22 +36,35 @@ class AppCacheManager extends CacheManager {
         debugPrint('AppCacheManager: 缓存文件有效, 使用缓存: $key');
       }
     }
-    
+
     return fileInfo;
   }
 
   /// 检查文件是否已过期（基于每天23:59分的规则）
   bool _isFileExpiredAt2359(DateTime validTill) {
     final now = DateTime.now();
-    
+
     // 计算文件的实际过期时间（当天23:59分）
-    final fileCreatedDay = DateTime(validTill.year, validTill.month, validTill.day);
-    final expiryTime = DateTime(fileCreatedDay.year, fileCreatedDay.month, fileCreatedDay.day, 23, 59, 59);
-    
+    final fileCreatedDay = DateTime(
+      validTill.year,
+      validTill.month,
+      validTill.day,
+    );
+    final expiryTime = DateTime(
+      fileCreatedDay.year,
+      fileCreatedDay.month,
+      fileCreatedDay.day,
+      23,
+      59,
+      59,
+    );
+
     final isExpired = now.isAfter(expiryTime);
-    
-    debugPrint('AppCacheManager: 检查过期时间 - 当前: $now, 过期时间: $expiryTime, 已过期: $isExpired');
-    
+
+    debugPrint(
+      'AppCacheManager: 检查过期时间 - 当前: $now, 过期时间: $expiryTime, 已过期: $isExpired',
+    );
+
     // 如果当前时间超过了文件创建当天的23:59分，则过期
     return isExpired;
   }

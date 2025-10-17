@@ -1240,7 +1240,7 @@ class _CustomThemeSettingsPageState
       // 检查图片大小
       final file = File(imagePath);
       final fileSize = await file.length();
-      final fileSizeMB = fileSize / (1024 * 1024);
+      final fileSizeMB = fileSize / (1000 * 1000);
 
       debugPrint('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
 
@@ -1251,27 +1251,15 @@ class _CustomThemeSettingsPageState
         if (!mounted) {
           shouldUseImage = false;
         } else {
-          shouldUseImage = await showDialog<bool>(
-                context: context,
-                builder: (dialogContext) => AlertDialog(
-                  title: const Text('图片体积较大'),
-                  content: Text(
-                    '图片体积为 ${fileSizeMB.toStringAsFixed(1)} MB，超过 5 MB。\n'
-                    '较大的图片可能导致上传失败或处理缓慢，确定仍然使用吗？',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(false),
-                      child: const Text('取消'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      child: const Text('仍然使用'),
-                    ),
-                  ],
-                ),
-              ) ??
-              false;
+          shouldUseImage = await ThemeAwareDialog.showConfirmDialog(
+            context,
+            title: '图片体积较大',
+            message:
+                '图片体积为 ${fileSizeMB.toStringAsFixed(1)} MB，超过 5 MB。\n'
+                '较大的图片可能导致上传失败或处理缓慢，确定仍然使用吗？',
+            negativeText: '取消',
+            positiveText: '仍然使用',
+          );
 
           if (!shouldUseImage) {
             ToastService.show(
@@ -1310,14 +1298,13 @@ class _CustomThemeSettingsPageState
         isCreateMode = false;
       });
 
-      ToastService.show(
-        '主题保存成功',
-        backgroundColor: Colors.green,
-      );
+      ToastService.show('主题保存成功', backgroundColor: Colors.green);
     } catch (e) {
-      ToastService.show(
-        '保存失败: $e',
-        backgroundColor: Colors.red,
+      await ThemeAwareDialog.showAlertDialog(
+        context,
+        title: '保存失败',
+        message: e.toString(),
+        buttonText: '确定',
       );
     }
   }

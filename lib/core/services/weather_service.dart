@@ -34,10 +34,10 @@ class WeatherService {
       // 从API获取新数据
       debugPrint('🌤️ 从API获取天气数据');
       final response = await _apiService.getWeather();
-      
+
       if (response['status'] == 'ok') {
         final weatherModel = WeatherModel.fromJson(response);
-        
+
         // 更新日期信息
         final dailyWithDate = WeatherDaily(
           date: DateTime.now().toLocal().toString().split(' ')[0],
@@ -48,7 +48,7 @@ class WeatherService {
 
         // 缓存数据
         await _cacheWeather(dailyWithDate);
-        
+
         return dailyWithDate;
       } else {
         debugPrint('❌ 天气API返回错误状态: ${response['status']}');
@@ -56,24 +56,28 @@ class WeatherService {
       }
     } catch (e) {
       debugPrint('❌ 获取天气数据失败: $e');
-      
+
       // 如果API请求失败，尝试返回缓存数据（即使已过期）
       final cachedWeather = await _getCachedWeather(ignoreExpiration: true);
       if (cachedWeather != null) {
         debugPrint('⚠️ API失败，使用过期缓存数据');
         return cachedWeather;
       }
-      
+
       return null;
     }
   }
 
   /// 从缓存获取天气数据
-  Future<WeatherDaily?> _getCachedWeather({bool ignoreExpiration = false}) async {
+  Future<WeatherDaily?> _getCachedWeather({
+    bool ignoreExpiration = false,
+  }) async {
     try {
       final cachedData = await _secureStorage.read(key: _weatherCacheKey);
-      final updateTimeStr = await _secureStorage.read(key: _weatherUpdateTimeKey);
-      
+      final updateTimeStr = await _secureStorage.read(
+        key: _weatherUpdateTimeKey,
+      );
+
       if (cachedData == null || updateTimeStr == null) {
         return null;
       }
@@ -101,10 +105,10 @@ class WeatherService {
     try {
       final weatherJson = jsonEncode(weather.toJson());
       final updateTime = DateTime.now().toIso8601String();
-      
+
       await _secureStorage.write(key: _weatherCacheKey, value: weatherJson);
       await _secureStorage.write(key: _weatherUpdateTimeKey, value: updateTime);
-      
+
       debugPrint('💾 天气数据已缓存');
     } catch (e) {
       debugPrint('❌ 缓存天气数据失败: $e');
@@ -123,15 +127,15 @@ class WeatherService {
 
     // 天气状况
     final skycon08h20h = weather.skycon08h20h[0].value;
-    final skycon20h32h = weather.skycon20h32h.isNotEmpty 
-        ? weather.skycon20h32h[0].value 
+    final skycon20h32h = weather.skycon20h32h.isNotEmpty
+        ? weather.skycon20h32h[0].value
         : skycon08h20h;
 
     final dayWeather = WeatherNames.getName(skycon08h20h);
     final nightWeather = WeatherNames.getName(skycon20h32h);
 
-    final weatherText = dayWeather == nightWeather 
-        ? dayWeather 
+    final weatherText = dayWeather == nightWeather
+        ? dayWeather
         : '$dayWeather转$nightWeather';
 
     return temperature + weatherText;

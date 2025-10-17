@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 /// BackdropFilter修复工具类
 /// 解决Flutter 3.16+版本中BackdropFilter在橡皮筋效果时失效的问题
 class BackdropFilterFix {
-  
   /// 创建一个修复了橡皮筋效果问题的BackdropFilter
   /// 使用Stack结构确保模糊效果作为背景层
   static Widget createFixedBackdropFilter({
@@ -19,9 +18,7 @@ class BackdropFilterFix {
           Positioned.fill(
             child: ImageFiltered(
               imageFilter: filter,
-              child: Container(
-                color: Colors.transparent,
-              ),
+              child: Container(color: Colors.transparent),
             ),
           ),
           // 前景内容
@@ -107,23 +104,30 @@ class _FixedScrollPhysics extends ScrollPhysics {
   @override
   double applyBoundaryConditions(ScrollMetrics position, double value) {
     // 完全禁用边界弹性效果，避免StretchingOverscrollIndicator
-    if (value < position.pixels && position.pixels <= position.minScrollExtent) {
+    if (value < position.pixels &&
+        position.pixels <= position.minScrollExtent) {
       return value - position.pixels;
     }
-    if (position.maxScrollExtent <= position.pixels && position.pixels < value) {
+    if (position.maxScrollExtent <= position.pixels &&
+        position.pixels < value) {
       return value - position.pixels;
     }
-    if (value < position.minScrollExtent && position.minScrollExtent < position.pixels) {
+    if (value < position.minScrollExtent &&
+        position.minScrollExtent < position.pixels) {
       return value - position.minScrollExtent;
     }
-    if (position.pixels < position.maxScrollExtent && position.maxScrollExtent < value) {
+    if (position.pixels < position.maxScrollExtent &&
+        position.maxScrollExtent < value) {
       return value - position.maxScrollExtent;
     }
     return 0.0;
   }
 
   @override
-  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(
+    ScrollMetrics position,
+    double velocity,
+  ) {
     final tolerance = toleranceFor(position);
     if (position.outOfRange) {
       double? end;

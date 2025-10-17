@@ -25,15 +25,14 @@ class ImageCropService {
             lockAspectRatio: true, // 锁定为正方形比例
             hideBottomControls: false,
             cropStyle: CropStyle.rectangle,
-            
+
             // UI优化配置 - 大幅增加可点击性
             showCropGrid: true,
             dimmedLayerColor: Colors.black54,
-            
+
             // 增加触摸友好性
             cropFrameStrokeWidth: 4, // 进一步增加边框宽度
-            cropGridStrokeWidth: 2,  // 增加网格线宽度
-            
+            cropGridStrokeWidth: 2, // 增加网格线宽度
             // 强制显示ActionBar并设置为NoActionBar主题
             // 这样可以确保我们的自定义主题生效
           ),
@@ -45,7 +44,7 @@ class ImageCropService {
             rotateClockwiseButtonHidden: false,
             rotateButtonsHidden: false,
             rectHeight: 350, // 增加裁剪区域高度
-            rectWidth: 350,  // 增加裁剪区域宽度
+            rectWidth: 350, // 增加裁剪区域宽度
             minimumAspectRatio: 1.0,
             // 增加按钮大小，方便点击
             cancelButtonTitle: '取消',

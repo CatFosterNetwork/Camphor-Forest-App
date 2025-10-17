@@ -9,11 +9,12 @@ import '../../core/providers/permission_provider.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/widgets/theme_aware_scaffold.dart';
 import '../../core/widgets/cached_image.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 import '../../core/providers/core_providers.dart';
 import '../../core/services/image_service.dart';
 import '../../core/services/image_cache_service.dart';
 import '../../core/services/image_upload_service.dart';
-import 'package:camphor_forest/core/services/toast_service.dart';
+import '../../core/services/toast_service.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
   const ProfileSettingsPage({super.key});
@@ -587,11 +588,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
           // 7. 显示成功提示
           if (context.mounted) {
-            ToastService.show(
-              '头像上传成功',
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
-            );
+            ToastService.show('头像上传成功', backgroundColor: Colors.green);
           }
         } else {
           // 关闭加载状态
@@ -602,9 +599,11 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           }
 
           if (context.mounted) {
-            ToastService.show(
-              '头像上传失败，请重试',
-              backgroundColor: Colors.red,
+            await ThemeAwareDialog.showAlertDialog(
+              context,
+              title: '上传失败',
+              message: '头像上传失败，请重试',
+              buttonText: '确定',
             );
           }
         }
@@ -633,10 +632,11 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               '上传失败: ${e.toString().length > 100 ? "${e.toString().substring(0, 100)}..." : e.toString()}';
         }
 
-        ToastService.show(
-          errorMessage,
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5), // 延长显示时间
+        await ThemeAwareDialog.showAlertDialog(
+          context,
+          title: '上传失败',
+          message: errorMessage,
+          buttonText: '确定',
         );
       }
     }
@@ -849,10 +849,7 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
           );
           if (!emailRegex.hasMatch(newValue)) {
             if (mounted) {
-              ToastService.show(
-                '请输入有效的邮箱地址',
-                backgroundColor: Colors.red,
-              );
+              ToastService.show('请输入有效的邮箱地址', backgroundColor: Colors.red);
             }
             return;
           }
@@ -919,18 +916,12 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
             backgroundColor: Colors.green,
           );
         } else {
-          ToastService.show(
-            '${widget.field}修改失败',
-            backgroundColor: Colors.red,
-          );
+          ToastService.show('${widget.field}修改失败', backgroundColor: Colors.red);
         }
       }
     } catch (e) {
       if (mounted) {
-        ToastService.show(
-          '修改失败: $e',
-          backgroundColor: Colors.red,
-        );
+        ToastService.show('修改失败: $e', backgroundColor: Colors.red);
       }
     } finally {
       if (mounted) {

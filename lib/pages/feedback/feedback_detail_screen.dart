@@ -71,10 +71,7 @@ class _FeedbackDetailScreenState extends ConsumerState<FeedbackDetailScreen> {
     // Listen to errors
     ref.listen(feedbackDetailProvider, (previous, current) {
       if (current.error != null && mounted) {
-        ToastService.show(
-          current.error!,
-          backgroundColor: Colors.red,
-        );
+        ToastService.show(current.error!, backgroundColor: Colors.red);
         if (mounted) {
           ref.read(feedbackDetailProvider.notifier).clearError();
         }
@@ -214,10 +211,7 @@ class _FeedbackDetailScreenState extends ConsumerState<FeedbackDetailScreen> {
                     .addReply(feedbackId, content);
 
                 if (!success && mounted) {
-                  ToastService.show(
-                    '回复失败，请重试',
-                    backgroundColor: Colors.red,
-                  );
+                  ToastService.show('回复失败，请重试', backgroundColor: Colors.red);
                 }
               }
             },

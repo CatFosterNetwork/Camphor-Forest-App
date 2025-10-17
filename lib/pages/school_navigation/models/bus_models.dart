@@ -44,7 +44,6 @@ class BusLine {
   factory BusLine.empty() {
     return BusLine(id: '', name: '', color: '', stops: [], route: []);
   }
-
 }
 
 class RoutePoint {

@@ -12,11 +12,7 @@ class WeatherWidget extends ConsumerStatefulWidget {
   final bool blur;
   final bool darkMode;
 
-  const WeatherWidget({
-    super.key,
-    required this.blur,
-    required this.darkMode,
-  });
+  const WeatherWidget({super.key, required this.blur, required this.darkMode});
 
   @override
   ConsumerState<WeatherWidget> createState() => _WeatherWidgetState();
@@ -35,22 +31,22 @@ class _WeatherWidgetState extends ConsumerState<WeatherWidget> {
   @override
   Widget build(BuildContext context) {
     final weatherState = ref.watch(weatherProvider);
-    
+
     // 如果正在加载且没有缓存数据，显示加载指示器
     if (weatherState.isLoading && weatherState.weather == null) {
       return _buildLoadingWidget();
     }
-    
+
     // 如果没有天气数据，不显示组件
     if (weatherState.weather == null) {
       return const SizedBox.shrink();
     }
 
     final weather = weatherState.weather!;
-    final temperature = weather.temperature.isNotEmpty 
-        ? weather.temperature[0] 
+    final temperature = weather.temperature.isNotEmpty
+        ? weather.temperature[0]
         : null;
-    final weatherCondition = weather.skycon08h20h.isNotEmpty 
+    final weatherCondition = weather.skycon08h20h.isNotEmpty
         ? WeatherNames.getName(weather.skycon08h20h[0].value)
         : '未知';
 
@@ -62,11 +58,11 @@ class _WeatherWidgetState extends ConsumerState<WeatherWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: widget.darkMode 
+        color: widget.darkMode
             ? const Color(0xFF2A2A2A).withAlpha(217)
             : Colors.white.withAlpha(128),
         border: Border.all(
-          color: widget.darkMode 
+          color: widget.darkMode
               ? Colors.white.withAlpha(26)
               : Colors.black.withAlpha(13),
           width: 0.2,
@@ -109,24 +105,20 @@ class _WeatherWidgetState extends ConsumerState<WeatherWidget> {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: widget.darkMode 
+              color: widget.darkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(20),
-                      border: widget.darkMode ? Border.all(
-          color: Colors.white.withAlpha(26),
-          width: 1,
-        ) : null,
+              border: widget.darkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
             ),
             child: child,
           ),
         ),
       );
     } else {
-      child = ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: child,
-      );
+      child = ClipRRect(borderRadius: BorderRadius.circular(20), child: child);
     }
 
     return child;
@@ -138,8 +130,8 @@ class _WeatherWidgetState extends ConsumerState<WeatherWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: widget.darkMode 
-            ? Colors.black.withAlpha(76) 
+        color: widget.darkMode
+            ? Colors.black.withAlpha(76)
             : Colors.white.withAlpha(76),
       ),
       child: Row(
@@ -175,24 +167,20 @@ class _WeatherWidgetState extends ConsumerState<WeatherWidget> {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: widget.darkMode 
+              color: widget.darkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(20),
-                      border: widget.darkMode ? Border.all(
-          color: Colors.white.withAlpha(26),
-          width: 1,
-        ) : null,
+              border: widget.darkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
             ),
             child: child,
           ),
         ),
       );
     } else {
-      child = ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: child,
-      );
+      child = ClipRRect(borderRadius: BorderRadius.circular(20), child: child);
     }
 
     return child;

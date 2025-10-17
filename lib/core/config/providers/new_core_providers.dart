@@ -3,7 +3,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 // 导入统一配置服务provider
 import 'unified_config_service_provider.dart';
 
@@ -12,7 +11,6 @@ export 'app_config_provider.dart';
 export 'theme_config_provider.dart' hide effectiveDarkModeProvider;
 export 'user_preferences_provider.dart';
 export 'unified_config_service_provider.dart' hide unifiedConfigServiceProvider;
-
 
 // ===== 新配置系统的主要提供者 =====
 
@@ -69,26 +67,32 @@ Provider<bool> newIndexFeatureEnabledProvider(String featureKey) {
 // ===== 预定义的兼容性提供者 =====
 
 /// 兼容旧的森林功能提供者
-final newShowSchoolNavigationProvider = newForestFeatureEnabledProvider('SchoolNavigation');
+final newShowSchoolNavigationProvider = newForestFeatureEnabledProvider(
+  'SchoolNavigation',
+);
 final newShowBBSProvider = newForestFeatureEnabledProvider('BBS');
-final newShowLifeServiceProvider = newForestFeatureEnabledProvider('LifeService');
+final newShowLifeServiceProvider = newForestFeatureEnabledProvider(
+  'LifeService',
+);
 final newShowFeedbackProvider = newForestFeatureEnabledProvider('Feedback');
 final newShowLibraryProvider = newForestFeatureEnabledProvider('Library');
 
 // ===== 迁移后的新配置系统监控和调试 =====
 
 /// 配置加载性能监控提供者
-final configLoadingPerformanceProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final configLoadingPerformanceProvider = FutureProvider<Map<String, dynamic>>((
+  ref,
+) async {
   // 计算配置加载性能指标
   final startTime = DateTime.now();
-  
+
   // 检查配置健康状态
   final healthStatus = await ref.read(configHealthProvider.future);
   final isLoaded = healthStatus['status'] == 'healthy';
-  
+
   final endTime = DateTime.now();
   final loadingTime = endTime.difference(startTime).inMilliseconds;
-  
+
   return {
     'loadingTime': loadingTime,
     'configsLoaded': isLoaded ? 3 : 0, // 三个配置系统
@@ -106,11 +110,13 @@ final configLoadingPerformanceProvider = FutureProvider<Map<String, dynamic>>((r
 // ===== 调试和开发辅助提供者 =====
 
 /// 配置对比提供者（验证配置系统状态）
-final configComparisonProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final configComparisonProvider = FutureProvider<Map<String, dynamic>>((
+  ref,
+) async {
   try {
     final health = await ref.read(configHealthProvider.future);
     final configState = ref.read(configInitializationProvider);
-    
+
     return configState.when(
       data: (result) => {
         'comparison': 'completed',
@@ -128,15 +134,10 @@ final configComparisonProvider = FutureProvider<Map<String, dynamic>>((ref) asyn
         'comparison': 'loading',
         'systemStatus': {'loading': true},
       },
-      error: (error, _) => {
-        'comparison': 'error',
-        'error': error.toString(),
-      },
+      error: (error, _) => {'comparison': 'error', 'error': error.toString()},
     );
   } catch (e) {
-    return {
-      'error': e.toString(),
-    };
+    return {'error': e.toString()};
   }
 });
 
@@ -144,18 +145,14 @@ final configComparisonProvider = FutureProvider<Map<String, dynamic>>((ref) asyn
 final configSystemLogProvider = Provider<List<String>>((ref) {
   final configState = ref.watch(configInitializationProvider);
   final health = ref.watch(configHealthProvider);
-  
+
   final logs = <String>[
     'Unified Configuration System v2.0',
     'Architecture: AppConfig + ThemeConfig + UserPreferences',
     'Provider: UnifiedConfigService',
-    'Status: ${configState.when(
-      data: (result) => result.success ? 'Active' : 'Failed',
-      loading: () => 'Initializing',
-      error: (_, _) => 'Error',
-    )}',
+    'Status: ${configState.when(data: (result) => result.success ? 'Active' : 'Failed', loading: () => 'Initializing', error: (_, _) => 'Error')}',
   ];
-  
+
   health.whenData((healthData) {
     if (healthData['status'] == 'healthy') {
       logs.add('Health: All systems operational');
@@ -163,6 +160,6 @@ final configSystemLogProvider = Provider<List<String>>((ref) {
       logs.add('Health: ${healthData['status'] ?? 'Unknown'}');
     }
   });
-  
+
   return logs;
 });

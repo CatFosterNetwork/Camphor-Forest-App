@@ -97,10 +97,11 @@ class AppConfigNotifier extends StateNotifier<AsyncValue<AppConfig>> {
 }
 
 /// 应用配置状态管理提供者
-final appConfigNotifierProvider = StateNotifierProvider<AppConfigNotifier, AsyncValue<AppConfig>>((ref) {
-  final service = ref.watch(appConfigServiceProvider);
-  return AppConfigNotifier(service);
-});
+final appConfigNotifierProvider =
+    StateNotifierProvider<AppConfigNotifier, AsyncValue<AppConfig>>((ref) {
+      final service = ref.watch(appConfigServiceProvider);
+      return AppConfigNotifier(service);
+    });
 
 // ===== 派生状态提供者 =====
 
@@ -189,15 +190,27 @@ Provider<bool> forestFeatureEnabledProvider(String featureKey) {
 /// 常用的首页功能启用状态提供者
 final showTodoProvider = indexFeatureEnabledProvider('index-showTodo');
 final showExpenseProvider = indexFeatureEnabledProvider('index-showExpense');
-final showClassroomProvider = indexFeatureEnabledProvider('index-showClassroom');
+final showClassroomProvider = indexFeatureEnabledProvider(
+  'index-showClassroom',
+);
 final showExamsProvider = indexFeatureEnabledProvider('index-showExams');
 final showGradesProvider = indexFeatureEnabledProvider('index-showGrades');
-final showIndexServicesProvider = indexFeatureEnabledProvider('index-showIndexServices');
+final showIndexServicesProvider = indexFeatureEnabledProvider(
+  'index-showIndexServices',
+);
 
 /// 常用的森林功能启用状态提供者
-final showSchoolNavigationProvider = forestFeatureEnabledProvider('forest-showSchoolNavigation');
+final showSchoolNavigationProvider = forestFeatureEnabledProvider(
+  'forest-showSchoolNavigation',
+);
 final showBBSProvider = forestFeatureEnabledProvider('forest-showBBS');
-final showLifeServiceProvider = forestFeatureEnabledProvider('forest-showLifeService');
-final showFeedbackProvider = forestFeatureEnabledProvider('forest-showFeedback');
+final showLifeServiceProvider = forestFeatureEnabledProvider(
+  'forest-showLifeService',
+);
+final showFeedbackProvider = forestFeatureEnabledProvider(
+  'forest-showFeedback',
+);
 final showLibraryProvider = forestFeatureEnabledProvider('forest-showLibrary');
-final showFleaMarketProvider = forestFeatureEnabledProvider('forest-showFleaMarket');
+final showFleaMarketProvider = forestFeatureEnabledProvider(
+  'forest-showFleaMarket',
+);

@@ -74,9 +74,7 @@ class RegionConfig {
       'rc-无楼号': 'rwlh',
       '无楼号': 'wlh',
     },
-    '西塔学院': {
-      '无楼号': 'wlh',
-    },
+    '西塔学院': {'无楼号': 'wlh'},
   };
 
   /// 获取所有校区
@@ -223,7 +221,7 @@ class ClassroomResult {
 
   /// 获取数字座位数
   int get seatCount => int.tryParse(zws) ?? 0;
-  
+
   /// 获取考试座位数
   int get examSeatCount => int.tryParse(kszws1) ?? 0;
 }

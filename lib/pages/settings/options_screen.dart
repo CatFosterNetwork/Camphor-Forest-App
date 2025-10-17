@@ -325,18 +325,17 @@ class OptionsScreen extends ConsumerWidget {
         Navigator.of(context).pop(); // 关闭加载对话框
 
         if (result.success) {
-          ToastService.show(
-            '配置下载成功',
-            backgroundColor: Colors.green,
-          );
+          ToastService.show('配置下载成功', backgroundColor: Colors.green);
 
           debugPrint('OptionsScreen: 配置下载成功，刷新所有配置 Provider');
           _refreshAllConfigProviders(ref);
           debugPrint('OptionsScreen: 所有配置 Provider 刷新完成');
         } else {
-          ToastService.show(
-            '配置下载失败: ${result.message}',
-            backgroundColor: Colors.red,
+          await ThemeAwareDialog.showAlertDialog(
+            context,
+            title: '下载失败',
+            message: '配置下载失败: ${result.message}',
+            buttonText: '确定',
           );
         }
       }
@@ -344,9 +343,11 @@ class OptionsScreen extends ConsumerWidget {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
 
-        ToastService.show(
-          '下载失败: $e',
-          backgroundColor: Colors.red,
+        await ThemeAwareDialog.showAlertDialog(
+          context,
+          title: '下载失败',
+          message: e.toString(),
+          buttonText: '确定',
         );
       }
     }
@@ -405,14 +406,13 @@ class OptionsScreen extends ConsumerWidget {
           ref.invalidate(customThemeManagerProvider);
           debugPrint('OptionsScreen: 已刷新主题列表 provider（包含云端图片URL）');
 
-          ToastService.show(
-            '配置上传成功',
-            backgroundColor: Colors.green,
-          );
+          ToastService.show('配置上传成功', backgroundColor: Colors.green);
         } else {
-          ToastService.show(
-            '配置上传失败，请稍后重试',
-            backgroundColor: Colors.red,
+          await ThemeAwareDialog.showAlertDialog(
+            context,
+            title: '上传失败',
+            message: '配置上传失败，请稍后重试',
+            buttonText: '确定',
           );
         }
       }
@@ -420,9 +420,12 @@ class OptionsScreen extends ConsumerWidget {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框
 
-        ToastService.show(
-          '上传失败: $e',
-          backgroundColor: Colors.red,
+        // 使用主题感知对话框显示错误信息
+        await ThemeAwareDialog.showAlertDialog(
+          context,
+          title: '上传失败',
+          message: e.toString().replaceFirst('Exception: ', ''),
+          buttonText: '确定',
         );
       }
     }

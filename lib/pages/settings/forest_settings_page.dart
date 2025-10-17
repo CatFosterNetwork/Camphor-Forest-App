@@ -16,9 +16,7 @@ class ForestSettingsPage extends ConsumerWidget {
     return ThemeAwareScaffold(
       pageType: PageType.settings,
       useBackground: false, // 设置页面使用纯色背景，保持专业感
-      appBar: ThemeAwareAppBar(
-        title: '森林功能设置',
-      ),
+      appBar: ThemeAwareAppBar(title: '森林功能设置'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -28,9 +26,7 @@ class ForestSettingsPage extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            color: isDarkMode 
-                ? Colors.grey.shade800 
-                : Colors.white,
+            color: isDarkMode ? Colors.grey.shade800 : Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -57,9 +53,9 @@ class ForestSettingsPage extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 使用说明
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -67,9 +63,7 @@ class ForestSettingsPage extends ConsumerWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            color: isDarkMode 
-                ? Colors.grey.shade800 
-                : Colors.white,
+            color: isDarkMode ? Colors.grey.shade800 : Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(

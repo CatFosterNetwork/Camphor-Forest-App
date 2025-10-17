@@ -56,7 +56,8 @@ class WeatherState {
   }
 
   /// 是否有有效的天气数据
-  bool get hasValidData => weather != null && !isLoading && errorMessage == null;
+  bool get hasValidData =>
+      weather != null && !isLoading && errorMessage == null;
 }
 
 /// 天气状态管理器
@@ -72,8 +73,10 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final weather = await _weatherService.getWeather(forceRefresh: forceRefresh);
-      
+      final weather = await _weatherService.getWeather(
+        forceRefresh: forceRefresh,
+      );
+
       if (weather != null) {
         state = state.copyWith(
           weather: weather,
@@ -82,17 +85,11 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
         );
         debugPrint('✅ 天气数据更新成功');
       } else {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: '无法获取天气数据',
-        );
+        state = state.copyWith(isLoading: false, errorMessage: '无法获取天气数据');
         debugPrint('❌ 天气数据为空');
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: '获取天气数据失败: $e',
-      );
+      state = state.copyWith(isLoading: false, errorMessage: '获取天气数据失败: $e');
       debugPrint('❌ 天气数据获取异常: $e');
     }
   }
@@ -117,7 +114,9 @@ final weatherServiceProvider = Provider<WeatherService>((ref) {
 });
 
 /// 天气状态Provider
-final weatherProvider = StateNotifierProvider<WeatherNotifier, WeatherState>((ref) {
+final weatherProvider = StateNotifierProvider<WeatherNotifier, WeatherState>((
+  ref,
+) {
   final weatherService = ref.watch(weatherServiceProvider);
   return WeatherNotifier(weatherService);
 });

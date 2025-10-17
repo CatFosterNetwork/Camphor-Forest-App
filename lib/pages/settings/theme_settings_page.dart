@@ -1061,18 +1061,12 @@ class ThemeSettingsPage extends ConsumerWidget {
         final success = await manager.deleteTheme(theme.code);
 
         if (success) {
-          ToastService.show(
-            '主题删除成功',
-            backgroundColor: Colors.green,
-          );
+          ToastService.show('主题删除成功', backgroundColor: Colors.green);
         } else {
           throw Exception('删除主题失败');
         }
       } catch (e) {
-        ToastService.show(
-          '删除失败: $e',
-          backgroundColor: Colors.red,
-        );
+        ToastService.show('删除失败: $e', backgroundColor: Colors.red);
       }
     }
   }

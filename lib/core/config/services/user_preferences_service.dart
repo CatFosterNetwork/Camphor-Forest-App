@@ -10,7 +10,7 @@ import '../models/user_preferences.dart';
 /// 负责用户偏好配置的加载、保存和管理
 class UserPreferencesService {
   static const String _configKey = 'user_preferences';
-  
+
   final SharedPreferences _prefs;
 
   UserPreferencesService(this._prefs);
@@ -24,7 +24,7 @@ class UserPreferencesService {
         debugPrint('UserPreferencesService: 成功加载用户偏好');
         return config;
       }
-      
+
       debugPrint('UserPreferencesService: 使用默认用户偏好');
       return UserPreferences.defaultConfig;
     } catch (e) {
@@ -69,7 +69,7 @@ class UserPreferencesService {
     final updatedPrefs = currentPrefs.copyWith(enableVibration: enabled);
     await savePreferences(updatedPrefs);
     debugPrint('UserPreferencesService: 设置震动为 $enabled');
-    return updatedPrefs;  
+    return updatedPrefs;
   }
 
   /// 设置声音反馈
@@ -142,16 +142,20 @@ class UserPreferencesService {
   }
 
   /// 批量更新偏好设置
-  Future<UserPreferences> updateMultiplePreferences(Map<String, dynamic> updates) async {
+  Future<UserPreferences> updateMultiplePreferences(
+    Map<String, dynamic> updates,
+  ) async {
     var currentPrefs = await loadPreferences();
-    
+
     for (final entry in updates.entries) {
       switch (entry.key) {
         case 'language':
           currentPrefs = currentPrefs.copyWith(language: entry.value);
           break;
         case 'enableNotifications':
-          currentPrefs = currentPrefs.copyWith(enableNotifications: entry.value);
+          currentPrefs = currentPrefs.copyWith(
+            enableNotifications: entry.value,
+          );
           break;
         case 'enableVibration':
           currentPrefs = currentPrefs.copyWith(enableVibration: entry.value);
@@ -170,7 +174,7 @@ class UserPreferencesService {
           currentPrefs = currentPrefs.setCustomData(entry.key, entry.value);
       }
     }
-    
+
     await savePreferences(currentPrefs);
     debugPrint('UserPreferencesService: 批量更新${updates.length}个偏好设置');
     return currentPrefs;

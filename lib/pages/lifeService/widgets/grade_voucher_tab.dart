@@ -411,12 +411,12 @@ class _GradeVoucherTabState extends ConsumerState<GradeVoucherTab> {
       final isDarkMode = ref.read(effectiveIsDarkModeProvider);
 
       // 设置30秒超时
-      final result = await apiService.studyCertificate({
-        'fileProperty': selectedVoucher.fileProperty,
-      }).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw Exception('请求超时，请稍后再试'),
-      );
+      final result = await apiService
+          .studyCertificate({'fileProperty': selectedVoucher.fileProperty})
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('请求超时，请稍后再试'),
+          );
 
       if (mounted) {
         Navigator.of(context).pop(); // 关闭加载对话框

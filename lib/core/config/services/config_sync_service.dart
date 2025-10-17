@@ -1,7 +1,6 @@
 // lib/core/config/services/config_sync_service.dart
 
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -90,28 +89,7 @@ class ConfigSyncService {
     }
 
     try {
-      // 检查图片文件大小
-      final file = File(imagePath);
-      if (!await file.exists()) {
-        throw Exception('图片文件不存在: $imagePath');
-      }
-
-      final fileSize = await file.length();
-      final fileSizeMB = fileSize / (1024 * 1024);
-      debugPrint(
-        'ConfigSyncService: 检查图片大小: ${fileSizeMB.toStringAsFixed(2)} MB',
-      );
-
-      // 如果图片超过 5MB，拒绝上传
-      if (fileSizeMB > 5) {
-        throw Exception(
-          '图片体积过大！\n'
-          '最大图片体积: ${fileSizeMB.toStringAsFixed(2)} MB\n'
-          '单张图片体积最大限制: 5 MB',
-        );
-      }
-
-      // 使用 ImageUploadService 生成文件名和上传
+      // 使用 ImageUploadService 上传图片
       final imageUploadService =
           _imageUploadService ?? ImageUploadService(_apiService!);
 

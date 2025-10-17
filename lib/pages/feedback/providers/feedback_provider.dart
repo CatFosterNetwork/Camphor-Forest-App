@@ -530,7 +530,7 @@ class AddFeedbackNotifier extends StateNotifier<AddFeedbackState> {
     state = state.copyWith(isSubmitting: true, error: null);
 
     try {
-      // Upload images first if any 
+      // Upload images first if any
       String? resourceUrl;
       if (state.images.isNotEmpty) {
         final imageUrls = <String, String>{};

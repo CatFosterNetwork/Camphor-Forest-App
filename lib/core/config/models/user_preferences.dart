@@ -5,28 +5,28 @@
 class UserPreferences {
   /// 语言设置
   final String language;
-  
+
   /// 是否启用通知
   final bool enableNotifications;
-  
+
   /// 是否启用震动反馈
   final bool enableVibration;
-  
+
   /// 是否启用声音反馈
   final bool enableSound;
-  
+
   /// 缓存大小限制（MB）
   final int cacheLimit;
-  
+
   /// 是否启用数据保护模式
   final bool enableDataSaver;
-  
+
   /// 首次启动标记
   final bool isFirstLaunch;
-  
+
   /// 上次同步时间
   final DateTime? lastSyncTime;
-  
+
   /// 用户自定义数据缓存
   final Map<String, dynamic> customData;
 

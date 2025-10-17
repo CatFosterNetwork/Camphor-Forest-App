@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../core/services/permission_service.dart';
+import '../../core/widgets/theme_aware_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -28,10 +29,7 @@ import 'providers/bus_provider.dart';
 import 'utils/bus_icon_utils.dart';
 
 class _AppleScaledIconData {
-  _AppleScaledIconData({
-    required this.image,
-    required this.bytes,
-  });
+  _AppleScaledIconData({required this.image, required this.bytes});
 
   final ui.Image image;
   final Uint8List bytes;
@@ -66,13 +64,9 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   final List<apple.Annotation> _appleBusStopAnnotations = [];
   final List<apple.Annotation> _appleBusAnnotations = [];
   final List<apple.Annotation> _appleLocationAnnotations = [];
-  
-  // Apple Maps 用户定位相关（保留用于将来扩展）
-  // bool _appleMapLocationEnabled = false;
 
   // 建筑定位状态
   LocationPoint? _selectedLocation;
-
 
   // 位置流监听
   StreamSubscription<Position>? _positionStreamSubscription;
@@ -139,7 +133,6 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   Future<void> _loadCustomAppleMapIcons() async {
     if (!mounted) return;
     try {
-
       _appleLocationPinIcon = await _loadAndScaleAppleMapIcon(
         'assets/icons/location_pin.png',
         scale: 2.5,
@@ -209,10 +202,8 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       computedScale = targetHeight / image.height;
     }
 
-    final int newWidth =
-        math.max(1, (image.width * computedScale).round());
-    final int newHeight =
-        math.max(1, (image.height * computedScale).round());
+    final int newWidth = math.max(1, (image.width * computedScale).round());
+    final int newHeight = math.max(1, (image.height * computedScale).round());
 
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
@@ -226,10 +217,13 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     );
     image.dispose();
 
-    final ui.Image newImage =
-        await pictureRecorder.endRecording().toImage(newWidth, newHeight);
-    final ByteData? byteData =
-        await newImage.toByteData(format: ui.ImageByteFormat.png);
+    final ui.Image newImage = await pictureRecorder.endRecording().toImage(
+      newWidth,
+      newHeight,
+    );
+    final ByteData? byteData = await newImage.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
 
     return _AppleScaledIconData(
       image: newImage,
@@ -247,24 +241,24 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
     final double width = baseImage.width.toDouble();
     final double height = baseImage.height.toDouble();
-    final double diagonal =
-        math.sqrt(width * width + height * height);
+    final double diagonal = math.sqrt(width * width + height * height);
     final int canvasSize = diagonal.ceil();
     final double halfCanvas = canvasSize / 2;
 
     canvas.translate(halfCanvas, halfCanvas);
     final double radians =
-        (headingBucket + _appleBusIconRotationOffsetDegrees) *
-            math.pi /
-            180;
+        (headingBucket + _appleBusIconRotationOffsetDegrees) * math.pi / 180;
     canvas.rotate(radians);
     canvas.translate(-width / 2, -height / 2);
     canvas.drawImage(baseImage, Offset.zero, paint);
 
-    final ui.Image rotatedImage =
-        await recorder.endRecording().toImage(canvasSize, canvasSize);
-    final ByteData? byteData =
-        await rotatedImage.toByteData(format: ui.ImageByteFormat.png);
+    final ui.Image rotatedImage = await recorder.endRecording().toImage(
+      canvasSize,
+      canvasSize,
+    );
+    final ByteData? byteData = await rotatedImage.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
     rotatedImage.dispose();
 
     return apple.BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
@@ -275,10 +269,10 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     double direction,
   ) async {
     final double normalizedDirection = direction.isFinite ? direction : 0.0;
-    final double wrappedHeading =
-        (normalizedDirection % 360 + 360) % 360;
-    final double step =
-        _appleBusHeadingBucketSize > 0 ? _appleBusHeadingBucketSize : 1.0;
+    final double wrappedHeading = (normalizedDirection % 360 + 360) % 360;
+    final double step = _appleBusHeadingBucketSize > 0
+        ? _appleBusHeadingBucketSize
+        : 1.0;
     final int bucketIndex = (wrappedHeading / step).round();
     final double snappedHeading = (bucketIndex * step) % 360;
     final String cacheKey = '$lineId|${snappedHeading.toStringAsFixed(1)}';
@@ -300,7 +294,9 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       _appleBusIconCache[cacheKey] = descriptor;
       return descriptor;
     } catch (e) {
-      debugPrint('🍎 [图标旋转异常] 线路$lineId 角度${snappedHeading.toStringAsFixed(1)}°: $e');
+      debugPrint(
+        '🍎 [图标旋转异常] 线路$lineId 角度${snappedHeading.toStringAsFixed(1)}°: $e',
+      );
       return _appleBusIconCache['$lineId|base'] ??
           apple.BitmapDescriptor.defaultAnnotation;
     }
@@ -316,8 +312,9 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         targetWidth: _appleBusIconTargetWidth,
       );
       _appleBusIconAssets[lineId] = iconData;
-      _appleBusIconCache['$lineId|base'] =
-          apple.BitmapDescriptor.fromBytes(iconData.bytes);
+      _appleBusIconCache['$lineId|base'] = apple.BitmapDescriptor.fromBytes(
+        iconData.bytes,
+      );
       debugPrint('🍎 [图标补载] 成功加载线路$lineId的图标');
 
       if (mounted) setState(() {});
@@ -393,8 +390,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
           return;
         }
 
-        debugPrint(
-            '🎯 [页面监听] 收到新的校车数据，准备更新地图: ${newBusData.length}辆车');
+        debugPrint('🎯 [页面监听] 收到新的校车数据，准备更新地图: ${newBusData.length}辆车');
 
         // 根据平台更新地图
         if (Platform.isAndroid && _baiduMapController != null) {
@@ -435,11 +431,15 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasError) {
                         return _buildErrorWidget(
-                            snapshot.error ?? '图标加载失败', isDarkMode);
+                          snapshot.error ?? '图标加载失败',
+                          isDarkMode,
+                        );
                       }
                       // 图标加载完成，显示地图
                       return _buildFullScreenMap(
-                          busLines, busDataAsync.value ?? []);
+                        busLines,
+                        busDataAsync.value ?? [],
+                      );
                     } else {
                       // 图标正在加载，显示加载动画
                       return Container(
@@ -619,7 +619,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         annotations: {
           ..._appleBusStopAnnotations,
           ..._appleBusAnnotations,
-          ..._appleLocationAnnotations
+          ..._appleLocationAnnotations,
         }.toSet(),
         polylines: _applePolylines.toSet(),
         onMapCreated: (controller) async {
@@ -629,7 +629,9 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
           _updateBusMarkersOnAppleMap(busData, busLines);
         },
         onTap: (apple.LatLng position) {
-          debugPrint('🍎 [地图点击] 点击位置: ${position.latitude}, ${position.longitude}');
+          debugPrint(
+            '🍎 [地图点击] 点击位置: ${position.latitude}, ${position.longitude}',
+          );
         },
       );
     }
@@ -1047,7 +1049,11 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     if (selectedLineIndex != null) {
       // 只绘制选中的线路，并高亮显示
       final selectedLine = busLines[selectedLineIndex!];
-      await _drawBusRoutePolylineOnAppleMap(selectedLine, isDarkMode, selectedLineIndex!);
+      await _drawBusRoutePolylineOnAppleMap(
+        selectedLine,
+        isDarkMode,
+        selectedLineIndex!,
+      );
 
       // 绘制站点标注（如果开启显示站点）
       if (showStops) {
@@ -1064,7 +1070,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         }
       }
     }
-    
+
     debugPrint('🍎 [Apple Maps] 已绘制 ${busLines.length} 条公交线路');
   }
 
@@ -1299,35 +1305,36 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         return;
       }
 
-      final List<Future<apple.Annotation>> annotationFutures =
-          filteredBusData.map((bus) async {
-        final line = busLines.firstWhere(
-          (line) => line.id == bus.lineId,
-          orElse: () => busLines.first,
-        );
+      final List<Future<apple.Annotation>> annotationFutures = filteredBusData
+          .map((bus) async {
+            final line = busLines.firstWhere(
+              (line) => line.id == bus.lineId,
+              orElse: () => busLines.first,
+            );
 
-        final position = apple.LatLng(bus.latitude, bus.longitude);
-        final icon =
-            await _getAppleBusIcon(bus.lineId, bus.direction);
+            final position = apple.LatLng(bus.latitude, bus.longitude);
+            final icon = await _getAppleBusIcon(bus.lineId, bus.direction);
 
-        return apple.Annotation(
-          annotationId: apple.AnnotationId('bus_${bus.id}'),
-          position: position,
-          anchor: const Offset(0.5, 0.5),
-          infoWindow: apple.InfoWindow(
-            title: '${line.name} - 车辆${bus.id}',
-            snippet: '速度: ${bus.speed.toStringAsFixed(1)} km/h • 点击查看详情',
-            onTap: () {
-              debugPrint('🍎 [车辆点击] 点击了车辆: ${bus.id}');
-              _showBusInfoDialog(bus, line);
-            },
-          ),
-          icon: icon,
-        );
-      }).toList();
+            return apple.Annotation(
+              annotationId: apple.AnnotationId('bus_${bus.id}'),
+              position: position,
+              anchor: const Offset(0.5, 0.5),
+              infoWindow: apple.InfoWindow(
+                title: '${line.name} - 车辆${bus.id}',
+                snippet: '速度: ${bus.speed.toStringAsFixed(1)} km/h • 点击查看详情',
+                onTap: () {
+                  debugPrint('🍎 [车辆点击] 点击了车辆: ${bus.id}');
+                  _showBusInfoDialog(bus, line);
+                },
+              ),
+              icon: icon,
+            );
+          })
+          .toList();
 
-      final List<apple.Annotation> newAnnotations =
-          await Future.wait(annotationFutures);
+      final List<apple.Annotation> newAnnotations = await Future.wait(
+        annotationFutures,
+      );
 
       if (!mounted || requestId != _appleBusAnnotationUpdateId) {
         debugPrint('🍎 [车辆更新] 忽略过期的Apple Maps车辆更新: $requestId');
@@ -1523,9 +1530,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       }
 
       setState(() {}); // Trigger rebuild
-      debugPrint(
-        '🍎 [站点完成] ${line.name}线已添加 ${annotations.length} 个站点标注',
-      );
+      debugPrint('🍎 [站点完成] ${line.name}线已添加 ${annotations.length} 个站点标注');
     } catch (e) {
       debugPrint('🍎 [站点异常] 绘制${line.name}线站点标注失败: $e');
     }
@@ -1649,10 +1654,19 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
           children: [
             _buildInfoRow('线路', line.name, isDarkMode),
             _buildInfoRow('车辆编号', bus.id.toString(), isDarkMode),
-            _buildInfoRow('当前速度', '${bus.speed.toStringAsFixed(1)} km/h', isDarkMode),
-            _buildInfoRow('行驶方向', '${bus.direction.toStringAsFixed(1)}°', isDarkMode),
-            _buildInfoRow('位置坐标', 
-              '${bus.latitude.toStringAsFixed(6)}, ${bus.longitude.toStringAsFixed(6)}', 
+            _buildInfoRow(
+              '当前速度',
+              '${bus.speed.toStringAsFixed(1)} km/h',
+              isDarkMode,
+            ),
+            _buildInfoRow(
+              '行驶方向',
+              '${bus.direction.toStringAsFixed(1)}°',
+              isDarkMode,
+            ),
+            _buildInfoRow(
+              '位置坐标',
+              '${bus.latitude.toStringAsFixed(6)}, ${bus.longitude.toStringAsFixed(6)}',
               isDarkMode,
             ),
           ],
@@ -2907,17 +2921,13 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         );
 
         if (result) {
-          debugPrint(
-            '✅ [位置更新] Android位置和朝向数据已更新到地图',
-          );
+          debugPrint('✅ [位置更新] Android位置和朝向数据已更新到地图');
         } else {
           debugPrint('❌ [位置更新] Android位置数据更新失败');
         }
       } else if (Platform.isIOS && _appleMapController != null) {
         // Apple Maps myLocationEnabled 会自动处理位置更新，我们无需手动操作
-        debugPrint(
-          '🍎 [位置更新] iOS平台接收到新位置，myLocationEnabled会自动处理',
-        );
+        debugPrint('🍎 [位置更新] iOS平台接收到新位置，myLocationEnabled会自动处理');
       }
     } catch (e) {
       debugPrint('💥 [位置更新失败] $e');
@@ -3016,7 +3026,6 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
             '经度=${gcj02Coordinate.longitude.toStringAsFixed(6)}',
           );
           await _moveMapToLocation(gcj02Coordinate);
-
         } else if (Platform.isIOS && _appleMapController != null) {
           // 修正：根据实际测试，iOS平台在中国区同样需要进行坐标转换
           final gcj02Coordinate = _convertWGS84ToGCJ02(
@@ -3027,7 +3036,10 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
             '🍎 [GCJ-02转换] 纬度=${gcj02Coordinate.latitude.toStringAsFixed(6)}, '
             '经度=${gcj02Coordinate.longitude.toStringAsFixed(6)}',
           );
-          final location = apple.LatLng(gcj02Coordinate.latitude, gcj02Coordinate.longitude);
+          final location = apple.LatLng(
+            gcj02Coordinate.latitude,
+            gcj02Coordinate.longitude,
+          );
           await _appleMapController!.animateCamera(
             apple.CameraUpdate.newLatLngZoom(location, 18.0),
           );
@@ -3042,29 +3054,20 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   }
 
   // 显示定位权限对话框
-  void _showLocationPermissionDialog() {
+  void _showLocationPermissionDialog() async {
     if (!mounted) return;
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('需要定位权限'),
-        content: const Text('为了在地图上显示您的位置，需要获取定位权限。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              openAppSettings();
-            },
-            child: const Text('去设置'),
-          ),
-        ],
-      ),
+    final shouldOpenSettings = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '需要定位权限',
+      message: '为了在地图上显示您的位置，需要获取定位权限。',
+      negativeText: '取消',
+      positiveText: '去设置',
     );
+
+    if (shouldOpenSettings) {
+      openAppSettings();
+    }
   }
 
   // 动态更新所有marker的缩放比例

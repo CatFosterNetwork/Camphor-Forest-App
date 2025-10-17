@@ -35,7 +35,7 @@ class _ExamQueryScreenState extends ConsumerState<ExamQueryScreen> {
     try {
       final apiService = ref.read(apiServiceProvider);
       final exams = await apiService.getExamInfo();
-      
+
       setState(() {
         _exams = exams;
         _isLoading = false;
@@ -112,7 +112,9 @@ class _ExamQueryScreenState extends ConsumerState<ExamQueryScreen> {
             ElevatedButton(
               onPressed: _loadExams,
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDarkMode ? Colors.blue.shade300 : Colors.blue,
+                backgroundColor: isDarkMode
+                    ? Colors.blue.shade300
+                    : Colors.blue,
                 foregroundColor: Colors.white,
               ),
               child: const Text('重试'),
@@ -196,9 +198,15 @@ class _ExamQueryScreenState extends ConsumerState<ExamQueryScreen> {
                 ),
                 if (examType.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: _getExamTypeColor(examType, isDarkMode).withAlpha(26),
+                      color: _getExamTypeColor(
+                        examType,
+                        isDarkMode,
+                      ).withAlpha(26),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -212,51 +220,36 @@ class _ExamQueryScreenState extends ConsumerState<ExamQueryScreen> {
                   ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // 考试时间
             if (examTime.isNotEmpty)
-              _buildInfoRow(
-                Icons.access_time,
-                '考试时间',
-                examTime,
-                isDarkMode,
-              ),
-            
+              _buildInfoRow(Icons.access_time, '考试时间', examTime, isDarkMode),
+
             // 考试地点
             if (location.isNotEmpty)
-              _buildInfoRow(
-                Icons.location_on,
-                '考试地点',
-                location,
-                isDarkMode,
-              ),
-            
+              _buildInfoRow(Icons.location_on, '考试地点', location, isDarkMode),
+
             // 座位号
             if (seatNumber.isNotEmpty)
-              _buildInfoRow(
-                Icons.event_seat,
-                '座位号',
-                seatNumber,
-                isDarkMode,
-              ),
-            
+              _buildInfoRow(Icons.event_seat, '座位号', seatNumber, isDarkMode),
+
             // 考试时长
             if (duration.isNotEmpty)
-              _buildInfoRow(
-                Icons.timer,
-                '考试时长',
-                '$duration分钟',
-                isDarkMode,
-              ),
+              _buildInfoRow(Icons.timer, '考试时长', '$duration分钟', isDarkMode),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, bool isDarkMode) {
+  Widget _buildInfoRow(
+    IconData icon,
+    String label,
+    String value,
+    bool isDarkMode,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(

@@ -28,7 +28,9 @@ class ExpenseBalance {
       remainingAccountBalance: _parseDouble(json['remainingAccountBalance']),
       electricityRate: _parseDouble(json['electricityRate']),
       waterRate: _parseDouble(json['waterRate']),
-      availableElectricitySubsidy: _parseDouble(json['availableElectricitySubsidy']),
+      availableElectricitySubsidy: _parseDouble(
+        json['availableElectricitySubsidy'],
+      ),
       availableWaterSubsidy: _parseDouble(json['availableWaterSubsidy']),
       electricityMeterNumber: json['electricityMeterNumber']?.toString(),
       waterMeterNumber: json['waterMeterNumber']?.toString(),
@@ -77,11 +79,19 @@ class ExpensePaymentRecord {
 
   factory ExpensePaymentRecord.fromJson(Map<String, dynamic> json) {
     return ExpensePaymentRecord(
-      paymentDate: DateTime.tryParse(json['paymentDate']?.toString() ?? '') ?? DateTime.now(),
+      paymentDate:
+          DateTime.tryParse(json['paymentDate']?.toString() ?? '') ??
+          DateTime.now(),
       serialNumber: json['serialNumber']?.toString() ?? '',
-      accountBalanceToday: ExpenseBalance._parseDouble(json['accountBalanceToday']),
-      paymentAmountThisTime: ExpenseBalance._parseDouble(json['paymentAmountThisTime']),
-      currentAccountBalance: ExpenseBalance._parseDouble(json['currentAccountBalance']),
+      accountBalanceToday: ExpenseBalance._parseDouble(
+        json['accountBalanceToday'],
+      ),
+      paymentAmountThisTime: ExpenseBalance._parseDouble(
+        json['paymentAmountThisTime'],
+      ),
+      currentAccountBalance: ExpenseBalance._parseDouble(
+        json['currentAccountBalance'],
+      ),
     );
   }
 
@@ -118,12 +128,20 @@ class ExpenseBalanceHistory {
 
   factory ExpenseBalanceHistory.fromJson(Map<String, dynamic> json) {
     return ExpenseBalanceHistory(
-      settlementDate: DateTime.tryParse(json['settlementDate']?.toString() ?? '') ?? DateTime.now(),
-      previousDayRemainingAmount: ExpenseBalance._parseDouble(json['previousDayRemainingAmount']),
-      currentDayRemainingAmount: ExpenseBalance._parseDouble(json['currentDayRemainingAmount']),
+      settlementDate:
+          DateTime.tryParse(json['settlementDate']?.toString() ?? '') ??
+          DateTime.now(),
+      previousDayRemainingAmount: ExpenseBalance._parseDouble(
+        json['previousDayRemainingAmount'],
+      ),
+      currentDayRemainingAmount: ExpenseBalance._parseDouble(
+        json['currentDayRemainingAmount'],
+      ),
       electricityFee: ExpenseBalance._parseDouble(json['electricityFee']),
       waterFee: ExpenseBalance._parseDouble(json['waterFee']),
-      todayPaymentAmount: ExpenseBalance._parseDouble(json['todayPaymentAmount']),
+      todayPaymentAmount: ExpenseBalance._parseDouble(
+        json['todayPaymentAmount'],
+      ),
       totalAmount: ExpenseBalance._parseDouble(json['totalAmount']),
     );
   }
@@ -168,11 +186,9 @@ class ExpenseBriefData {
   /// 获取对比文本
   String get compareText {
     if (changeRate == 0) return '与昨日持平';
-    
+
     final percentage = (changeRate * 100).abs().toStringAsFixed(1);
-    return changeRate > 0 
-        ? '较昨日增长$percentage%'
-        : '较昨日减少$percentage%';
+    return changeRate > 0 ? '较昨日增长$percentage%' : '较昨日减少$percentage%';
   }
 
   /// 获取对比颜色

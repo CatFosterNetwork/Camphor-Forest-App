@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
+import '../../../core/widgets/theme_aware_dialog.dart';
 import '../models/todo_item.dart';
 import '../providers/todo_provider.dart';
 
@@ -42,15 +43,17 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
   void initState() {
     super.initState();
     _isEditing = widget.initialTodo != null;
-    
-    _currentTodo = widget.initialTodo ?? TodoItem(
-      id: 0,
-      title: '',
-      due: null, // 默认无截止时间，让用户主动选择
-      important: false,
-      finished: false,
-    );
-    
+
+    _currentTodo =
+        widget.initialTodo ??
+        TodoItem(
+          id: 0,
+          title: '',
+          due: null, // 默认无截止时间，让用户主动选择
+          important: false,
+          finished: false,
+        );
+
     _titleController = TextEditingController(text: _currentTodo.title);
 
     // 初始化动画
@@ -63,21 +66,14 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.easeOutCubic,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutCubic),
+    );
 
     // 启动动画
     _slideController.forward();
@@ -96,9 +92,11 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
   Widget build(BuildContext context) {
     final isDarkMode = widget.darkMode;
     final themeColor = widget.themeColor;
-    
+
     final backgroundColor = isDarkMode ? const Color(0xFF1E1E1E) : Colors.white;
-    final surfaceColor = isDarkMode ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
+    final surfaceColor = isDarkMode
+        ? const Color(0xFF2A2A2A)
+        : Colors.grey.shade50;
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
     final borderColor = isDarkMode ? Colors.white12 : Colors.grey.shade200;
@@ -131,7 +129,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                     children: [
                       // 标题栏
                       _buildHeader(themeColor, textColor, subtitleColor),
-                      
+
                       // 内容区域
                       Flexible(
                         child: SingleChildScrollView(
@@ -140,22 +138,43 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // 标题输入
-                              _buildTitleInput(textColor, subtitleColor, borderColor, themeColor),
-                              
+                              _buildTitleInput(
+                                textColor,
+                                subtitleColor,
+                                borderColor,
+                                themeColor,
+                              ),
+
                               const SizedBox(height: 24),
-                              
+
                               // 截止时间选择
-                              _buildDateTimeSection(textColor, subtitleColor, surfaceColor, borderColor, themeColor),
-                              
+                              _buildDateTimeSection(
+                                textColor,
+                                subtitleColor,
+                                surfaceColor,
+                                borderColor,
+                                themeColor,
+                              ),
+
                               const SizedBox(height: 24),
-                              
+
                               // 重要性和其他选项
-                              _buildOptionsSection(textColor, subtitleColor, surfaceColor, themeColor),
-                              
+                              _buildOptionsSection(
+                                textColor,
+                                subtitleColor,
+                                surfaceColor,
+                                themeColor,
+                              ),
+
                               const SizedBox(height: 32),
-                              
+
                               // 操作按钮
-                              _buildActionButtons(context, themeColor, textColor, backgroundColor),
+                              _buildActionButtons(
+                                context,
+                                themeColor,
+                                textColor,
+                                backgroundColor,
+                              ),
                             ],
                           ),
                         ),
@@ -176,10 +195,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
       padding: const EdgeInsets.fromLTRB(24, 20, 20, 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            themeColor.withAlpha(26),
-            themeColor.withAlpha(13),
-          ],
+          colors: [themeColor.withAlpha(26), themeColor.withAlpha(13)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -217,10 +233,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                 ),
                 Text(
                   _isEditing ? '修改你的计划' : '记录重要的事情',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: subtitleColor,
-                  ),
+                  style: TextStyle(fontSize: 14, color: subtitleColor),
                 ),
               ],
             ),
@@ -245,7 +258,12 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
     );
   }
 
-  Widget _buildTitleInput(Color textColor, Color subtitleColor, Color borderColor, Color themeColor) {
+  Widget _buildTitleInput(
+    Color textColor,
+    Color subtitleColor,
+    Color borderColor,
+    Color themeColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -316,7 +334,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
             },
           ),
         ),
-        
+
         // 错误提示
         if (_errorMessage != null) ...[
           const SizedBox(height: 8),
@@ -329,11 +347,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.red.shade600,
-                  size: 16,
-                ),
+                Icon(Icons.error_outline, color: Colors.red.shade600, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -353,7 +367,13 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
     );
   }
 
-  Widget _buildDateTimeSection(Color textColor, Color subtitleColor, Color surfaceColor, Color borderColor, Color themeColor) {
+  Widget _buildDateTimeSection(
+    Color textColor,
+    Color subtitleColor,
+    Color surfaceColor,
+    Color borderColor,
+    Color themeColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -366,25 +386,46 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
           ),
         ),
         const SizedBox(height: 12),
-        
+
         // 快速选择按钮
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _buildQuickDateButton('今天', DateTime.now().add(const Duration(hours: 2)), themeColor, subtitleColor),
+              _buildQuickDateButton(
+                '今天',
+                DateTime.now().add(const Duration(hours: 2)),
+                themeColor,
+                subtitleColor,
+              ),
               const SizedBox(width: 8),
-              _buildQuickDateButton('明天', DateTime.now().add(const Duration(days: 1, hours: 9)), themeColor, subtitleColor),
+              _buildQuickDateButton(
+                '明天',
+                DateTime.now().add(const Duration(days: 1, hours: 9)),
+                themeColor,
+                subtitleColor,
+              ),
               const SizedBox(width: 8),
-              _buildQuickDateButton('下周', DateTime.now().add(const Duration(days: 7, hours: 9)), themeColor, subtitleColor),
+              _buildQuickDateButton(
+                '下周',
+                DateTime.now().add(const Duration(days: 7, hours: 9)),
+                themeColor,
+                subtitleColor,
+              ),
               const SizedBox(width: 8),
-              _buildQuickDateButton('自定义', null, themeColor, subtitleColor, isCustom: true),
+              _buildQuickDateButton(
+                '自定义',
+                null,
+                themeColor,
+                subtitleColor,
+                isCustom: true,
+              ),
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // 当前选择的时间显示
         if (_currentTodo.due != null)
           Container(
@@ -415,10 +456,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                     children: [
                       Text(
                         '截止时间',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: subtitleColor,
-                        ),
+                        style: TextStyle(fontSize: 12, color: subtitleColor),
                       ),
                       Text(
                         _formatDetailedDateTime(_currentTodo.due!),
@@ -457,10 +495,19 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
     );
   }
 
-  Widget _buildQuickDateButton(String label, DateTime? dateTime, Color themeColor, Color subtitleColor, {bool isCustom = false}) {
-    final isSelected = !isCustom && _currentTodo.due != null && dateTime != null && 
+  Widget _buildQuickDateButton(
+    String label,
+    DateTime? dateTime,
+    Color themeColor,
+    Color subtitleColor, {
+    bool isCustom = false,
+  }) {
+    final isSelected =
+        !isCustom &&
+        _currentTodo.due != null &&
+        dateTime != null &&
         _isSameDay(_currentTodo.due!, dateTime);
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -486,11 +533,12 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (isCustom) Icon(
-                Icons.calendar_month_rounded,
-                size: 16,
-                color: isSelected ? Colors.white : themeColor,
-              ),
+              if (isCustom)
+                Icon(
+                  Icons.calendar_month_rounded,
+                  size: 16,
+                  color: isSelected ? Colors.white : themeColor,
+                ),
               if (isCustom) const SizedBox(width: 4),
               Text(
                 label,
@@ -507,7 +555,12 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
     );
   }
 
-  Widget _buildOptionsSection(Color textColor, Color subtitleColor, Color surfaceColor, Color themeColor) {
+  Widget _buildOptionsSection(
+    Color textColor,
+    Color subtitleColor,
+    Color surfaceColor,
+    Color themeColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -520,7 +573,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
           ),
         ),
         const SizedBox(height: 12),
-        
+
         // 重要性开关
         Container(
           padding: const EdgeInsets.all(16),
@@ -533,13 +586,15 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _currentTodo.important 
+                  color: _currentTodo.important
                       ? Colors.orange.withAlpha(26)
                       : Colors.grey.withAlpha(26),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  _currentTodo.important ? Icons.star_rounded : Icons.star_outline_rounded,
+                  _currentTodo.important
+                      ? Icons.star_rounded
+                      : Icons.star_outline_rounded,
                   color: _currentTodo.important ? Colors.orange : subtitleColor,
                   size: 20,
                 ),
@@ -559,10 +614,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                     ),
                     Text(
                       '重要的事项会优先显示',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: subtitleColor,
-                      ),
+                      style: TextStyle(fontSize: 12, color: subtitleColor),
                     ),
                   ],
                 ),
@@ -584,7 +636,12 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, Color themeColor, Color textColor, Color backgroundColor) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    Color themeColor,
+    Color textColor,
+    Color backgroundColor,
+  ) {
     return Column(
       children: [
         // 主要操作按钮
@@ -610,7 +667,9 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -627,7 +686,9 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        _isEditing ? Icons.save_rounded : Icons.add_task_rounded,
+                        _isEditing
+                            ? Icons.save_rounded
+                            : Icons.add_task_rounded,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -642,9 +703,9 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                   ),
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // 次要操作按钮
         Row(
           children: [
@@ -667,7 +728,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                 ),
               ),
             ),
-            
+
             // 删除按钮（仅编辑模式）
             if (_isEditing) ...[
               const SizedBox(width: 12),
@@ -689,16 +750,15 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.red,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 4),
                             Text(
                               '删除中...',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.red,
-                              ),
+                              style: TextStyle(fontSize: 14, color: Colors.red),
                             ),
                           ],
                         )
@@ -713,10 +773,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                             const SizedBox(width: 4),
                             Text(
                               '删除',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.red,
-                              ),
+                              style: TextStyle(fontSize: 14, color: Colors.red),
                             ),
                           ],
                         ),
@@ -731,7 +788,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
 
   void _showCustomDateTimePicker() async {
     final now = DateTime.now();
-    
+
     final date = await showDatePicker(
       context: context,
       initialDate: _currentTodo.due ?? now.add(const Duration(days: 1)),
@@ -740,11 +797,11 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
       helpText: '选择截止日期',
       cancelText: '取消',
       confirmText: '确定',
-              builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: widget.themeColor,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: widget.themeColor,
               surface: widget.darkMode ? const Color(0xFF2A2A2A) : Colors.white,
               onSurface: widget.darkMode ? Colors.white : Colors.black,
             ),
@@ -753,7 +810,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
         );
       },
     );
-    
+
     if (date != null) {
       final time = await showTimePicker(
         context: context,
@@ -768,7 +825,9 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
             data: Theme.of(context).copyWith(
               colorScheme: Theme.of(context).colorScheme.copyWith(
                 primary: widget.themeColor,
-                surface: widget.darkMode ? const Color(0xFF2A2A2A) : Colors.white,
+                surface: widget.darkMode
+                    ? const Color(0xFF2A2A2A)
+                    : Colors.white,
                 onSurface: widget.darkMode ? Colors.white : Colors.black,
               ),
             ),
@@ -776,7 +835,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
           );
         },
       );
-      
+
       if (time != null) {
         final dateTime = DateTime(
           date.year,
@@ -785,7 +844,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
           time.hour,
           time.minute,
         );
-        
+
         setState(() {
           _currentTodo = _currentTodo.copyWith(due: dateTime);
         });
@@ -793,74 +852,36 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
     }
   }
 
-  void _showDeleteConfirmation() {
-    final isDarkMode = widget.darkMode;
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
-          '确认删除',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          '确定要删除这个待办事项吗？此操作无法撤销。',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white70 : Colors.black87,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              '取消',
-              style: TextStyle(
-                color: isDarkMode ? Colors.white70 : Colors.black54,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // 立即关闭对话框
-              _deleteTodo(); // 开始删除操作
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+  void _showDeleteConfirmation() async {
+    final shouldDelete = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '确认删除',
+      message: '确定要删除这个待办事项吗？此操作无法撤销。',
+      negativeText: '取消',
+      positiveText: '删除',
     );
+
+    if (shouldDelete) {
+      _deleteTodo();
+    }
   }
 
   Future<void> _deleteTodo() async {
     if (_isDeleting) return; // 防止重复点击
-    
+
     setState(() {
       _isDeleting = true;
     });
-    
+
     try {
       await ref.read(todoProvider.notifier).deleteTodo(_currentTodo.id);
       if (mounted) {
         // 添加轻微的触觉反馈
         HapticFeedback.lightImpact();
-        
+
         // 删除成功后关闭模态框
         _closeModal();
-        
+
         ToastService.show(
           '删除成功',
           backgroundColor: Colors.green,
@@ -871,7 +892,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
       if (mounted) {
         // 添加错误触觉反馈
         HapticFeedback.heavyImpact();
-        
+
         ToastService.show(
           '删除失败：$e',
           backgroundColor: Colors.red,
@@ -889,7 +910,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
 
   Future<void> _saveTodo() async {
     if (_isSaving) return; // 防止重复点击
-    
+
     // 验证标题
     if (_titleController.text.trim().isEmpty) {
       setState(() {
@@ -910,23 +931,25 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
       _isSaving = true;
     });
 
-    final updatedTodo = _currentTodo.copyWith(title: _titleController.text.trim());
+    final updatedTodo = _currentTodo.copyWith(
+      title: _titleController.text.trim(),
+    );
 
     try {
       if (_isEditing) {
-        await ref.read(todoProvider.notifier).modifyTodo(updatedTodo.id, updatedTodo);
+        await ref
+            .read(todoProvider.notifier)
+            .modifyTodo(updatedTodo.id, updatedTodo);
       } else {
-        await ref.read(todoProvider.notifier).addTodo(
-          updatedTodo.title,
-          updatedTodo.due,
-          updatedTodo.important,
-        );
+        await ref
+            .read(todoProvider.notifier)
+            .addTodo(updatedTodo.title, updatedTodo.due, updatedTodo.important);
       }
 
       if (mounted) {
         // 添加轻微的触觉反馈
         HapticFeedback.lightImpact();
-        
+
         _closeModal();
         ToastService.show(
           _isEditing ? '修改成功' : '添加成功',
@@ -938,7 +961,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
       if (mounted) {
         // 添加错误触觉反馈
         HapticFeedback.heavyImpact();
-        
+
         ToastService.show(
           '操作失败：$e',
           backgroundColor: Colors.red,
@@ -988,7 +1011,8 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
       dateStr = '${dateTime.year}年${dateTime.month}月${dateTime.day}日';
     }
 
-    final timeStr = '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    final timeStr =
+        '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
     return '$dateStr $timeStr';
   }
 }

@@ -57,10 +57,10 @@ abstract class RouteConstants {
   static const String statistics = '/statistics';
   // 校园导航
   static const String schoolNavigation = '/schoolNavigation';
-  
+
   // 图书馆
   static const String library = '/library';
-  
+
   // 跳蚤市场
   static const String fleaMarket = '/fleaMarket';
 }

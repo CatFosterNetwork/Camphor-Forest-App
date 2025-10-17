@@ -445,7 +445,7 @@ class ApiService {
       // 获取文件大小
       final file = File(filePath);
       final fileSize = await file.length();
-      debugPrint('📊 文件大小: ${(fileSize / 1024).toStringAsFixed(2)} KB');
+      debugPrint('📊 文件大小: ${(fileSize / 1000).toStringAsFixed(2)} KB');
 
       // 3. 直接使用 Dio 进行文件上传
       final dio = (_http as dynamic).dio as Dio;

@@ -77,6 +77,29 @@ class ThemeAwareDialog {
     return brightness > 128 ? Colors.black : Colors.white;
   }
 
+  /// 根据明暗模式调整背景色
+  /// 亮色模式：使用较浅的主题色
+  /// 暗色模式：使用较深的主题色
+  static Color _adjustBackgroundColor(Color themeColor, bool isDarkMode) {
+    final hslColor = HSLColor.fromColor(themeColor);
+
+    if (isDarkMode) {
+      // 暗色模式：使用很低的亮度（0.15-0.2），使背景很深
+      // 保持较高饱和度，让主题色更明显
+      return hslColor
+          .withLightness(0.18)
+          .withSaturation((hslColor.saturation * 0.8).clamp(0.0, 1.0))
+          .toColor();
+    } else {
+      // 亮色模式：使用很高的亮度（0.94），使背景接近白色
+      // 降低饱和度（0.7），让颜色浅淡
+      return hslColor
+          .withLightness(0.94)
+          .withSaturation((hslColor.saturation * 0.7).clamp(0.0, 1.0))
+          .toColor();
+    }
+  }
+
   /// 显示确认对话框
   static Future<bool> showConfirmDialog(
     BuildContext context, {
@@ -161,11 +184,12 @@ class ThemeAwareDialog {
     required String positiveText,
     required String negativeText,
   }) {
-    final textColor = _getTextColor(themeColor);
+    final backgroundColor = _adjustBackgroundColor(themeColor, isDarkMode);
+    final textColor = _getTextColor(backgroundColor);
     final contentTextColor = textColor.withOpacity(0.87);
 
     return AlertDialog(
-      backgroundColor: themeColor,
+      backgroundColor: backgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       contentPadding: const EdgeInsets.fromLTRB(24, 8, 24, 6),
@@ -224,11 +248,12 @@ class ThemeAwareDialog {
     required bool isDarkMode,
     required String buttonText,
   }) {
-    final textColor = _getTextColor(themeColor);
+    final backgroundColor = _adjustBackgroundColor(themeColor, isDarkMode);
+    final textColor = _getTextColor(backgroundColor);
     final contentTextColor = textColor.withOpacity(0.87);
 
     return AlertDialog(
-      backgroundColor: themeColor,
+      backgroundColor: backgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       contentPadding: const EdgeInsets.fromLTRB(24, 8, 24, 6),

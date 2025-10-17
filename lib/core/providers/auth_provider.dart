@@ -39,24 +39,24 @@ class AuthState {
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final UserService _userService;
-  
+
   AuthNotifier._internal(this._userService) : super(const AuthState());
-  
+
   /// 异步工厂构造函数
   static Future<AuthNotifier> create(UserService userService) async {
     final notifier = AuthNotifier._internal(userService);
     await notifier._initialize();
     return notifier;
   }
-  
+
   /// 异步初始化方法
   Future<void> _initialize() async {
     debugPrint('🔐 开始初始化 AuthNotifier');
     state = state.copyWith(isLoading: true);
-    
+
     try {
       await _userService.initialize();
-      
+
       // 检查是否已经有登录状态
       final isLoggedIn = await _userService.check();
       if (isLoggedIn) {
@@ -69,17 +69,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
           debugPrint('🟢 用户已登录，状态已恢复: ${user.name}');
         } else {
-          state = state.copyWith(
-            isLoading: false,
-            initialized: true,
-          );
+          state = state.copyWith(isLoading: false, initialized: true);
           debugPrint('🔴 用户信息获取失败');
         }
       } else {
-        state = state.copyWith(
-          isLoading: false,
-          initialized: true,
-        );
+        state = state.copyWith(isLoading: false, initialized: true);
         debugPrint('🔐 用户未登录');
       }
     } catch (e) {
@@ -195,7 +189,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   bool get isAuthenticated => state.user != null;
-  
+
   /// 获取当前状态 - 供外部访问
   AuthState get currentState => state;
 }
@@ -207,10 +201,10 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
   @override
   Future<AuthState> build() async {
     debugPrint('🔐 开始构建 AuthAsyncNotifier');
-    
+
     // 获取 UserService
     _userService = await ref.watch(userServiceProvider.future);
-    
+
     // 初始化用户状态
     return await _initialize();
   }
@@ -218,34 +212,24 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
   /// 初始化认证状态
   Future<AuthState> _initialize() async {
     debugPrint('🔐 开始初始化认证状态');
-    
+
     try {
       await _userService.initialize();
-      
+
       // 检查是否已经有登录状态
       final isLoggedIn = await _userService.check();
       if (isLoggedIn) {
         final user = await _userService.getUser();
         if (user != null) {
           debugPrint('🟢 用户已登录，状态已恢复: ${user.name}');
-          return AuthState(
-            user: user,
-            isLoading: false,
-            initialized: true,
-          );
+          return AuthState(user: user, isLoading: false, initialized: true);
         } else {
           debugPrint('🔴 用户信息获取失败');
-          return const AuthState(
-            isLoading: false,
-            initialized: true,
-          );
+          return const AuthState(isLoading: false, initialized: true);
         }
       } else {
         debugPrint('🔐 用户未登录');
-        return const AuthState(
-          isLoading: false,
-          initialized: true,
-        );
+        return const AuthState(isLoading: false, initialized: true);
       }
     } catch (e) {
       debugPrint('🔴 认证初始化失败: $e');
@@ -260,9 +244,11 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
   /// 登录
   Future<bool> login(String account, String password) async {
     debugPrint('🔐 开始登录: account=$account');
-    
+
     // 设置加载状态
-    state = AsyncValue.data(state.value!.copyWith(isLoading: true, errorMessage: null));
+    state = AsyncValue.data(
+      state.value!.copyWith(isLoading: true, errorMessage: null),
+    );
 
     try {
       debugPrint('🔐 调用 UserService 登录方法');
@@ -270,10 +256,12 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
       debugPrint('🔐 登录结果: $success');
 
       if (!success) {
-        state = AsyncValue.data(state.value!.copyWith(
-          isLoading: false, 
-          errorMessage: '登录失败，请检查账号和密码'
-        ));
+        state = AsyncValue.data(
+          state.value!.copyWith(
+            isLoading: false,
+            errorMessage: '登录失败，请检查账号和密码',
+          ),
+        );
         debugPrint('🔴 登录失败');
         return false;
       }
@@ -285,34 +273,35 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
         debugPrint('🔐 获取用户信息结果: ${u?.name ?? "未获取到用户信息"}');
 
         if (u != null) {
-          state = AsyncValue.data(AuthState(
-            user: u, 
-            isLoading: false, 
-            initialized: true
-          ));
+          state = AsyncValue.data(
+            AuthState(user: u, isLoading: false, initialized: true),
+          );
           debugPrint('🟢 登录成功，用户信息已更新');
           return true;
         } else {
-          state = AsyncValue.data(state.value!.copyWith(
-            isLoading: false, 
-            errorMessage: '获取用户信息失败'
-          ));
+          state = AsyncValue.data(
+            state.value!.copyWith(isLoading: false, errorMessage: '获取用户信息失败'),
+          );
           debugPrint('🔴 获取用户信息失败');
           return false;
         }
       } catch (e) {
-        state = AsyncValue.data(state.value!.copyWith(
-          isLoading: false,
-          errorMessage: '获取用户信息异常：${e.toString()}',
-        ));
+        state = AsyncValue.data(
+          state.value!.copyWith(
+            isLoading: false,
+            errorMessage: '获取用户信息异常：${e.toString()}',
+          ),
+        );
         debugPrint('🔴 获取用户信息异常: $e');
         return false;
       }
     } catch (e) {
-      state = AsyncValue.data(state.value!.copyWith(
-        isLoading: false,
-        errorMessage: '登录异常：${e.toString()}',
-      ));
+      state = AsyncValue.data(
+        state.value!.copyWith(
+          isLoading: false,
+          errorMessage: '登录异常：${e.toString()}',
+        ),
+      );
       debugPrint('🔴 登录异常: $e');
       return false;
     }
@@ -329,7 +318,7 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
   /// 刷新用户数据
   Future<void> refreshUser() async {
     debugPrint('🔄 开始刷新用户数据');
-    
+
     final currentState = state.value;
     if (currentState?.user == null) {
       debugPrint('❌ 用户未登录，无法刷新');
@@ -380,9 +369,10 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
 }
 
 /// 异步认证状态Provider - 使用 AsyncNotifierProvider
-final authAsyncNotifierProvider = AsyncNotifierProvider<AuthAsyncNotifier, AuthState>(() {
-  return AuthAsyncNotifier();
-});
+final authAsyncNotifierProvider =
+    AsyncNotifierProvider<AuthAsyncNotifier, AuthState>(() {
+      return AuthAsyncNotifier();
+    });
 
 /// 便捷的认证状态获取Provider
 final authProvider = Provider<AuthState>((ref) {
@@ -390,10 +380,8 @@ final authProvider = Provider<AuthState>((ref) {
   return authAsync.when(
     data: (state) => state,
     loading: () => const AuthState(isLoading: true),
-    error: (error, _) => AuthState(
-      initialized: true,
-      errorMessage: error.toString(),
-    ),
+    error: (error, _) =>
+        AuthState(initialized: true, errorMessage: error.toString()),
   );
 });
 
@@ -401,8 +389,6 @@ final authProvider = Provider<AuthState>((ref) {
 final authStateProvider = Provider<AsyncValue<AuthState>>((ref) {
   return ref.watch(authAsyncNotifierProvider);
 });
-
-
 
 /// 认证状态检查Helper
 final isAuthenticatedProvider = Provider<bool>((ref) {
@@ -422,32 +408,32 @@ extension AuthNotifierExtensions on WidgetRef {
   Future<bool> login(String account, String password) async {
     return read(authAsyncNotifierProvider.notifier).login(account, password);
   }
-  
+
   /// 执行注销操作
   Future<void> logout() async {
     return read(authAsyncNotifierProvider.notifier).logout();
   }
-  
+
   /// 刷新用户数据
   Future<void> refreshUser() async {
     return read(authAsyncNotifierProvider.notifier).refreshUser();
   }
-  
+
   /// 直接更新用户信息
   void updateUser(UserModel user) {
     read(authAsyncNotifierProvider.notifier).updateUser(user);
   }
-  
+
   /// 获取当前认证状态
   AuthState getAuthState() {
     return read(authProvider);
   }
-  
+
   /// 检查是否已认证
   bool isAuthenticated() {
     return read(isAuthenticatedProvider);
   }
-  
+
   /// 获取当前用户
   UserModel? getCurrentUser() {
     return read(currentUserProvider);

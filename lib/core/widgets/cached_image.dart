@@ -46,7 +46,7 @@ class _CachedImageState extends State<CachedImage> {
   @override
   void didUpdateWidget(CachedImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // 只有当URL发生变化时才重新加载
     if (widget.imageUrl != oldWidget.imageUrl) {
       _loadImage();
@@ -60,8 +60,10 @@ class _CachedImageState extends State<CachedImage> {
     });
 
     try {
-      final provider = await _cacheService.getCachedImageProvider(widget.imageUrl);
-      
+      final provider = await _cacheService.getCachedImageProvider(
+        widget.imageUrl,
+      );
+
       if (mounted) {
         setState(() {
           _imageProvider = provider;
@@ -112,10 +114,7 @@ class _CachedImageState extends State<CachedImage> {
         color: widget.backgroundColor,
       ),
       child: widget.borderRadius != null
-          ? ClipRRect(
-              borderRadius: widget.borderRadius!,
-              child: content,
-            )
+          ? ClipRRect(borderRadius: widget.borderRadius!, child: content)
           : content,
     );
   }
@@ -129,9 +128,7 @@ class _CachedImageState extends State<CachedImage> {
         child: SizedBox(
           width: 20,
           height: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-          ),
+          child: CircularProgressIndicator(strokeWidth: 2),
         ),
       ),
     );
@@ -142,11 +139,7 @@ class _CachedImageState extends State<CachedImage> {
       width: widget.width,
       height: widget.height,
       color: Colors.grey.shade300,
-      child: Icon(
-        Icons.broken_image,
-        size: 32,
-        color: Colors.grey.shade600,
-      ),
+      child: Icon(Icons.broken_image, size: 32, color: Colors.grey.shade600),
     );
   }
 }
@@ -174,11 +167,9 @@ class CachedAvatar extends StatelessWidget {
       return CircleAvatar(
         radius: radius,
         backgroundColor: backgroundColor ?? Colors.grey.shade300,
-        child: child ?? Icon(
-          Icons.person,
-          size: radius,
-          color: Colors.grey.shade600,
-        ),
+        child:
+            child ??
+            Icon(Icons.person, size: radius, color: Colors.grey.shade600),
       );
     }
 
@@ -201,11 +192,9 @@ class CachedAvatar extends StatelessWidget {
       errorWidget: CircleAvatar(
         radius: radius,
         backgroundColor: backgroundColor ?? Colors.grey.shade300,
-        child: child ?? Icon(
-          Icons.person,
-          size: radius,
-          color: Colors.grey.shade600,
-        ),
+        child:
+            child ??
+            Icon(Icons.person, size: radius, color: Colors.grey.shade600),
       ),
     );
   }

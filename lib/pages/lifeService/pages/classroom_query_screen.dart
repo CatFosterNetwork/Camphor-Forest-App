@@ -131,10 +131,7 @@ class _ClassroomQueryScreenState extends ConsumerState<ClassroomQueryScreen> {
       setState(() {
         _isLoading = false;
       });
-      ToastService.show(
-        '查询失败: $e',
-        backgroundColor: Colors.red,
-      );
+      ToastService.show('查询失败: $e', backgroundColor: Colors.red);
     }
   }
 

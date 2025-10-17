@@ -50,33 +50,26 @@ class ExpenseDetailCard extends ConsumerWidget {
                     const SizedBox(height: 4),
                     Text(
                       subtitle!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: subtitleColor,
-                      ),
+                      style: TextStyle(fontSize: 12, color: subtitleColor),
                     ),
                   ],
                 ],
               ),
             ),
             if (onTap != null)
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: subtitleColor,
-              ),
+              Icon(Icons.arrow_forward_ios, size: 16, color: subtitleColor),
           ],
         ),
-        
+
         const SizedBox(height: 20),
-        
+
         // 内容
         child,
       ],
     );
 
     Widget styledCard;
-    
+
     if (useAcrylicEffect) {
       // 使用亚克力材质效果
       styledCard = ClipRRect(
@@ -86,14 +79,13 @@ class ExpenseDetailCard extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode 
+              color: isDarkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: isDarkMode ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              ) : null,
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(isDarkMode ? 76 : 20),
@@ -120,11 +112,8 @@ class ExpenseDetailCard extends ConsumerWidget {
               offset: const Offset(0, 4),
             ),
           ],
-          border: isDarkMode 
-              ? Border.all(
-                  color: Colors.white.withAlpha(26),
-                  width: 1,
-                )
+          border: isDarkMode
+              ? Border.all(color: Colors.white.withAlpha(26), width: 1)
               : null,
         ),
         child: cardContent,

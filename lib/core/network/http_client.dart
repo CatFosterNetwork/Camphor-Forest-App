@@ -28,8 +28,6 @@ class HttpClient implements IHttpClient {
     responseType: ResponseType.json,
   );
 
-
-
   void _setupInterceptors() {
     // 日志拦截
     if (kDebugMode) {

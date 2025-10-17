@@ -100,14 +100,14 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
     return size;
   }
 
-  /// 格式化字节大小
+  /// 格式化字节大小（十进制单位：1 KB = 1000 bytes）
   String _formatBytes(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024) {
-      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (bytes < 1000) return '$bytes B';
+    if (bytes < 1000 * 1000) return '${(bytes / 1000).toStringAsFixed(1)} KB';
+    if (bytes < 1000 * 1000 * 1000) {
+      return '${(bytes / (1000 * 1000)).toStringAsFixed(1)} MB';
     }
-    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+    return '${(bytes / (1000 * 1000 * 1000)).toStringAsFixed(1)} GB';
   }
 
   @override

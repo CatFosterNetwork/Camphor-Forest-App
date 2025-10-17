@@ -35,7 +35,7 @@ class AppConfig {
     this.showExams = true,
     this.showGrades = true,
     this.showIndexServices = true,
-    
+
     // 森林功能设置 - 默认显示核心功能
     this.showFleaMarket = false,
     this.showCampusRecruitment = false,
@@ -45,7 +45,7 @@ class AppConfig {
     this.showAds = false,
     this.showLifeService = true,
     this.showFeedback = true,
-    
+
     // 应用基础设置
     this.autoSync = false,
     this.autoRenewalCheckInService = false,
@@ -62,7 +62,7 @@ class AppConfig {
       showExams: json['index-showExams'] ?? true,
       showGrades: json['index-showGrades'] ?? true,
       showIndexServices: json['index-showIndexServices'] ?? true,
-      
+
       // 森林功能设置
       showFleaMarket: json['forest-showFleaMarket'] ?? false,
       showCampusRecruitment: json['forest-showCampusRecruitment'] ?? false,
@@ -72,7 +72,7 @@ class AppConfig {
       showAds: json['forest-showAds'] ?? false,
       showLifeService: json['forest-showLifeService'] ?? true,
       showFeedback: json['forest-showFeedback'] ?? true,
-      
+
       // 应用基础设置
       autoSync: json['autoSync'] ?? false,
       autoRenewalCheckInService: json['autoRenewalCheckInService'] ?? false,
@@ -90,7 +90,7 @@ class AppConfig {
       'index-showExams': showExams,
       'index-showGrades': showGrades,
       'index-showIndexServices': showIndexServices,
-      
+
       // 森林功能设置
       'forest-showFleaMarket': showFleaMarket,
       'forest-showCampusRecruitment': showCampusRecruitment,
@@ -100,7 +100,7 @@ class AppConfig {
       'forest-showAds': showAds,
       'forest-showLifeService': showLifeService,
       'forest-showFeedback': showFeedback,
-      
+
       // 应用基础设置
       'autoSync': autoSync,
       'autoRenewalCheckInService': autoRenewalCheckInService,
@@ -117,7 +117,7 @@ class AppConfig {
     bool? showExams,
     bool? showGrades,
     bool? showIndexServices,
-    
+
     // 森林功能设置
     bool? showFleaMarket,
     bool? showCampusRecruitment,
@@ -127,7 +127,7 @@ class AppConfig {
     bool? showAds,
     bool? showLifeService,
     bool? showFeedback,
-    
+
     // 应用基础设置
     bool? autoSync,
     bool? autoRenewalCheckInService,
@@ -141,20 +141,22 @@ class AppConfig {
       showExams: showExams ?? this.showExams,
       showGrades: showGrades ?? this.showGrades,
       showIndexServices: showIndexServices ?? this.showIndexServices,
-      
+
       // 森林功能设置
       showFleaMarket: showFleaMarket ?? this.showFleaMarket,
-      showCampusRecruitment: showCampusRecruitment ?? this.showCampusRecruitment,
+      showCampusRecruitment:
+          showCampusRecruitment ?? this.showCampusRecruitment,
       showSchoolNavigation: showSchoolNavigation ?? this.showSchoolNavigation,
       showLibrary: showLibrary ?? this.showLibrary,
       showBBS: showBBS ?? this.showBBS,
       showAds: showAds ?? this.showAds,
       showLifeService: showLifeService ?? this.showLifeService,
       showFeedback: showFeedback ?? this.showFeedback,
-      
+
       // 应用基础设置
       autoSync: autoSync ?? this.autoSync,
-      autoRenewalCheckInService: autoRenewalCheckInService ?? this.autoRenewalCheckInService,
+      autoRenewalCheckInService:
+          autoRenewalCheckInService ?? this.autoRenewalCheckInService,
     );
   }
 
@@ -162,7 +164,7 @@ class AppConfig {
   static const AppConfig defaultConfig = AppConfig();
 
   // ===== 便利方法 =====
-  
+
   /// 获取首页显示设置的Map
   Map<String, bool> get indexDisplaySettings => {
     'index-showFinishedTodo': showFinishedTodo,
@@ -187,14 +189,25 @@ class AppConfig {
   };
 
   /// 检查是否有任何森林功能启用
-  bool get hasAnyForestFeatureEnabled => 
-    showFleaMarket || showCampusRecruitment || showSchoolNavigation || 
-    showLibrary || showBBS || showAds || showLifeService || showFeedback;
+  bool get hasAnyForestFeatureEnabled =>
+      showFleaMarket ||
+      showCampusRecruitment ||
+      showSchoolNavigation ||
+      showLibrary ||
+      showBBS ||
+      showAds ||
+      showLifeService ||
+      showFeedback;
 
   /// 检查是否有任何首页功能启用
-  bool get hasAnyIndexFeatureEnabled => 
-    showFinishedTodo || showTodo || showExpense || showClassroom || 
-    showExams || showGrades || showIndexServices;
+  bool get hasAnyIndexFeatureEnabled =>
+      showFinishedTodo ||
+      showTodo ||
+      showExpense ||
+      showClassroom ||
+      showExams ||
+      showGrades ||
+      showIndexServices;
 
   @override
   bool operator ==(Object other) =>

@@ -70,18 +70,15 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       final prefs = _ref.read(sharedPreferencesProvider);
       final buildingId = prefs.getString('buildingId');
       final roomCode = prefs.getString('roomCode');
-      
+
       if (buildingId != null && roomCode != null) {
         final buildingIdInt = int.tryParse(buildingId);
         DormInfo? dormInfo;
         if (buildingIdInt != null) {
           dormInfo = DormConfig.findDormByBuildingId(buildingIdInt);
         }
-        
-        state = state.copyWith(
-          isBound: true,
-          currentDorm: dormInfo,
-        );
+
+        state = state.copyWith(isBound: true, currentDorm: dormInfo);
         // 尝试加载缓存的水电费数据
         _loadExpenseFromCache();
       }
@@ -96,13 +93,13 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       final prefs = _ref.read(sharedPreferencesProvider);
       final expenseJson = prefs.getString('expense_data');
       final lastUpdate = prefs.getString('expense_last_update');
-      
+
       if (expenseJson != null) {
         // 检查数据是否过期（超过12小时）
         DateTime? lastUpdateTime;
         if (lastUpdate != null) {
           lastUpdateTime = DateTime.tryParse(lastUpdate);
-          if (lastUpdateTime != null && 
+          if (lastUpdateTime != null &&
               DateTime.now().difference(lastUpdateTime).inHours < 12) {
             // 数据未过期，使用缓存数据
             _parseExpenseData(expenseJson, lastUpdateTime, isFromCache: true);
@@ -110,7 +107,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
           }
         }
       }
-      
+
       // 缓存数据不存在或已过期，刷新数据
       refreshExpenseData();
     } catch (e) {
@@ -120,11 +117,15 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
   }
 
   /// 解析水电费数据
-  void _parseExpenseData(String jsonData, DateTime updateTime, {bool isFromCache = true}) {
+  void _parseExpenseData(
+    String jsonData,
+    DateTime updateTime, {
+    bool isFromCache = true,
+  }) {
     try {
       // 解析JSON数据
       final data = json.decode(jsonData);
-      
+
       // 使用与_parseApiData相同的逻辑来解析数据，但标记为缓存数据
       _parseApiData(data, updateTime, isFromCache: isFromCache);
     } catch (e) {
@@ -159,17 +160,20 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
 
       // 调用API获取数据
       final apiService = _ref.read(apiServiceProvider);
-      final response = await apiService.getElectricityExpense(buildingId, roomCode);
+      final response = await apiService.getElectricityExpense(
+        buildingId,
+        roomCode,
+      );
 
       // 解析API响应
       if (response['success'] == true && response['data'] != null) {
         final data = response['data'];
         final now = DateTime.now();
-        
+
         // 保存到缓存 - 将data转换为JSON字符串
         await prefs.setString('expense_data', json.encode(data));
         await prefs.setString('expense_last_update', now.toIso8601String());
-        
+
         // 解析数据
         _parseApiData(data, now, isFromCache: false);
       } else {
@@ -177,17 +181,19 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       }
     } catch (e) {
       debugPrint('刷新水电费数据失败: $e');
-      
+
       // API请求失败时，尝试使用缓存数据（即使已过期）
       final prefs = _ref.read(sharedPreferencesProvider);
       final expenseJson = prefs.getString('expense_data');
       final lastUpdate = prefs.getString('expense_last_update');
-      
+
       if (expenseJson != null && lastUpdate != null) {
         final lastUpdateTime = DateTime.tryParse(lastUpdate);
         if (lastUpdateTime != null) {
           try {
-            debugPrint('API失败，使用缓存数据（${DateTime.now().difference(lastUpdateTime).inHours}小时前）');
+            debugPrint(
+              'API失败，使用缓存数据（${DateTime.now().difference(lastUpdateTime).inHours}小时前）',
+            );
             _parseExpenseData(expenseJson, lastUpdateTime, isFromCache: true);
             return;
           } catch (cacheError) {
@@ -195,17 +201,18 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
           }
         }
       }
-      
+
       // 既没有缓存数据，API也失败了
-      state = state.copyWith(
-        isLoading: false,
-        error: '网络请求失败，且无可用缓存数据: $e',
-      );
+      state = state.copyWith(isLoading: false, error: '网络请求失败，且无可用缓存数据: $e');
     }
   }
 
   /// 解析API数据
-  void _parseApiData(Map<String, dynamic> data, DateTime updateTime, {bool isFromCache = false}) {
+  void _parseApiData(
+    Map<String, dynamic> data,
+    DateTime updateTime, {
+    bool isFromCache = false,
+  }) {
     try {
       ExpenseBalance? balance;
       ExpensePaymentRecord? payment;
@@ -215,13 +222,22 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       if (data['currentBalanceData'] != null) {
         final balanceData = data['currentBalanceData'];
         balance = ExpenseBalance(
-          currentRemainingAmount: _parseDouble(balanceData['currentRemainingAmount']),
-          remainingAccountBalance: _parseDouble(balanceData['remainingAccountBalance']),
+          currentRemainingAmount: _parseDouble(
+            balanceData['currentRemainingAmount'],
+          ),
+          remainingAccountBalance: _parseDouble(
+            balanceData['remainingAccountBalance'],
+          ),
           electricityRate: _parseDouble(balanceData['electricityRate']),
           waterRate: _parseDouble(balanceData['waterRate']),
-          availableElectricitySubsidy: _parseDouble(balanceData['availableElectricitySubsidy']),
-          availableWaterSubsidy: _parseDouble(balanceData['availableWaterSubsidy']),
-          electricityMeterNumber: balanceData['electricityMeterNumber']?.toString(),
+          availableElectricitySubsidy: _parseDouble(
+            balanceData['availableElectricitySubsidy'],
+          ),
+          availableWaterSubsidy: _parseDouble(
+            balanceData['availableWaterSubsidy'],
+          ),
+          electricityMeterNumber: balanceData['electricityMeterNumber']
+              ?.toString(),
           waterMeterNumber: balanceData['waterMeterNumber']?.toString(),
         );
       }
@@ -230,11 +246,17 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       if (data['paymentData'] != null) {
         final paymentData = data['paymentData'];
         payment = ExpensePaymentRecord(
-          paymentDate: DateTime.tryParse(paymentData['paymentDate']?.toString() ?? '') ?? DateTime.now(),
+          paymentDate:
+              DateTime.tryParse(paymentData['paymentDate']?.toString() ?? '') ??
+              DateTime.now(),
           serialNumber: paymentData['serialNumber']?.toString() ?? '',
           accountBalanceToday: _parseDouble(paymentData['accountBalanceToday']),
-          paymentAmountThisTime: _parseDouble(paymentData['paymentAmountThisTime']),
-          currentAccountBalance: _parseDouble(paymentData['currentAccountBalance']),
+          paymentAmountThisTime: _parseDouble(
+            paymentData['paymentAmountThisTime'],
+          ),
+          currentAccountBalance: _parseDouble(
+            paymentData['currentAccountBalance'],
+          ),
         );
       }
 
@@ -242,9 +264,15 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       if (data['balanceData'] != null && data['balanceData'] is List) {
         history = (data['balanceData'] as List).map((item) {
           return ExpenseBalanceHistory(
-            settlementDate: DateTime.tryParse(item['settlementDate']?.toString() ?? '') ?? DateTime.now(),
-            previousDayRemainingAmount: _parseDouble(item['previousDayRemainingAmount']),
-            currentDayRemainingAmount: _parseDouble(item['currentDayRemainingAmount']),
+            settlementDate:
+                DateTime.tryParse(item['settlementDate']?.toString() ?? '') ??
+                DateTime.now(),
+            previousDayRemainingAmount: _parseDouble(
+              item['previousDayRemainingAmount'],
+            ),
+            currentDayRemainingAmount: _parseDouble(
+              item['currentDayRemainingAmount'],
+            ),
             electricityFee: _parseDouble(item['electricityFee']),
             waterFee: _parseDouble(item['waterFee']),
             todayPaymentAmount: _parseDouble(item['todayPaymentAmount']),
@@ -278,7 +306,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
 
     try {
       debugPrint('开始绑定宿舍: buildingId=$buildingId, roomCode=$roomCode');
-      
+
       // 保存绑定信息
       final prefs = _ref.read(sharedPreferencesProvider);
       await prefs.setString('buildingId', buildingId);
@@ -342,7 +370,10 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
 
   /// 初始化数据加载（使用缓存策略）
   void initializeData() {
-    if (state.isBound && !state.isLoading && state.currentBalance == null && state.error == null) {
+    if (state.isBound &&
+        !state.isLoading &&
+        state.currentBalance == null &&
+        state.error == null) {
       // 只有在已绑定、未加载中、无数据、无错误的情况下才加载
       _loadExpenseFromCache();
     }
@@ -377,19 +408,23 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
     try {
       // 安全检查：确保状态完整
       if (!state.isBound || state.currentBalance == null || state.isLoading) {
-        debugPrint('briefData: 状态不完整，返回null - isBound: ${state.isBound}, hasBalance: ${state.currentBalance != null}, isLoading: ${state.isLoading}');
+        debugPrint(
+          'briefData: 状态不完整，返回null - isBound: ${state.isBound}, hasBalance: ${state.currentBalance != null}, isLoading: ${state.isLoading}',
+        );
         return null;
       }
-      
+
       final balance = state.currentBalance!;
-      
+
       // 安全访问历史数据
       final historyList = state.balanceHistory;
       final todayHistory = historyList.isNotEmpty ? historyList.first : null;
       final yesterdayHistory = historyList.length > 1 ? historyList[1] : null;
-      
-      debugPrint('briefData: 创建简要数据 - balance: ${balance.currentRemainingAmount}, historyCount: ${historyList.length}');
-      
+
+      debugPrint(
+        'briefData: 创建简要数据 - balance: ${balance.currentRemainingAmount}, historyCount: ${historyList.length}',
+      );
+
       return ExpenseBriefData(
         currentBalance: balance.currentRemainingAmount,
         electricityFee: todayHistory?.electricityFee ?? 0.0,
@@ -407,7 +442,9 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
 }
 
 /// 水电费Provider
-final expenseProvider = StateNotifierProvider<ExpenseNotifier, ExpenseState>((ref) {
+final expenseProvider = StateNotifierProvider<ExpenseNotifier, ExpenseState>((
+  ref,
+) {
   return ExpenseNotifier(ref);
 });
 
@@ -415,13 +452,13 @@ final expenseProvider = StateNotifierProvider<ExpenseNotifier, ExpenseState>((re
 final expenseBriefProvider = Provider<ExpenseBriefData?>((ref) {
   final expenseState = ref.watch(expenseProvider);
   final expenseNotifier = ref.watch(expenseProvider.notifier);
-  
+
   // 只有在关键状态变化时才重新计算
   if (!expenseState.isBound || expenseState.isLoading) {
     debugPrint('expenseBriefProvider: 状态未就绪，返回null');
     return null;
   }
-  
+
   try {
     final briefData = expenseNotifier.briefData;
     debugPrint('expenseBriefProvider: 返回简要数据 - hasData: ${briefData != null}');

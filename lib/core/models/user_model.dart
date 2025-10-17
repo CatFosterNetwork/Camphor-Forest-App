@@ -10,9 +10,9 @@ class UserModel {
   final String name;
   final bool siteAdmin;
   final String studentId;
-  final String college;      // 学院
-  final String major;        // 专业
-  final String className;    // 班级
+  final String college; // 学院
+  final String major; // 专业
+  final String className; // 班级
   String openId;
 
   UserModel({

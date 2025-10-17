@@ -32,14 +32,14 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
     final themeColor = ref.watch(selectedCustomThemeProvider);
-    final mainColor = themeColor.colorList.isNotEmpty == true 
-        ? themeColor.colorList[0] 
+    final mainColor = themeColor.colorList.isNotEmpty == true
+        ? themeColor.colorList[0]
         : Colors.blue;
-    
+
     final expenseState = ref.watch(expenseProvider);
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
-    
+
     // 获取亚克力效果设置
     final useAcrylicEffect = themeColor.indexMessageBoxBlur;
 
@@ -49,10 +49,7 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
       appBar: AppBar(
         title: Text(
           '水电费查询',
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -97,18 +94,31 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => ref.read(expenseProvider.notifier).refreshExpenseData(),
+        onRefresh: () =>
+            ref.read(expenseProvider.notifier).refreshExpenseData(),
         color: mainColor,
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           padding: const EdgeInsets.all(16),
-          child: !expenseState.isBound && !expenseState.isLoading && expenseState.error == null
+          child:
+              !expenseState.isBound &&
+                  !expenseState.isLoading &&
+                  expenseState.error == null
               ? SizedBox(
-                  height: MediaQuery.of(context).size.height - 
-                         MediaQuery.of(context).padding.top - 
-                         kToolbarHeight - 32, // 减去状态栏、AppBar和padding
+                  height:
+                      MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top -
+                      kToolbarHeight -
+                      32, // 减去状态栏、AppBar和padding
                   child: Center(
-                    child: _buildUnboundCard(context, isDarkMode, mainColor, useAcrylicEffect: useAcrylicEffect),
+                    child: _buildUnboundCard(
+                      context,
+                      isDarkMode,
+                      mainColor,
+                      useAcrylicEffect: useAcrylicEffect,
+                    ),
                   ),
                 )
               : Column(
@@ -116,20 +126,32 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
                     // 状态处理
                     if (expenseState.isLoading) ...[
                       SizedBox(
-                        height: MediaQuery.of(context).size.height - 
-                               MediaQuery.of(context).padding.top - 
-                               kToolbarHeight - 32,
+                        height:
+                            MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top -
+                            kToolbarHeight -
+                            32,
                         child: Center(
-                          child: _buildLoadingCard(isDarkMode, useAcrylicEffect: useAcrylicEffect),
+                          child: _buildLoadingCard(
+                            isDarkMode,
+                            useAcrylicEffect: useAcrylicEffect,
+                          ),
                         ),
                       ),
                     ] else if (expenseState.error != null) ...[
                       SizedBox(
-                        height: MediaQuery.of(context).size.height - 
-                               MediaQuery.of(context).padding.top - 
-                               kToolbarHeight - 32,
+                        height:
+                            MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top -
+                            kToolbarHeight -
+                            32,
                         child: Center(
-                          child: _buildErrorCard(expenseState.error!, isDarkMode, mainColor, useAcrylicEffect: useAcrylicEffect),
+                          child: _buildErrorCard(
+                            expenseState.error!,
+                            isDarkMode,
+                            mainColor,
+                            useAcrylicEffect: useAcrylicEffect,
+                          ),
                         ),
                       ),
                     ] else ...[
@@ -137,31 +159,50 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
                       if (expenseState.currentBalance != null)
                         ExpenseDetailCard(
                           title: '余额总览',
-                          subtitle: '更新于 ${_formatUpdateTime(expenseState.lastUpdateTime)}',
+                          subtitle:
+                              '更新于 ${_formatUpdateTime(expenseState.lastUpdateTime)}',
                           useAcrylicEffect: useAcrylicEffect,
-                          child: _buildBalanceOverview(expenseState, isDarkMode, textColor, subtitleColor, mainColor),
+                          child: _buildBalanceOverview(
+                            expenseState,
+                            isDarkMode,
+                            textColor,
+                            subtitleColor,
+                            mainColor,
+                          ),
                         ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // 近期缴费记录
                       if (expenseState.paymentRecord != null)
                         ExpenseDetailCard(
                           title: '近期缴费记录',
-                          subtitle: '缴费于 ${_formatUpdateTime(expenseState.paymentRecord!.paymentDate)}',
+                          subtitle:
+                              '缴费于 ${_formatUpdateTime(expenseState.paymentRecord!.paymentDate)}',
                           useAcrylicEffect: useAcrylicEffect,
-                          child: _buildPaymentRecord(expenseState, isDarkMode, textColor, subtitleColor, mainColor),
+                          child: _buildPaymentRecord(
+                            expenseState,
+                            isDarkMode,
+                            textColor,
+                            subtitleColor,
+                            mainColor,
+                          ),
                         ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // 近期消费流水
                       if (expenseState.balanceHistory.isNotEmpty)
                         ExpenseDetailCard(
                           title: '近期消费流水',
                           subtitle: '最近 30 天数据',
                           useAcrylicEffect: useAcrylicEffect,
-                          child: _buildBalanceHistory(expenseState, isDarkMode, textColor, subtitleColor),
+                          child: _buildBalanceHistory(
+                            expenseState,
+                            isDarkMode,
+                            textColor,
+                            subtitleColor,
+                          ),
                         ),
                     ],
                   ],
@@ -196,14 +237,13 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
           child: Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDarkMode 
+              color: isDarkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: isDarkMode ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              ) : null,
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(26),
@@ -235,14 +275,15 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     }
   }
 
-  Widget _buildErrorCard(String error, bool isDarkMode, Color mainColor, {bool useAcrylicEffect = false}) {
+  Widget _buildErrorCard(
+    String error,
+    bool isDarkMode,
+    Color mainColor, {
+    bool useAcrylicEffect = false,
+  }) {
     Widget cardContent = Column(
       children: [
-        Icon(
-          Icons.error_outline,
-          size: 48,
-          color: Colors.red,
-        ),
+        Icon(Icons.error_outline, size: 48, color: Colors.red),
         const SizedBox(height: 16),
         Text(
           '获取数据失败',
@@ -263,7 +304,8 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
         ),
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: () => ref.read(expenseProvider.notifier).refreshExpenseData(),
+          onPressed: () =>
+              ref.read(expenseProvider.notifier).refreshExpenseData(),
           style: ElevatedButton.styleFrom(
             backgroundColor: mainColor,
             foregroundColor: Colors.white,
@@ -281,14 +323,13 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isDarkMode 
+              color: isDarkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: isDarkMode ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              ) : null,
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(26),
@@ -320,7 +361,12 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     }
   }
 
-  Widget _buildUnboundCard(BuildContext context, bool isDarkMode, Color mainColor, {bool useAcrylicEffect = false}) {
+  Widget _buildUnboundCard(
+    BuildContext context,
+    bool isDarkMode,
+    Color mainColor, {
+    bool useAcrylicEffect = false,
+  }) {
     Widget cardContent = Column(
       children: [
         Icon(
@@ -371,14 +417,13 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
           child: Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDarkMode 
+              color: isDarkMode
                   ? const Color(0xFF2A2A2A).withAlpha(217)
                   : Colors.white.withAlpha(128),
               borderRadius: BorderRadius.circular(16),
-              border: isDarkMode ? Border.all(
-                color: Colors.white.withAlpha(26),
-                width: 1,
-              ) : null,
+              border: isDarkMode
+                  ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                  : null,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(26),
@@ -410,9 +455,15 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     }
   }
 
-  Widget _buildBalanceOverview(ExpenseState state, bool isDarkMode, Color textColor, Color subtitleColor, Color mainColor) {
+  Widget _buildBalanceOverview(
+    ExpenseState state,
+    bool isDarkMode,
+    Color textColor,
+    Color subtitleColor,
+    Color mainColor,
+  ) {
     final balance = state.currentBalance!;
-    
+
     return Column(
       children: [
         // 电表水表号信息
@@ -439,9 +490,9 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         // 余额信息网格
         Row(
           children: [
@@ -467,9 +518,9 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         Row(
           children: [
             Expanded(
@@ -493,9 +544,9 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         Row(
           children: [
             Expanded(
@@ -523,16 +574,22 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     );
   }
 
-  Widget _buildPaymentRecord(ExpenseState state, bool isDarkMode, Color textColor, Color subtitleColor, Color mainColor) {
+  Widget _buildPaymentRecord(
+    ExpenseState state,
+    bool isDarkMode,
+    Color textColor,
+    Color subtitleColor,
+    Color mainColor,
+  ) {
     final payment = state.paymentRecord!;
-    
+
     return Column(
       children: [
         // 流水号
         _buildInfoRow('流水号', payment.serialNumber, subtitleColor),
-        
+
         const SizedBox(height: 16),
-        
+
         // 缴费信息
         Row(
           children: [
@@ -572,7 +629,12 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     );
   }
 
-  Widget _buildBalanceHistory(ExpenseState state, bool isDarkMode, Color textColor, Color subtitleColor) {
+  Widget _buildBalanceHistory(
+    ExpenseState state,
+    bool isDarkMode,
+    Color textColor,
+    Color subtitleColor,
+  ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
@@ -581,10 +643,7 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
-        dataTextStyle: TextStyle(
-          color: textColor,
-          fontSize: 11,
-        ),
+        dataTextStyle: TextStyle(color: textColor, fontSize: 11),
         columnSpacing: 16,
         horizontalMargin: 0,
         columns: const [
@@ -599,7 +658,9 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
           return DataRow(
             cells: [
               DataCell(Text(_formatDate(item.settlementDate))),
-              DataCell(Text(item.previousDayRemainingAmount.toStringAsFixed(2))),
+              DataCell(
+                Text(item.previousDayRemainingAmount.toStringAsFixed(2)),
+              ),
               DataCell(Text(item.currentDayRemainingAmount.toStringAsFixed(2))),
               DataCell(Text(item.electricityFee.toStringAsFixed(2))),
               DataCell(Text(item.waterFee.toStringAsFixed(2))),
@@ -611,7 +672,13 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     );
   }
 
-  Widget _buildInfoItem(String title, String value, IconData icon, Color iconColor, Color subtitleColor) {
+  Widget _buildInfoItem(
+    String title,
+    String value,
+    IconData icon,
+    Color iconColor,
+    Color subtitleColor,
+  ) {
     return Row(
       children: [
         Icon(icon, size: 16, color: iconColor),
@@ -619,13 +686,7 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                color: subtitleColor,
-              ),
-            ),
+            Text(title, style: TextStyle(fontSize: 12, color: subtitleColor)),
             Text(
               value,
               style: TextStyle(
@@ -640,26 +701,26 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     );
   }
 
-  Widget _buildBalanceItem(String title, String value, Color textColor, Color subtitleColor, Color mainColor, {bool isPrimary = false}) {
+  Widget _buildBalanceItem(
+    String title,
+    String value,
+    Color textColor,
+    Color subtitleColor,
+    Color mainColor, {
+    bool isPrimary = false,
+  }) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isPrimary 
-            ? mainColor.withAlpha(26)
-            : Colors.grey.withAlpha(13),
+        color: isPrimary ? mainColor.withAlpha(26) : Colors.grey.withAlpha(13),
         borderRadius: BorderRadius.circular(8),
-        border: isPrimary 
-            ? Border.all(color: mainColor.withAlpha(76))
-            : null,
+        border: isPrimary ? Border.all(color: mainColor.withAlpha(76)) : null,
       ),
       child: Column(
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 12,
-              color: subtitleColor,
-            ),
+            style: TextStyle(fontSize: 12, color: subtitleColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
@@ -681,13 +742,7 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            color: subtitleColor,
-          ),
-        ),
+        Text(title, style: TextStyle(fontSize: 12, color: subtitleColor)),
         Text(
           value,
           style: TextStyle(
@@ -705,7 +760,9 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
       context: context,
       builder: (context) => ExpenseBindDialog(
         onBind: (buildingId, roomCode) async {
-          await ref.read(expenseProvider.notifier).bindDormitory(buildingId, roomCode);
+          await ref
+              .read(expenseProvider.notifier)
+              .bindDormitory(buildingId, roomCode);
           if (mounted) {
             Navigator.of(context).pop();
           }
@@ -716,10 +773,10 @@ class _ExpenseQueryScreenState extends ConsumerState<ExpenseQueryScreen> {
 
   String _formatUpdateTime(DateTime? dateTime) {
     if (dateTime == null) return '未知';
-    
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays} 天前';
     } else if (difference.inHours > 0) {

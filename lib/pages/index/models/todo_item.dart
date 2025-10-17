@@ -45,9 +45,11 @@ class TodoItem {
         parsedDue = DateTime.fromMillisecondsSinceEpoch(json['due']);
       }
     }
-    
+
     return TodoItem(
-      id: json['id'] is String ? int.tryParse(json['id']) ?? 0 : (json['id'] as int? ?? 0),
+      id: json['id'] is String
+          ? int.tryParse(json['id']) ?? 0
+          : (json['id'] as int? ?? 0),
       title: json['title'] as String? ?? '',
       due: parsedDue,
       important: json['important'] as bool? ?? false,
@@ -90,13 +92,13 @@ class TodoItem {
 
 /// 待办事项类型枚举
 enum TodoCategory {
-  overdue,    // 已逾期
-  today,      // 今天
-  tomorrow,   // 明天
-  thisWeek,   // 一周内
-  future,     // 以后
-  noDueTime,  // 无截止时间
-  completed,  // 已完成
+  overdue, // 已逾期
+  today, // 今天
+  tomorrow, // 明天
+  thisWeek, // 一周内
+  future, // 以后
+  noDueTime, // 无截止时间
+  completed, // 已完成
 }
 
 /// 待办事项分类扩展

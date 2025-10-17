@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
+import '../../../core/widgets/theme_aware_dialog.dart';
 import '../models/todo_item.dart';
 import '../providers/todo_provider.dart';
 import 'todo_edit_modal.dart';
@@ -82,13 +83,13 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
   }
 
   /// 显示刷新结果通知
-  void _showRefreshNotification(bool isSuccess, String message) {
+  Future<void> _showRefreshNotification(bool isSuccess, String message) async {
     if (!mounted) return;
 
-    final backgroundColor =
-        isSuccess ? Colors.green.shade600 : Colors.red.shade600;
-    final duration =
-        Duration(milliseconds: isSuccess ? 2000 : 3000);
+    final backgroundColor = isSuccess
+        ? Colors.green.shade600
+        : Colors.red.shade600;
+    final duration = Duration(milliseconds: isSuccess ? 2000 : 3000);
 
     ToastService.show(
       message,
@@ -98,26 +99,17 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
     );
 
     if (!isSuccess) {
-      showDialog(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('刷新失败'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                _handleRefresh();
-              },
-              child: const Text('重试'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('取消'),
-            ),
-          ],
-        ),
+      final shouldRetry = await ThemeAwareDialog.showConfirmDialog(
+        context,
+        title: '刷新失败',
+        message: message,
+        negativeText: '取消',
+        positiveText: '重试',
       );
+
+      if (shouldRetry) {
+        _handleRefresh();
+      }
     }
   }
 
@@ -496,7 +488,6 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
       ],
     );
   }
-
 
   /// 构建单个待办事项
   Widget _buildTodoItem(

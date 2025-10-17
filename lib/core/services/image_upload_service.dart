@@ -1,5 +1,6 @@
 // lib/core/services/image_upload_service.dart
 
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -30,6 +31,26 @@ class ImageUploadService {
   }) async {
     debugPrint('📸 ImageUploadService: 开始上传图片');
     debugPrint('📄 本地路径: $imagePath');
+
+    // 检查文件是否存在
+    final file = File(imagePath);
+    if (!await file.exists()) {
+      throw Exception('图片文件不存在: $imagePath');
+    }
+
+    // 检查文件大小（5MB 限制）
+    final fileSize = await file.length();
+    final fileSizeMB = fileSize / (1000 * 1000);
+    debugPrint('ImageUploadService: 图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
+
+    if (fileSizeMB > 5) {
+      throw Exception(
+        '图片体积过大！\n'
+        '文件: $imagePath\n'
+        '当前上传图片大小: ${fileSizeMB.toStringAsFixed(2)} MB\n'
+        '单张图片体积最大限制: 5 MB',
+      );
+    }
 
     // 生成文件名
     final fileName = _generateFileName(

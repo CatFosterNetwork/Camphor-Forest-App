@@ -134,7 +134,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: isDarkMode 
+                          color: isDarkMode
                               ? Colors.black.withOpacity(0.3)
                               : Colors.black.withOpacity(0.08),
                           blurRadius: 24,
@@ -143,7 +143,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                         ),
                       ],
                       border: Border.all(
-                        color: isDarkMode 
+                        color: isDarkMode
                             ? Colors.white.withOpacity(0.05)
                             : Colors.black.withOpacity(0.04),
                         width: 0.5,
@@ -172,17 +172,17 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
   /// 构建平台适配的加载指示器
   Widget _buildLoadingIndicator() {
     final isDarkMode = ref.watch(effectiveIsDarkModeProvider);
-    
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            isDarkMode 
+            isDarkMode
                 ? const Color(0xFF1C1C1E).withOpacity(0.95)
                 : Colors.white.withOpacity(0.95),
-            isDarkMode 
+            isDarkMode
                 ? const Color(0xFF1C1C1E).withOpacity(0.98)
                 : Colors.white.withOpacity(0.98),
           ],
@@ -193,9 +193,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28),
           margin: const EdgeInsets.symmetric(horizontal: 40),
           decoration: BoxDecoration(
-            color: isDarkMode 
-                ? const Color(0xFF2C2C2E)
-                : Colors.white,
+            color: isDarkMode ? const Color(0xFF2C2C2E) : Colors.white,
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
@@ -208,7 +206,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
               ),
             ],
             border: Border.all(
-              color: isDarkMode 
+              color: isDarkMode
                   ? Colors.white.withOpacity(0.08)
                   : Colors.black.withOpacity(0.06),
               width: 0.5,
@@ -238,7 +236,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                           height: 28,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            color: isDarkMode 
+                            color: isDarkMode
                                 ? Colors.blue[400]
                                 : Colors.blue[600],
                           ),
@@ -250,7 +248,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                 '正在加载用户协议',
                 style: TextStyle(
                   fontSize: 15,
-                  color: isDarkMode 
+                  color: isDarkMode
                       ? Colors.white.withOpacity(0.85)
                       : Colors.black87,
                   fontWeight: FontWeight.w500,
@@ -263,7 +261,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                 '请稍候...',
                 style: TextStyle(
                   fontSize: 13,
-                  color: isDarkMode 
+                  color: isDarkMode
                       ? Colors.white.withOpacity(0.5)
                       : Colors.black54,
                   fontWeight: FontWeight.w400,
@@ -282,12 +280,12 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: isDarkMode 
+        color: isDarkMode
             ? Colors.black.withOpacity(0.8)
             : Colors.white.withOpacity(0.9),
         border: Border(
           bottom: BorderSide(
-            color: isDarkMode 
+            color: isDarkMode
                 ? Colors.white.withOpacity(0.08)
                 : Colors.black.withOpacity(0.08),
             width: 0.5,
@@ -302,7 +300,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
             height: 36,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
-              color: isDarkMode 
+              color: isDarkMode
                   ? Colors.white.withOpacity(0.1)
                   : Colors.black.withOpacity(0.06),
             ),
@@ -515,9 +513,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDarkMode 
-                ? const Color(0xFF2C2C2E)
-                : Colors.white,
+            color: isDarkMode ? const Color(0xFF2C2C2E) : Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -530,7 +526,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
               ),
             ],
             border: Border.all(
-              color: isDarkMode 
+              color: isDarkMode
                   ? Colors.white.withOpacity(0.1)
                   : Colors.black.withOpacity(0.08),
               width: 0.5,
@@ -555,7 +551,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                 '请手动复制邮箱地址并在您的邮件应用中联系我们：',
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDarkMode 
+                  color: isDarkMode
                       ? Colors.white.withOpacity(0.7)
                       : Colors.black54,
                   height: 1.4,
@@ -572,7 +568,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                       : Colors.grey.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode 
+                    color: isDarkMode
                         ? Colors.white.withOpacity(0.1)
                         : Colors.black.withOpacity(0.06),
                     width: 0.5,
@@ -612,11 +608,11 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
-                            Platform.isIOS 
+                            Platform.isIOS
                                 ? CupertinoIcons.doc_on_clipboard
                                 : Icons.copy_rounded,
                             size: 18,
-                            color: isDarkMode 
+                            color: isDarkMode
                                 ? Colors.blue[400]
                                 : Colors.blue[600],
                           ),
@@ -638,9 +634,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: isDarkMode 
-                            ? Colors.blue[400]
-                            : Colors.blue[600],
+                        color: isDarkMode ? Colors.blue[400] : Colors.blue[600],
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text(
@@ -678,9 +672,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDarkMode 
-                ? const Color(0xFF2C2C2E)
-                : Colors.white,
+            color: isDarkMode ? const Color(0xFF2C2C2E) : Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -693,7 +685,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
               ),
             ],
             border: Border.all(
-              color: isDarkMode 
+              color: isDarkMode
                   ? Colors.white.withOpacity(0.1)
                   : Colors.black.withOpacity(0.08),
               width: 0.5,
@@ -718,7 +710,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                 '请手动复制链接地址并在浏览器中访问：',
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDarkMode 
+                  color: isDarkMode
                       ? Colors.white.withOpacity(0.7)
                       : Colors.black54,
                   height: 1.4,
@@ -735,7 +727,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                       : Colors.grey.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode 
+                    color: isDarkMode
                         ? Colors.white.withOpacity(0.1)
                         : Colors.black.withOpacity(0.06),
                     width: 0.5,
@@ -778,11 +770,11 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
-                            Platform.isIOS 
+                            Platform.isIOS
                                 ? CupertinoIcons.doc_on_clipboard
                                 : Icons.copy_rounded,
                             size: 18,
-                            color: isDarkMode 
+                            color: isDarkMode
                                 ? Colors.blue[400]
                                 : Colors.blue[600],
                           ),
@@ -804,9 +796,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: isDarkMode 
-                            ? Colors.blue[400]
-                            : Colors.blue[600],
+                        color: isDarkMode ? Colors.blue[400] : Colors.blue[600],
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text(

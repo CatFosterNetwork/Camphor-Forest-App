@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../../core/config/providers/theme_config_provider.dart';
+import '../../../core/widgets/theme_aware_dialog.dart';
 import '../models/custom_course_model.dart';
 import '../providers/classtable_settings_provider.dart';
 
@@ -631,10 +632,7 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
       }
     } catch (e) {
       if (mounted) {
-        ToastService.show(
-          '保存失败: $e',
-          backgroundColor: Colors.red,
-        );
+        ToastService.show('保存失败: $e', backgroundColor: Colors.red);
       }
     } finally {
       if (mounted) {
@@ -646,46 +644,30 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
   }
 
   /// 显示删除确认对话框
-  void _showDeleteConfirmDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('删除课程'),
-        content: Text('确定要删除课程"${widget.course!.title}"吗？此操作不可撤销。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop(); // 关闭确认对话框
-              try {
-                await ref
-                    .read(classTableSettingsProvider.notifier)
-                    .deleteCustomCourse(widget.course!.id);
-                if (mounted) {
-                  Navigator.of(context).pop(); // 关闭编辑对话框
-                  ToastService.show(
-                    '课程删除成功',
-                    backgroundColor: Colors.green,
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  ToastService.show(
-                    '删除失败: $e',
-                    backgroundColor: Colors.red,
-                  );
-                }
-              }
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+  void _showDeleteConfirmDialog() async {
+    final shouldDelete = await ThemeAwareDialog.showConfirmDialog(
+      context,
+      title: '删除课程',
+      message: '确定要删除课程"${widget.course!.title}"吗？此操作不可撤销。',
+      negativeText: '取消',
+      positiveText: '删除',
     );
+
+    if (shouldDelete) {
+      try {
+        await ref
+            .read(classTableSettingsProvider.notifier)
+            .deleteCustomCourse(widget.course!.id);
+        if (mounted) {
+          Navigator.of(context).pop(); // 关闭编辑对话框
+          ToastService.show('课程删除成功', backgroundColor: Colors.green);
+        }
+      } catch (e) {
+        if (mounted) {
+          ToastService.show('删除失败: $e', backgroundColor: Colors.red);
+        }
+      }
+    }
   }
 
   /// 构建课程类型选择器

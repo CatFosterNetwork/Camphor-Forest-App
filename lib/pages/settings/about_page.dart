@@ -480,17 +480,11 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         );
 
         if (mounted) {
-          ToastService.show(
-            '打开失败，链接已复制到剪贴板',
-            backgroundColor: Colors.orange,
-          );
+          ToastService.show('打开失败，链接已复制到剪贴板', backgroundColor: Colors.orange);
         }
       } catch (clipboardError) {
         if (mounted) {
-          ToastService.show(
-            '操作失败: $e',
-            backgroundColor: Colors.red,
-          );
+          ToastService.show('操作失败: $e', backgroundColor: Colors.red);
         }
       }
     }
@@ -810,17 +804,11 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         await Clipboard.setData(const ClipboardData(text: qrCodeScannerUrl));
 
         if (mounted) {
-          ToastService.show(
-            '打开失败，链接已复制到剪贴板',
-            backgroundColor: Colors.red,
-          );
+          ToastService.show('打开失败，链接已复制到剪贴板', backgroundColor: Colors.red);
         }
       } catch (clipboardError) {
         if (mounted) {
-          ToastService.show(
-            '操作失败，请稍后重试',
-            backgroundColor: Colors.red,
-          );
+          ToastService.show('操作失败，请稍后重试', backgroundColor: Colors.red);
         }
       }
     }

@@ -17,11 +17,7 @@ class ForestHidden extends ConsumerWidget {
   final bool blur;
   final bool darkMode;
 
-  const ForestHidden({
-    super.key,
-    required this.blur,
-    required this.darkMode,
-  });
+  const ForestHidden({super.key, required this.blur, required this.darkMode});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +30,9 @@ class ForestHidden extends ConsumerWidget {
     }
 
     final textColor = darkMode ? Colors.white70 : Colors.black87;
-    final fadedTextColor = darkMode ? Colors.grey.shade500 : Colors.grey.shade600;
+    final fadedTextColor = darkMode
+        ? Colors.grey.shade500
+        : Colors.grey.shade600;
 
     Widget child = Padding(
       padding: const EdgeInsets.all(16),
@@ -55,25 +53,21 @@ class ForestHidden extends ConsumerWidget {
                 ),
               ),
               IconButton(
-                icon: Icon(
-                  Icons.settings_outlined,
-                  color: textColor,
-                  size: 20,
-                ),
+                icon: Icon(Icons.settings_outlined, color: textColor, size: 20),
                 onPressed: () => context.push(RouteConstants.options),
                 tooltip: '设置',
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // 功能网格
           if (enabledFeatures.isNotEmpty)
             _buildFeaturesGrid(
-              context, 
-              enabledFeatures, 
-              textColor, 
+              context,
+              enabledFeatures,
+              textColor,
               currentTheme,
             )
           else
@@ -82,10 +76,7 @@ class ForestHidden extends ConsumerWidget {
               child: Center(
                 child: Text(
                   '暂无启用的功能',
-                  style: TextStyle(
-                    color: fadedTextColor,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: fadedTextColor, fontSize: 14),
                 ),
               ),
             ),
@@ -101,14 +92,13 @@ class ForestHidden extends ConsumerWidget {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
               decoration: BoxDecoration(
-                color: darkMode 
+                color: darkMode
                     ? const Color(0xFF2A2A2A).withAlpha(217)
                     : Colors.white.withAlpha(128),
                 borderRadius: BorderRadius.circular(16),
-                border: darkMode ? Border.all(
-                  color: Colors.white.withAlpha(26),
-                  width: 1,
-                ) : null,
+                border: darkMode
+                    ? Border.all(color: Colors.white.withAlpha(26), width: 1)
+                    : null,
               ),
               child: child,
             ),
@@ -118,8 +108,8 @@ class ForestHidden extends ConsumerWidget {
     } else {
       child = Container(
         decoration: BoxDecoration(
-          color: darkMode 
-              ? Colors.grey.shade900.withAlpha(230) 
+          color: darkMode
+              ? Colors.grey.shade900.withAlpha(230)
               : Colors.white.withAlpha(230),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -138,8 +128,8 @@ class ForestHidden extends ConsumerWidget {
   }
 
   Widget _buildFeaturesGrid(
-    BuildContext context, 
-    List<ForestFeature> features, 
+    BuildContext context,
+    List<ForestFeature> features,
     Color textColor,
     theme_model.Theme? currentTheme,
   ) {
@@ -155,7 +145,7 @@ class ForestHidden extends ConsumerWidget {
       itemCount: features.length,
       itemBuilder: (context, index) {
         final feature = features[index];
-        
+
         // 使用主题色彩或默认色彩
         Color primaryColor = Colors.blue;
         if (currentTheme != null && currentTheme.colorList.isNotEmpty) {
@@ -168,19 +158,12 @@ class ForestHidden extends ConsumerWidget {
             decoration: BoxDecoration(
               color: primaryColor.withAlpha(26),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: primaryColor.withAlpha(76),
-                width: 1,
-              ),
+              border: Border.all(color: primaryColor.withAlpha(76), width: 1),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  feature.icon,
-                  color: primaryColor,
-                  size: 24,
-                ),
+                Icon(feature.icon, color: primaryColor, size: 24),
                 const SizedBox(height: 4),
                 Text(
                   feature.name,
@@ -200,5 +183,4 @@ class ForestHidden extends ConsumerWidget {
       },
     );
   }
-
 }
