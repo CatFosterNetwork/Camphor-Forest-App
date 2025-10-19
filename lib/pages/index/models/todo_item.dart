@@ -40,9 +40,18 @@ class TodoItem {
     DateTime? parsedDue;
     if (json['due'] != null) {
       if (json['due'] is String) {
-        parsedDue = DateTime.tryParse(json['due']);
+        // 解析时间字符串，如果是UTC时间（带Z后缀），转换为本地时区
+        final parsed = DateTime.tryParse(json['due']);
+        if (parsed != null) {
+          // 如果解析出来的时间是UTC，转换为本地时间
+          parsedDue = parsed.isUtc ? parsed.toLocal() : parsed;
+        }
       } else if (json['due'] is int) {
-        parsedDue = DateTime.fromMillisecondsSinceEpoch(json['due']);
+        // 时间戳默认是UTC，需要转换为本地时间
+        parsedDue = DateTime.fromMillisecondsSinceEpoch(
+          json['due'],
+          isUtc: true,
+        ).toLocal();
       }
     }
 
@@ -62,7 +71,8 @@ class TodoItem {
     return {
       'id': id,
       'title': title,
-      'due': due?.toIso8601String(),
+      // 发送到服务器时，统一转换为UTC时间的ISO8601字符串
+      'due': due?.toUtc().toIso8601String(),
       'important': important,
       'finished': finished,
     };
