@@ -16,6 +16,8 @@ PODS:
     - BaiduMapKit/Map (= 6.6.4)
     - Flutter
     - flutter_baidu_mapapi_base
+  - flutter_local_notifications (0.0.1):
+    - Flutter
   - flutter_native_splash (2.4.3):
     - Flutter
   - flutter_platform_alert (0.0.1):
@@ -67,6 +69,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_baidu_mapapi_base (from `.symlinks/plugins/flutter_baidu_mapapi_base/ios`)
   - flutter_baidu_mapapi_map (from `.symlinks/plugins/flutter_baidu_mapapi_map/ios`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_platform_alert (from `.symlinks/plugins/flutter_platform_alert/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
@@ -102,6 +105,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_baidu_mapapi_base/ios"
   flutter_baidu_mapapi_map:
     :path: ".symlinks/plugins/flutter_baidu_mapapi_map/ios"
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   flutter_platform_alert:
@@ -146,6 +151,7 @@ SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_baidu_mapapi_base: 24dd82034374c6f52a73e90316834c63ff8d4f64
   flutter_baidu_mapapi_map: f799cc1bb3d39196b8d3d59399ca8635e690bd44
+  flutter_local_notifications: a5a732f069baa862e728d839dd2ebb904737effb
   flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
   flutter_platform_alert: bf3b5fcd4ac14bd637e20527e9c471633071afd3
   flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
@@ -166,6 +172,6 @@ SPEC CHECKSUMS:
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
   webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
 
-PODFILE CHECKSUM: 8c6f27db1d7765c3a1883620353ff21422c9a251
+PODFILE CHECKSUM: 01e48703f38dd335315a05c31282db2fb92f74ef
 
 COCOAPODS: 1.16.2

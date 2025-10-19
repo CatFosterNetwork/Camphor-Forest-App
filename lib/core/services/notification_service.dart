@@ -46,6 +46,9 @@ class NotificationService {
         requestAlertPermission: true,
         requestBadgePermission: true,
         requestSoundPermission: true,
+        defaultPresentAlert: true,
+        defaultPresentBadge: true,
+        defaultPresentSound: true,
       );
 
       // 初始化设置
@@ -82,31 +85,59 @@ class NotificationService {
   Future<bool> _requestPermissions() async {
     try {
       // Android 13+ 需要请求通知权限
-      final androidPlugin = _notifications
-          .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
-          >();
-
-      if (androidPlugin != null) {
-        final granted = await androidPlugin.requestNotificationsPermission();
-        AppLogger.debug('📱 Android通知权限: ${granted == true ? "已授予" : "未授予"}');
-        return granted ?? false;
+      if (Platform.isAndroid) {
+        final androidPlugin = _notifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+        if (androidPlugin != null) {
+          final granted = await androidPlugin.requestNotificationsPermission();
+          AppLogger.debug(
+            '📱 Android通知权限: ${granted == true ? "已授予" : "未授予"}',
+          );
+          return granted ?? false;
+        }
+        return true;
       }
 
-      // iOS请求权限
-      final iosPlugin = _notifications
-          .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >();
+      // iOS 请求权限
+      if (Platform.isIOS) {
+        final iosPlugin = _notifications
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
+        if (iosPlugin != null) {
+          final granted = await iosPlugin.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+          AppLogger.debug(
+            '🍎 iOS通知权限: ${granted == true ? "已授予" : "未授予"}',
+          );
+          return granted ?? false;
+        }
+        return true;
+      }
 
-      if (iosPlugin != null) {
-        final granted = await iosPlugin.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-        AppLogger.debug('🍎 iOS通知权限: ${granted == true ? "已授予" : "未授予"}');
-        return granted ?? false;
+      // macOS 请求权限
+      if (Platform.isMacOS) {
+        final macPlugin = _notifications
+            .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin
+            >();
+        if (macPlugin != null) {
+          final granted = await macPlugin.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+          AppLogger.debug(
+            '🍎 macOS通知权限: ${granted == true ? "已授予" : "未授予"}',
+          );
+          return granted ?? false;
+        }
+        return true;
       }
 
       return true;
