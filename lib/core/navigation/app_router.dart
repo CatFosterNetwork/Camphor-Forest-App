@@ -20,6 +20,7 @@ import '../../pages/settings/options_screen.dart';
 import '../../pages/settings/index_settings_page.dart';
 import '../../pages/settings/theme_settings_page.dart';
 import '../../pages/settings/profile_settings_page.dart';
+import '../../pages/settings/notification_settings_page.dart';
 import '../../pages/settings/other_settings_page.dart';
 import '../../pages/settings/custom_theme_settings_page.dart';
 import '../../pages/settings/about_page.dart';
@@ -112,6 +113,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteConstants.optionsProfileSettings,
         builder: (ctx, state) => const ProfileSettingsPage(),
+      ),
+      GoRoute(
+        path: RouteConstants.optionsNotificationSettings,
+        builder: (ctx, state) => const NotificationSettingsPage(),
       ),
       GoRoute(
         path: RouteConstants.optionsOtherSettings,

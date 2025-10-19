@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -172,46 +173,34 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                   ),
                   const SizedBox(height: 12),
 
-                  SwitchListTile(
+                  // 推送通知设置已移至专门的"通知设置"页面
+                  ListTile(
+                    leading: Icon(
+                      Icons.notifications_outlined,
+                      color: isDarkMode ? Colors.white70 : Colors.black54,
+                    ),
                     title: Text(
-                      '推送通知',
+                      '推送通知设置',
                       style: TextStyle(
                         color: isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
                     subtitle: Text(
-                      '接收应用推送消息',
+                      '课程提醒、待办提醒等通知设置',
                       style: TextStyle(
                         color: isDarkMode ? Colors.white70 : Colors.black54,
                       ),
                     ),
-                    value: true,
-                    onChanged: (value) {
-                      // TODO: 实现推送通知开关
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: isDarkMode ? Colors.white70 : Colors.black54,
+                      size: 16,
+                    ),
+                    onTap: () {
+                      // 跳转到通知设置页面
+                      context.push('/options/notificationSettings');
                     },
                     contentPadding: EdgeInsets.zero,
-                    activeThumbColor: activeColor,
-                  ),
-
-                  SwitchListTile(
-                    title: Text(
-                      '课程提醒',
-                      style: TextStyle(
-                        color: isDarkMode ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    subtitle: Text(
-                      '上课前10分钟提醒',
-                      style: TextStyle(
-                        color: isDarkMode ? Colors.white70 : Colors.black54,
-                      ),
-                    ),
-                    value: true,
-                    onChanged: (value) {
-                      // TODO: 实现课程提醒开关
-                    },
-                    contentPadding: EdgeInsets.zero,
-                    activeThumbColor: activeColor,
                   ),
                 ],
               ),

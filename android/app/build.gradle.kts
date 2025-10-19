@@ -23,6 +23,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // 启用 core library desugaring 以支持 Java 8+ API
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -97,5 +99,8 @@ dependencies {
     
     // 百度地图 SDK
     implementation("com.baidu.lbsyun:BaiduMapSDK_Map:7.6.4")
+    
+    // Core library desugaring 支持（flutter_local_notifications 需要）
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 

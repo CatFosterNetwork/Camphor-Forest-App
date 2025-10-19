@@ -10,6 +10,8 @@ abstract class RouteConstants {
   static const String optionsIndexSettings = '/options/indexSettings';
   static const String optionsThemeSettings = '/options/themeSettings';
   static const String optionsProfileSettings = '/options/profileSettings';
+  static const String optionsNotificationSettings =
+      '/options/notificationSettings';
   static const String optionsOtherSettings = '/options/otherSettings';
   static const String optionsCustomThemeSettings =
       '/options/customThemeSettings';

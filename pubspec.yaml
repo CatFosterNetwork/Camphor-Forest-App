@@ -77,6 +77,9 @@ dependencies:
   dynamic_color: ^1.7.0
   fluttertoast: ^9.0.0
   logger: ^2.6.2
+  flutter_local_notifications: ^19.5.0
+  timezone: ^0.10.0
+  android_alarm_manager_plus: ^4.0.3
 
 dev_dependencies:
   flutter_test:

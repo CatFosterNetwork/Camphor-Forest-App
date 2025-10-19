@@ -10,6 +10,7 @@ import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'core/providers/core_providers.dart';
 import 'core/services/image_cache_service.dart';
+import 'core/services/alarm_callbacks.dart';
 import 'app.dart';
 
 void main() async {
@@ -28,6 +29,9 @@ void main() async {
       'sda006XNA24mpvl67FB2d7wYwxGHp7VR',
       bmf_base.BMF_COORD_TYPE.COMMON,
     );
+
+    // 初始化 AlarmManager (Android only)
+    await initializeAlarmManager();
   }
 
   await initialization();

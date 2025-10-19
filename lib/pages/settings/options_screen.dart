@@ -105,6 +105,15 @@ class OptionsScreen extends ConsumerWidget {
                     _buildSettingItem(
                       context,
                       ref,
+                      '通知设置',
+                      Icons.notifications_outlined,
+                      RouteConstants.optionsNotificationSettings,
+                      isDarkMode,
+                    ),
+                    _buildDivider(isDarkMode),
+                    _buildSettingItem(
+                      context,
+                      ref,
                       '其他设置',
                       Icons.settings_outlined,
                       RouteConstants.optionsOtherSettings,
