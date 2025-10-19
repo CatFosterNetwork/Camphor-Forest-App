@@ -8,6 +8,7 @@ import '../models/custom_course_model.dart';
 import '../../../core/providers/grade_provider.dart';
 import '../../../core/models/grade_models.dart';
 import 'classtable_providers.dart';
+import '../../../core/services/notification_service.dart';
 
 /// 课程表设置状态
 class ClassTableSettingsState {
@@ -65,6 +66,7 @@ class ClassTableSettingsNotifier
   static const _customCoursesKey = 'custom_courses';
   static const _historyClassTablesKey = 'history_class_tables';
   final Ref _ref;
+  final _notificationService = NotificationService();
 
   ClassTableSettingsNotifier(this._ref)
     : super(
@@ -478,6 +480,13 @@ class ClassTableSettingsNotifier
       state = state.copyWith(customCourses: updatedCourses);
       await _saveCustomCourses();
       AppLogger.debug('✅ 添加自定义课程: ${course.title}');
+
+      // 🔔 只有当前学期的自定义课程才调度通知
+      if (_isCurrentSemester(course.xnm, course.xqm)) {
+        await rescheduleNotificationsAfterRefresh();
+      } else {
+        AppLogger.debug('🔔 添加的是历史学期课程，不调度通知');
+      }
     } catch (e) {
       state = state.copyWith(error: '添加课程失败: $e');
       AppLogger.debug('❌ 添加自定义课程失败: $e');
@@ -495,6 +504,13 @@ class ClassTableSettingsNotifier
       state = state.copyWith(customCourses: updatedCourses);
       await _saveCustomCourses();
       AppLogger.debug('✅ 更新自定义课程: ${updatedCourse.title}');
+
+      // 🔔 只有当前学期的自定义课程才调度通知
+      if (_isCurrentSemester(updatedCourse.xnm, updatedCourse.xqm)) {
+        await rescheduleNotificationsAfterRefresh();
+      } else {
+        AppLogger.debug('🔔 更新的是历史学期课程，不调度通知');
+      }
     } catch (e) {
       state = state.copyWith(error: '更新课程失败: $e');
       AppLogger.debug('❌ 更新自定义课程失败: $e');
@@ -505,6 +521,15 @@ class ClassTableSettingsNotifier
   /// 删除自定义课程
   Future<void> deleteCustomCourse(String courseId) async {
     try {
+      // 找到要删除的课程，判断是否是当前学期
+      final courseToDelete = state.customCourses.firstWhere(
+        (course) => course.id == courseId,
+      );
+      final isCurrentSem = _isCurrentSemester(
+        courseToDelete.xnm,
+        courseToDelete.xqm,
+      );
+
       final updatedCourses = state.customCourses
           .where((course) => course.id != courseId)
           .toList();
@@ -512,6 +537,13 @@ class ClassTableSettingsNotifier
       state = state.copyWith(customCourses: updatedCourses);
       await _saveCustomCourses();
       AppLogger.debug('✅ 删除自定义课程: $courseId');
+
+      // 🔔 只有当前学期的自定义课程才调度通知
+      if (isCurrentSem) {
+        await rescheduleNotificationsAfterRefresh();
+      } else {
+        AppLogger.debug('🔔 删除的是历史学期课程，不调度通知');
+      }
     } catch (e) {
       state = state.copyWith(error: '删除课程失败: $e');
       AppLogger.debug('❌ 删除自定义课程失败: $e');
@@ -694,9 +726,48 @@ class ClassTableSettingsNotifier
       _ref.invalidate(classTableProvider((xnm: xnm, xqm: xqm)));
 
       AppLogger.debug('✅ 学期切换成功: $xnm-$xqm');
+
+      // ⚠️ 注意：切换学期只是查看历史课表，不修改通知
+      // 通知始终针对当前实际学期，不受查看的学期影响
     } catch (e) {
       AppLogger.debug('❌ 切换学期失败: $e');
       rethrow;
+    }
+  }
+
+  // ==================== 辅助方法 ====================
+
+  /// 判断是否是当前实际学期
+  bool _isCurrentSemester(String xnm, String xqm) {
+    final now = DateTime.now();
+    final currentYear = now.year.toString();
+    final currentXqm = now.month < 7 ? '12' : '3';
+
+    return xnm == currentYear && xqm == currentXqm;
+  }
+
+  // ==================== 通知相关方法 ====================
+
+  /// 手动触发通知重新调度（用于课表刷新后）
+  /// 这个方法应该在 UI 层调用，在刷新课表后
+  Future<void> rescheduleNotificationsAfterRefresh() async {
+    try {
+      // 获取当前学期的完整课表（包含自定义课程）
+      final classTable = await _ref.read(
+        classTableProvider((
+          xnm: state.currentXnm,
+          xqm: state.currentXqm,
+        )).future,
+      );
+
+      // 调用 NotificationService 的重新调度方法
+      await _notificationService.rescheduleCourseNotificationsForSemester(
+        classTable: classTable,
+        xnm: state.currentXnm,
+        xqm: state.currentXqm,
+      );
+    } catch (e) {
+      AppLogger.error('🔔 重新调度课程通知失败: $e');
     }
   }
 }

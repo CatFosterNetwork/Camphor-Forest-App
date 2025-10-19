@@ -4,10 +4,12 @@ import '../../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/todo_item.dart';
 import '../../../core/providers/core_providers.dart';
+import '../../../core/services/notification_service.dart';
 
 /// 待办事项状态管理
 class TodoNotifier extends StateNotifier<List<TodoItem>> {
   final Ref _ref;
+  final _notificationService = NotificationService();
 
   TodoNotifier(this._ref) : super([]) {
     _loadTodos();
@@ -70,6 +72,13 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       final apiService = _ref.read(apiServiceProvider);
       final todo = state.firstWhere((t) => t.id == id);
       await apiService.modifyTodo(id, todo.toJson());
+
+      // 🔔 更新通知：如果完成了，取消通知；如果取消完成，重新调度通知
+      if (todo.finished) {
+        await _notificationService.cancelTodoReminder(id);
+      } else {
+        await _notificationService.scheduleSingleTodoNotification(todo);
+      }
     } catch (e) {
       AppLogger.debug('更新待办事项失败: $e');
       // 如果API调用失败，回滚状态
@@ -118,10 +127,18 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
 
           state = updatedTodos;
           AppLogger.debug('待办事项添加成功，使用返回数据，当前总数: ${state.length}');
+
+          // 🔔 自动调度通知
+          await _notificationService.scheduleSingleTodoNotification(
+            createdTodo,
+          );
         } else {
           // 后端没有返回数据，重新加载所有待办事项
           AppLogger.debug('后端返回成功但无数据，重新加载待办事项列表');
           await _loadTodos();
+
+          // 🔔 重新调度所有待办通知
+          await _notificationService.scheduleAllTodoNotifications(todos: state);
         }
       } else {
         throw Exception('添加失败: ${response['msg'] ?? '未知错误'}');
@@ -144,6 +161,12 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
     try {
       final apiService = _ref.read(apiServiceProvider);
       await apiService.modifyTodo(id, updatedTodo.toJson());
+
+      // 🔔 更新通知
+      await _notificationService.cancelTodoReminder(id);
+      if (!updatedTodo.finished && updatedTodo.due != null) {
+        await _notificationService.scheduleSingleTodoNotification(updatedTodo);
+      }
     } catch (e) {
       AppLogger.debug('修改待办事项失败: $e');
       // 如果API调用失败，回滚状态
@@ -161,6 +184,9 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
     try {
       final apiService = _ref.read(apiServiceProvider);
       await apiService.deleteTodo(id);
+
+      // 🔔 取消通知
+      await _notificationService.cancelTodoReminder(id);
     } catch (e) {
       AppLogger.debug('删除待办事项失败: $e');
       // 如果API调用失败，回滚状态

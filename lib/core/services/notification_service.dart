@@ -453,6 +453,34 @@ class NotificationService {
 
   // ==================== 批量调度通知 ====================
 
+  /// 重新调度课程通知（供 Provider 使用）
+  /// 自动检查是否启用、获取课表数据、调度通知
+  Future<void> rescheduleCourseNotificationsForSemester({
+    required ClassTable classTable,
+    required String xnm,
+    required String xqm,
+  }) async {
+    try {
+      // 检查是否启用课程提醒
+      final isEnabled = await isCourseReminderEnabled();
+      if (!isEnabled) {
+        AppLogger.debug('🔔 课程提醒已禁用，跳过通知调度');
+        return;
+      }
+
+      // 调度所有课程通知
+      await scheduleAllCourseNotifications(
+        classTable: classTable,
+        xnm: xnm,
+        xqm: xqm,
+      );
+
+      AppLogger.debug('🔔 已重新调度课程通知');
+    } catch (e) {
+      AppLogger.error('🔔 重新调度课程通知失败: $e');
+    }
+  }
+
   /// 调度所有课程通知
   /// [classTable] 课表数据
   /// [xnm] 学年 (如 "2024")
@@ -531,6 +559,35 @@ class NotificationService {
     });
 
     AppLogger.info('✅ 已调度 $scheduledCount 个课程通知');
+  }
+
+  /// 为单个待办事项调度通知（供 Provider 使用）
+  /// 自动检查是否启用、是否完成、是否有截止时间
+  Future<void> scheduleSingleTodoNotification(TodoItem todo) async {
+    try {
+      // 检查是否启用待办提醒
+      final isEnabled = await isTodoReminderEnabled();
+      if (!isEnabled) {
+        AppLogger.debug('🔔 待办提醒已禁用，跳过通知调度');
+        return;
+      }
+
+      // 只为未完成且有截止时间的待办调度通知
+      if (todo.finished || todo.due == null) {
+        AppLogger.debug('🔔 待办已完成或无截止时间，跳过通知调度');
+        return;
+      }
+
+      await scheduleTodoReminder(
+        todoId: todo.id,
+        todoTitle: todo.title,
+        dueTime: todo.due!,
+      );
+
+      AppLogger.debug('🔔 已为待办 "${todo.title}" 调度通知');
+    } catch (e) {
+      AppLogger.error('🔔 调度待办通知失败: $e');
+    }
   }
 
   /// 调度所有待办通知

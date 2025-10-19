@@ -323,7 +323,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                 onPressed: () async {
                   // 使用强制刷新确保从远程获取数据
                   try {
-                    await ref.refresh(
+                    final _ = await ref.refresh(
                       forceRefreshClassTableProvider((
                         xnm: _currentXnm,
                         xqm: _currentXqm,
@@ -337,6 +337,16 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                   ref.invalidate(
                     classTableProvider((xnm: _currentXnm, xqm: _currentXqm)),
                   );
+
+                  // 🔔 只有刷新当前学期时才调度通知
+                  final now = DateTime.now();
+                  final currentYear = now.year.toString();
+                  final currentXqm = now.month < 7 ? '12' : '3';
+                  if (_currentXnm == currentYear && _currentXqm == currentXqm) {
+                    ref
+                        .read(classTableSettingsProvider.notifier)
+                        .rescheduleNotificationsAfterRefresh();
+                  }
                 },
                 child: const Text('重试'),
               ),
@@ -552,7 +562,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
 
                                     try {
                                       // Await the provider that fetches from remote. This solves the race condition.
-                                      await ref.refresh(
+                                      final _ = await ref.refresh(
                                         forceRefreshClassTableProvider((
                                           xnm: _currentXnm,
                                           xqm: _currentXqm,
@@ -566,6 +576,22 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                           xqm: _currentXqm,
                                         )),
                                       );
+
+                                      // 🔔 只有刷新当前学期时才调度通知
+                                      final now = DateTime.now();
+                                      final currentYear = now.year.toString();
+                                      final currentXqm = now.month < 7
+                                          ? '12'
+                                          : '3';
+                                      if (_currentXnm == currentYear &&
+                                          _currentXqm == currentXqm) {
+                                        ref
+                                            .read(
+                                              classTableSettingsProvider
+                                                  .notifier,
+                                            )
+                                            .rescheduleNotificationsAfterRefresh();
+                                      }
 
                                       // Update state to show success
                                       if (mounted) {
