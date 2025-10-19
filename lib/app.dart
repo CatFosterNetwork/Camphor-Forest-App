@@ -3,6 +3,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -47,12 +49,12 @@ class CamphorForestApp extends ConsumerWidget {
     // 使用统一的状态栏服务管理状态栏样式
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final timestamp = DateTime.now().toString().substring(11, 23);
-      debugPrint('🏠[$timestamp] App级别主题信息:');
-      debugPrint('  - themeMode: $themeMode');
-      debugPrint('  - isDarkMode: $isDarkMode');
-      debugPrint('  - currentTheme: ${currentTheme.title}');
-      debugPrint('  - currentTheme.code: ${currentTheme.code}');
-      debugPrint(
+      AppLogger.debug('🏠[$timestamp] App级别主题信息:');
+      AppLogger.debug('  - themeMode: $themeMode');
+      AppLogger.debug('  - isDarkMode: $isDarkMode');
+      AppLogger.debug('  - currentTheme: ${currentTheme.title}');
+      AppLogger.debug('  - currentTheme.code: ${currentTheme.code}');
+      AppLogger.debug(
         '  - MaterialApp.themeMode: ${_convertStringToThemeMode(themeMode)}',
       );
 

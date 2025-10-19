@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'course.dart';
 
 /// 课表数据结构：按周次和星期几组织课程信息
@@ -49,7 +50,7 @@ class ClassTable {
         });
       });
     } catch (e) {
-      debugPrint('解析格式化JSON出错: $e');
+      AppLogger.debug('解析格式化JSON出错: $e');
       // 在出错情况下返回空表
     }
 
@@ -67,32 +68,32 @@ class ClassTable {
       final Map<String, dynamic> rawJson;
       if (rawData is String) {
         // 如果是字符串，尝试解析为JSON
-        debugPrint(
+        AppLogger.debug(
           '尝试解析JSON字符串: ${rawData.substring(0, min(100, rawData.length))}...',
         );
         rawJson = jsonDecode(rawData) as Map<String, dynamic>;
       } else if (rawData is Map<String, dynamic>) {
         rawJson = rawData;
       } else {
-        debugPrint('原始数据类型不是Map或String: ${rawData.runtimeType}');
+        AppLogger.debug('原始数据类型不是Map或String: ${rawData.runtimeType}');
         return ClassTable(weekTable: weekTable, xnm: xnm, xqm: xqm);
       }
 
       // 打印完整的JSON结构以进行调试
-      debugPrint('API响应数据结构: ${rawJson.keys.join(", ")}');
+      AppLogger.debug('API响应数据结构: ${rawJson.keys.join(", ")}');
 
       // 检查响应状态
       final code = rawJson['code'];
       final success = rawJson['success'];
       if (code != 200 || success != true) {
-        debugPrint('API响应状态错误: code=$code, success=$success');
+        AppLogger.debug('API响应状态错误: code=$code, success=$success');
         return ClassTable(weekTable: weekTable, xnm: xnm, xqm: xqm);
       }
 
       // 获取data部分
       final data = rawJson['data'];
       if (data == null) {
-        debugPrint('API响应中没有data字段');
+        AppLogger.debug('API响应中没有data字段');
         return ClassTable(weekTable: weekTable, xnm: xnm, xqm: xqm);
       }
 
@@ -101,13 +102,13 @@ class ClassTable {
         final xsxx = data['xsxx'] as Map<String, dynamic>;
         xnm = xsxx['XNM']?.toString() ?? '';
         xqm = xsxx['XQM']?.toString() ?? '';
-        debugPrint('提取到学年学期: xnm=$xnm, xqm=$xqm');
+        AppLogger.debug('提取到学年学期: xnm=$xnm, xqm=$xqm');
       }
 
       // 处理常规课程 kbList
       if (data['kbList'] != null) {
         final kbList = data['kbList'] as List? ?? [];
-        debugPrint('课程列表数量: ${kbList.length}');
+        AppLogger.debug('课程列表数量: ${kbList.length}');
 
         for (final item in kbList) {
           if (item is! Map<String, dynamic>) continue;
@@ -117,7 +118,7 @@ class ClassTable {
             final weekday = course.weekday;
 
             // 输出调试信息
-            debugPrint(
+            AppLogger.debug(
               '解析课程: ${course.title}, 周${course.weekday}, 第${course.periods.join(",")}节, 周次${course.weeks.join(",")}, kcxz=${course.kcxz}, kclb=${course.kclb}',
             );
 
@@ -161,7 +162,7 @@ class ClassTable {
               }
             }
           } catch (e) {
-            debugPrint('解析课程失败: $e');
+            AppLogger.debug('解析课程失败: $e');
           }
         }
       }
@@ -169,7 +170,7 @@ class ClassTable {
       // 处理实践课程 sjkList
       if (data['sjkList'] != null) {
         final sjkList = data['sjkList'] as List? ?? [];
-        debugPrint('实践课程数量: ${sjkList.length}');
+        AppLogger.debug('实践课程数量: ${sjkList.length}');
 
         for (final item in sjkList) {
           if (item is! Map<String, dynamic>) continue;
@@ -184,7 +185,7 @@ class ClassTable {
             final weeks = <int>[];
             final weekStr = item['qsjsz']?.toString() ?? '';
             if (weekStr.isNotEmpty) {
-              debugPrint('解析实践课程周次: $weekStr');
+              AppLogger.debug('解析实践课程周次: $weekStr');
 
               // 去掉"周"字，分离范围
               final weeksStr = weekStr.replaceAll('周', '');
@@ -222,7 +223,7 @@ class ClassTable {
               final parsedDay = int.tryParse(day) ?? 7;
               // 确保weekday在有效范围内（1-7），超出范围的统一放到周日
               weekday = (parsedDay >= 1 && parsedDay <= 7) ? parsedDay : 7;
-              debugPrint('实践课程day字段值: $day, 解析后weekday: $weekday');
+              AppLogger.debug('实践课程day字段值: $day, 解析后weekday: $weekday');
             }
 
             // 创建课程对象
@@ -238,7 +239,7 @@ class ClassTable {
               kclb: item['kclb']?.toString(), // 课程类别
             );
 
-            debugPrint('解析实践课程: $title, 周次${weeks.join(",")}');
+            AppLogger.debug('解析实践课程: $title, 周次${weeks.join(",")}');
 
             // 添加到课表
             for (final week in weeks) {
@@ -247,7 +248,7 @@ class ClassTable {
               weekTable[week]![weekday]!.add(course);
             }
           } catch (e) {
-            debugPrint('解析实践课程失败: $e');
+            AppLogger.debug('解析实践课程失败: $e');
           }
         }
       }
@@ -259,10 +260,10 @@ class ClassTable {
           totalCourses += courses.length;
         });
       });
-      debugPrint('课表解析完成: ${weekTable.length}周, $totalCourses门课程');
+      AppLogger.debug('课表解析完成: ${weekTable.length}周, $totalCourses门课程');
     } catch (e, stackTrace) {
-      debugPrint('解析课表数据时发生异常: $e');
-      debugPrint('堆栈跟踪: $stackTrace');
+      AppLogger.debug('解析课表数据时发生异常: $e');
+      AppLogger.debug('堆栈跟踪: $stackTrace');
     }
 
     return ClassTable(weekTable: weekTable, xnm: xnm, xqm: xqm);

@@ -1,7 +1,8 @@
 // lib/core/providers/grade_provider.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -84,13 +85,13 @@ class GradeNotifier extends StateNotifier<GradeState> {
 
     // 如果有多个学期，默认选择第二个
     if (availableSemesters.length > 1) {
-      debugPrint('🎓 默认选择第二个学期: ${availableSemesters[1].displayName}');
+      AppLogger.debug('🎓 默认选择第二个学期: ${availableSemesters[1].displayName}');
       return availableSemesters[1];
     }
 
     // 否则选择第一个学期
     if (availableSemesters.isNotEmpty) {
-      debugPrint('🎓 默认选择第一个学期: ${availableSemesters[0].displayName}');
+      AppLogger.debug('🎓 默认选择第一个学期: ${availableSemesters[0].displayName}');
       return availableSemesters[0];
     }
 
@@ -177,7 +178,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
       // 如果没有保存的学期选择，默认选择第二个学期（如果存在）
       if (currentSemester == null && availableSemesters.length > 1) {
         currentSemester = availableSemesters[1]; // 选择列表的第二个学期
-        debugPrint('🎓 使用默认学期（第二个）: ${currentSemester.displayName}');
+        AppLogger.debug('🎓 使用默认学期（第二个）: ${currentSemester.displayName}');
       }
 
       // 计算当前学期成绩
@@ -200,7 +201,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
         lastUpdateTime: DateTime.now(),
       );
     } catch (e) {
-      debugPrint('加载成绩数据失败: $e');
+      AppLogger.debug('加载成绩数据失败: $e');
     }
   }
 
@@ -281,7 +282,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
         if (detailData == null || detailData.isEmpty) {
           if (summaryItems.isNotEmpty) {
             detailData = summaryItems;
-            debugPrint('🎓 使用汇总数据作为详情数据，条数: ${detailData.length}');
+            AppLogger.debug('🎓 使用汇总数据作为详情数据，条数: ${detailData.length}');
           }
         }
 
@@ -303,7 +304,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
       )[0]; // 格式: YYYY-MM-DD
 
       // 处理成绩汇总数据，检测新成绩并设置获取日期
-      debugPrint('🎓 解析成绩汇总数据，条数: ${summaryItems.length}');
+      AppLogger.debug('🎓 解析成绩汇总数据，条数: ${summaryItems.length}');
       for (final item in summaryItems) {
         try {
           final newGrade = GradeSummary.fromJson(item);
@@ -404,19 +405,19 @@ class GradeNotifier extends StateNotifier<GradeState> {
             }
           }
         } catch (e) {
-          debugPrint('解析成绩汇总数据失败: $e');
-          debugPrint('原始数据: $item');
+          AppLogger.debug('解析成绩汇总数据失败: $e');
+          AppLogger.debug('原始数据: $item');
         }
       }
 
       // 处理成绩详情数据
-      debugPrint('🎓 解析成绩详情数据，条数: ${detailItems.length}');
+      AppLogger.debug('🎓 解析成绩详情数据，条数: ${detailItems.length}');
       for (final item in detailItems) {
         try {
           gradeDetails.add(GradeDetail.fromJson(item));
         } catch (e) {
-          debugPrint('解析成绩详情数据失败: $e');
-          debugPrint('原始数据: $item');
+          AppLogger.debug('解析成绩详情数据失败: $e');
+          AppLogger.debug('原始数据: $item');
         }
       }
 
@@ -514,9 +515,9 @@ class GradeNotifier extends StateNotifier<GradeState> {
       }
 
       // 计算当前学期成绩
-      debugPrint('🎓 计算当前学期成绩，学期: ${state.currentSemester.displayName}');
-      debugPrint('🎓 成绩详情数据: ${gradeDetails.length} 条');
-      debugPrint('🎓 成绩汇总数据: ${gradeSummaries.length} 条');
+      AppLogger.debug('🎓 计算当前学期成绩，学期: ${state.currentSemester.displayName}');
+      AppLogger.debug('🎓 成绩详情数据: ${gradeDetails.length} 条');
+      AppLogger.debug('🎓 成绩汇总数据: ${gradeSummaries.length} 条');
 
       final calculatedGrades = _calculateCurrentSemesterGrades(
         gradeDetails,
@@ -524,7 +525,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
         state.currentSemester,
       );
 
-      debugPrint('🎓 计算得到 ${calculatedGrades.length} 条成绩');
+      AppLogger.debug('🎓 计算得到 ${calculatedGrades.length} 条成绩');
 
       // 计算统计信息
       final statistics = _calculateStatistics(gradeSummaries);
@@ -581,7 +582,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
 
   /// 清理成绩数据（退出登录时调用）
   Future<void> clearGrades() async {
-    debugPrint('🎓 清理成绩数据');
+    AppLogger.debug('🎓 清理成绩数据');
 
     // 清理存储中的数据
     await Future.wait([
@@ -611,7 +612,7 @@ class GradeNotifier extends StateNotifier<GradeState> {
     List<GradeSummary> gradeSummaries,
     SemesterInfo semester,
   ) {
-    debugPrint(
+    AppLogger.debug(
       '🎓 开始计算学期成绩，目标学期: ${semester.xnm}-${semester.xqm} (${semester.displayName})',
     );
     final Map<String, CalculatedGrade> gradeMap = {};
@@ -619,14 +620,16 @@ class GradeNotifier extends StateNotifier<GradeState> {
     // 主要从gradeSummaries构建成绩，因为API主要返回summary数据
     int matchedCount = 0;
     for (final summary in gradeSummaries) {
-      debugPrint('🎓 检查成绩: ${summary.kcmc} (${summary.xnm}-${summary.xqm})');
+      AppLogger.debug(
+        '🎓 检查成绩: ${summary.kcmc} (${summary.xnm}-${summary.xqm})',
+      );
       if (summary.xnm == semester.xnm && summary.xqm == semester.xqm) {
         matchedCount++;
-        debugPrint('🎓 学期匹配: ${summary.kcmc}, 成绩: ${summary.bfzcj}');
+        AppLogger.debug('🎓 学期匹配: ${summary.kcmc}, 成绩: ${summary.bfzcj}');
 
         // 过滤掉缓考的成绩
         if (summary.cj == '缓考') {
-          debugPrint('🎓 跳过缓考成绩: ${summary.kcmc}');
+          AppLogger.debug('🎓 跳过缓考成绩: ${summary.kcmc}');
           continue;
         }
 
@@ -650,16 +653,16 @@ class GradeNotifier extends StateNotifier<GradeState> {
       }
     }
 
-    debugPrint('🎓 匹配到 $matchedCount 条该学期成绩，生成 ${gradeMap.length} 条有效成绩');
+    AppLogger.debug('🎓 匹配到 $matchedCount 条该学期成绩，生成 ${gradeMap.length} 条有效成绩');
 
     // 如果没有匹配的成绩，尝试显示所有学期的成绩供调试
     if (matchedCount == 0 && gradeSummaries.isNotEmpty) {
-      debugPrint('🎓 调试：可用的学期数据：');
+      AppLogger.debug('🎓 调试：可用的学期数据：');
       final availableTerms = gradeSummaries
           .map((s) => '${s.xnm}-${s.xqm}')
           .toSet();
       for (final term in availableTerms) {
-        debugPrint('🎓   - $term');
+        AppLogger.debug('🎓   - $term');
       }
     }
 
@@ -868,14 +871,14 @@ final gradeProvider = StateNotifierProvider<GradeNotifier, GradeState>((ref) {
 
   // 监听认证状态变化
   ref.listen<bool>(isAuthenticatedProvider, (previous, next) {
-    debugPrint('🎓 GradeProvider: 认证状态变化 $previous -> $next');
+    AppLogger.debug('🎓 GradeProvider: 认证状态变化 $previous -> $next');
     if (previous == false && next == true) {
       // 登录后自动刷新成绩数据
-      debugPrint('🎓 用户登录，开始刷新成绩数据');
+      AppLogger.debug('🎓 用户登录，开始刷新成绩数据');
       Future.microtask(() => notifier.refreshGrades());
     } else if (previous == true && next == false) {
       // 注销后清理成绩数据
-      debugPrint('🎓 用户注销，清理成绩数据');
+      AppLogger.debug('🎓 用户注销，清理成绩数据');
       notifier.clearGrades();
     }
   });

@@ -1,7 +1,8 @@
 // lib/core/config/services/user_preferences_service.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user_preferences.dart';
@@ -21,14 +22,14 @@ class UserPreferencesService {
       final configJson = _prefs.getString(_configKey);
       if (configJson != null) {
         final config = UserPreferences.fromJson(jsonDecode(configJson));
-        debugPrint('UserPreferencesService: 成功加载用户偏好');
+        AppLogger.debug('UserPreferencesService: 成功加载用户偏好');
         return config;
       }
 
-      debugPrint('UserPreferencesService: 使用默认用户偏好');
+      AppLogger.debug('UserPreferencesService: 使用默认用户偏好');
       return UserPreferences.defaultConfig;
     } catch (e) {
-      debugPrint('UserPreferencesService: 加载用户偏好失败，使用默认配置: $e');
+      AppLogger.debug('UserPreferencesService: 加载用户偏好失败，使用默认配置: $e');
       return UserPreferences.defaultConfig;
     }
   }
@@ -38,9 +39,9 @@ class UserPreferencesService {
     try {
       final configJson = jsonEncode(preferences.toJson());
       await _prefs.setString(_configKey, configJson);
-      debugPrint('UserPreferencesService: 用户偏好已保存');
+      AppLogger.debug('UserPreferencesService: 用户偏好已保存');
     } catch (e) {
-      debugPrint('UserPreferencesService: 保存用户偏好失败: $e');
+      AppLogger.debug('UserPreferencesService: 保存用户偏好失败: $e');
       throw Exception('保存用户偏好失败: $e');
     }
   }
@@ -50,7 +51,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.copyWith(language: language);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 设置语言为 $language');
+    AppLogger.debug('UserPreferencesService: 设置语言为 $language');
     return updatedPrefs;
   }
 
@@ -59,7 +60,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.copyWith(enableNotifications: enabled);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 设置通知为 $enabled');
+    AppLogger.debug('UserPreferencesService: 设置通知为 $enabled');
     return updatedPrefs;
   }
 
@@ -68,7 +69,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.copyWith(enableVibration: enabled);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 设置震动为 $enabled');
+    AppLogger.debug('UserPreferencesService: 设置震动为 $enabled');
     return updatedPrefs;
   }
 
@@ -77,7 +78,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.copyWith(enableSound: enabled);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 设置声音为 $enabled');
+    AppLogger.debug('UserPreferencesService: 设置声音为 $enabled');
     return updatedPrefs;
   }
 
@@ -86,7 +87,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.copyWith(cacheLimit: limitMB);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 设置缓存限制为 ${limitMB}MB');
+    AppLogger.debug('UserPreferencesService: 设置缓存限制为 ${limitMB}MB');
     return updatedPrefs;
   }
 
@@ -95,7 +96,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.copyWith(enableDataSaver: enabled);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 设置数据保护模式为 $enabled');
+    AppLogger.debug('UserPreferencesService: 设置数据保护模式为 $enabled');
     return updatedPrefs;
   }
 
@@ -104,7 +105,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.markNotFirstLaunch();
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 标记为非首次启动');
+    AppLogger.debug('UserPreferencesService: 标记为非首次启动');
     return updatedPrefs;
   }
 
@@ -113,7 +114,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.markSynced();
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 标记为已同步');
+    AppLogger.debug('UserPreferencesService: 标记为已同步');
     return updatedPrefs;
   }
 
@@ -122,7 +123,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.setCustomData(key, value);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 设置自定义数据 $key');
+    AppLogger.debug('UserPreferencesService: 设置自定义数据 $key');
     return updatedPrefs;
   }
 
@@ -137,7 +138,7 @@ class UserPreferencesService {
     final currentPrefs = await loadPreferences();
     final updatedPrefs = currentPrefs.removeCustomData(key);
     await savePreferences(updatedPrefs);
-    debugPrint('UserPreferencesService: 移除自定义数据 $key');
+    AppLogger.debug('UserPreferencesService: 移除自定义数据 $key');
     return updatedPrefs;
   }
 
@@ -176,14 +177,14 @@ class UserPreferencesService {
     }
 
     await savePreferences(currentPrefs);
-    debugPrint('UserPreferencesService: 批量更新${updates.length}个偏好设置');
+    AppLogger.debug('UserPreferencesService: 批量更新${updates.length}个偏好设置');
     return currentPrefs;
   }
 
   /// 重置为默认配置
   Future<UserPreferences> resetToDefault() async {
     await savePreferences(UserPreferences.defaultConfig);
-    debugPrint('UserPreferencesService: 已重置为默认用户偏好');
+    AppLogger.debug('UserPreferencesService: 已重置为默认用户偏好');
     return UserPreferences.defaultConfig;
   }
 
@@ -195,7 +196,7 @@ class UserPreferencesService {
   /// 删除配置
   Future<void> deletePreferences() async {
     await _prefs.remove(_configKey);
-    debugPrint('UserPreferencesService: 用户偏好已删除');
+    AppLogger.debug('UserPreferencesService: 用户偏好已删除');
   }
 
   // ===== 便利方法 =====

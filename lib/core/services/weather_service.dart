@@ -1,6 +1,6 @@
 // lib/core/services/weather_service.dart
 
-import 'package:flutter/foundation.dart';
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
@@ -26,13 +26,13 @@ class WeatherService {
       if (!forceRefresh) {
         final cachedWeather = await _getCachedWeather();
         if (cachedWeather != null) {
-          debugPrint('🌤️ 从缓存获取天气数据');
+          AppLogger.debug('🌤️ 从缓存获取天气数据');
           return cachedWeather;
         }
       }
 
       // 从API获取新数据
-      debugPrint('🌤️ 从API获取天气数据');
+      AppLogger.debug('🌤️ 从API获取天气数据');
       final response = await _apiService.getWeather();
 
       if (response['status'] == 'ok') {
@@ -51,16 +51,16 @@ class WeatherService {
 
         return dailyWithDate;
       } else {
-        debugPrint('❌ 天气API返回错误状态: ${response['status']}');
+        AppLogger.debug('❌ 天气API返回错误状态: ${response['status']}');
         return null;
       }
     } catch (e) {
-      debugPrint('❌ 获取天气数据失败: $e');
+      AppLogger.debug('❌ 获取天气数据失败: $e');
 
       // 如果API请求失败，尝试返回缓存数据（即使已过期）
       final cachedWeather = await _getCachedWeather(ignoreExpiration: true);
       if (cachedWeather != null) {
-        debugPrint('⚠️ API失败，使用过期缓存数据');
+        AppLogger.debug('⚠️ API失败，使用过期缓存数据');
         return cachedWeather;
       }
 
@@ -87,7 +87,7 @@ class WeatherService {
         final updateTime = DateTime.parse(updateTimeStr);
         final now = DateTime.now();
         if (now.difference(updateTime) > _cacheExpiration) {
-          debugPrint('🌤️ 天气缓存已过期');
+          AppLogger.debug('🌤️ 天气缓存已过期');
           return null;
         }
       }
@@ -95,7 +95,7 @@ class WeatherService {
       final weatherJson = jsonDecode(cachedData) as Map<String, dynamic>;
       return WeatherDaily.fromJson(weatherJson);
     } catch (e) {
-      debugPrint('❌ 读取天气缓存失败: $e');
+      AppLogger.debug('❌ 读取天气缓存失败: $e');
       return null;
     }
   }
@@ -109,9 +109,9 @@ class WeatherService {
       await _secureStorage.write(key: _weatherCacheKey, value: weatherJson);
       await _secureStorage.write(key: _weatherUpdateTimeKey, value: updateTime);
 
-      debugPrint('💾 天气数据已缓存');
+      AppLogger.debug('💾 天气数据已缓存');
     } catch (e) {
-      debugPrint('❌ 缓存天气数据失败: $e');
+      AppLogger.debug('❌ 缓存天气数据失败: $e');
     }
   }
 
@@ -146,9 +146,9 @@ class WeatherService {
     try {
       await _secureStorage.delete(key: _weatherCacheKey);
       await _secureStorage.delete(key: _weatherUpdateTimeKey);
-      debugPrint('🗑️ 天气缓存已清除');
+      AppLogger.debug('🗑️ 天气缓存已清除');
     } catch (e) {
-      debugPrint('❌ 清除天气缓存失败: $e');
+      AppLogger.debug('❌ 清除天气缓存失败: $e');
     }
   }
 }

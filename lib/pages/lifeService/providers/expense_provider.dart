@@ -1,7 +1,8 @@
 // lib/pages/lifeService/providers/expense_provider.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/core_providers.dart';
 import '../models/expense_models.dart';
@@ -83,7 +84,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         _loadExpenseFromCache();
       }
     } catch (e) {
-      debugPrint('加载缓存数据失败: $e');
+      AppLogger.debug('加载缓存数据失败: $e');
     }
   }
 
@@ -111,7 +112,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       // 缓存数据不存在或已过期，刷新数据
       refreshExpenseData();
     } catch (e) {
-      debugPrint('加载缓存水电费数据失败: $e');
+      AppLogger.debug('加载缓存水电费数据失败: $e');
       refreshExpenseData();
     }
   }
@@ -129,7 +130,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       // 使用与_parseApiData相同的逻辑来解析数据，但标记为缓存数据
       _parseApiData(data, updateTime, isFromCache: isFromCache);
     } catch (e) {
-      debugPrint('解析缓存数据失败: $e');
+      AppLogger.debug('解析缓存数据失败: $e');
       state = state.copyWith(
         isLoading: false,
         error: '数据解析失败: $e',
@@ -180,7 +181,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         throw Exception(response['msg'] ?? '获取数据失败');
       }
     } catch (e) {
-      debugPrint('刷新水电费数据失败: $e');
+      AppLogger.debug('刷新水电费数据失败: $e');
 
       // API请求失败时，尝试使用缓存数据（即使已过期）
       final prefs = _ref.read(sharedPreferencesProvider);
@@ -191,13 +192,13 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         final lastUpdateTime = DateTime.tryParse(lastUpdate);
         if (lastUpdateTime != null) {
           try {
-            debugPrint(
+            AppLogger.debug(
               'API失败，使用缓存数据（${DateTime.now().difference(lastUpdateTime).inHours}小时前）',
             );
             _parseExpenseData(expenseJson, lastUpdateTime, isFromCache: true);
             return;
           } catch (cacheError) {
-            debugPrint('解析缓存数据也失败: $cacheError');
+            AppLogger.debug('解析缓存数据也失败: $cacheError');
           }
         }
       }
@@ -305,20 +306,20 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      debugPrint('开始绑定宿舍: buildingId=$buildingId, roomCode=$roomCode');
+      AppLogger.debug('开始绑定宿舍: buildingId=$buildingId, roomCode=$roomCode');
 
       // 保存绑定信息
       final prefs = _ref.read(sharedPreferencesProvider);
       await prefs.setString('buildingId', buildingId);
       await prefs.setString('roomCode', roomCode);
-      debugPrint('绑定信息已保存到SharedPreferences');
+      AppLogger.debug('绑定信息已保存到SharedPreferences');
 
       // 解析宿舍信息
       final buildingIdInt = int.tryParse(buildingId);
       DormInfo? dormInfo;
       if (buildingIdInt != null) {
         dormInfo = DormConfig.findDormByBuildingId(buildingIdInt);
-        debugPrint('解析宿舍信息: ${dormInfo?.toString()}');
+        AppLogger.debug('解析宿舍信息: ${dormInfo?.toString()}');
       }
 
       // 更新绑定状态
@@ -327,15 +328,15 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         currentDorm: dormInfo,
         isLoading: false, // 先设置为false，避免在数据获取时保持loading状态
       );
-      debugPrint('绑定状态已更新');
+      AppLogger.debug('绑定状态已更新');
 
       // 异步获取水电费数据，不阻塞绑定流程
       try {
-        debugPrint('开始获取水电费数据');
+        AppLogger.debug('开始获取水电费数据');
         await refreshExpenseData();
-        debugPrint('水电费数据获取完成');
+        AppLogger.debug('水电费数据获取完成');
       } catch (dataError) {
-        debugPrint('获取水电费数据失败，但绑定已成功: $dataError');
+        AppLogger.debug('获取水电费数据失败，但绑定已成功: $dataError');
         // 数据获取失败不影响绑定成功状态
         state = state.copyWith(
           isLoading: false,
@@ -343,7 +344,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         );
       }
     } catch (e) {
-      debugPrint('绑定宿舍失败: $e');
+      AppLogger.debug('绑定宿舍失败: $e');
       state = state.copyWith(
         isLoading: false,
         error: '绑定失败: $e',
@@ -385,9 +386,9 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       final prefs = _ref.read(sharedPreferencesProvider);
       await prefs.remove('expense_data');
       await prefs.remove('expense_last_update');
-      debugPrint('水电费缓存数据已清除');
+      AppLogger.debug('水电费缓存数据已清除');
     } catch (e) {
-      debugPrint('清除缓存失败: $e');
+      AppLogger.debug('清除缓存失败: $e');
     }
   }
 
@@ -408,7 +409,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
     try {
       // 安全检查：确保状态完整
       if (!state.isBound || state.currentBalance == null || state.isLoading) {
-        debugPrint(
+        AppLogger.debug(
           'briefData: 状态不完整，返回null - isBound: ${state.isBound}, hasBalance: ${state.currentBalance != null}, isLoading: ${state.isLoading}',
         );
         return null;
@@ -421,7 +422,7 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
       final todayHistory = historyList.isNotEmpty ? historyList.first : null;
       final yesterdayHistory = historyList.length > 1 ? historyList[1] : null;
 
-      debugPrint(
+      AppLogger.debug(
         'briefData: 创建简要数据 - balance: ${balance.currentRemainingAmount}, historyCount: ${historyList.length}',
       );
 
@@ -434,8 +435,8 @@ class ExpenseNotifier extends StateNotifier<ExpenseState> {
         updateTime: state.lastUpdateTime,
       );
     } catch (e, stackTrace) {
-      debugPrint('briefData error: $e');
-      debugPrint('StackTrace: $stackTrace');
+      AppLogger.debug('briefData error: $e');
+      AppLogger.debug('StackTrace: $stackTrace');
       return null; // 发生任何错误都返回null，避免崩溃
     }
   }
@@ -455,16 +456,18 @@ final expenseBriefProvider = Provider<ExpenseBriefData?>((ref) {
 
   // 只有在关键状态变化时才重新计算
   if (!expenseState.isBound || expenseState.isLoading) {
-    debugPrint('expenseBriefProvider: 状态未就绪，返回null');
+    AppLogger.debug('expenseBriefProvider: 状态未就绪，返回null');
     return null;
   }
 
   try {
     final briefData = expenseNotifier.briefData;
-    debugPrint('expenseBriefProvider: 返回简要数据 - hasData: ${briefData != null}');
+    AppLogger.debug(
+      'expenseBriefProvider: 返回简要数据 - hasData: ${briefData != null}',
+    );
     return briefData;
   } catch (e) {
-    debugPrint('expenseBriefProvider error: $e');
+    AppLogger.debug('expenseBriefProvider error: $e');
     return null;
   }
 });

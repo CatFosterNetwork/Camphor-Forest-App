@@ -1,8 +1,9 @@
 // lib/pages/school_navigation/providers/bus_provider.dart
 
 import 'dart:async';
+
+import '../../../core/utils/app_logger.dart';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,16 +28,16 @@ class WebSocketManager {
     if (_isDisposed) return;
 
     try {
-      debugPrint('🔄 [WebSocket管理器] 开始连接...');
+      AppLogger.debug('🔄 [WebSocket管理器] 开始连接...');
       _channel = WebSocketChannel.connect(
         Uri.parse('wss://youche.jhcampus.net:8914'),
       );
 
-      debugPrint('✅ [WebSocket管理器] 连接成功，启动心跳');
+      AppLogger.debug('✅ [WebSocket管理器] 连接成功，启动心跳');
       _startHeartbeat();
       _listenToStream();
     } catch (e) {
-      debugPrint('💥 [WebSocket管理器] 连接失败: $e');
+      AppLogger.debug('💥 [WebSocket管理器] 连接失败: $e');
       // 5秒后重试
       if (!_isDisposed) {
         Timer(const Duration(seconds: 5), () => _connect());
@@ -52,13 +53,13 @@ class WebSocketManager {
           final ts = (DateTime.now().millisecondsSinceEpoch / 1000).floor();
           final payload = '1,1915111,0,0,$ts,189,0';
           _channel!.sink.add(payload);
-          debugPrint('💓 [WebSocket管理器] 心跳发送: $payload');
+          AppLogger.debug('💓 [WebSocket管理器] 心跳发送: $payload');
         } else {
-          debugPrint('⚠️ [WebSocket管理器] 连接已关闭，准备重连');
+          AppLogger.debug('⚠️ [WebSocket管理器] 连接已关闭，准备重连');
           _reconnect();
         }
       } catch (e) {
-        debugPrint('💥 [WebSocket管理器] 心跳失败: $e，准备重连');
+        AppLogger.debug('💥 [WebSocket管理器] 心跳失败: $e，准备重连');
         _reconnect();
       }
     });
@@ -71,11 +72,11 @@ class WebSocketManager {
         _handleMessage(event);
       },
       onError: (error) {
-        debugPrint('💥 [WebSocket管理器] 流错误: $error，准备重连');
+        AppLogger.debug('💥 [WebSocket管理器] 流错误: $error，准备重连');
         if (!_isDisposed) _reconnect();
       },
       onDone: () {
-        debugPrint('🔚 [WebSocket管理器] 流结束，准备重连');
+        AppLogger.debug('🔚 [WebSocket管理器] 流结束，准备重连');
         if (!_isDisposed) _reconnect();
       },
     );
@@ -83,14 +84,14 @@ class WebSocketManager {
 
   void _handleMessage(dynamic event) {
     // 增加原始数据打印，用于调试任何类型的传入消息
-    debugPrint('📥 [WebSocket管理器] 收到原始事件: $event');
+    AppLogger.debug('📥 [WebSocket管理器] 收到原始事件: $event');
     try {
       if (event is String && event.contains('|')) {
         // 增加长度检查，避免RangeError
         final logMessage = event.length > 100
             ? '${event.substring(0, 100)}...'
             : event;
-        debugPrint('📥 [WebSocket管理器] 收到有效数据: $logMessage');
+        AppLogger.debug('📥 [WebSocket管理器] 收到有效数据: $logMessage');
         final parts = event.split('|');
         if (parts.length < 2) return;
 
@@ -123,18 +124,18 @@ class WebSocketManager {
           }
         }
 
-        debugPrint('📊 [WebSocket管理器] 解析完成: ${buses.length}辆车');
+        AppLogger.debug('📊 [WebSocket管理器] 解析完成: ${buses.length}辆车');
         if (!_isDisposed) {
           _controller!.add(buses);
         }
       }
     } catch (e) {
-      debugPrint('💥 [WebSocket管理器] 消息处理失败: $e');
+      AppLogger.debug('💥 [WebSocket管理器] 消息处理失败: $e');
     }
   }
 
   void _reconnect() {
-    debugPrint('🔄 [WebSocket管理器] 开始重连...');
+    AppLogger.debug('🔄 [WebSocket管理器] 开始重连...');
     _cleanup();
     Timer(const Duration(seconds: 2), () => _connect());
   }
@@ -146,7 +147,7 @@ class WebSocketManager {
   }
 
   void dispose() {
-    debugPrint('🛑 [WebSocket管理器] 销毁连接');
+    AppLogger.debug('🛑 [WebSocket管理器] 销毁连接');
     _isDisposed = true;
     _cleanup();
     _controller?.close();
@@ -164,18 +165,20 @@ WebSocketManager? _globalWebSocketManager;
 final realTimeBusDataProvider = StreamProvider.autoDispose<List<BusData>>((
   ref,
 ) async* {
-  debugPrint('🔄 [Provider] realTimeBusDataProvider 被创建');
+  AppLogger.debug('🔄 [Provider] realTimeBusDataProvider 被创建');
 
   // 创建或重用WebSocket管理器
   if (_globalWebSocketManager == null || _globalWebSocketManager!._isDisposed) {
-    debugPrint('🔄 [Provider] 创建新的WebSocket管理器');
+    AppLogger.debug('🔄 [Provider] 创建新的WebSocket管理器');
     _globalWebSocketManager = WebSocketManager();
   } else {
-    debugPrint('🔄 [Provider] 重用现有WebSocket管理器');
+    AppLogger.debug('🔄 [Provider] 重用现有WebSocket管理器');
   }
 
   ref.onDispose(() {
-    debugPrint('🛑 [Provider] realTimeBusDataProvider 被销毁，释放 WebSocket 管理器');
+    AppLogger.debug(
+      '🛑 [Provider] realTimeBusDataProvider 被销毁，释放 WebSocket 管理器',
+    );
     _globalWebSocketManager?.dispose();
     _globalWebSocketManager = null;
   });

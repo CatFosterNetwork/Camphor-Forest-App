@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/providers/theme_config_provider.dart';
@@ -23,7 +25,7 @@ class ThemeAwareDialog {
       final themeCode = container.read(selectedThemeCodeProvider);
       return themeCode;
     } catch (e) {
-      debugPrint('ThemeAwareDialog: 无法获取主题 code: $e');
+      AppLogger.debug('ThemeAwareDialog: 无法获取主题 code: $e');
       return null;
     }
   }
@@ -37,7 +39,7 @@ class ThemeAwareDialog {
         return currentTheme.colorList[0];
       }
     } catch (e) {
-      debugPrint('ThemeAwareDialog: 无法获取主题色: $e');
+      AppLogger.debug('ThemeAwareDialog: 无法获取主题色: $e');
     }
     return Colors.blue;
   }
@@ -48,7 +50,7 @@ class ThemeAwareDialog {
       final container = ProviderScope.containerOf(context);
       return container.read(effectiveIsDarkModeProvider);
     } catch (e) {
-      debugPrint('ThemeAwareDialog: 无法获取暗黑模式状态: $e');
+      AppLogger.debug('ThemeAwareDialog: 无法获取暗黑模式状态: $e');
       return false;
     }
   }

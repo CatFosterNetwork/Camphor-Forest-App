@@ -1,7 +1,8 @@
 // lib/core/config/services/config_sync_service.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../services/api_service.dart';
@@ -41,19 +42,19 @@ class ConfigSyncService {
     }
 
     try {
-      debugPrint('ConfigSyncService: 开始上传配置...');
+      AppLogger.debug('ConfigSyncService: 开始上传配置...');
 
       // 处理配置中的图片上传（本地路径会被替换为URL）
       final processedConfigs = await _processConfigImages(configs);
 
       // 上传到服务器
       await _apiService!.postConfigToServer(processedConfigs);
-      debugPrint('ConfigSyncService: 配置上传成功');
+      AppLogger.debug('ConfigSyncService: 配置上传成功');
 
       // 返回处理后的配置，包含已上传的图片URL
       return processedConfigs;
     } catch (e) {
-      debugPrint('ConfigSyncService: 配置上传失败: $e');
+      AppLogger.debug('ConfigSyncService: 配置上传失败: $e');
       rethrow;
     }
   }
@@ -65,19 +66,19 @@ class ConfigSyncService {
     }
 
     try {
-      debugPrint('ConfigSyncService: 开始下载配置...');
+      AppLogger.debug('ConfigSyncService: 开始下载配置...');
 
       final response = await _apiService!.getConfig();
       if (response['data']?['settings'] != null) {
         final configs = response['data']['settings'] as Map<String, dynamic>;
-        debugPrint('ConfigSyncService: 配置下载成功');
+        AppLogger.debug('ConfigSyncService: 配置下载成功');
         return configs;
       } else {
-        debugPrint('ConfigSyncService: 服务器无配置数据');
+        AppLogger.debug('ConfigSyncService: 服务器无配置数据');
         return {};
       }
     } catch (e) {
-      debugPrint('ConfigSyncService: 配置下载失败: $e');
+      AppLogger.debug('ConfigSyncService: 配置下载失败: $e');
       rethrow;
     }
   }
@@ -105,10 +106,10 @@ class ConfigSyncService {
         prefix: 'theme',
       );
 
-      debugPrint('ConfigSyncService: 图片上传成功: $url');
+      AppLogger.debug('ConfigSyncService: 图片上传成功: $url');
       return url;
     } catch (e) {
-      debugPrint('ConfigSyncService: 图片上传失败: $e');
+      AppLogger.debug('ConfigSyncService: 图片上传失败: $e');
       rethrow;
     }
   }
@@ -122,7 +123,7 @@ class ConfigSyncService {
       await _apiService!.getConfig();
       return true;
     } catch (e) {
-      debugPrint('ConfigSyncService: 网络连接检查失败: $e');
+      AppLogger.debug('ConfigSyncService: 网络连接检查失败: $e');
       return false;
     }
   }
@@ -135,7 +136,7 @@ class ConfigSyncService {
       final response = await _apiService!.getConfig();
       return response['data']?['version'] as String?;
     } catch (e) {
-      debugPrint('ConfigSyncService: 获取服务器配置版本失败: $e');
+      AppLogger.debug('ConfigSyncService: 获取服务器配置版本失败: $e');
       return null;
     }
   }
@@ -156,7 +157,7 @@ class ConfigSyncService {
 
     if (isNested) {
       // 嵌套格式处理（标准格式）
-      debugPrint('ConfigSyncService: 处理嵌套格式的图片...');
+      AppLogger.debug('ConfigSyncService: 处理嵌套格式的图片...');
 
       if (processedConfigs['themeConfig'] != null) {
         final themeConfig = Map<String, dynamic>.from(
@@ -168,7 +169,7 @@ class ConfigSyncService {
             themeConfig['theme-theme'] is Map) {
           await _processThemeImages(themeConfig['theme-theme']);
         } else {
-          debugPrint('ConfigSyncService: ⚠️ theme-theme 不存在或格式错误');
+          AppLogger.debug('ConfigSyncService: ⚠️ theme-theme 不存在或格式错误');
         }
 
         // 处理 theme-customThemes（多个自定义主题）
@@ -180,20 +181,22 @@ class ConfigSyncService {
               await _processThemeImages(customThemes[i]);
             }
           }
-          debugPrint('ConfigSyncService: 处理了 ${customThemes.length} 个自定义主题的图片');
+          AppLogger.debug(
+            'ConfigSyncService: 处理了 ${customThemes.length} 个自定义主题的图片',
+          );
         }
         // 处理旧格式 theme-customTheme（单个）
         else if (themeConfig['theme-customTheme'] != null &&
             themeConfig['theme-customTheme'] is Map) {
           await _processThemeImages(themeConfig['theme-customTheme']);
-          debugPrint('ConfigSyncService: 检测到旧格式单个自定义主题');
+          AppLogger.debug('ConfigSyncService: 检测到旧格式单个自定义主题');
         }
 
         processedConfigs['themeConfig'] = themeConfig;
       }
     } else {
       // 扁平格式处理
-      debugPrint('ConfigSyncService: 处理扁平格式的图片...');
+      AppLogger.debug('ConfigSyncService: 处理扁平格式的图片...');
 
       // 处理 theme-customTheme
       if (processedConfigs['theme-customTheme'] != null &&
@@ -231,16 +234,18 @@ class ConfigSyncService {
         if (!imageUrl.startsWith('https://data.swu.social') &&
             !imageUrl.startsWith('http://www.yumus.cn') &&
             !imageUrl.startsWith('http')) {
-          debugPrint('ConfigSyncService: ⚠️ 发现本地图片: $field');
-          debugPrint('ConfigSyncService: ⚠️ 路径: $imageUrl');
+          AppLogger.debug('ConfigSyncService: ⚠️ 发现本地图片: $field');
+          AppLogger.debug('ConfigSyncService: ⚠️ 路径: $imageUrl');
 
           try {
             final uploadedUrl = await uploadImage(imageUrl);
             theme[field] = uploadedUrl;
-            debugPrint('ConfigSyncService: ✅ 主题图片 $field 已上传: $uploadedUrl');
+            AppLogger.debug(
+              'ConfigSyncService: ✅ 主题图片 $field 已上传: $uploadedUrl',
+            );
           } catch (e) {
             // 图片上传失败，抛出错误阻止配置上传
-            debugPrint('ConfigSyncService: ❌ 主题图片 $field 上传失败: $e');
+            AppLogger.debug('ConfigSyncService: ❌ 主题图片 $field 上传失败: $e');
             // 直接抛出原始错误，保留详细的错误信息
             rethrow;
           }
@@ -260,7 +265,7 @@ class ConfigSyncService {
           configs.containsKey('userPreferences');
 
       if (hasNestedStructure) {
-        debugPrint('ConfigSyncService: 验证嵌套格式配置');
+        AppLogger.debug('ConfigSyncService: 验证嵌套格式配置');
         return true;
       }
 
@@ -272,15 +277,15 @@ class ConfigSyncService {
       final hasThemeKeys = configs.keys.any((key) => key.startsWith('theme-'));
 
       if (hasIndexKeys || hasForestKeys || hasThemeKeys) {
-        debugPrint('ConfigSyncService: 验证扁平格式配置');
+        AppLogger.debug('ConfigSyncService: 验证扁平格式配置');
         return true;
       }
 
       // 如果都不是，可能是空配置或格式错误
-      debugPrint('ConfigSyncService: 未识别的配置格式');
+      AppLogger.debug('ConfigSyncService: 未识别的配置格式');
       return configs.isEmpty; // 空配置也视为有效
     } catch (e) {
-      debugPrint('ConfigSyncService: 配置格式验证失败: $e');
+      AppLogger.debug('ConfigSyncService: 配置格式验证失败: $e');
       return false;
     }
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:home_widget/home_widget.dart';
 import '../../pages/classtable/models/course.dart';
 
@@ -18,7 +19,7 @@ class WidgetService {
     required DateTime semesterStart,
   }) async {
     try {
-      debugPrint('🔄 开始更新课表小组件...');
+      AppLogger.debug('🔄 开始更新课表小组件...');
 
       // 设置 App Group ID（iOS）
       await HomeWidget.setAppGroupId(_appGroupId);
@@ -69,26 +70,26 @@ class WidgetService {
         iOSName: _widgetName,
       );
 
-      debugPrint('✅ 课表小组件更新成功');
-      debugPrint('   - 当前周次: $currentWeek');
-      debugPrint('   - 当前星期: $displayWeekday');
-      debugPrint('   - 总课程数: ${courses.length}');
-      debugPrint(
+      AppLogger.debug('✅ 课表小组件更新成功');
+      AppLogger.debug('   - 当前周次: $currentWeek');
+      AppLogger.debug('   - 当前星期: $displayWeekday');
+      AppLogger.debug('   - 总课程数: ${courses.length}');
+      AppLogger.debug(
         '   - 周一到周日课程数: ${weekData.values.map((e) => e.length).join(', ')}',
       );
-      debugPrint('   - JSON数据长度: ${jsonData.length} 字符');
+      AppLogger.debug('   - JSON数据长度: ${jsonData.length} 字符');
 
       // 打印每天的课程详情用于调试
       for (var day = 1; day <= 7; day++) {
         final dayCourses = weekData['day_$day'];
         if (dayCourses != null && dayCourses.isNotEmpty) {
-          debugPrint(
+          AppLogger.debug(
             '   - 周$day: ${dayCourses.map((c) => c['name']).join(', ')}',
           );
         }
       }
     } catch (e) {
-      debugPrint('❌ 更新课表小组件失败: $e');
+      AppLogger.debug('❌ 更新课表小组件失败: $e');
     }
   }
 
@@ -101,9 +102,9 @@ class WidgetService {
         androidName: _androidWidgetName,
         iOSName: _widgetName,
       );
-      debugPrint('✅ 课表小组件数据已清空');
+      AppLogger.debug('✅ 课表小组件数据已清空');
     } catch (e) {
-      debugPrint('❌ 清空课表小组件数据失败: $e');
+      AppLogger.debug('❌ 清空课表小组件数据失败: $e');
     }
   }
 }

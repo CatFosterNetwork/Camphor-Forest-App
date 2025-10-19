@@ -1,7 +1,8 @@
 // lib/core/config/services/theme_config_service.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/theme_config.dart';
@@ -28,33 +29,33 @@ class ThemeConfigService {
     try {
       // 如果有缓存且不强制刷新，直接返回缓存
       if (_cachedConfig != null && !forceRefresh) {
-        debugPrint('ThemeConfigService: 从缓存加载主题配置');
+        AppLogger.debug('ThemeConfigService: 从缓存加载主题配置');
         return _cachedConfig!;
       }
 
-      debugPrint('ThemeConfigService: 开始从磁盘加载主题配置...');
+      AppLogger.debug('ThemeConfigService: 开始从磁盘加载主题配置...');
 
       // 首先尝试加载新格式的配置
       final configJson = _prefs.getString(_configKey);
-      debugPrint('ThemeConfigService: 新格式配置数据: $configJson');
+      AppLogger.debug('ThemeConfigService: 新格式配置数据: $configJson');
 
       if (configJson != null) {
         final config = ThemeConfig.fromJson(jsonDecode(configJson));
         _cachedConfig = config; // 更新缓存
-        debugPrint(
+        AppLogger.debug(
           'ThemeConfigService: 成功加载主题配置 - 深色模式: ${config.isDarkMode}, 主题模式: ${config.themeMode}',
         );
         return config;
       }
 
-      debugPrint('ThemeConfigService: 新格式配置不存在，使用默认配置');
+      AppLogger.debug('ThemeConfigService: 新格式配置不存在，使用默认配置');
       // 如果新配置不存在，使用默认配置并保存
       const defaultConfig = ThemeConfig.defaultConfig;
       await saveConfig(defaultConfig);
-      debugPrint('ThemeConfigService: 已保存默认主题配置');
+      AppLogger.debug('ThemeConfigService: 已保存默认主题配置');
       return defaultConfig;
     } catch (e) {
-      debugPrint('ThemeConfigService: 加载主题配置失败，使用默认配置: $e');
+      AppLogger.debug('ThemeConfigService: 加载主题配置失败，使用默认配置: $e');
       // 清除无效缓存
       _cachedConfig = null;
       return ThemeConfig.defaultConfig;
@@ -67,25 +68,25 @@ class ThemeConfigService {
       _cachedConfig = config; // 先更新缓存
 
       final configJson = jsonEncode(config.toJson());
-      debugPrint('ThemeConfigService: 准备保存主题配置: $configJson');
+      AppLogger.debug('ThemeConfigService: 准备保存主题配置: $configJson');
 
       final success = await _prefs.setString(_configKey, configJson);
-      debugPrint(
+      AppLogger.debug(
         'ThemeConfigService: SharedPreferences.setString 返回值: $success',
       );
 
       // 立即验证保存是否成功
       final savedConfig = _prefs.getString(_configKey);
       if (savedConfig == configJson) {
-        debugPrint('ThemeConfigService: 主题配置保存成功，验证通过（已更新缓存）');
+        AppLogger.debug('ThemeConfigService: 主题配置保存成功，验证通过（已更新缓存）');
       } else {
-        debugPrint('ThemeConfigService: 警告 - 保存的配置验证失败');
-        debugPrint('  期望: $configJson');
-        debugPrint('  实际: $savedConfig');
+        AppLogger.debug('ThemeConfigService: 警告 - 保存的配置验证失败');
+        AppLogger.debug('  期望: $configJson');
+        AppLogger.debug('  实际: $savedConfig');
         _cachedConfig = null; // 验证失败时清除缓存
       }
     } catch (e) {
-      debugPrint('ThemeConfigService: 保存主题配置失败: $e');
+      AppLogger.debug('ThemeConfigService: 保存主题配置失败: $e');
       throw Exception('保存主题配置失败: $e');
     }
   }
@@ -95,7 +96,7 @@ class ThemeConfigService {
     final currentConfig = await loadConfig();
     final updatedConfig = currentConfig.copyWith(themeMode: mode);
     await saveConfig(updatedConfig);
-    debugPrint('ThemeConfigService: 设置主题模式为 $mode');
+    AppLogger.debug('ThemeConfigService: 设置主题模式为 $mode');
     return updatedConfig;
   }
 
@@ -104,7 +105,7 @@ class ThemeConfigService {
     final currentConfig = await loadConfig();
     final updatedConfig = currentConfig.copyWith(isDarkMode: isDark);
     await saveConfig(updatedConfig);
-    debugPrint('ThemeConfigService: 设置深色模式为 $isDark');
+    AppLogger.debug('ThemeConfigService: 设置深色模式为 $isDark');
     return updatedConfig;
   }
 
@@ -121,11 +122,11 @@ class ThemeConfigService {
         final customThemes = await _customThemeService.getCustomThemes();
         try {
           finalTheme = customThemes.firstWhere((t) => t.code == themeCode);
-          debugPrint(
+          AppLogger.debug(
             'ThemeConfigService: 从 CustomThemeService 查找自定义主题 $themeCode: 找到',
           );
         } catch (e) {
-          debugPrint(
+          AppLogger.debug(
             'ThemeConfigService: 从 CustomThemeService 查找自定义主题 $themeCode: 未找到',
           );
         }
@@ -135,7 +136,7 @@ class ThemeConfigService {
     // 如果是自定义主题且提供了主题对象，保存到 CustomThemeService
     if (finalTheme != null && ThemeUtils.isCustomTheme(themeCode)) {
       await _customThemeService.saveCustomTheme(finalTheme);
-      debugPrint(
+      AppLogger.debug(
         'ThemeConfigService: 已保存自定义主题到 CustomThemeService: ${finalTheme.title}',
       );
     }
@@ -149,7 +150,7 @@ class ThemeConfigService {
 
     await saveConfig(updatedConfig);
 
-    debugPrint(
+    AppLogger.debug(
       'ThemeConfigService: ✅ 选择主题完成 - '
       'code: $themeCode, '
       'selectedTheme: ${finalTheme?.title ?? "null"}, '
@@ -172,14 +173,14 @@ class ThemeConfigService {
       clearSelectedTheme: true, // 清除预设主题
     );
     await saveConfig(updatedConfig);
-    debugPrint('ThemeConfigService: 设置自定义主题 ${customTheme.code}');
+    AppLogger.debug('ThemeConfigService: 设置自定义主题 ${customTheme.code}');
     return updatedConfig;
   }
 
   /// 重置为默认配置
   Future<ThemeConfig> resetToDefault() async {
     await saveConfig(ThemeConfig.defaultConfig);
-    debugPrint('ThemeConfigService: 已重置为默认主题配置');
+    AppLogger.debug('ThemeConfigService: 已重置为默认主题配置');
     return ThemeConfig.defaultConfig;
   }
 
@@ -189,7 +190,7 @@ class ThemeConfigService {
       // 暂时返回空列表，等待CustomThemeService实现getAllThemes方法
       return [];
     } catch (e) {
-      debugPrint('ThemeConfigService: 获取主题列表失败: $e');
+      AppLogger.debug('ThemeConfigService: 获取主题列表失败: $e');
       return [];
     }
   }
@@ -222,7 +223,7 @@ class ThemeConfigService {
       }
       return themes.isNotEmpty ? themes.first : null;
     } catch (e) {
-      debugPrint('ThemeConfigService: 获取主题失败: $e');
+      AppLogger.debug('ThemeConfigService: 获取主题失败: $e');
       return null;
     }
   }
@@ -231,9 +232,9 @@ class ThemeConfigService {
   Future<void> saveCustomThemeToFile(Theme customTheme) async {
     try {
       await _customThemeService.saveCustomTheme(customTheme);
-      debugPrint('ThemeConfigService: 自定义主题已保存到文件');
+      AppLogger.debug('ThemeConfigService: 自定义主题已保存到文件');
     } catch (e) {
-      debugPrint('ThemeConfigService: 保存自定义主题失败: $e');
+      AppLogger.debug('ThemeConfigService: 保存自定义主题失败: $e');
       throw Exception('保存自定义主题失败: $e');
     }
   }
@@ -244,7 +245,7 @@ class ThemeConfigService {
       // 暂时返回null，等待CustomThemeService实现loadCustomTheme方法
       return null;
     } catch (e) {
-      debugPrint('ThemeConfigService: 加载自定义主题失败: $e');
+      AppLogger.debug('ThemeConfigService: 加载自定义主题失败: $e');
       return null;
     }
   }
@@ -257,7 +258,7 @@ class ThemeConfigService {
   /// 删除配置
   Future<void> deleteConfig() async {
     await _prefs.remove(_configKey);
-    debugPrint('ThemeConfigService: 主题配置已删除');
+    AppLogger.debug('ThemeConfigService: 主题配置已删除');
   }
 
   // ===== 私有方法 =====
@@ -288,7 +289,9 @@ class ThemeConfigService {
           (t) => t.code == config.selectedThemeCode,
         );
       } catch (e) {
-        debugPrint('ThemeConfigService: 未找到自定义主题 ${config.selectedThemeCode}');
+        AppLogger.debug(
+          'ThemeConfigService: 未找到自定义主题 ${config.selectedThemeCode}',
+        );
         return null;
       }
     }

@@ -1,10 +1,11 @@
 // lib/core/services/api_service.dart
 
 import 'dart:convert';
+
+import '../../core/utils/app_logger.dart';
 import 'dart:io';
 import 'package:camphor_forest/core/network/http_client.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../network/i_http_client.dart';
@@ -361,24 +362,24 @@ class ApiService {
   // 上传图片到 OSS，并返回最终访问 URL
   Future<String> uploadImage(String filePath, String fileName) async {
     try {
-      debugPrint('📸 开始上传图片: $fileName');
-      debugPrint('📄 本地文件路径: $filePath');
+      AppLogger.debug('📸 开始上传图片: $fileName');
+      AppLogger.debug('📄 本地文件路径: $filePath');
 
       // 1. 先签名
-      debugPrint('🔐 第1步：获取OSS签名...');
+      AppLogger.debug('🔐 第1步：获取OSS签名...');
       final sign = await _http.get<Map<String, dynamic>>(
         '${ApiConstants.upload}/signPost',
         converter: (d) => d as Map<String, dynamic>,
         queryParameters: {'type': 'IMAGE'},
       );
 
-      debugPrint('✅ 签名请求成功');
-      debugPrint('📋 签名响应: $sign');
+      AppLogger.debug('✅ 签名请求成功');
+      AppLogger.debug('📋 签名响应: $sign');
 
       final data = sign['data'] as Map<String, dynamic>;
       final keyPath = (data['keyPath'] as String);
       final ossFilePath = keyPath + fileName;
-      debugPrint('🗂️ OSS文件路径: $ossFilePath');
+      AppLogger.debug('🗂️ OSS文件路径: $ossFilePath');
 
       final policy = data['policy'] as String;
       final ak = data['q-ak'] as String;
@@ -386,31 +387,31 @@ class ApiService {
       final keyTime = data['q-key-time'] as String;
       final signature = data['q-signature'] as String;
 
-      debugPrint('🔑 签名参数解析完成:');
-      debugPrint('  - policy: ${policy.substring(0, 50)}...');
-      debugPrint('  - q-ak: $ak');
-      debugPrint('  - q-sign-algorithm: $algorithm');
-      debugPrint('  - q-key-time: $keyTime');
-      debugPrint('  - q-signature: $signature');
+      AppLogger.debug('🔑 签名参数解析完成:');
+      AppLogger.debug('  - policy: ${policy.substring(0, 50)}...');
+      AppLogger.debug('  - q-ak: $ak');
+      AppLogger.debug('  - q-sign-algorithm: $algorithm');
+      AppLogger.debug('  - q-key-time: $keyTime');
+      AppLogger.debug('  - q-signature: $signature');
 
       // 获取用户名
-      debugPrint('👤 第2步：获取用户信息...');
+      AppLogger.debug('👤 第2步：获取用户信息...');
       final userInfoStr = await _secureStorage.read(key: 'userInfo');
       String username = '';
       if (userInfoStr != null) {
         try {
           final userInfo = json.decode(userInfoStr) as Map<String, dynamic>;
           username = userInfo['name'] ?? '';
-          debugPrint('✅ 解析用户名成功: $username');
+          AppLogger.debug('✅ 解析用户名成功: $username');
         } catch (e) {
-          debugPrint('❌ 解析用户信息失败: $e');
+          AppLogger.debug('❌ 解析用户信息失败: $e');
         }
       } else {
-        debugPrint('⚠️ 未找到userInfo');
+        AppLogger.debug('⚠️ 未找到userInfo');
       }
 
       // 2. 构造 FormData
-      debugPrint('📦 第3步：构造FormData...');
+      AppLogger.debug('📦 第3步：构造FormData...');
       final formData = FormData.fromMap({
         'key': ossFilePath,
         'policy': policy,
@@ -422,10 +423,10 @@ class ApiService {
         'file': await MultipartFile.fromFile(filePath, filename: fileName),
       });
 
-      debugPrint('✅ FormData构造完成:');
-      debugPrint('  - key: $ossFilePath');
-      debugPrint('  - x-cos-meta-username: $username');
-      debugPrint('  - file: $fileName');
+      AppLogger.debug('✅ FormData构造完成:');
+      AppLogger.debug('  - key: $ossFilePath');
+      AppLogger.debug('  - x-cos-meta-username: $username');
+      AppLogger.debug('  - file: $fileName');
 
       // 3. 构造 Pic-Operations header
       final picOperations = json.encode({
@@ -439,13 +440,13 @@ class ApiService {
         ],
       });
 
-      debugPrint('🎨 Pic-Operations: $picOperations');
-      debugPrint('🌐 上传URL: ${ApiConstants.ossUrl}');
+      AppLogger.debug('🎨 Pic-Operations: $picOperations');
+      AppLogger.debug('🌐 上传URL: ${ApiConstants.ossUrl}');
 
       // 获取文件大小
       final file = File(filePath);
       final fileSize = await file.length();
-      debugPrint('📊 文件大小: ${(fileSize / 1000).toStringAsFixed(2)} KB');
+      AppLogger.debug('📊 文件大小: ${(fileSize / 1000).toStringAsFixed(2)} KB');
 
       // 3. 直接使用 Dio 进行文件上传
       final dio = (_http as dynamic).dio as Dio;
@@ -465,29 +466,29 @@ class ApiService {
         ),
         onSendProgress: (sent, total) {
           final progress = (sent / total * 100).toStringAsFixed(1);
-          debugPrint('📤 上传进度: $progress% ($sent/$total 字节)');
+          AppLogger.debug('📤 上传进度: $progress% ($sent/$total 字节)');
         },
       );
 
-      debugPrint('📬 上传响应状态码: ${response.statusCode}');
-      debugPrint('📬 上传响应headers: ${response.headers}');
-      debugPrint('📬 上传响应数据: ${response.data}');
+      AppLogger.debug('📬 上传响应状态码: ${response.statusCode}');
+      AppLogger.debug('📬 上传响应headers: ${response.headers}');
+      AppLogger.debug('📬 上传响应数据: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 204) {
         final finalUrl = '${ApiConstants.dataUrl}$ossFilePath';
-        debugPrint('✅ 上传成功！最终URL: $finalUrl');
+        AppLogger.debug('✅ 上传成功！最终URL: $finalUrl');
         return finalUrl;
       } else {
-        debugPrint('❌ 上传失败，状态码: ${response.statusCode}');
-        debugPrint('❌ 响应内容: ${response.data}');
+        AppLogger.debug('❌ 上传失败，状态码: ${response.statusCode}');
+        AppLogger.debug('❌ 响应内容: ${response.data}');
         throw HttpException(
           response.statusCode ?? 0,
           '图片上传失败: ${response.statusMessage}',
         );
       }
     } catch (e) {
-      debugPrint("❌ 图片上传过程中发生异常: $e");
-      debugPrint("📍 异常堆栈: ${StackTrace.current}");
+      AppLogger.debug("❌ 图片上传过程中发生异常: $e");
+      AppLogger.debug("📍 异常堆栈: ${StackTrace.current}");
       rethrow;
     }
   }

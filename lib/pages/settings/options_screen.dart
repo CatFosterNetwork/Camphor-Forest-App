@@ -3,6 +3,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -327,9 +329,9 @@ class OptionsScreen extends ConsumerWidget {
         if (result.success) {
           ToastService.show('配置下载成功', backgroundColor: Colors.green);
 
-          debugPrint('OptionsScreen: 配置下载成功，刷新所有配置 Provider');
+          AppLogger.debug('OptionsScreen: 配置下载成功，刷新所有配置 Provider');
           _refreshAllConfigProviders(ref);
-          debugPrint('OptionsScreen: 所有配置 Provider 刷新完成');
+          AppLogger.debug('OptionsScreen: 所有配置 Provider 刷新完成');
         } else {
           await ThemeAwareDialog.showAlertDialog(
             context,
@@ -404,7 +406,7 @@ class OptionsScreen extends ConsumerWidget {
         if (success) {
           // 刷新主题列表 provider，使其重新加载更新后的数据（包含云端图片URL）
           ref.invalidate(customThemeManagerProvider);
-          debugPrint('OptionsScreen: 已刷新主题列表 provider（包含云端图片URL）');
+          AppLogger.debug('OptionsScreen: 已刷新主题列表 provider（包含云端图片URL）');
 
           ToastService.show('配置上传成功', backgroundColor: Colors.green);
         } else {

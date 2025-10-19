@@ -1,6 +1,6 @@
 // lib/pages/index/providers/todo_provider.dart
 
-import 'package:flutter/foundation.dart';
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/todo_item.dart';
 import '../../../core/providers/core_providers.dart';
@@ -19,7 +19,7 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       final apiService = _ref.read(apiServiceProvider);
       final response = await apiService.getTodo();
 
-      debugPrint('getTodo API 响应: $response');
+      AppLogger.debug('getTodo API 响应: $response');
 
       // 处理API响应结构
       List<dynamic> todoData = [];
@@ -36,7 +36,7 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
           .map((item) => TodoItem.fromJson(item as Map<String, dynamic>))
           .toList();
 
-      debugPrint('解析的待办事项数量: ${todos.length}');
+      AppLogger.debug('解析的待办事项数量: ${todos.length}');
 
       // 按截止时间排序
       todos.sort((a, b) {
@@ -47,10 +47,10 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       });
 
       state = todos;
-      debugPrint('待办事项加载完成，状态更新: ${state.length} 项');
+      AppLogger.debug('待办事项加载完成，状态更新: ${state.length} 项');
     } catch (e) {
       // 如果API调用失败，显示空状态
-      debugPrint('加载待办事项失败: $e');
+      AppLogger.debug('加载待办事项失败: $e');
       state = [];
     }
   }
@@ -71,7 +71,7 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       final todo = state.firstWhere((t) => t.id == id);
       await apiService.modifyTodo(id, todo.toJson());
     } catch (e) {
-      debugPrint('更新待办事项失败: $e');
+      AppLogger.debug('更新待办事项失败: $e');
       // 如果API调用失败，回滚状态
       state = state.map((todo) {
         if (todo.id == id) {
@@ -95,7 +95,7 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       final apiService = _ref.read(apiServiceProvider);
       final response = await apiService.addTodo(newTodo.toJson());
 
-      debugPrint('addTodo API 响应: $response');
+      AppLogger.debug('addTodo API 响应: $response');
 
       // 如果成功，处理响应数据
       if (response['success'] == true) {
@@ -117,17 +117,17 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
           });
 
           state = updatedTodos;
-          debugPrint('待办事项添加成功，使用返回数据，当前总数: ${state.length}');
+          AppLogger.debug('待办事项添加成功，使用返回数据，当前总数: ${state.length}');
         } else {
           // 后端没有返回数据，重新加载所有待办事项
-          debugPrint('后端返回成功但无数据，重新加载待办事项列表');
+          AppLogger.debug('后端返回成功但无数据，重新加载待办事项列表');
           await _loadTodos();
         }
       } else {
         throw Exception('添加失败: ${response['msg'] ?? '未知错误'}');
       }
     } catch (e) {
-      debugPrint('添加待办事项失败: $e');
+      AppLogger.debug('添加待办事项失败: $e');
       // API调用失败，不添加到本地
       rethrow; // 重新抛出异常，让UI层处理
     }
@@ -145,7 +145,7 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       final apiService = _ref.read(apiServiceProvider);
       await apiService.modifyTodo(id, updatedTodo.toJson());
     } catch (e) {
-      debugPrint('修改待办事项失败: $e');
+      AppLogger.debug('修改待办事项失败: $e');
       // 如果API调用失败，回滚状态
       state = oldState;
     }
@@ -162,7 +162,7 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       final apiService = _ref.read(apiServiceProvider);
       await apiService.deleteTodo(id);
     } catch (e) {
-      debugPrint('删除待办事项失败: $e');
+      AppLogger.debug('删除待办事项失败: $e');
       // 如果API调用失败，回滚状态
       state = oldState;
     }
@@ -184,7 +184,7 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
       final todo = state.firstWhere((t) => t.id == id);
       await apiService.modifyTodo(id, todo.toJson());
     } catch (e) {
-      debugPrint('更新重要性失败: $e');
+      AppLogger.debug('更新重要性失败: $e');
       // 如果API调用失败，回滚状态
       state = oldState;
     }

@@ -76,6 +76,7 @@ dependencies:
   home_widget: ^0.8.1
   dynamic_color: ^1.7.0
   fluttertoast: ^9.0.0
+  logger: ^2.6.2
 
 dev_dependencies:
   flutter_test:

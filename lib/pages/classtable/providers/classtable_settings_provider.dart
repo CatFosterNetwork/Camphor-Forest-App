@@ -1,7 +1,7 @@
 import 'dart:async';
+
+import '../../../core/utils/app_logger.dart';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/custom_course_model.dart';
@@ -90,7 +90,7 @@ class ClassTableSettingsNotifier
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: '加载数据失败: $e');
-      debugPrint('❌ 加载课程表设置数据失败: $e');
+      AppLogger.debug('❌ 加载课程表设置数据失败: $e');
     }
   }
 
@@ -107,13 +107,15 @@ class ClassTableSettingsNotifier
     try {
       // 如果历史课表数量少于2个，尝试从成绩数据初始化
       if (state.historyClassTables.length < 2) {
-        debugPrint(
+        AppLogger.debug(
           '📅 延迟检查：历史课表数量为 ${state.historyClassTables.length}，尝试从成绩数据初始化',
         );
 
         final gradeState = _ref.read(gradeProvider);
         if (gradeState.gradeDetails.isNotEmpty) {
-          debugPrint('📅 发现成绩数据 ${gradeState.gradeDetails.length} 条，开始提取历史课表');
+          AppLogger.debug(
+            '📅 发现成绩数据 ${gradeState.gradeDetails.length} 条，开始提取历史课表',
+          );
 
           final gradeBasedTables = await _extractHistoryFromGradeDetails(
             gradeState.gradeDetails,
@@ -148,10 +150,10 @@ class ClassTableSettingsNotifier
             // 更新状态并保存
             state = state.copyWith(historyClassTables: finalTables);
             await _saveHistoryClassTablesData(finalTables);
-            debugPrint('📅 延迟初始化完成，现有 ${finalTables.length} 个历史课表');
+            AppLogger.debug('📅 延迟初始化完成，现有 ${finalTables.length} 个历史课表');
           }
         } else {
-          debugPrint('📅 延迟检查时仍无成绩数据，稍后再试');
+          AppLogger.debug('📅 延迟检查时仍无成绩数据，稍后再试');
           // 如果还是没有成绩数据，再延迟5秒重试一次
           Timer(const Duration(seconds: 5), () {
             _checkAndInitializeHistory();
@@ -159,7 +161,7 @@ class ClassTableSettingsNotifier
         }
       }
     } catch (e) {
-      debugPrint('❌ 延迟初始化历史课表失败: $e');
+      AppLogger.debug('❌ 延迟初始化历史课表失败: $e');
     }
   }
 
@@ -171,7 +173,7 @@ class ClassTableSettingsNotifier
       if ((previous?.gradeDetails.isEmpty ?? true) &&
           next.gradeDetails.isNotEmpty &&
           state.historyClassTables.length < 2) {
-        debugPrint('📅 检测到成绩数据加载完成，开始自动初始化历史课表');
+        AppLogger.debug('📅 检测到成绩数据加载完成，开始自动初始化历史课表');
         Future.microtask(() => _autoInitializeFromGrades(next.gradeDetails));
       }
     });
@@ -180,7 +182,7 @@ class ClassTableSettingsNotifier
   /// 从成绩数据自动初始化历史课表
   Future<void> _autoInitializeFromGrades(List<GradeDetail> gradeDetails) async {
     try {
-      debugPrint('📅 自动初始化：从 ${gradeDetails.length} 条成绩数据提取历史课表');
+      AppLogger.debug('📅 自动初始化：从 ${gradeDetails.length} 条成绩数据提取历史课表');
 
       final gradeBasedTables = await _extractHistoryFromGradeDetails(
         gradeDetails,
@@ -213,15 +215,17 @@ class ClassTableSettingsNotifier
         // 更新状态并保存
         state = state.copyWith(historyClassTables: finalTables);
         await _saveHistoryClassTablesData(finalTables);
-        debugPrint('📅 自动初始化完成，现有 ${finalTables.length} 个历史课表');
+        AppLogger.debug('📅 自动初始化完成，现有 ${finalTables.length} 个历史课表');
 
         // 输出历史课表列表
         for (final table in finalTables) {
-          debugPrint('   - ${table.displayName} (${table.xnm}-${table.xqm})');
+          AppLogger.debug(
+            '   - ${table.displayName} (${table.xnm}-${table.xqm})',
+          );
         }
       }
     } catch (e) {
-      debugPrint('❌ 自动初始化历史课表失败: $e');
+      AppLogger.debug('❌ 自动初始化历史课表失败: $e');
     }
   }
 
@@ -236,10 +240,10 @@ class ClassTableSettingsNotifier
             .toList();
 
         state = state.copyWith(customCourses: courses);
-        debugPrint('📚 加载了 ${courses.length} 门自定义课程');
+        AppLogger.debug('📚 加载了 ${courses.length} 门自定义课程');
       }
     } catch (e) {
-      debugPrint('❌ 加载自定义课程失败: $e');
+      AppLogger.debug('❌ 加载自定义课程失败: $e');
     }
   }
 
@@ -257,20 +261,22 @@ class ClassTableSettingsNotifier
                   HistoryClassTable.fromJson(json as Map<String, dynamic>),
             )
             .toList();
-        debugPrint('📅 从存储中加载了 ${historyTables.length} 个历史课表');
+        AppLogger.debug('📅 从存储中加载了 ${historyTables.length} 个历史课表');
         for (final table in historyTables) {
-          debugPrint('   - ${table.displayName} (${table.xnm}-${table.xqm})');
+          AppLogger.debug(
+            '   - ${table.displayName} (${table.xnm}-${table.xqm})',
+          );
         }
       } else {
-        debugPrint('📅 存储中没有历史课表数据');
+        AppLogger.debug('📅 存储中没有历史课表数据');
       }
 
       // 如果历史课表为空，或者只有1个（可能只有当前学期），尝试从成绩数据中初始化
       if (historyTables.isEmpty || historyTables.length == 1) {
-        debugPrint('📅 历史课表数量较少（${historyTables.length}个），尝试从成绩数据重新初始化');
+        AppLogger.debug('📅 历史课表数量较少（${historyTables.length}个），尝试从成绩数据重新初始化');
         final gradeBasedTables = await _initHistoryFromGrades();
         if (gradeBasedTables.isNotEmpty) {
-          debugPrint('📅 从成绩数据中获取了 ${gradeBasedTables.length} 个学期');
+          AppLogger.debug('📅 从成绩数据中获取了 ${gradeBasedTables.length} 个学期');
 
           // 合并现有和新提取的历史课表
           final existingMap = <String, HistoryClassTable>{};
@@ -282,7 +288,7 @@ class ClassTableSettingsNotifier
           }
 
           historyTables = existingMap.values.toList();
-          debugPrint('📅 合并后共有 ${historyTables.length} 个历史课表');
+          AppLogger.debug('📅 合并后共有 ${historyTables.length} 个历史课表');
           // 保存合并后的历史课表
           await _saveHistoryClassTablesData(historyTables);
         }
@@ -309,9 +315,9 @@ class ClassTableSettingsNotifier
       }
 
       state = state.copyWith(historyClassTables: historyTables);
-      debugPrint('📅 加载了 ${historyTables.length} 个历史课表');
+      AppLogger.debug('📅 加载了 ${historyTables.length} 个历史课表');
     } catch (e) {
-      debugPrint('❌ 加载历史课表失败: $e');
+      AppLogger.debug('❌ 加载历史课表失败: $e');
     }
   }
 
@@ -319,15 +325,15 @@ class ClassTableSettingsNotifier
   Future<List<HistoryClassTable>> _initHistoryFromGrades() async {
     try {
       final gradeState = _ref.read(gradeProvider);
-      debugPrint('📅 当前成绩数据条数: ${gradeState.gradeDetails.length}');
+      AppLogger.debug('📅 当前成绩数据条数: ${gradeState.gradeDetails.length}');
       if (gradeState.gradeDetails.isEmpty) {
-        debugPrint('📅 没有成绩数据，无法初始化历史课表');
+        AppLogger.debug('📅 没有成绩数据，无法初始化历史课表');
         return [];
       }
 
       return await _extractHistoryFromGradeDetails(gradeState.gradeDetails);
     } catch (e) {
-      debugPrint('❌ 从成绩数据初始化历史课表失败: $e');
+      AppLogger.debug('❌ 从成绩数据初始化历史课表失败: $e');
       return [];
     }
   }
@@ -344,7 +350,7 @@ class ClassTableSettingsNotifier
           semesterKeys.add('${grade.xnm}-${grade.xqm}');
         }
       }
-      debugPrint('📅 从成绩数据中提取到的学期: ${semesterKeys.toList()}');
+      AppLogger.debug('📅 从成绩数据中提取到的学期: ${semesterKeys.toList()}');
 
       // 转换为HistoryClassTable对象
       final List<HistoryClassTable> historyTables = [];
@@ -372,10 +378,10 @@ class ClassTableSettingsNotifier
         return bYear.compareTo(aYear);
       });
 
-      debugPrint('📅 从成绩数据中提取了 ${historyTables.length} 个学期');
+      AppLogger.debug('📅 从成绩数据中提取了 ${historyTables.length} 个学期');
       return historyTables;
     } catch (e) {
-      debugPrint('❌ 从成绩数据初始化历史课表失败: $e');
+      AppLogger.debug('❌ 从成绩数据初始化历史课表失败: $e');
       return [];
     }
   }
@@ -402,7 +408,7 @@ class ClassTableSettingsNotifier
         );
 
         final updatedTables = [currentSemester, ...existingTables];
-        debugPrint('📅 添加当前学期到历史记录: ${currentSemester.displayName}');
+        AppLogger.debug('📅 添加当前学期到历史记录: ${currentSemester.displayName}');
 
         // 不在这里保存，让调用方决定何时保存
         return updatedTables;
@@ -410,7 +416,7 @@ class ClassTableSettingsNotifier
 
       return existingTables;
     } catch (e) {
-      debugPrint('❌ 确保当前学期在历史记录中失败: $e');
+      AppLogger.debug('❌ 确保当前学期在历史记录中失败: $e');
       return existingTables;
     }
   }
@@ -425,9 +431,9 @@ class ClassTableSettingsNotifier
         key: _historyClassTablesKey,
         value: json.encode(jsonList),
       );
-      debugPrint('💾 保存了 ${historyTables.length} 个历史课表');
+      AppLogger.debug('💾 保存了 ${historyTables.length} 个历史课表');
     } catch (e) {
-      debugPrint('❌ 保存历史课表数据失败: $e');
+      AppLogger.debug('❌ 保存历史课表数据失败: $e');
     }
   }
 
@@ -441,9 +447,9 @@ class ClassTableSettingsNotifier
         key: _customCoursesKey,
         value: json.encode(jsonList),
       );
-      debugPrint('💾 保存了 ${state.customCourses.length} 门自定义课程');
+      AppLogger.debug('💾 保存了 ${state.customCourses.length} 门自定义课程');
     } catch (e) {
-      debugPrint('❌ 保存自定义课程失败: $e');
+      AppLogger.debug('❌ 保存自定义课程失败: $e');
       throw Exception('保存自定义课程失败');
     }
   }
@@ -458,9 +464,9 @@ class ClassTableSettingsNotifier
         key: _historyClassTablesKey,
         value: json.encode(jsonList),
       );
-      debugPrint('💾 保存了 ${state.historyClassTables.length} 个历史课表');
+      AppLogger.debug('💾 保存了 ${state.historyClassTables.length} 个历史课表');
     } catch (e) {
-      debugPrint('❌ 保存历史课表失败: $e');
+      AppLogger.debug('❌ 保存历史课表失败: $e');
       throw Exception('保存历史课表失败');
     }
   }
@@ -471,10 +477,10 @@ class ClassTableSettingsNotifier
       final updatedCourses = [...state.customCourses, course];
       state = state.copyWith(customCourses: updatedCourses);
       await _saveCustomCourses();
-      debugPrint('✅ 添加自定义课程: ${course.title}');
+      AppLogger.debug('✅ 添加自定义课程: ${course.title}');
     } catch (e) {
       state = state.copyWith(error: '添加课程失败: $e');
-      debugPrint('❌ 添加自定义课程失败: $e');
+      AppLogger.debug('❌ 添加自定义课程失败: $e');
       rethrow;
     }
   }
@@ -488,10 +494,10 @@ class ClassTableSettingsNotifier
 
       state = state.copyWith(customCourses: updatedCourses);
       await _saveCustomCourses();
-      debugPrint('✅ 更新自定义课程: ${updatedCourse.title}');
+      AppLogger.debug('✅ 更新自定义课程: ${updatedCourse.title}');
     } catch (e) {
       state = state.copyWith(error: '更新课程失败: $e');
-      debugPrint('❌ 更新自定义课程失败: $e');
+      AppLogger.debug('❌ 更新自定义课程失败: $e');
       rethrow;
     }
   }
@@ -505,10 +511,10 @@ class ClassTableSettingsNotifier
 
       state = state.copyWith(customCourses: updatedCourses);
       await _saveCustomCourses();
-      debugPrint('✅ 删除自定义课程: $courseId');
+      AppLogger.debug('✅ 删除自定义课程: $courseId');
     } catch (e) {
       state = state.copyWith(error: '删除课程失败: $e');
-      debugPrint('❌ 删除自定义课程失败: $e');
+      AppLogger.debug('❌ 删除自定义课程失败: $e');
       rethrow;
     }
   }
@@ -555,9 +561,9 @@ class ClassTableSettingsNotifier
 
       state = state.copyWith(historyClassTables: updatedTables);
       await _saveHistoryClassTables();
-      debugPrint('✅ 添加历史课表: $displayName');
+      AppLogger.debug('✅ 添加历史课表: $displayName');
     } catch (e) {
-      debugPrint('❌ 添加历史课表失败: $e');
+      AppLogger.debug('❌ 添加历史课表失败: $e');
     }
   }
 
@@ -586,13 +592,13 @@ class ClassTableSettingsNotifier
   /// 手动刷新历史课表（当成绩数据更新后调用）
   Future<void> refreshHistoryFromGrades() async {
     try {
-      debugPrint('🔄 开始刷新历史课表...');
+      AppLogger.debug('🔄 开始刷新历史课表...');
 
       // 首先刷新成绩数据
       try {
         await _ref.read(gradeProvider.notifier).refreshGrades();
       } catch (e) {
-        debugPrint('❌ 刷新成绩数据失败: $e');
+        AppLogger.debug('❌ 刷新成绩数据失败: $e');
       }
 
       // 从成绩数据获取历史课表
@@ -618,20 +624,20 @@ class ClassTableSettingsNotifier
         // 更新状态并保存
         state = state.copyWith(historyClassTables: finalTables);
         await _saveHistoryClassTablesData(finalTables);
-        debugPrint('🔄 已刷新历史课表，现有 ${finalTables.length} 个历史课表');
+        AppLogger.debug('🔄 已刷新历史课表，现有 ${finalTables.length} 个历史课表');
       } else {
-        debugPrint('📅 从成绩数据中未获取到历史课表，可能没有成绩数据');
+        AppLogger.debug('📅 从成绩数据中未获取到历史课表，可能没有成绩数据');
 
         // 如果没有历史课表，至少确保当前学期存在
         final currentTables = await _ensureCurrentSemesterInHistory([]);
         if (currentTables.isNotEmpty) {
           state = state.copyWith(historyClassTables: currentTables);
           await _saveHistoryClassTablesData(currentTables);
-          debugPrint('📅 添加了当前学期到历史课表');
+          AppLogger.debug('📅 添加了当前学期到历史课表');
         }
       }
     } catch (e) {
-      debugPrint('❌ 刷新历史课表失败: $e');
+      AppLogger.debug('❌ 刷新历史课表失败: $e');
     }
   }
 
@@ -659,16 +665,16 @@ class ClassTableSettingsNotifier
       }
 
       state = state.copyWith(historyClassTables: updatedTables);
-      debugPrint('✅ 手动添加当前学期到历史记录完成');
+      AppLogger.debug('✅ 手动添加当前学期到历史记录完成');
     } catch (e) {
-      debugPrint('❌ 手动添加当前学期失败: $e');
+      AppLogger.debug('❌ 手动添加当前学期失败: $e');
     }
   }
 
   /// 切换到指定学期
   Future<void> switchSemester(String xnm, String xqm) async {
     try {
-      debugPrint('🔄 开始切换学期: $xnm-$xqm');
+      AppLogger.debug('🔄 开始切换学期: $xnm-$xqm');
 
       // 更新当前学期状态
       state = state.copyWith(currentXnm: xnm, currentXqm: xqm);
@@ -679,7 +685,7 @@ class ClassTableSettingsNotifier
       final startMonth = xqm == '12' ? '02' : '08';
       final semesterStartDate = '$xnm-$startMonth-15';
 
-      debugPrint('📅 设置学期开始日期: $semesterStartDate');
+      AppLogger.debug('📅 设置学期开始日期: $semesterStartDate');
 
       // 获取并保存课表数据
       await _ref.read(classTableRepositoryProvider).fetchRemote(xnm, xqm);
@@ -687,9 +693,9 @@ class ClassTableSettingsNotifier
       // 刷新课表提供器以更新UI
       _ref.invalidate(classTableProvider((xnm: xnm, xqm: xqm)));
 
-      debugPrint('✅ 学期切换成功: $xnm-$xqm');
+      AppLogger.debug('✅ 学期切换成功: $xnm-$xqm');
     } catch (e) {
-      debugPrint('❌ 切换学期失败: $e');
+      AppLogger.debug('❌ 切换学期失败: $e');
       rethrow;
     }
   }

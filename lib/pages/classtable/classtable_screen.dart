@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/config/providers/theme_config_provider.dart';
@@ -188,7 +190,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
   void _changeWeek(int week) {
     setState(() {
       _currentWeek = week;
-      debugPrint('🗓️ 切换到第$_currentWeek周 (学期: $_currentXnm-$_currentXqm)');
+      AppLogger.debug('🗓️ 切换到第$_currentWeek周 (学期: $_currentXnm-$_currentXqm)');
     });
   }
 
@@ -234,7 +236,9 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
       _currentXnm = settings.currentXnm;
       _currentXqm = settings.currentXqm;
       _isInitialized = true;
-      debugPrint('📅 初始化学期: ${settings.currentXnm}-${settings.currentXqm}');
+      AppLogger.debug(
+        '📅 初始化学期: ${settings.currentXnm}-${settings.currentXqm}',
+      );
     }
 
     // 监听学期变化
@@ -252,7 +256,9 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
               _currentWeek = 1; // 重置周次
               _hasAutoCalculatedWeek = false; // 允许新学期重新计算周次
             });
-            debugPrint('📅 学期切换: ${next.currentXnm}-${next.currentXqm}，周次重置为1');
+            AppLogger.debug(
+              '📅 学期切换: ${next.currentXnm}-${next.currentXqm}，周次重置为1',
+            );
           }
         });
       }
@@ -290,13 +296,13 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
             _currentWeek = calculatedWeek.clamp(1, 30);
-            debugPrint('🕰️ 根据日期自动设置为第$_currentWeek周（当前学期，首次初始化）');
+            AppLogger.debug('🕰️ 根据日期自动设置为第$_currentWeek周（当前学期，首次初始化）');
           });
         });
       }
     } else {
       // 历史学期：如果是刚切换过来的（周次为1且未自动计算过），保持第1周
-      debugPrint('📅 历史学期 $_currentXnm-$_currentXqm，保持第$_currentWeek周');
+      AppLogger.debug('📅 历史学期 $_currentXnm-$_currentXqm，保持第$_currentWeek周');
     }
 
     if (_isLoading && !_isRefreshing) {
@@ -324,7 +330,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                       )).future,
                     );
                   } catch (err) {
-                    debugPrint('强制刷新课表失败: $err');
+                    AppLogger.debug('强制刷新课表失败: $err');
                   }
 
                   // 刷新普通provider
@@ -339,7 +345,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
         ),
       ),
       data: (table) {
-        debugPrint('成功加载课表数据');
+        AppLogger.debug('成功加载课表数据');
 
         // 当前周的课表数据
         final weekSchedule = table.getWeekSchedule(_currentWeek);
@@ -350,7 +356,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
             .values
             .expand((e) => e)
             .toList();
-        debugPrint('总课程数量: ${allCourses.length}');
+        AppLogger.debug('总课程数量: ${allCourses.length}');
 
         int maxWeek = 1;
 
@@ -371,14 +377,14 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
           maxWeek = 20; // 如果没有课程，默认设置为20周
         }
         maxWeek = maxWeek > 20 ? maxWeek : 20;
-        debugPrint('计算得到最大周次: $maxWeek');
+        AppLogger.debug('计算得到最大周次: $maxWeek');
 
         // 只有当前周超出范围时才调整
         if (_currentWeek > maxWeek) {
-          debugPrint('⚠️ 当前周 $_currentWeek 超出最大周次 $maxWeek，调整为: $maxWeek');
+          AppLogger.debug('⚠️ 当前周 $_currentWeek 超出最大周次 $maxWeek，调整为: $maxWeek');
           _currentWeek = maxWeek;
         } else if (_currentWeek < 1) {
-          debugPrint('⚠️ 当前周 $_currentWeek 小于1，调整为: 1');
+          AppLogger.debug('⚠️ 当前周 $_currentWeek 小于1，调整为: 1');
           _currentWeek = 1;
         }
 
@@ -387,10 +393,10 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
         if (weekSchedule != null) {
           // 从当前周的课表中提取所有课程
           courses = weekSchedule.values.expand((list) => list).toList();
-          debugPrint('当前第$_currentWeek周的课程数量: ${courses.length}');
+          AppLogger.debug('当前第$_currentWeek周的课程数量: ${courses.length}');
         } else {
           courses = [];
-          debugPrint('当前第$_currentWeek周没有课程');
+          AppLogger.debug('当前第$_currentWeek周没有课程');
         }
 
         // 更新小组件数据（仅在当前学期时更新）
@@ -495,7 +501,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                         FloatingActionButton(
                           heroTag: "settings",
                           onPressed: () {
-                            debugPrint('🔧 设置按钮被点击，显示操作菜单');
+                            AppLogger.debug('🔧 设置按钮被点击，显示操作菜单');
                             _showActionMenu(context);
                           },
                           backgroundColor:
@@ -581,7 +587,7 @@ class _ClassTableScreenState extends ConsumerState<ClassTableScreen>
                                         );
                                       }
                                     } catch (e) {
-                                      debugPrint('课表刷新失败: $e');
+                                      AppLogger.debug('课表刷新失败: $e');
                                       // Optionally show an error snackbar or change icon to an error icon
                                     } finally {
                                       // This block runs whether refresh succeeded or failed

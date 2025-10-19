@@ -2,6 +2,8 @@
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
@@ -260,14 +262,14 @@ class _TodoBriefState extends ConsumerState<TodoBrief>
             ? allTodos
             : allTodos.where((todo) => !todo.finished).toList();
 
-        debugPrint('TodoBrief: 原始待办事项数量: ${allTodos.length}');
-        debugPrint('TodoBrief: 过滤后待办事项数量: ${filteredTodos.length}');
-        debugPrint(
+        AppLogger.debug('TodoBrief: 原始待办事项数量: ${allTodos.length}');
+        AppLogger.debug('TodoBrief: 过滤后待办事项数量: ${filteredTodos.length}');
+        AppLogger.debug(
           'TodoBrief: showFinishedTodo配置: ${appConfig.showFinishedTodo}',
         );
 
         if (filteredTodos.isEmpty) {
-          debugPrint('TodoBrief: 显示空状态');
+          AppLogger.debug('TodoBrief: 显示空状态');
           return _buildEmptyState(subtitleColor);
         }
 

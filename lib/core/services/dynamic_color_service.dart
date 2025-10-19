@@ -3,6 +3,8 @@
 import 'dart:io';
 import 'package:camphor_forest/core/models/theme_model.dart' as theme_model;
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
@@ -42,13 +44,13 @@ class DynamicColorService {
           );
         }
       } catch (e) {
-        debugPrint('获取动态颜色失败: $e');
+        AppLogger.debug('获取动态颜色失败: $e');
         _isSupported = false;
       }
     }
 
     _isInitialized = true;
-    debugPrint('动态颜色服务初始化完成 - 支持状态: $_isSupported');
+    AppLogger.debug('动态颜色服务初始化完成 - 支持状态: $_isSupported');
   }
 
   /// 检查是否支持动态颜色
@@ -63,12 +65,12 @@ class DynamicColorService {
 
       // Android 12 对应 SDK 31
       final isAndroid12Plus = androidInfo.version.sdkInt >= 31;
-      debugPrint('Android SDK 版本: ${androidInfo.version.sdkInt}');
-      debugPrint('是否支持动态颜色: $isAndroid12Plus');
+      AppLogger.debug('Android SDK 版本: ${androidInfo.version.sdkInt}');
+      AppLogger.debug('是否支持动态颜色: $isAndroid12Plus');
 
       return isAndroid12Plus;
     } catch (e) {
-      debugPrint('检查 Android 版本失败: $e');
+      AppLogger.debug('检查 Android 版本失败: $e');
       return false;
     }
   }

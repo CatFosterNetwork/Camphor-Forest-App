@@ -1,7 +1,8 @@
 // lib/core/services/custom_theme_service.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/theme_model.dart';
 
@@ -24,7 +25,7 @@ class CustomThemeService {
           .map((themeJson) => Theme.fromJson(themeJson as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      debugPrint('获取自定义主题失败: $e');
+      AppLogger.debug('获取自定义主题失败: $e');
       return [];
     }
   }
@@ -50,7 +51,7 @@ class CustomThemeService {
 
       return await _prefs.setString(_customThemesKey, themesJsonString);
     } catch (e) {
-      debugPrint('保存自定义主题失败: $e');
+      AppLogger.debug('保存自定义主题失败: $e');
       return false;
     }
   }
@@ -69,7 +70,7 @@ class CustomThemeService {
 
       return await _prefs.setString(_customThemesKey, themesJsonString);
     } catch (e) {
-      debugPrint('删除自定义主题失败: $e');
+      AppLogger.debug('删除自定义主题失败: $e');
       return false;
     }
   }
@@ -83,7 +84,7 @@ class CustomThemeService {
       final themeJson = json.decode(themeJsonString) as Map<String, dynamic>;
       return Theme.fromJson(themeJson);
     } catch (e) {
-      debugPrint('获取当前自定义主题失败: $e');
+      AppLogger.debug('获取当前自定义主题失败: $e');
       return null;
     }
   }
@@ -94,7 +95,7 @@ class CustomThemeService {
       final themeJsonString = json.encode(theme.toJson());
       return await _prefs.setString(_currentCustomThemeKey, themeJsonString);
     } catch (e) {
-      debugPrint('设置当前自定义主题失败: $e');
+      AppLogger.debug('设置当前自定义主题失败: $e');
       return false;
     }
   }
@@ -104,7 +105,7 @@ class CustomThemeService {
     try {
       return await _prefs.remove(_currentCustomThemeKey);
     } catch (e) {
-      debugPrint('清除当前自定义主题失败: $e');
+      AppLogger.debug('清除当前自定义主题失败: $e');
       return false;
     }
   }
@@ -134,7 +135,7 @@ class CustomThemeService {
     try {
       return await _prefs.remove(_customThemesKey);
     } catch (e) {
-      debugPrint('清空所有自定义主题失败: $e');
+      AppLogger.debug('清空所有自定义主题失败: $e');
       return false;
     }
   }
@@ -142,7 +143,7 @@ class CustomThemeService {
   /// 替换所有自定义主题（用于从服务器下载配置）
   Future<bool> replaceAllCustomThemes(List<Theme> themes) async {
     try {
-      debugPrint('CustomThemeService: 准备替换所有自定义主题，共 ${themes.length} 个');
+      AppLogger.debug('CustomThemeService: 准备替换所有自定义主题，共 ${themes.length} 个');
 
       final themesJsonString = json.encode(
         themes.map((t) => t.toJson()).toList(),
@@ -151,20 +152,20 @@ class CustomThemeService {
       final result = await _prefs.setString(_customThemesKey, themesJsonString);
 
       if (result) {
-        debugPrint('CustomThemeService: ✅ 自定义主题保存成功');
+        AppLogger.debug('CustomThemeService: ✅ 自定义主题保存成功');
         // 验证保存结果
         final saved = await getCustomThemes();
-        debugPrint('CustomThemeService: 验证读取 - 共 ${saved.length} 个主题');
+        AppLogger.debug('CustomThemeService: 验证读取 - 共 ${saved.length} 个主题');
         for (final theme in saved) {
-          debugPrint('  - ${theme.title} (${theme.code})');
+          AppLogger.debug('  - ${theme.title} (${theme.code})');
         }
       } else {
-        debugPrint('CustomThemeService: ❌ 自定义主题保存失败');
+        AppLogger.debug('CustomThemeService: ❌ 自定义主题保存失败');
       }
 
       return result;
     } catch (e) {
-      debugPrint('CustomThemeService: 替换所有自定义主题失败: $e');
+      AppLogger.debug('CustomThemeService: 替换所有自定义主题失败: $e');
       return false;
     }
   }

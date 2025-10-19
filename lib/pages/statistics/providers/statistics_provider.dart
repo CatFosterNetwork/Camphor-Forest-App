@@ -2,6 +2,8 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/app_logger.dart';
+
 import '../../../core/providers/core_providers.dart';
 import '../../../core/providers/grade_provider.dart' as grade_provider;
 import '../../classtable/providers/classtable_providers.dart';
@@ -51,7 +53,9 @@ final courseStatisticsProvider =
 
         return null;
       } catch (e) {
-        print('Error getting course statistics for ${params.courseId}: $e');
+        AppLogger.error(
+          'Error getting course statistics for ${params.courseId}: $e',
+        );
         return null;
       }
     });
@@ -165,7 +169,7 @@ final semesterCoursesProvider =
         final gradeState = ref.read(grade_provider.gradeProvider);
         final gradesData = gradeState.gradeDetails;
 
-        print('📚 本地成绩数据数量: ${gradesData.length}');
+        AppLogger.debug('📚 本地成绩数据数量: ${gradesData.length}');
 
         // 3. 从课表和成绩中提取课程信息
         final Set<CourseInfo> courseSet = {};
@@ -185,11 +189,11 @@ final semesterCoursesProvider =
           }
         }
 
-        print('🎯 从成绩数据中找到 $matchingGrades 门课程');
+        AppLogger.debug('🎯 从成绩数据中找到 $matchingGrades 门课程');
 
         // 如果成绩数据中没有找到课程，再从课表数据中提取
         if (courseSet.isEmpty) {
-          print('⚠️ 成绩数据中没有该学期课程，尝试从课表中提取...');
+          AppLogger.warning('⚠️ 成绩数据中没有该学期课程，尝试从课表中提取...');
 
           await classTableAsync.when(
             data: (classTable) {
@@ -200,7 +204,7 @@ final semesterCoursesProvider =
                   .expand((e) => e)
                   .toList();
 
-              print('📚 课表中共有 ${courses.length} 门课程');
+              AppLogger.debug('📚 课表中共有 ${courses.length} 门课程');
 
               // 处理每门课程
               for (final course in courses) {
@@ -214,7 +218,7 @@ final semesterCoursesProvider =
                       (grade) => grade.kcmc == kcmc,
                     );
                     kch = matchingGrade.kch;
-                    print('🔗 课程 $kcmc 从成绩中匹配到 kch: $kch');
+                    AppLogger.debug('🔗 课程 $kcmc 从成绩中匹配到 kch: $kch');
                   } catch (e) {
                     // 没找到匹配的成绩，跳过
                   }
@@ -228,24 +232,24 @@ final semesterCoursesProvider =
                 }
               }
 
-              print('📋 从课表中提取了 ${courseSet.length} 门课程');
+              AppLogger.debug('📋 从课表中提取了 ${courseSet.length} 门课程');
             },
             loading: () {
-              print('⏳ 课表数据加载中...');
+              AppLogger.debug('⏳ 课表数据加载中...');
             },
             error: (error, stack) {
-              print('❌ 课表数据加载失败: $error');
+              AppLogger.error('❌ 课表数据加载失败: $error');
             },
           );
         }
 
         final result = courseSet.toList()
           ..sort((a, b) => a.name.compareTo(b.name));
-        print('✅ 最终课程列表: ${result.length} 门课程');
+        AppLogger.info('✅ 最终课程列表: ${result.length} 门课程');
 
         return result;
       } catch (e) {
-        print('Error getting semester courses: $e');
+        AppLogger.error('Error getting semester courses: $e');
         return [];
       }
     });

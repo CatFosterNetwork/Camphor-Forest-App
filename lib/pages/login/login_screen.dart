@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -89,11 +91,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final info = await plugin.deviceInfo;
         sysInfo = info.data.toString();
       }
-      debugPrint('🛠 DeviceInfo: $sysInfo');
+      AppLogger.debug('🛠 DeviceInfo: $sysInfo');
       if (!mounted) return;
       setState(() => _system = sysInfo);
     } catch (e, st) {
-      debugPrint('⚠️ _initDeviceInfo error: $e\n$st');
+      AppLogger.debug('⚠️ _initDeviceInfo error: $e\n$st');
     }
   }
 
@@ -104,16 +106,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _initIpInfo() async {
     try {
       final api = ref.read(apiServiceProvider);
-      debugPrint('🛠 Fetching IP info …');
+      AppLogger.debug('🛠 Fetching IP info …');
       final info = await api.getIpInfo();
-      debugPrint('✅ Got IP info: ip=${info.ip}, loc=${info.loc}');
+      AppLogger.debug('✅ Got IP info: ip=${info.ip}, loc=${info.loc}');
       if (!mounted) return;
       setState(() {
         _ip = info.ip;
         _loc = info.loc;
       });
     } catch (e, st) {
-      debugPrint('⚠️ _initIpInfo error: $e\n$st');
+      AppLogger.debug('⚠️ _initIpInfo error: $e\n$st');
       if (!mounted) return;
       setState(() {
         _ip = '获取失败';
@@ -165,7 +167,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // 根据登录结果处理
       if (ok) {
         // 登录成功，清除所有缓存的provider数据
-        debugPrint('🟢 登录成功，清除缓存并跳转到主页');
+        AppLogger.debug('🟢 登录成功，清除缓存并跳转到主页');
         // 清除课表相关的provider缓存
         ref.invalidate(classTableRepositoryProvider);
         // 清除成绩provider缓存
@@ -180,7 +182,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e, st) {
       // 处理异常情况
-      debugPrint('🔴 登录异常: $e\n$st');
+      AppLogger.debug('🔴 登录异常: $e\n$st');
       if (!mounted) return;
       _showToast('登录异常：${e.toString()}', Colors.red);
     } finally {

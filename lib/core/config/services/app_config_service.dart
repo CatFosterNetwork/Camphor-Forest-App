@@ -1,7 +1,8 @@
 // lib/core/config/services/app_config_service.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/app_config.dart';
 
@@ -24,18 +25,18 @@ class AppConfigService {
     try {
       // 如果有缓存且不强制刷新，直接返回缓存
       if (_cachedConfig != null && !forceRefresh) {
-        debugPrint('AppConfigService: 从缓存加载应用配置');
+        AppLogger.debug('AppConfigService: 从缓存加载应用配置');
         return _cachedConfig!;
       }
 
-      debugPrint('AppConfigService: 开始从磁盘加载应用配置...');
+      AppLogger.debug('AppConfigService: 开始从磁盘加载应用配置...');
 
       // 首先尝试加载新格式的配置
       final configJson = _prefs.getString(_configKey);
       if (configJson != null) {
         final config = AppConfig.fromJson(jsonDecode(configJson));
         _cachedConfig = config; // 更新缓存
-        debugPrint('AppConfigService: 成功加载应用配置');
+        AppLogger.debug('AppConfigService: 成功加载应用配置');
         return config;
       }
 
@@ -44,7 +45,7 @@ class AppConfigService {
       _cachedConfig = config; // 更新缓存
       return config;
     } catch (e) {
-      debugPrint('AppConfigService: 加载应用配置失败，使用默认配置: $e');
+      AppLogger.debug('AppConfigService: 加载应用配置失败，使用默认配置: $e');
       _cachedConfig = null; // 清除无效缓存
       return AppConfig.defaultConfig;
     }
@@ -57,9 +58,9 @@ class AppConfigService {
 
       final configJson = jsonEncode(config.toJson());
       await _prefs.setString(_configKey, configJson);
-      debugPrint('AppConfigService: 应用配置已保存（已更新缓存）');
+      AppLogger.debug('AppConfigService: 应用配置已保存（已更新缓存）');
     } catch (e) {
-      debugPrint('AppConfigService: 保存应用配置失败: $e');
+      AppLogger.debug('AppConfigService: 保存应用配置失败: $e');
       _cachedConfig = null; // 保存失败时清除缓存
       throw Exception('保存应用配置失败: $e');
     }
@@ -70,7 +71,7 @@ class AppConfigService {
     final currentConfig = await loadConfig();
     final updatedConfig = _updateConfigByKey(currentConfig, key, value);
     await saveConfig(updatedConfig);
-    debugPrint('AppConfigService: 更新配置项 $key = $value');
+    AppLogger.debug('AppConfigService: 更新配置项 $key = $value');
     return updatedConfig;
   }
 
@@ -83,14 +84,14 @@ class AppConfigService {
     }
 
     await saveConfig(currentConfig);
-    debugPrint('AppConfigService: 批量更新${updates.length}个配置项');
+    AppLogger.debug('AppConfigService: 批量更新${updates.length}个配置项');
     return currentConfig;
   }
 
   /// 重置为默认配置
   Future<AppConfig> resetToDefault() async {
     await saveConfig(AppConfig.defaultConfig);
-    debugPrint('AppConfigService: 已重置为默认配置');
+    AppLogger.debug('AppConfigService: 已重置为默认配置');
     return AppConfig.defaultConfig;
   }
 
@@ -102,7 +103,7 @@ class AppConfigService {
   /// 删除配置
   Future<void> deleteConfig() async {
     await _prefs.remove(_configKey);
-    debugPrint('AppConfigService: 应用配置已删除');
+    AppLogger.debug('AppConfigService: 应用配置已删除');
   }
 
   /// 获取特定类型的配置
@@ -132,15 +133,15 @@ class AppConfigService {
         // 保存到新的存储键
         await saveConfig(appConfig);
 
-        debugPrint('AppConfigService: 成功从旧配置迁移应用设置');
+        AppLogger.debug('AppConfigService: 成功从旧配置迁移应用设置');
         return appConfig;
       }
     } catch (e) {
-      debugPrint('AppConfigService: 旧配置迁移失败: $e');
+      AppLogger.debug('AppConfigService: 旧配置迁移失败: $e');
     }
 
     // 如果迁移失败，返回默认配置
-    debugPrint('AppConfigService: 使用默认应用配置');
+    AppLogger.debug('AppConfigService: 使用默认应用配置');
     return AppConfig.defaultConfig;
   }
 
@@ -188,7 +189,7 @@ class AppConfigService {
         return config.copyWith(autoRenewalCheckInService: value);
 
       default:
-        debugPrint('AppConfigService: 未知的配置键: $key');
+        AppLogger.debug('AppConfigService: 未知的配置键: $key');
         return config;
     }
   }

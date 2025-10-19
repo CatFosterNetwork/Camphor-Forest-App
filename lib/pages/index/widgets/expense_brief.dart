@@ -2,6 +2,8 @@
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
 import '../../../core/config/providers/theme_config_provider.dart';
@@ -31,7 +33,7 @@ class ExpenseBrief extends ConsumerWidget {
     final subtitleColor = darkMode ? Colors.white54 : Colors.black54;
 
     // 添加状态安全检查
-    debugPrint(
+    AppLogger.debug(
       'ExpenseBrief build: isBound=${expenseState.isBound}, isLoading=${expenseState.isLoading}, hasData=${expenseBrief != null}',
     );
 
@@ -473,12 +475,12 @@ class ExpenseBrief extends ConsumerWidget {
       builder: (context) => ExpenseBindDialog(
         onBind: (buildingId, roomCode) async {
           try {
-            debugPrint('ExpenseBrief: 开始绑定宿舍操作');
+            AppLogger.debug('ExpenseBrief: 开始绑定宿舍操作');
 
             // 先关闭对话框，避免状态更新时对话框还在显示
             if (context.mounted) {
               Navigator.of(context).pop();
-              debugPrint('ExpenseBrief: 对话框已关闭');
+              AppLogger.debug('ExpenseBrief: 对话框已关闭');
             }
 
             // 给UI一些时间稳定
@@ -488,7 +490,7 @@ class ExpenseBrief extends ConsumerWidget {
             await ref
                 .read(expenseProvider.notifier)
                 .bindDormitory(buildingId, roomCode);
-            debugPrint('ExpenseBrief: 绑定宿舍操作完成');
+            AppLogger.debug('ExpenseBrief: 绑定宿舍操作完成');
 
             // 再次延迟，确保状态完全更新
             await Future.delayed(const Duration(milliseconds: 300));
@@ -502,7 +504,7 @@ class ExpenseBrief extends ConsumerWidget {
               );
             }
           } catch (e) {
-            debugPrint('ExpenseBrief: 绑定失败: $e');
+            AppLogger.debug('ExpenseBrief: 绑定失败: $e');
 
             if (context.mounted) {
               ToastService.show(
@@ -514,7 +516,7 @@ class ExpenseBrief extends ConsumerWidget {
           }
         },
         onCancel: () {
-          debugPrint('ExpenseBrief: 用户取消绑定');
+          AppLogger.debug('ExpenseBrief: 用户取消绑定');
         },
       ),
     );

@@ -1,6 +1,8 @@
 // lib/pages/settings/profile_settings_page.dart
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -37,7 +39,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         setState(() {});
       }
     } catch (e) {
-      debugPrint('刷新用户数据失败: $e');
+      AppLogger.debug('刷新用户数据失败: $e');
     }
   }
 
@@ -454,8 +456,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     ImageSource source,
   ) async {
     try {
-      debugPrint('🎬 开始头像上传流程...');
-      debugPrint('📷 图片来源: ${source == ImageSource.camera ? "相机" : "相册"}');
+      AppLogger.debug('🎬 开始头像上传流程...');
+      AppLogger.debug('📷 图片来源: ${source == ImageSource.camera ? "相机" : "相册"}');
 
       // 1. 检查并请求权限
       final permissionChecker = ref.read(permissionCheckerProvider);
@@ -468,12 +470,12 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
       }
 
       if (!hasPermission) {
-        debugPrint('❌ 权限检查失败');
+        AppLogger.debug('❌ 权限检查失败');
         return;
       }
 
       // 2. 使用图片服务选择和处理图片（裁剪+压缩）
-      debugPrint('🖼️ 第2步：选择和处理图片...');
+      AppLogger.debug('🖼️ 第2步：选择和处理图片...');
       final imageService = ImageService();
       final processedImageFile = await imageService.pickAndProcessAvatar(
         source: source,
@@ -481,12 +483,12 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
       // 如果用户取消了裁剪，返回
       if (processedImageFile == null) {
-        debugPrint('❌ 用户取消了图片选择或裁剪');
+        AppLogger.debug('❌ 用户取消了图片选择或裁剪');
         return;
       }
 
-      debugPrint('✅ 图片处理完成: ${processedImageFile.path}');
-      debugPrint('📊 文件大小: ${await processedImageFile.length()} bytes');
+      AppLogger.debug('✅ 图片处理完成: ${processedImageFile.path}');
+      AppLogger.debug('📊 文件大小: ${await processedImageFile.length()} bytes');
 
       // 3. 开始上传，设置加载状态
       if (mounted) {
@@ -496,7 +498,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
       }
 
       // 3. 上传图片到OSS
-      debugPrint('☁️ 第3步：上传图片到OSS...');
+      AppLogger.debug('☁️ 第3步：上传图片到OSS...');
       final authState = ref.read(authProvider);
       final studentId = authState.user?.studentId ?? '';
 
@@ -511,10 +513,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         prefix: 'avatar',
       );
 
-      debugPrint('🎉 图片上传成功！头像URL: $avatarUrl');
+      AppLogger.debug('🎉 图片上传成功！头像URL: $avatarUrl');
 
       // 5. 更新用户信息到服务器
-      debugPrint('👤 第4步：更新用户信息到服务器...');
+      AppLogger.debug('👤 第4步：更新用户信息到服务器...');
       if (authState.user != null) {
         final updatedUser = authState.user!.copyWith(avatarUrl: avatarUrl);
         final userMap = {
@@ -528,24 +530,24 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           'avatarUrl': avatarUrl,
         };
 
-        debugPrint('📋 准备更新的用户信息:');
-        debugPrint('  - name: ${updatedUser.name}');
-        debugPrint('  - studentId: ${updatedUser.studentId}');
-        debugPrint('  - avatarUrl: $avatarUrl');
+        AppLogger.debug('📋 准备更新的用户信息:');
+        AppLogger.debug('  - name: ${updatedUser.name}');
+        AppLogger.debug('  - studentId: ${updatedUser.studentId}');
+        AppLogger.debug('  - avatarUrl: $avatarUrl');
 
         final apiService = ref.read(apiServiceProvider);
         final response = await apiService.modifyPersonalInfo(userMap);
-        debugPrint('📬 用户信息更新响应: $response');
+        AppLogger.debug('📬 用户信息更新响应: $response');
         final success = response['success'] ?? false;
-        debugPrint('✅ 用户信息更新${success ? "成功" : "失败"}');
+        AppLogger.debug('✅ 用户信息更新${success ? "成功" : "失败"}');
 
         // 6. API成功后，立即更新本地状态
-        debugPrint('🔄 第5步：更新本地状态...');
+        AppLogger.debug('🔄 第5步：更新本地状态...');
         if (success) {
           try {
             final currentUser = authState.user;
             if (currentUser != null) {
-              debugPrint('👤 当前用户: ${currentUser.name}');
+              AppLogger.debug('👤 当前用户: ${currentUser.name}');
 
               // 清除旧头像的缓存（包括所有可能的URL变体）
               final imageCacheService = ImageCacheService();
@@ -554,7 +556,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                 final oldUrl = currentUser.avatarUrl.split('?').first; // 去除时间戳
                 await imageCacheService.removeFromCache(oldUrl);
                 await imageCacheService.removeFromCache(currentUser.avatarUrl);
-                debugPrint('🗑️ 已清除旧头像缓存');
+                AppLogger.debug('🗑️ 已清除旧头像缓存');
               }
 
               // 清除新头像URL的缓存（以防万一）
@@ -568,15 +570,15 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               final updatedUser = currentUser.copyWith(
                 avatarUrl: avatarUrlWithTimestamp,
               );
-              debugPrint('🔄 更新用户头像URL（带时间戳）: $avatarUrlWithTimestamp');
+              AppLogger.debug('🔄 更新用户头像URL（带时间戳）: $avatarUrlWithTimestamp');
               ref.updateUser(updatedUser);
 
-              debugPrint('✅ 本地状态更新完成');
+              AppLogger.debug('✅ 本地状态更新完成');
             } else {
-              debugPrint('⚠️ 当前用户为null');
+              AppLogger.debug('⚠️ 当前用户为null');
             }
           } catch (e) {
-            debugPrint('❌ 更新用户状态失败: $e');
+            AppLogger.debug('❌ 更新用户状态失败: $e');
           }
 
           // 关闭加载状态
@@ -609,7 +611,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         }
       }
     } catch (e) {
-      debugPrint('❌ 上传过程发生错误: $e');
+      AppLogger.debug('❌ 上传过程发生错误: $e');
 
       // 关闭加载状态
       if (mounted) {
@@ -907,7 +909,7 @@ class _EditFieldDialogState extends ConsumerState<_EditFieldDialog> {
               ref.updateUser(updatedUser);
             }
           } catch (e) {
-            debugPrint('更新用户状态失败: $e');
+            AppLogger.debug('更新用户状态失败: $e');
           }
 
           Navigator.of(context).pop();

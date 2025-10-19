@@ -3,6 +3,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -73,12 +75,12 @@ class _IndexScreenState extends ConsumerState<IndexScreen> {
 
   /// 获取成绩数据
   void _fetchGradeData() {
-    debugPrint('IndexScreen: 开始获取成绩数据');
+    AppLogger.debug('IndexScreen: 开始获取成绩数据');
     final isAuthenticated = ref.read(isAuthenticatedProvider);
     if (isAuthenticated) {
       ref.read(gradeProvider.notifier).refreshGrades();
     } else {
-      debugPrint('IndexScreen: 用户未登录，跳过获取成绩数据');
+      AppLogger.debug('IndexScreen: 用户未登录，跳过获取成绩数据');
     }
   }
 

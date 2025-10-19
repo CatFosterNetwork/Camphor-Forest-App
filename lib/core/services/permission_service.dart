@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import '../widgets/theme_aware_dialog.dart';
@@ -117,7 +119,7 @@ class PermissionService {
       final permission = _getPermissionForType(permissionType);
       final status = await permission.status;
 
-      debugPrint('🔒 检查权限: ${permissionType.displayName}, 当前状态: $status');
+      AppLogger.debug('🔒 检查权限: ${permissionType.displayName}, 当前状态: $status');
 
       // 如果已授权，直接返回成功
       if (status.isGranted) {
@@ -149,7 +151,7 @@ class PermissionService {
 
       // 请求权限
       final result = await permission.request();
-      debugPrint('🔒 权限请求结果: ${permissionType.displayName} -> $result');
+      AppLogger.debug('🔒 权限请求结果: ${permissionType.displayName} -> $result');
 
       if (result.isGranted) {
         return PermissionRequestResult.granted();
@@ -165,7 +167,7 @@ class PermissionService {
         return PermissionRequestResult.denied('权限被拒绝');
       }
     } catch (e) {
-      debugPrint('🔒 权限请求异常: $e');
+      AppLogger.debug('🔒 权限请求异常: $e');
       return PermissionRequestResult.denied('权限请求异常: $e');
     }
   }
@@ -177,7 +179,7 @@ class PermissionService {
       final status = await permission.status;
       return status.isGranted;
     } catch (e) {
-      debugPrint('🔒 检查权限异常: $e');
+      AppLogger.debug('🔒 检查权限异常: $e');
       return false;
     }
   }

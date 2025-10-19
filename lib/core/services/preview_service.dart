@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
 import 'permission_service.dart';
 import 'package:path_provider/path_provider.dart';
@@ -178,7 +180,7 @@ class PreviewService {
       }
       return base64Decode(base64Data);
     } catch (e) {
-      debugPrint('Base64解码失败: $e');
+      AppLogger.debug('Base64解码失败: $e');
       return null;
     }
   }

@@ -3,6 +3,8 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -78,7 +80,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
 
       await webViewController.loadHtmlString(processedContent);
     } catch (e) {
-      debugPrint('Error loading user agreement: $e');
+      AppLogger.debug('Error loading user agreement: $e');
     }
   }
 
@@ -96,7 +98,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
 
       await webViewController.loadHtmlString(processedContent);
     } catch (e) {
-      debugPrint('Error reloading user agreement with theme: $e');
+      AppLogger.debug('Error reloading user agreement with theme: $e');
     }
   }
 
@@ -477,7 +479,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
         _showEmailFallback(url);
       }
     } catch (e) {
-      debugPrint('Error launching email: $e');
+      AppLogger.debug('Error launching email: $e');
       _showEmailFallback(url);
     }
   }
@@ -492,7 +494,7 @@ class _UserAgreementPageState extends ConsumerState<UserAgreementPage> {
         _showUrlFallback(url);
       }
     } catch (e) {
-      debugPrint('Error launching URL: $e');
+      AppLogger.debug('Error launching URL: $e');
       _showUrlFallback(url);
     }
   }

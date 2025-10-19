@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
@@ -35,9 +37,9 @@ class ImageCacheService {
       }
 
       _initialized = true;
-      debugPrint('🖼️ ImageCacheService initialized: ${_cacheDir.path}');
+      AppLogger.debug('🖼️ ImageCacheService initialized: ${_cacheDir.path}');
     } catch (e) {
-      debugPrint('❌ Failed to initialize ImageCacheService: $e');
+      AppLogger.debug('❌ Failed to initialize ImageCacheService: $e');
     }
   }
 
@@ -72,7 +74,7 @@ class ImageCacheService {
       final filePath = _getCacheFilePath(url);
       final file = File(filePath);
 
-      debugPrint('🌐 Downloading image: $url');
+      AppLogger.debug('🌐 Downloading image: $url');
 
       final response = await _dio.get(
         url,
@@ -86,11 +88,11 @@ class ImageCacheService {
         await file.writeAsBytes(response.data);
         _urlToFileMap[url] = filePath;
 
-        debugPrint('✅ Image cached: $filePath');
+        AppLogger.debug('✅ Image cached: $filePath');
         return filePath;
       }
     } catch (e) {
-      debugPrint('❌ Failed to download image $url: $e');
+      AppLogger.debug('❌ Failed to download image $url: $e');
     }
 
     return null;
@@ -131,7 +133,7 @@ class ImageCacheService {
     if (!_initialized) await initialize();
 
     if (await isCached(url)) {
-      debugPrint('🎯 Image already cached: $url');
+      AppLogger.debug('🎯 Image already cached: $url');
       return;
     }
 
@@ -161,12 +163,12 @@ class ImageCacheService {
 
           if (age > maxAge) {
             await file.delete();
-            debugPrint('🗑️ Deleted expired cache: ${file.path}');
+            AppLogger.debug('🗑️ Deleted expired cache: ${file.path}');
           }
         }
       }
     } catch (e) {
-      debugPrint('❌ Failed to clean cache: $e');
+      AppLogger.debug('❌ Failed to clean cache: $e');
     }
   }
 
@@ -187,7 +189,7 @@ class ImageCacheService {
 
       return totalSize;
     } catch (e) {
-      debugPrint('❌ Failed to get cache size: $e');
+      AppLogger.debug('❌ Failed to get cache size: $e');
       return 0;
     }
   }
@@ -208,9 +210,9 @@ class ImageCacheService {
       _urlToFileMap.clear();
       _imageProviderCache.clear();
 
-      debugPrint('🗑️ All image cache cleared');
+      AppLogger.debug('🗑️ All image cache cleared');
     } catch (e) {
-      debugPrint('❌ Failed to clear cache: $e');
+      AppLogger.debug('❌ Failed to clear cache: $e');
     }
   }
 
@@ -229,15 +231,15 @@ class ImageCacheService {
       _urlToFileMap.remove(url);
       _imageProviderCache.remove(url);
 
-      debugPrint('🗑️ Removed from cache: $url');
+      AppLogger.debug('🗑️ Removed from cache: $url');
     } catch (e) {
-      debugPrint('❌ Failed to remove from cache: $e');
+      AppLogger.debug('❌ Failed to remove from cache: $e');
     }
   }
 
   /// 预加载启动时需要的图片
   Future<void> preloadStartupImages() async {
-    debugPrint('🚀 Preloading startup images...');
+    AppLogger.debug('🚀 Preloading startup images...');
 
     // 预加载关于页面的QR码图片
     final qrImages = [
@@ -247,6 +249,6 @@ class ImageCacheService {
 
     await precacheImages(qrImages);
 
-    debugPrint('✅ Startup images preloaded');
+    AppLogger.debug('✅ Startup images preloaded');
   }
 }

@@ -2,12 +2,14 @@
 // 验证主题系统与用户提供的JSON格式完全兼容
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import '../models/theme_model.dart' as theme_model;
 
 class JsonCompatibilityValidator {
   /// 验证所有用户提供的主题JSON格式
   static Future<bool> validateAllThemes() async {
-    debugPrint('🧪 开始验证主题JSON兼容性...\n');
+    AppLogger.debug('🧪 开始验证主题JSON兼容性...\n');
 
     bool allPassed = true;
 
@@ -23,7 +25,7 @@ class JsonCompatibilityValidator {
     // 测试往返转换
     allPassed &= await _validateRoundTripConversion();
 
-    debugPrint(allPassed ? '✅ 所有主题JSON验证通过！' : '❌ 部分主题JSON验证失败！');
+    AppLogger.debug(allPassed ? '✅ 所有主题JSON验证通过！' : '❌ 部分主题JSON验证失败！');
     return allPassed;
   }
 
@@ -64,15 +66,15 @@ class JsonCompatibilityValidator {
       final backRGB = outputJson['backRGB'] as String;
       assert(backRGB.startsWith('rgb(') && backRGB.endsWith(')'));
 
-      debugPrint('✅ $themeName 验证通过');
-      debugPrint('  - 代码: ${theme.code}');
-      debugPrint('  - 颜色数量: ${theme.colorList.length}');
-      debugPrint('  - RGB输出: ${outputJson['backRGB']}');
+      AppLogger.debug('✅ $themeName 验证通过');
+      AppLogger.debug('  - 代码: ${theme.code}');
+      AppLogger.debug('  - 颜色数量: ${theme.colorList.length}');
+      AppLogger.debug('  - RGB输出: ${outputJson['backRGB']}');
 
       return true;
     } catch (e, stackTrace) {
-      debugPrint('❌ $themeName 验证失败: $e');
-      debugPrint('堆栈: $stackTrace');
+      AppLogger.debug('❌ $themeName 验证失败: $e');
+      AppLogger.debug('堆栈: $stackTrace');
       return false;
     }
   }
@@ -99,10 +101,10 @@ class JsonCompatibilityValidator {
       assert(theme.weekColor.toARGB32() == themeRoundTrip.weekColor.toARGB32());
       assert(theme.colorList.length == themeRoundTrip.colorList.length);
 
-      debugPrint('✅ 往返转换一致性验证通过');
+      AppLogger.debug('✅ 往返转换一致性验证通过');
       return true;
     } catch (e) {
-      debugPrint('❌ 往返转换一致性验证失败: $e');
+      AppLogger.debug('❌ 往返转换一致性验证失败: $e');
       return false;
     }
   }

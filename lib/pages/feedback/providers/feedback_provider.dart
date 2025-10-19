@@ -1,8 +1,9 @@
 // lib/pages/feedback/providers/feedback_provider.dart
 
 import 'dart:convert';
+
+import '../../../core/utils/app_logger.dart';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/api_service.dart';
@@ -63,14 +64,16 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
     String? status,
     String? query,
   }) async {
-    debugPrint('[Feedback] === 开始加载反馈列表 ===');
-    debugPrint('[Feedback] 参数: refresh=$refresh, status=$status, query=$query');
-    debugPrint(
+    AppLogger.debug('[Feedback] === 开始加载反馈列表 ===');
+    AppLogger.debug(
+      '[Feedback] 参数: refresh=$refresh, status=$status, query=$query',
+    );
+    AppLogger.debug(
       '[Feedback] 当前状态: currentPage=${state.currentPage}, hasMore=${state.hasMore}, isLoading=${state.isLoading}, feedbackCount=${state.feedbacks.length}',
     );
 
     if (state.isLoading) {
-      debugPrint('[Feedback] 已在加载中，提前返回');
+      AppLogger.debug('[Feedback] 已在加载中，提前返回');
       return;
     }
 
@@ -78,7 +81,7 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
     if (refresh ||
         status != state.currentStatus ||
         query != state.searchQuery) {
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 重置状态: refresh=$refresh, statusChanged=${status != state.currentStatus}, queryChanged=${query != state.searchQuery}',
       );
       state = state.copyWith(
@@ -89,7 +92,7 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
         searchQuery: query ?? state.searchQuery,
         error: null,
       );
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 状态重置后: currentPage=${state.currentPage}, hasMore=${state.hasMore}, feedbackCount=${state.feedbacks.length}',
       );
     }
@@ -103,7 +106,7 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
       // Use current page for request, then increment after success
       final pageToRequest = refresh ? 1 : state.currentPage;
 
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 加载反馈: refresh=$refresh, page=$pageToRequest, hasMore=${state.hasMore}',
       );
 
@@ -113,13 +116,13 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
         status: state.currentStatus,
       );
 
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] API响应已接收: ${response.toString().length > 200 ? "${response.toString().substring(0, 200)}..." : response.toString()}',
       );
 
       final feedbackResponse = FeedbackListResponse.fromJson(response);
 
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 解析响应: listCount=${feedbackResponse.list.length}, page=${feedbackResponse.page}, total=${feedbackResponse.total}, hasMore=${feedbackResponse.hasMore}',
       );
 
@@ -131,7 +134,7 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
           ? sortedFeedbacks
           : [...state.feedbacks, ...sortedFeedbacks];
 
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 数据合并: refresh=$refresh, existing=${state.feedbacks.length}, new=${sortedFeedbacks.length}, total=${allFeedbacks.length}',
       );
 
@@ -142,22 +145,22 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
         currentPage: pageToRequest + 1,
       );
 
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 状态已更新: currentPage=${state.currentPage}, hasMore=${state.hasMore}, totalFeedbacks=${state.feedbacks.length}',
       );
-      debugPrint('[Feedback] === 反馈列表加载完成 ===');
+      AppLogger.debug('[Feedback] === 反馈列表加载完成 ===');
     } catch (e) {
-      debugPrint('[Feedback] 加载反馈列表错误: $e');
+      AppLogger.debug('[Feedback] 加载反馈列表错误: $e');
       state = state.copyWith(isLoading: false, error: e.toString());
-      debugPrint('[Feedback] === 反馈列表加载完成 (错误) ===');
+      AppLogger.debug('[Feedback] === 反馈列表加载完成 (错误) ===');
     }
   }
 
   /// Load more feedbacks
   Future<void> loadMore() async {
-    debugPrint('[Feedback] === 开始加载更多 ===');
+    AppLogger.debug('[Feedback] === 开始加载更多 ===');
     if (state.hasMore && !state.isLoading) {
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 加载更多反馈: currentPage=${state.currentPage}, hasMore=${state.hasMore}',
       );
       // Use current state values to avoid triggering reset
@@ -167,18 +170,18 @@ class FeedbackNotifier extends StateNotifier<FeedbackState> {
         query: state.searchQuery,
       );
     } else {
-      debugPrint(
+      AppLogger.debug(
         '[Feedback] 跳过加载更多: hasMore=${state.hasMore}, isLoading=${state.isLoading}',
       );
     }
-    debugPrint('[Feedback] === 加载更多结束 ===');
+    AppLogger.debug('[Feedback] === 加载更多结束 ===');
   }
 
   /// Refresh feedbacks (full reset)
   Future<void> refresh() async {
-    debugPrint('[Feedback] === 开始刷新 ===');
+    AppLogger.debug('[Feedback] === 开始刷新 ===');
     await loadFeedbacks(refresh: true);
-    debugPrint('[Feedback] === 刷新结束 ===');
+    AppLogger.debug('[Feedback] === 刷新结束 ===');
   }
 
   /// Search feedbacks
@@ -408,7 +411,7 @@ class FeedbackDetailNotifier extends StateNotifier<FeedbackDetailState> {
 
       return true;
     } catch (e) {
-      debugPrint('[Feedback] 更新反馈可见性失败: $e');
+      AppLogger.debug('[Feedback] 更新反馈可见性失败: $e');
       state = state.copyWith(error: e.toString());
       return false;
     }

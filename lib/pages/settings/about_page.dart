@@ -1,6 +1,8 @@
 // lib/pages/settings/about_page.dart
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,7 +59,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       }
     } catch (e) {
       // 使用默认值
-      debugPrint('加载包信息失败: $e');
+      AppLogger.debug('加载包信息失败: $e');
     }
   }
 
@@ -797,7 +799,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         await Clipboard.setData(const ClipboardData(text: qrCodeScannerUrl));
       }
     } catch (e) {
-      debugPrint('打开二维码链接失败: $e');
+      AppLogger.debug('打开二维码链接失败: $e');
 
       // 备用方案：复制链接到剪贴板
       try {

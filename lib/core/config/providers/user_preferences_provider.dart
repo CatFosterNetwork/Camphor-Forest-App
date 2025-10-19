@@ -1,6 +1,6 @@
 // lib/core/config/providers/user_preferences_provider.dart
 
-import 'package:flutter/foundation.dart';
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/core_providers.dart';
@@ -36,10 +36,10 @@ class UserPreferencesNotifier
       state = const AsyncValue.loading();
       final preferences = await _service.loadPreferences();
       state = AsyncValue.data(preferences);
-      debugPrint('UserPreferencesNotifier: 偏好设置加载成功');
+      AppLogger.debug('UserPreferencesNotifier: 偏好设置加载成功');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      debugPrint('UserPreferencesNotifier: 偏好设置加载失败: $e');
+      AppLogger.debug('UserPreferencesNotifier: 偏好设置加载失败: $e');
     }
   }
 
@@ -48,7 +48,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.setLanguage(language);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 语言设置为 $language');
+      AppLogger.debug('UserPreferencesNotifier: 语言设置为 $language');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -59,7 +59,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.setNotifications(enabled);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 通知设置为 $enabled');
+      AppLogger.debug('UserPreferencesNotifier: 通知设置为 $enabled');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -70,7 +70,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.setVibration(enabled);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 震动设置为 $enabled');
+      AppLogger.debug('UserPreferencesNotifier: 震动设置为 $enabled');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -81,7 +81,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.setSound(enabled);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 声音设置为 $enabled');
+      AppLogger.debug('UserPreferencesNotifier: 声音设置为 $enabled');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -92,7 +92,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.setCacheLimit(limitMB);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 缓存限制设置为 ${limitMB}MB');
+      AppLogger.debug('UserPreferencesNotifier: 缓存限制设置为 ${limitMB}MB');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -103,7 +103,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.setDataSaver(enabled);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 数据保护模式设置为 $enabled');
+      AppLogger.debug('UserPreferencesNotifier: 数据保护模式设置为 $enabled');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -114,7 +114,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.markNotFirstLaunch();
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 标记为非首次启动');
+      AppLogger.debug('UserPreferencesNotifier: 标记为非首次启动');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -125,7 +125,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.markSynced();
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 标记为已同步');
+      AppLogger.debug('UserPreferencesNotifier: 标记为已同步');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -136,7 +136,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.setCustomData(key, value);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 设置自定义数据 $key');
+      AppLogger.debug('UserPreferencesNotifier: 设置自定义数据 $key');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -147,7 +147,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.removeCustomData(key);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 移除自定义数据 $key');
+      AppLogger.debug('UserPreferencesNotifier: 移除自定义数据 $key');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -158,7 +158,7 @@ class UserPreferencesNotifier
     try {
       final updatedPrefs = await _service.updateMultiplePreferences(updates);
       state = AsyncValue.data(updatedPrefs);
-      debugPrint('UserPreferencesNotifier: 批量更新${updates.length}个设置');
+      AppLogger.debug('UserPreferencesNotifier: 批量更新${updates.length}个设置');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -169,7 +169,7 @@ class UserPreferencesNotifier
     try {
       final defaultPrefs = await _service.resetToDefault();
       state = AsyncValue.data(defaultPrefs);
-      debugPrint('UserPreferencesNotifier: 重置为默认偏好设置');
+      AppLogger.debug('UserPreferencesNotifier: 重置为默认偏好设置');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }

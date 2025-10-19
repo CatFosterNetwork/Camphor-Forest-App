@@ -1,6 +1,7 @@
 // lib/core/providers/auth_provider.dart
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
@@ -51,7 +52,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// 异步初始化方法
   Future<void> _initialize() async {
-    debugPrint('🔐 开始初始化 AuthNotifier');
+    AppLogger.debug('🔐 开始初始化 AuthNotifier');
     state = state.copyWith(isLoading: true);
 
     try {
@@ -67,14 +68,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
             isLoading: false,
             initialized: true,
           );
-          debugPrint('🟢 用户已登录，状态已恢复: ${user.name}');
+          AppLogger.debug('🟢 用户已登录，状态已恢复: ${user.name}');
         } else {
           state = state.copyWith(isLoading: false, initialized: true);
-          debugPrint('🔴 用户信息获取失败');
+          AppLogger.debug('🔴 用户信息获取失败');
         }
       } else {
         state = state.copyWith(isLoading: false, initialized: true);
-        debugPrint('🔐 用户未登录');
+        AppLogger.debug('🔐 用户未登录');
       }
     } catch (e) {
       state = state.copyWith(
@@ -82,38 +83,38 @@ class AuthNotifier extends StateNotifier<AuthState> {
         initialized: true,
         errorMessage: '初始化失败：${e.toString()}',
       );
-      debugPrint('🔴 AuthNotifier 初始化失败: $e');
+      AppLogger.debug('🔴 AuthNotifier 初始化失败: $e');
     }
   }
 
   Future<bool> login(String account, String password) async {
-    debugPrint('🔐 开始登录: account=$account');
+    AppLogger.debug('🔐 开始登录: account=$account');
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      debugPrint('🔐 调用 UserService 登录方法');
+      AppLogger.debug('🔐 调用 UserService 登录方法');
       final success = await _userService.login(account, password);
-      debugPrint('🔐 登录结果: $success');
+      AppLogger.debug('🔐 登录结果: $success');
 
       if (!success) {
         state = state.copyWith(isLoading: false, errorMessage: '登录失败，请检查账号和密码');
-        debugPrint('🔴 登录失败: ${state.errorMessage}');
+        AppLogger.debug('🔴 登录失败: ${state.errorMessage}');
         return false;
       }
 
       // 尝试获取用户信息
       try {
-        debugPrint('🔐 尝试获取用户信息');
+        AppLogger.debug('🔐 尝试获取用户信息');
         final u = await _userService.getUser();
-        debugPrint('🔐 获取用户信息结果: ${u?.name ?? "未获取到用户信息"}');
+        AppLogger.debug('🔐 获取用户信息结果: ${u?.name ?? "未获取到用户信息"}');
 
         if (u != null) {
           state = state.copyWith(user: u, isLoading: false, initialized: true);
-          debugPrint('🟢 登录成功，用户信息已更新: $state');
+          AppLogger.debug('🟢 登录成功，用户信息已更新: $state');
           return true;
         } else {
           state = state.copyWith(isLoading: false, errorMessage: '获取用户信息失败');
-          debugPrint('🔴 获取用户信息失败: ${state.errorMessage}');
+          AppLogger.debug('🔴 获取用户信息失败: ${state.errorMessage}');
           return false;
         }
       } catch (e) {
@@ -121,7 +122,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           isLoading: false,
           errorMessage: '获取用户信息异常：${e.toString()}',
         );
-        debugPrint('🔴 获取用户信息异常: ${state.errorMessage}');
+        AppLogger.debug('🔴 获取用户信息异常: ${state.errorMessage}');
         return false;
       }
     } catch (e) {
@@ -129,23 +130,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
         isLoading: false,
         errorMessage: '登录异常：${e.toString()}',
       );
-      debugPrint('🔴 登录异常: ${state.errorMessage}');
+      AppLogger.debug('🔴 登录异常: ${state.errorMessage}');
       return false;
     }
   }
 
   Future<void> logout() async {
-    debugPrint('🔐 开始注销');
+    AppLogger.debug('🔐 开始注销');
     await _userService.logout();
     state = const AuthState();
-    debugPrint('🔐 注销完成');
+    AppLogger.debug('🔐 注销完成');
   }
 
   /// 刷新用户数据
   Future<void> refreshUser() async {
-    debugPrint('🔄 开始刷新用户数据');
+    AppLogger.debug('🔄 开始刷新用户数据');
     if (state.user == null) {
-      debugPrint('❌ 用户未登录，无法刷新');
+      AppLogger.debug('❌ 用户未登录，无法刷新');
       return;
     }
 
@@ -153,36 +154,36 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final user = await _userService.getUser();
       if (user != null) {
         state = state.copyWith(user: user);
-        debugPrint('🟢 用户数据刷新成功: ${user.name}');
+        AppLogger.debug('🟢 用户数据刷新成功: ${user.name}');
       } else {
         // API返回null时，尝试从本地缓存重新加载
-        debugPrint('⚠️ API返回null，尝试从本地缓存重新加载用户数据');
+        AppLogger.debug('⚠️ API返回null，尝试从本地缓存重新加载用户数据');
         final cachedUser = await _userService.loadUserFromCache();
         if (cachedUser != UserModel.empty()) {
           state = state.copyWith(user: cachedUser);
-          debugPrint('🔄 从本地缓存加载用户数据成功: ${cachedUser.name}');
+          AppLogger.debug('🔄 从本地缓存加载用户数据成功: ${cachedUser.name}');
         } else {
-          debugPrint('❌ 本地缓存也没有有效的用户数据');
+          AppLogger.debug('❌ 本地缓存也没有有效的用户数据');
         }
       }
     } catch (e) {
-      debugPrint('❌ 刷新用户数据异常: $e');
+      AppLogger.debug('❌ 刷新用户数据异常: $e');
       // 异常时也尝试从本地缓存加载
       try {
         final cachedUser = await _userService.loadUserFromCache();
         if (cachedUser != UserModel.empty()) {
           state = state.copyWith(user: cachedUser);
-          debugPrint('🔄 异常恢复：从本地缓存加载用户数据成功: ${cachedUser.name}');
+          AppLogger.debug('🔄 异常恢复：从本地缓存加载用户数据成功: ${cachedUser.name}');
         }
       } catch (cacheError) {
-        debugPrint('❌ 从本地缓存加载也失败: $cacheError');
+        AppLogger.debug('❌ 从本地缓存加载也失败: $cacheError');
       }
     }
   }
 
   /// 直接更新用户信息（用于本地修改后立即更新状态）
   void updateUser(UserModel user) {
-    debugPrint('🔄 直接更新用户状态: ${user.name}');
+    AppLogger.debug('🔄 直接更新用户状态: ${user.name}');
     state = state.copyWith(user: user);
     // 同时保存到本地缓存
     _userService.updateUserInfo(user);
@@ -200,7 +201,7 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
 
   @override
   Future<AuthState> build() async {
-    debugPrint('🔐 开始构建 AuthAsyncNotifier');
+    AppLogger.debug('🔐 开始构建 AuthAsyncNotifier');
 
     // 获取 UserService
     _userService = await ref.watch(userServiceProvider.future);
@@ -211,7 +212,7 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
 
   /// 初始化认证状态
   Future<AuthState> _initialize() async {
-    debugPrint('🔐 开始初始化认证状态');
+    AppLogger.debug('🔐 开始初始化认证状态');
 
     try {
       await _userService.initialize();
@@ -221,18 +222,18 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
       if (isLoggedIn) {
         final user = await _userService.getUser();
         if (user != null) {
-          debugPrint('🟢 用户已登录，状态已恢复: ${user.name}');
+          AppLogger.debug('🟢 用户已登录，状态已恢复: ${user.name}');
           return AuthState(user: user, isLoading: false, initialized: true);
         } else {
-          debugPrint('🔴 用户信息获取失败');
+          AppLogger.debug('🔴 用户信息获取失败');
           return const AuthState(isLoading: false, initialized: true);
         }
       } else {
-        debugPrint('🔐 用户未登录');
+        AppLogger.debug('🔐 用户未登录');
         return const AuthState(isLoading: false, initialized: true);
       }
     } catch (e) {
-      debugPrint('🔴 认证初始化失败: $e');
+      AppLogger.debug('🔴 认证初始化失败: $e');
       return AuthState(
         isLoading: false,
         initialized: true,
@@ -243,7 +244,7 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
 
   /// 登录
   Future<bool> login(String account, String password) async {
-    debugPrint('🔐 开始登录: account=$account');
+    AppLogger.debug('🔐 开始登录: account=$account');
 
     // 设置加载状态
     state = AsyncValue.data(
@@ -251,9 +252,9 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
     );
 
     try {
-      debugPrint('🔐 调用 UserService 登录方法');
+      AppLogger.debug('🔐 调用 UserService 登录方法');
       final success = await _userService.login(account, password);
-      debugPrint('🔐 登录结果: $success');
+      AppLogger.debug('🔐 登录结果: $success');
 
       if (!success) {
         state = AsyncValue.data(
@@ -262,27 +263,27 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
             errorMessage: '登录失败，请检查账号和密码',
           ),
         );
-        debugPrint('🔴 登录失败');
+        AppLogger.debug('🔴 登录失败');
         return false;
       }
 
       // 尝试获取用户信息
       try {
-        debugPrint('🔐 尝试获取用户信息');
+        AppLogger.debug('🔐 尝试获取用户信息');
         final u = await _userService.getUser();
-        debugPrint('🔐 获取用户信息结果: ${u?.name ?? "未获取到用户信息"}');
+        AppLogger.debug('🔐 获取用户信息结果: ${u?.name ?? "未获取到用户信息"}');
 
         if (u != null) {
           state = AsyncValue.data(
             AuthState(user: u, isLoading: false, initialized: true),
           );
-          debugPrint('🟢 登录成功，用户信息已更新');
+          AppLogger.debug('🟢 登录成功，用户信息已更新');
           return true;
         } else {
           state = AsyncValue.data(
             state.value!.copyWith(isLoading: false, errorMessage: '获取用户信息失败'),
           );
-          debugPrint('🔴 获取用户信息失败');
+          AppLogger.debug('🔴 获取用户信息失败');
           return false;
         }
       } catch (e) {
@@ -292,7 +293,7 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
             errorMessage: '获取用户信息异常：${e.toString()}',
           ),
         );
-        debugPrint('🔴 获取用户信息异常: $e');
+        AppLogger.debug('🔴 获取用户信息异常: $e');
         return false;
       }
     } catch (e) {
@@ -302,26 +303,26 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
           errorMessage: '登录异常：${e.toString()}',
         ),
       );
-      debugPrint('🔴 登录异常: $e');
+      AppLogger.debug('🔴 登录异常: $e');
       return false;
     }
   }
 
   /// 退出登录
   Future<void> logout() async {
-    debugPrint('🔐 开始注销');
+    AppLogger.debug('🔐 开始注销');
     await _userService.logout();
     state = const AsyncValue.data(AuthState());
-    debugPrint('🔐 注销完成');
+    AppLogger.debug('🔐 注销完成');
   }
 
   /// 刷新用户数据
   Future<void> refreshUser() async {
-    debugPrint('🔄 开始刷新用户数据');
+    AppLogger.debug('🔄 开始刷新用户数据');
 
     final currentState = state.value;
     if (currentState?.user == null) {
-      debugPrint('❌ 用户未登录，无法刷新');
+      AppLogger.debug('❌ 用户未登录，无法刷新');
       return;
     }
 
@@ -329,36 +330,36 @@ class AuthAsyncNotifier extends AsyncNotifier<AuthState> {
       final user = await _userService.getUser();
       if (user != null) {
         state = AsyncValue.data(currentState!.copyWith(user: user));
-        debugPrint('🟢 用户数据刷新成功: ${user.name}');
+        AppLogger.debug('🟢 用户数据刷新成功: ${user.name}');
       } else {
         // API返回null时，尝试从本地缓存重新加载
-        debugPrint('⚠️ API返回null，尝试从本地缓存重新加载用户数据');
+        AppLogger.debug('⚠️ API返回null，尝试从本地缓存重新加载用户数据');
         final cachedUser = await _userService.loadUserFromCache();
         if (cachedUser != UserModel.empty()) {
           state = AsyncValue.data(currentState!.copyWith(user: cachedUser));
-          debugPrint('🔄 从本地缓存加载用户数据成功: ${cachedUser.name}');
+          AppLogger.debug('🔄 从本地缓存加载用户数据成功: ${cachedUser.name}');
         } else {
-          debugPrint('❌ 本地缓存也没有有效的用户数据');
+          AppLogger.debug('❌ 本地缓存也没有有效的用户数据');
         }
       }
     } catch (e) {
-      debugPrint('❌ 刷新用户数据异常: $e');
+      AppLogger.debug('❌ 刷新用户数据异常: $e');
       // 异常时也尝试从本地缓存加载
       try {
         final cachedUser = await _userService.loadUserFromCache();
         if (cachedUser != UserModel.empty()) {
           state = AsyncValue.data(currentState!.copyWith(user: cachedUser));
-          debugPrint('🔄 异常恢复：从本地缓存加载用户数据成功: ${cachedUser.name}');
+          AppLogger.debug('🔄 异常恢复：从本地缓存加载用户数据成功: ${cachedUser.name}');
         }
       } catch (cacheError) {
-        debugPrint('❌ 从本地缓存加载也失败: $cacheError');
+        AppLogger.debug('❌ 从本地缓存加载也失败: $cacheError');
       }
     }
   }
 
   /// 直接更新用户信息
   void updateUser(UserModel user) {
-    debugPrint('🔄 直接更新用户状态: ${user.name}');
+    AppLogger.debug('🔄 直接更新用户状态: ${user.name}');
     final currentState = state.value;
     if (currentState != null) {
       state = AsyncValue.data(currentState.copyWith(user: user));

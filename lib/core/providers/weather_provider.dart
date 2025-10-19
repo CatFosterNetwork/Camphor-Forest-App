@@ -1,7 +1,8 @@
 // lib/core/providers/weather_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
+
+import '../../core/utils/app_logger.dart';
 
 import '../models/weather_model.dart';
 import '../services/weather_service.dart';
@@ -83,14 +84,14 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
           isLoading: false,
           lastUpdated: DateTime.now(),
         );
-        debugPrint('✅ 天气数据更新成功');
+        AppLogger.debug('✅ 天气数据更新成功');
       } else {
         state = state.copyWith(isLoading: false, errorMessage: '无法获取天气数据');
-        debugPrint('❌ 天气数据为空');
+        AppLogger.debug('❌ 天气数据为空');
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: '获取天气数据失败: $e');
-      debugPrint('❌ 天气数据获取异常: $e');
+      AppLogger.debug('❌ 天气数据获取异常: $e');
     }
   }
 

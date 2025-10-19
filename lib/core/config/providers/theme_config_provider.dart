@@ -3,6 +3,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -39,7 +41,7 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
   /// 初始化主题系统
   Future<void> _initializeThemeSystem() async {
     if (_isInitialized) {
-      debugPrint('ThemeConfigNotifier: 已经初始化过，跳过重复初始化');
+      AppLogger.debug('ThemeConfigNotifier: 已经初始化过，跳过重复初始化');
       return;
     }
 
@@ -55,12 +57,12 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
       }
 
       state = AsyncValue.data(config);
-      debugPrint(
+      AppLogger.debug(
         'ThemeConfigNotifier: 主题系统初始化成功，当前主题: ${config.selectedThemeCode}, 主题模式: ${config.themeMode}',
       );
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      debugPrint('ThemeConfigNotifier: 主题系统初始化失败: $e');
+      AppLogger.debug('ThemeConfigNotifier: 主题系统初始化失败: $e');
     }
   }
 
@@ -73,9 +75,9 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
       ); // 给CustomThemeManager一点时间初始化
 
       // 这里暂时先使用默认主题对象，等主题列表加载完成后会自动更新
-      debugPrint('ThemeConfigNotifier: 等待主题列表加载完成后自动同步主题对象');
+      AppLogger.debug('ThemeConfigNotifier: 等待主题列表加载完成后自动同步主题对象');
     } catch (e) {
-      debugPrint('ThemeConfigNotifier: 加载主题对象失败: $e');
+      AppLogger.debug('ThemeConfigNotifier: 加载主题对象失败: $e');
     }
   }
 
@@ -87,13 +89,13 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
   /// 设置主题模式
   Future<void> setThemeMode(String mode) async {
     try {
-      debugPrint('ThemeConfigNotifier: 准备设置主题模式为 $mode');
+      AppLogger.debug('ThemeConfigNotifier: 准备设置主题模式为 $mode');
       final updatedConfig = await _service.setThemeMode(mode);
       state = AsyncValue.data(updatedConfig);
-      debugPrint('ThemeConfigNotifier: 主题模式已设置为 $mode');
+      AppLogger.debug('ThemeConfigNotifier: 主题模式已设置为 $mode');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      debugPrint('ThemeConfigNotifier: 设置主题模式失败: $e');
+      AppLogger.debug('ThemeConfigNotifier: 设置主题模式失败: $e');
     }
   }
 
@@ -102,7 +104,7 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
     try {
       final updatedConfig = await _service.setDarkMode(isDark);
       state = AsyncValue.data(updatedConfig);
-      debugPrint('ThemeConfigNotifier: 深色模式设置为 $isDark');
+      AppLogger.debug('ThemeConfigNotifier: 深色模式设置为 $isDark');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -113,7 +115,7 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
     try {
       final updatedConfig = await _service.selectTheme(themeCode, theme);
       state = AsyncValue.data(updatedConfig);
-      debugPrint('ThemeConfigNotifier: 选择主题 $themeCode');
+      AppLogger.debug('ThemeConfigNotifier: 选择主题 $themeCode');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -124,7 +126,7 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
     try {
       final updatedConfig = await _service.setCustomTheme(customTheme);
       state = AsyncValue.data(updatedConfig);
-      debugPrint('ThemeConfigNotifier: 设置自定义主题');
+      AppLogger.debug('ThemeConfigNotifier: 设置自定义主题');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -155,7 +157,7 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
     try {
       final defaultConfig = await _service.resetToDefault();
       state = AsyncValue.data(defaultConfig);
-      debugPrint('ThemeConfigNotifier: 重置为默认配置');
+      AppLogger.debug('ThemeConfigNotifier: 重置为默认配置');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -163,7 +165,7 @@ class ThemeConfigNotifier extends StateNotifier<AsyncValue<ThemeConfig>> {
 
   /// 重新加载配置
   Future<void> reload() async {
-    debugPrint('ThemeConfigNotifier: 手动重新加载配置');
+    AppLogger.debug('ThemeConfigNotifier: 手动重新加载配置');
     _isInitialized = false; // 允许重新初始化
     await _loadConfig();
   }
@@ -253,7 +255,7 @@ final effectiveDarkModeProvider = Provider<bool>((ref) {
         final isDark = systemBrightness.when(
           data: (brightness) {
             final isDark = brightness == Brightness.dark;
-            debugPrint(
+            AppLogger.debug(
               '🌓 主题模式变化: System模式 -> 系统亮度=${brightness.name} -> isDark=$isDark',
             );
             return isDark;
@@ -262,26 +264,26 @@ final effectiveDarkModeProvider = Provider<bool>((ref) {
             final isDark =
                 WidgetsBinding.instance.platformDispatcher.platformBrightness ==
                 Brightness.dark;
-            debugPrint('🌓 主题模式变化: System模式 (加载中) -> isDark=$isDark');
+            AppLogger.debug('🌓 主题模式变化: System模式 (加载中) -> isDark=$isDark');
             return isDark;
           },
           error: (_, _) {
-            debugPrint('🌓 主题模式变化: System模式 (错误) -> 默认浅色模式');
+            AppLogger.debug('🌓 主题模式变化: System模式 (错误) -> 默认浅色模式');
             return false;
           },
         );
         return isDark;
       }
       final isDark = config.getEffectiveDarkMode();
-      debugPrint('🌓 主题模式变化: 手动模式(${config.themeMode}) -> isDark=$isDark');
+      AppLogger.debug('🌓 主题模式变化: 手动模式(${config.themeMode}) -> isDark=$isDark');
       return isDark;
     },
     loading: () {
-      debugPrint('🌓 主题模式变化: 配置加载中 -> 默认浅色模式');
+      AppLogger.debug('🌓 主题模式变化: 配置加载中 -> 默认浅色模式');
       return false;
     },
     error: (_, _) {
-      debugPrint('🌓 主题模式变化: 配置错误 -> 默认浅色模式');
+      AppLogger.debug('🌓 主题模式变化: 配置错误 -> 默认浅色模式');
       return false;
     },
   );
@@ -313,29 +315,29 @@ final currentThemeProvider = Provider<theme_model.Theme>((ref) {
           }
 
           // 如果找不到指定主题，返回默认的"你好西大人"主题
-          debugPrint('⚠️ 找不到主题 ${config.selectedThemeCode}，使用默认主题');
+          AppLogger.debug('⚠️ 找不到主题 ${config.selectedThemeCode}，使用默认主题');
           return _createDefaultTheme();
         },
         loading: () {
           // 主题列表加载中时，返回默认主题避免null
-          debugPrint('⚠️ 主题列表加载中，使用默认主题');
+          AppLogger.debug('⚠️ 主题列表加载中，使用默认主题');
           return _createDefaultTheme();
         },
         error: (error, _) {
           // 主题列表加载失败时，返回默认主题避免null
-          debugPrint('⚠️ 主题列表加载失败: $error，使用默认主题');
+          AppLogger.debug('⚠️ 主题列表加载失败: $error，使用默认主题');
           return _createDefaultTheme();
         },
       );
     },
     loading: () {
       // 配置加载中时，返回默认主题避免null
-      debugPrint('⚠️ 主题配置加载中，使用默认主题');
+      AppLogger.debug('⚠️ 主题配置加载中，使用默认主题');
       return _createDefaultTheme();
     },
     error: (error, _) {
       // 配置加载失败时，返回默认主题避免null
-      debugPrint('⚠️ 主题配置加载失败: $error，使用默认主题');
+      AppLogger.debug('⚠️ 主题配置加载失败: $error，使用默认主题');
       return _createDefaultTheme();
     },
   );
@@ -505,7 +507,7 @@ class SelectedThemeCodeNotifier extends StateNotifier<String> {
     // 只有在主题对象为空且不是自定义主题时，才尝试加载主题对象
     // 并且不能影响主题模式
     if (config.selectedTheme == null && config.selectedThemeCode != 'custom') {
-      debugPrint(
+      AppLogger.debug(
         'SelectedThemeCodeNotifier: 配置中缺少主题对象，延迟加载: ${config.selectedThemeCode}',
       );
       // 使用延迟加载，避免在初始化期间修改配置
@@ -517,7 +519,7 @@ class SelectedThemeCodeNotifier extends StateNotifier<String> {
 
   Future<void> _ensureThemeObjectLoaded(String themeCode) async {
     try {
-      debugPrint('SelectedThemeCodeNotifier: 开始加载主题对象: $themeCode');
+      AppLogger.debug('SelectedThemeCodeNotifier: 开始加载主题对象: $themeCode');
 
       // 等待主题列表加载完成
       final themes = await _ref.read(customThemesProvider.future);
@@ -530,34 +532,34 @@ class SelectedThemeCodeNotifier extends StateNotifier<String> {
         final currentConfig = await service.loadConfig();
         if (currentConfig.selectedTheme?.code != themeCode) {
           await service.selectTheme(themeCode, foundTheme.first);
-          debugPrint(
+          AppLogger.debug(
             'SelectedThemeCodeNotifier: 主题对象已加载: ${foundTheme.first.title} ($themeCode)',
           );
         } else {
-          debugPrint(
+          AppLogger.debug(
             'SelectedThemeCodeNotifier: 主题对象已存在: ${currentConfig.selectedTheme?.title} ($themeCode)',
           );
         }
       } else {
-        debugPrint('SelectedThemeCodeNotifier: 未找到主题 $themeCode');
+        AppLogger.debug('SelectedThemeCodeNotifier: 未找到主题 $themeCode');
         // 如果找不到指定主题，尝试加载第一个可用主题
         if (themes.isNotEmpty) {
           final firstTheme = themes.first;
           final service = _ref.read(themeConfigServiceProvider);
           await service.selectTheme(firstTheme.code, firstTheme);
           state = firstTheme.code;
-          debugPrint(
+          AppLogger.debug(
             'SelectedThemeCodeNotifier: 使用第一个可用主题: ${firstTheme.title} (${firstTheme.code})',
           );
         }
       }
     } catch (e) {
-      debugPrint('SelectedThemeCodeNotifier: 加载主题对象失败: $e');
+      AppLogger.debug('SelectedThemeCodeNotifier: 加载主题对象失败: $e');
     }
   }
 
   Future<void> setThemeCode(String themeCode) async {
-    debugPrint('SelectedThemeCodeNotifier: 开始切换主题到: $themeCode');
+    AppLogger.debug('SelectedThemeCodeNotifier: 开始切换主题到: $themeCode');
 
     final service = _ref.read(themeConfigServiceProvider);
 
@@ -569,22 +571,22 @@ class SelectedThemeCodeNotifier extends StateNotifier<String> {
       theme = foundTheme.isNotEmpty ? foundTheme.first : null;
 
       if (theme != null) {
-        debugPrint(
+        AppLogger.debug(
           'SelectedThemeCodeNotifier: ✅ 找到主题对象: ${theme.title} ($themeCode)',
         );
-        debugPrint(
+        AppLogger.debug(
           'SelectedThemeCodeNotifier: 主题颜色: backColor=${theme.backColor}, foregColor=${theme.foregColor}, colorList=${theme.colorList.length}个颜色',
         );
       } else {
-        debugPrint('SelectedThemeCodeNotifier: ⚠️ 未找到主题对象: $themeCode');
+        AppLogger.debug('SelectedThemeCodeNotifier: ⚠️ 未找到主题对象: $themeCode');
       }
     } catch (e) {
-      debugPrint('SelectedThemeCodeNotifier: ❌ 获取主题列表失败: $e');
+      AppLogger.debug('SelectedThemeCodeNotifier: ❌ 获取主题列表失败: $e');
     }
 
     // 选择主题
     await service.selectTheme(themeCode, theme);
-    debugPrint('SelectedThemeCodeNotifier: ✅ 主题切换完成: $themeCode');
+    AppLogger.debug('SelectedThemeCodeNotifier: ✅ 主题切换完成: $themeCode');
 
     final newConfig = await service.loadConfig();
 
@@ -595,7 +597,7 @@ class SelectedThemeCodeNotifier extends StateNotifier<String> {
     // 更新自己的 state
     state = newConfig.selectedThemeCode;
 
-    debugPrint('SelectedThemeCodeNotifier: ✅ 已更新配置（无闪烁）');
+    AppLogger.debug('SelectedThemeCodeNotifier: ✅ 已更新配置（无闪烁）');
   }
 }
 
@@ -622,12 +624,12 @@ class CustomThemeManager
       final customThemes = await _service.getCustomThemes();
       final presetThemes = await _loadPresetThemes();
 
-      debugPrint('CustomThemeManager: 加载主题列表');
-      debugPrint('  - 预设主题: ${presetThemes.length} 个');
-      debugPrint('  - 自定义主题: ${customThemes.length} 个');
+      AppLogger.debug('CustomThemeManager: 加载主题列表');
+      AppLogger.debug('  - 预设主题: ${presetThemes.length} 个');
+      AppLogger.debug('  - 自定义主题: ${customThemes.length} 个');
 
       for (final theme in customThemes) {
-        debugPrint('    * ${theme.title} (${theme.code})');
+        AppLogger.debug('    * ${theme.title} (${theme.code})');
       }
 
       // 检查是否支持系统动态主题（Android 12+）
@@ -643,7 +645,7 @@ class CustomThemeManager
         final systemTheme = DynamicColorService().createSystemTheme();
         if (systemTheme != null) {
           allThemes.insert(0, systemTheme);
-          debugPrint('CustomThemeManager: ✅ 添加系统动态主题（Android 12+）');
+          AppLogger.debug('CustomThemeManager: ✅ 添加系统动态主题（Android 12+）');
         }
       }
 
@@ -652,9 +654,9 @@ class CustomThemeManager
 
       state = AsyncValue.data(allThemes);
 
-      debugPrint('CustomThemeManager: ✅ 主题加载完成，共 ${allThemes.length} 个');
+      AppLogger.debug('CustomThemeManager: ✅ 主题加载完成，共 ${allThemes.length} 个');
     } catch (e, st) {
-      debugPrint('CustomThemeManager: ❌ 加载主题失败: $e');
+      AppLogger.debug('CustomThemeManager: ❌ 加载主题失败: $e');
       state = AsyncValue.error(e, st);
     }
   }
@@ -711,10 +713,10 @@ class CustomThemeManager
       // 重新加载主题列表（触发响应式更新）
       await loadThemes();
 
-      debugPrint('CustomThemeManager: ✅ 已删除主题 $themeCode');
+      AppLogger.debug('CustomThemeManager: ✅ 已删除主题 $themeCode');
       return true;
     } catch (e) {
-      debugPrint('CustomThemeManager: ❌ 删除主题失败: $e');
+      AppLogger.debug('CustomThemeManager: ❌ 删除主题失败: $e');
       return false;
     }
   }
@@ -727,10 +729,10 @@ class CustomThemeManager
       // 重新加载主题列表（触发响应式更新）
       await loadThemes();
 
-      debugPrint('CustomThemeManager: ✅ 已保存主题 ${theme.title}');
+      AppLogger.debug('CustomThemeManager: ✅ 已保存主题 ${theme.title}');
       return true;
     } catch (e) {
-      debugPrint('CustomThemeManager: ❌ 保存主题失败: $e');
+      AppLogger.debug('CustomThemeManager: ❌ 保存主题失败: $e');
       return false;
     }
   }

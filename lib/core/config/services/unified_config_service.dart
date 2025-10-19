@@ -1,7 +1,8 @@
 // lib/core/config/services/unified_config_service.dart
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/app_config.dart';
@@ -71,7 +72,7 @@ class UnifiedConfigService {
   /// 优先级: API数据 → 缓存数据 → 默认配置
   Future<ConfigResult> initialize({Map<String, dynamic>? apiData}) async {
     try {
-      debugPrint('UnifiedConfigService: 开始配置初始化...');
+      AppLogger.debug('UnifiedConfigService: 开始配置初始化...');
 
       Map<String, dynamic>? dataToUse;
       String dataSource;
@@ -106,11 +107,11 @@ class UnifiedConfigService {
       }
 
       await _recordConfigSource(dataSource);
-      debugPrint('UnifiedConfigService: 配置初始化完成 (来源: $dataSource)');
+      AppLogger.debug('UnifiedConfigService: 配置初始化完成 (来源: $dataSource)');
 
       return result;
     } catch (e, st) {
-      debugPrint('UnifiedConfigService: 配置初始化失败: $e');
+      AppLogger.debug('UnifiedConfigService: 配置初始化失败: $e');
       return ConfigResult.failure(e, st);
     }
   }
@@ -123,7 +124,7 @@ class UnifiedConfigService {
 
     // 打印配置统计信息
     final stats = ApiConfigDistributor.getConfigStats(repairedData);
-    debugPrint('UnifiedConfigService: 配置统计 - ${stats.toString()}');
+    AppLogger.debug('UnifiedConfigService: 配置统计 - ${stats.toString()}');
 
     final distributionResult = ApiConfigDistributor.distributeApiData(
       repairedData,
@@ -141,16 +142,18 @@ class UnifiedConfigService {
     // 保存自定义主题到 CustomThemeService
     try {
       await _customThemeService.replaceAllCustomThemes(customThemes);
-      debugPrint('UnifiedConfigService: 已替换所有自定义主题，共 ${customThemes.length} 个');
+      AppLogger.debug(
+        'UnifiedConfigService: 已替换所有自定义主题，共 ${customThemes.length} 个',
+      );
       if (customThemes.isNotEmpty) {
         for (final theme in customThemes) {
-          debugPrint('  - ${theme.title} (${theme.code})');
+          AppLogger.debug('  - ${theme.title} (${theme.code})');
         }
       } else {
-        debugPrint('  - 服务器配置中没有自定义主题，已清空本地自定义主题');
+        AppLogger.debug('  - 服务器配置中没有自定义主题，已清空本地自定义主题');
       }
     } catch (e) {
-      debugPrint('UnifiedConfigService: 替换自定义主题失败: $e');
+      AppLogger.debug('UnifiedConfigService: 替换自定义主题失败: $e');
     }
 
     await Future.wait([
@@ -284,39 +287,41 @@ class UnifiedConfigService {
       nestedSyncData['_uploadSource'] = 'flutter';
       nestedSyncData['_uploadTime'] = DateTime.now().toIso8601String();
 
-      debugPrint('UnifiedConfigService: 上传 ${customThemes.length} 个自定义主题');
+      AppLogger.debug('UnifiedConfigService: 上传 ${customThemes.length} 个自定义主题');
 
       // 上传配置，返回处理后的数据（图片URL已替换）
-      debugPrint('UnifiedConfigService: 📤 开始上传配置...');
+      AppLogger.debug('UnifiedConfigService: 📤 开始上传配置...');
       final processedData = await _syncService.uploadConfigs(nestedSyncData);
-      debugPrint('UnifiedConfigService: ✅ 配置上传完成');
+      AppLogger.debug('UnifiedConfigService: ✅ 配置上传完成');
 
       // 将上传后的配置（包含图片URL）更新回本地
       if (processedData['themeConfig'] != null) {
         final themeConfigData =
             processedData['themeConfig'] as Map<String, dynamic>;
 
-        debugPrint('UnifiedConfigService: 📝 准备保存处理后的配置到本地...');
+        AppLogger.debug('UnifiedConfigService: 📝 准备保存处理后的配置到本地...');
 
         // 1. 保存 ThemeConfig（不包含 customThemes）
         final updatedThemeConfig = ThemeConfig.fromJson(themeConfigData);
         await _themeConfigService.saveConfig(updatedThemeConfig);
-        debugPrint('UnifiedConfigService: ✅ 已更新本地主题配置（图片URL）');
+        AppLogger.debug('UnifiedConfigService: ✅ 已更新本地主题配置（图片URL）');
 
         // 2. 单独保存自定义主题到 CustomThemeService
         if (themeConfigData['theme-customThemes'] != null) {
           final customThemesData =
               themeConfigData['theme-customThemes'] as List;
-          debugPrint(
+          AppLogger.debug(
             'UnifiedConfigService: 📋 准备保存 ${customThemesData.length} 个自定义主题...',
           );
 
           // 打印每个主题的图片URL
           for (int i = 0; i < customThemesData.length; i++) {
             final themeJson = customThemesData[i];
-            debugPrint('UnifiedConfigService: 主题 $i: ${themeJson['title']}');
-            debugPrint('  - img: ${themeJson['img']}');
-            debugPrint(
+            AppLogger.debug(
+              'UnifiedConfigService: 主题 $i: ${themeJson['title']}',
+            );
+            AppLogger.debug('  - img: ${themeJson['img']}');
+            AppLogger.debug(
               '  - indexBackgroundImg: ${themeJson['indexBackgroundImg']}',
             );
           }
@@ -325,19 +330,21 @@ class UnifiedConfigService {
               .map((json) => theme_model.Theme.fromJson(json))
               .toList();
           await _customThemeService.replaceAllCustomThemes(customThemes);
-          debugPrint(
+          AppLogger.debug(
             'UnifiedConfigService: ✅ 已更新本地自定义主题列表，共 ${customThemes.length} 个（图片URL）',
           );
         }
       } else {
-        debugPrint('UnifiedConfigService: ⚠️ processedData 中没有 themeConfig');
+        AppLogger.debug(
+          'UnifiedConfigService: ⚠️ processedData 中没有 themeConfig',
+        );
       }
 
       await _userPreferencesService.markSynced();
-      debugPrint('UnifiedConfigService: 配置同步到服务器成功（嵌套格式）');
+      AppLogger.debug('UnifiedConfigService: 配置同步到服务器成功（嵌套格式）');
       return true;
     } catch (e) {
-      debugPrint('UnifiedConfigService: 配置同步失败: $e');
+      AppLogger.debug('UnifiedConfigService: 配置同步失败: $e');
       rethrow;
     }
   }
@@ -359,7 +366,7 @@ class UnifiedConfigService {
 
       final hasChanges = appConfigChanged || themeConfigChanged;
 
-      debugPrint(
+      AppLogger.debug(
         'UnifiedConfigService: 本地配置检查 - '
         'AppConfig已修改: $appConfigChanged, '
         'ThemeConfig已修改: $themeConfigChanged, '
@@ -368,7 +375,7 @@ class UnifiedConfigService {
 
       return hasChanges;
     } catch (e) {
-      debugPrint('UnifiedConfigService: 检查本地配置失败: $e');
+      AppLogger.debug('UnifiedConfigService: 检查本地配置失败: $e');
       return false; // 出错时假定无修改，允许下载
     }
   }
@@ -383,7 +390,7 @@ class UnifiedConfigService {
         return await _initializeWithDefaults();
       }
     } catch (e, st) {
-      debugPrint('UnifiedConfigService: 从服务器下载配置失败: $e');
+      AppLogger.debug('UnifiedConfigService: 从服务器下载配置失败: $e');
       return ConfigResult.failure(e, st);
     }
   }
@@ -400,7 +407,7 @@ class UnifiedConfigService {
         DateTime.now().millisecondsSinceEpoch,
       );
     } catch (e) {
-      debugPrint('UnifiedConfigService: 缓存API数据失败: $e');
+      AppLogger.debug('UnifiedConfigService: 缓存API数据失败: $e');
     }
   }
 
@@ -411,7 +418,7 @@ class UnifiedConfigService {
       if (jsonData == null) return null;
       return Map<String, dynamic>.from(jsonDecode(jsonData));
     } catch (e) {
-      debugPrint('UnifiedConfigService: 获取缓存数据失败: $e');
+      AppLogger.debug('UnifiedConfigService: 获取缓存数据失败: $e');
       return null;
     }
   }
@@ -465,7 +472,7 @@ class UnifiedConfigService {
   Future<void> clearCache() async {
     await _prefs.remove(_lastApiDataKey);
     await _prefs.remove('${_lastApiDataKey}_timestamp');
-    debugPrint('UnifiedConfigService: 缓存已清除');
+    AppLogger.debug('UnifiedConfigService: 缓存已清除');
   }
 }
 

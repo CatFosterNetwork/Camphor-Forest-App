@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../pages/classtable/providers/classtable_providers.dart';
 import '../../pages/classtable/providers/classtable_settings_provider.dart';
@@ -20,7 +20,7 @@ class WidgetUpdateListener {
       // 当学期切换时，尝试更新小组件
       if (previous?.currentXnm != next.currentXnm ||
           previous?.currentXqm != next.currentXqm) {
-        debugPrint('🔔 检测到学期切换，准备更新小组件');
+        AppLogger.debug('🔔 检测到学期切换，准备更新小组件');
         _updateWidget(ref, next.currentXnm, next.currentXqm);
       }
     });
@@ -29,12 +29,12 @@ class WidgetUpdateListener {
     ref.listen<bool>(isAuthenticatedProvider, (previous, next) {
       if (next) {
         // 登录后尝试更新小组件
-        debugPrint('🔔 检测到用户登录，准备更新小组件');
+        AppLogger.debug('🔔 检测到用户登录，准备更新小组件');
         final settings = ref.read(classTableSettingsProvider);
         _updateWidget(ref, settings.currentXnm, settings.currentXqm);
       } else {
         // 退出登录时清空小组件
-        debugPrint('🔔 检测到用户登出，清空小组件');
+        AppLogger.debug('🔔 检测到用户登出，清空小组件');
         WidgetService.clearClassTableWidget();
       }
     });
@@ -50,12 +50,12 @@ class WidgetUpdateListener {
       // 检查是否已登录
       final isAuthenticated = ref.read(isAuthenticatedProvider);
       if (!isAuthenticated) {
-        debugPrint('🔔 用户未登录，跳过小组件更新');
+        AppLogger.debug('🔔 用户未登录，跳过小组件更新');
         return;
       }
 
       if (xnm.isEmpty || xqm.isEmpty) {
-        debugPrint('🔔 学期参数为空，跳过小组件更新');
+        AppLogger.debug('🔔 学期参数为空，跳过小组件更新');
         return;
       }
 
@@ -64,7 +64,7 @@ class WidgetUpdateListener {
       final classTable = await classTableRepo.loadLocal(xnm, xqm);
 
       if (classTable == null) {
-        debugPrint('🔔 没有缓存的课表数据，跳过小组件更新');
+        AppLogger.debug('🔔 没有缓存的课表数据，跳过小组件更新');
         return;
       }
 
@@ -77,7 +77,7 @@ class WidgetUpdateListener {
       // 获取当前周的课程
       final weekCourses = classTable.weekTable[currentWeek];
       if (weekCourses == null || weekCourses.isEmpty) {
-        debugPrint('🔔 本周没有课程数据，跳过小组件更新');
+        AppLogger.debug('🔔 本周没有课程数据，跳过小组件更新');
         return;
       }
 
@@ -88,20 +88,20 @@ class WidgetUpdateListener {
       });
 
       if (allCourses.isEmpty) {
-        debugPrint('🔔 本周课程列表为空，跳过小组件更新');
+        AppLogger.debug('🔔 本周课程列表为空，跳过小组件更新');
         return;
       }
 
       // 更新小组件
-      debugPrint('🔔 自动更新小组件数据');
+      AppLogger.debug('🔔 自动更新小组件数据');
       await WidgetService.updateClassTableWidget(
         courses: allCourses,
         currentWeek: currentWeek,
         semesterStart: semesterStart,
       );
-      debugPrint('✅ 小组件数据更新成功');
+      AppLogger.debug('✅ 小组件数据更新成功');
     } catch (e) {
-      debugPrint('❌ 更新小组件数据失败: $e');
+      AppLogger.debug('❌ 更新小组件数据失败: $e');
     }
   }
 

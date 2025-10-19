@@ -3,6 +3,8 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -53,7 +55,7 @@ class _CustomThemeSettingsPageState
         await _loadDefaultTheme();
       }
     } catch (e) {
-      debugPrint('初始化主题失败: $e');
+      AppLogger.debug('初始化主题失败: $e');
       await _loadDefaultTheme();
     } finally {
       if (mounted) {
@@ -1242,7 +1244,7 @@ class _CustomThemeSettingsPageState
       final fileSize = await file.length();
       final fileSizeMB = fileSize / (1000 * 1000);
 
-      debugPrint('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
+      AppLogger.debug('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
 
       var shouldUseImage = true;
 

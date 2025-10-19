@@ -1,8 +1,9 @@
 // lib/core/services/image_upload_service.dart
 
 import 'dart:io';
+
+import '../../core/utils/app_logger.dart';
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import 'api_service.dart';
@@ -29,8 +30,8 @@ class ImageUploadService {
     String? prefix,
     int maxRetries = 3,
   }) async {
-    debugPrint('📸 ImageUploadService: 开始上传图片');
-    debugPrint('📄 本地路径: $imagePath');
+    AppLogger.debug('📸 ImageUploadService: 开始上传图片');
+    AppLogger.debug('📄 本地路径: $imagePath');
 
     // 检查文件是否存在
     final file = File(imagePath);
@@ -41,7 +42,9 @@ class ImageUploadService {
     // 检查文件大小（5MB 限制）
     final fileSize = await file.length();
     final fileSizeMB = fileSize / (1000 * 1000);
-    debugPrint('ImageUploadService: 图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
+    AppLogger.debug(
+      'ImageUploadService: 图片大小: ${fileSizeMB.toStringAsFixed(2)} MB',
+    );
 
     if (fileSizeMB > 5) {
       throw Exception(
@@ -58,29 +61,29 @@ class ImageUploadService {
       context: context,
       prefix: prefix,
     );
-    debugPrint('📝 生成文件名: $fileName');
+    AppLogger.debug('📝 生成文件名: $fileName');
 
     // 带重试的上传
     for (int attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         if (attempt > 1) {
-          debugPrint('🔄 第 $attempt 次重试上传...');
+          AppLogger.debug('🔄 第 $attempt 次重试上传...');
           // 重试前等待（指数退避）
           await Future.delayed(Duration(seconds: attempt * 2));
         }
 
         final url = await _apiService.uploadImage(imagePath, fileName);
-        debugPrint('✅ ImageUploadService: 图片上传成功');
-        debugPrint('🌐 URL: $url');
+        AppLogger.debug('✅ ImageUploadService: 图片上传成功');
+        AppLogger.debug('🌐 URL: $url');
 
         return url;
       } catch (e) {
-        debugPrint('❌ ImageUploadService: 第 $attempt 次上传失败');
-        debugPrint('❌ 错误: $e');
+        AppLogger.debug('❌ ImageUploadService: 第 $attempt 次上传失败');
+        AppLogger.debug('❌ 错误: $e');
 
         // 最后一次尝试失败，抛出异常
         if (attempt == maxRetries) {
-          debugPrint('💥 ImageUploadService: 已达最大重试次数，上传失败');
+          AppLogger.debug('💥 ImageUploadService: 已达最大重试次数，上传失败');
           rethrow;
         }
 
@@ -89,7 +92,7 @@ class ImageUploadService {
         if (!errorStr.contains('socket') &&
             !errorStr.contains('connection') &&
             !errorStr.contains('timeout')) {
-          debugPrint('⚠️ ImageUploadService: 非网络错误，不再重试');
+          AppLogger.debug('⚠️ ImageUploadService: 非网络错误，不再重试');
           rethrow;
         }
       }
@@ -116,7 +119,9 @@ class ImageUploadService {
 
     for (int i = 0; i < imagePaths.length; i++) {
       try {
-        debugPrint('📸 ImageUploadService: 上传图片 ${i + 1}/${imagePaths.length}');
+        AppLogger.debug(
+          '📸 ImageUploadService: 上传图片 ${i + 1}/${imagePaths.length}',
+        );
 
         final url = await uploadImage(
           imagePaths[i],
@@ -127,7 +132,7 @@ class ImageUploadService {
         results[i] = url;
         onProgress?.call(i + 1, imagePaths.length);
       } catch (e) {
-        debugPrint('❌ ImageUploadService: 图片 $i 上传失败: $e');
+        AppLogger.debug('❌ ImageUploadService: 图片 $i 上传失败: $e');
         rethrow;
       }
     }

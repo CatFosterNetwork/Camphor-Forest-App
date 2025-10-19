@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 /// 全局图片缓存管理器，负责统一壁纸/大图缓存策略
@@ -28,12 +28,12 @@ class AppCacheManager extends CacheManager {
     if (fileInfo != null) {
       // 检查文件是否已过23:59分
       if (_isFileExpiredAt2359(fileInfo.validTill)) {
-        debugPrint('AppCacheManager: 缓存文件已过期(超过23:59), 删除缓存: $key');
+        AppLogger.debug('AppCacheManager: 缓存文件已过期(超过23:59), 删除缓存: $key');
         // 如果已过期，删除缓存并返回null
         await removeFile(key);
         return null;
       } else {
-        debugPrint('AppCacheManager: 缓存文件有效, 使用缓存: $key');
+        AppLogger.debug('AppCacheManager: 缓存文件有效, 使用缓存: $key');
       }
     }
 
@@ -61,7 +61,7 @@ class AppCacheManager extends CacheManager {
 
     final isExpired = now.isAfter(expiryTime);
 
-    debugPrint(
+    AppLogger.debug(
       'AppCacheManager: 检查过期时间 - 当前: $now, 过期时间: $expiryTime, 已过期: $isExpired',
     );
 

@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class ImageCropService {
@@ -54,14 +56,14 @@ class ImageCropService {
       );
 
       if (croppedFile != null) {
-        debugPrint('用户手动裁剪完成: ${croppedFile.path}');
+        AppLogger.debug('用户手动裁剪完成: ${croppedFile.path}');
         return File(croppedFile.path);
       } else {
-        debugPrint('用户取消了裁剪');
+        AppLogger.debug('用户取消了裁剪');
         return null;
       }
     } catch (e) {
-      debugPrint('图片裁剪失败: $e');
+      AppLogger.debug('图片裁剪失败: $e');
       return null;
     }
   }
@@ -72,7 +74,7 @@ class ImageCropService {
       final bytes = await imageFile.readAsBytes();
       return bytes.isNotEmpty;
     } catch (e) {
-      debugPrint('验证裁剪图片失败: $e');
+      AppLogger.debug('验证裁剪图片失败: $e');
       return false;
     }
   }

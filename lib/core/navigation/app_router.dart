@@ -2,6 +2,8 @@
 
 import 'dart:async';
 
+import '../../core/utils/app_logger.dart';
+
 import 'package:camphor_forest/core/providers/core_providers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -274,7 +276,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         }
       } catch (e) {
         // 如果UserService加载失败，重定向到登录页面
-        debugPrint('AppRouter: UserService加载失败: $e');
+        AppLogger.debug('AppRouter: UserService加载失败: $e');
         if (state.location != RouteConstants.login) {
           return RouteConstants.login;
         }

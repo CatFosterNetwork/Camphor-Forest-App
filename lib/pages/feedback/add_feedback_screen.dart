@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -77,7 +79,7 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
     final fileSize = await file.length();
     final fileSizeMB = fileSize / (1000 * 1000);
 
-    debugPrint('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
+    AppLogger.debug('📊 选择的图片大小: ${fileSizeMB.toStringAsFixed(2)} MB');
 
     var shouldUseImage = true;
 

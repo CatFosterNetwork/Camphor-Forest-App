@@ -1,6 +1,6 @@
 // lib/core/config/data/api_config_distributor.dart
 
-import 'package:flutter/foundation.dart';
+import '../../../core/utils/app_logger.dart';
 
 import '../models/app_config.dart';
 import '../models/theme_config.dart';
@@ -15,12 +15,12 @@ class ApiConfigDistributor {
     Map<String, dynamic> apiData,
   ) {
     try {
-      debugPrint('ApiConfigDistributor: 开始分配API配置数据...');
+      AppLogger.debug('ApiConfigDistributor: 开始分配API配置数据...');
 
       // 规范化配置格式（统一转换为嵌套格式 ）
       final normalizedData = _normalizeConfigFormat(apiData);
 
-      debugPrint(
+      AppLogger.debug(
         'ApiConfigDistributor: 配置格式规范化完成，原格式: ${_detectConfigFormat(apiData)}, 目标格式: nested',
       );
 
@@ -36,7 +36,7 @@ class ApiConfigDistributor {
       // 提取自定义主题列表（用于 CustomThemeService）
       final customThemes = _extractCustomThemes(normalizedData);
 
-      debugPrint('ApiConfigDistributor: 配置数据分配完成');
+      AppLogger.debug('ApiConfigDistributor: 配置数据分配完成');
       return ConfigDistributionResult.success(
         appConfig: appConfig,
         themeConfig: themeConfig,
@@ -44,7 +44,7 @@ class ApiConfigDistributor {
         customThemes: customThemes,
       );
     } catch (e, st) {
-      debugPrint('ApiConfigDistributor: 配置数据分配失败: $e');
+      AppLogger.debug('ApiConfigDistributor: 配置数据分配失败: $e');
       return ConfigDistributionResult.failure(e, st);
     }
   }
@@ -77,13 +77,13 @@ class ApiConfigDistributor {
     final format = _detectConfigFormat(data);
 
     if (format == 'nested') {
-      debugPrint('ApiConfigDistributor: 检测到嵌套格式，直接使用');
+      AppLogger.debug('ApiConfigDistributor: 检测到嵌套格式，直接使用');
       return data;
     } else if (format == 'flat') {
-      debugPrint('ApiConfigDistributor: 检测到扁平格式，转换为嵌套格式...');
+      AppLogger.debug('ApiConfigDistributor: 检测到扁平格式，转换为嵌套格式...');
       return _convertFlatToNested(data);
     } else {
-      debugPrint('ApiConfigDistributor: 未知格式，尝试作为嵌套格式处理');
+      AppLogger.debug('ApiConfigDistributor: 未知格式，尝试作为嵌套格式处理');
       return data;
     }
   }
@@ -129,7 +129,7 @@ class ApiConfigDistributor {
       final customTheme = nested['themeConfig']['theme-customTheme'];
       if (customTheme != null) {
         nested['themeConfig']['theme-customThemes'] = [customTheme];
-        debugPrint('ApiConfigDistributor: 将单个自定义主题转换为数组格式');
+        AppLogger.debug('ApiConfigDistributor: 将单个自定义主题转换为数组格式');
       }
       // 移除旧字段
       nested['themeConfig'].remove('theme-customTheme');
@@ -138,7 +138,9 @@ class ApiConfigDistributor {
     // 校验颜色模式：将 "auto" 映射为 "system"
     if (nested['themeConfig']['theme-colorMode'] == 'auto') {
       nested['themeConfig']['theme-colorMode'] = 'system';
-      debugPrint('ApiConfigDistributor: [扁平转嵌套] 将颜色模式 "auto" 转换为 "system"');
+      AppLogger.debug(
+        'ApiConfigDistributor: [扁平转嵌套] 将颜色模式 "auto" 转换为 "system"',
+      );
     }
 
     // 确保 selectedThemeCode 存在
@@ -156,7 +158,7 @@ class ApiConfigDistributor {
           customThemes[0]['code'] != null) {
         // 使用自定义主题的 code
         nested['themeConfig']['selectedThemeCode'] = customThemes[0]['code'];
-        debugPrint(
+        AppLogger.debug(
           'ApiConfigDistributor: [扁平转嵌套] 检测到自定义主题，设置 selectedThemeCode = ${customThemes[0]['code']}',
         );
       } else if (themeTheme != null &&
@@ -233,7 +235,7 @@ class ApiConfigDistributor {
     // 校验颜色模式：将 "auto" 映射为 "system"
     if (themeConfigData['theme-colorMode'] == 'auto') {
       themeConfigData['theme-colorMode'] = 'system';
-      debugPrint('ApiConfigDistributor: 将颜色模式 "auto" 转换为 "system"');
+      AppLogger.debug('ApiConfigDistributor: 将颜色模式 "auto" 转换为 "system"');
     }
 
     // 获取 selectedThemeCode
@@ -254,7 +256,7 @@ class ApiConfigDistributor {
         // 如果主题数据中缺少 code，使用 selectedThemeCode
         if (!themeData.containsKey('code') || themeData['code'] == null) {
           themeData['code'] = selectedThemeCode;
-          debugPrint(
+          AppLogger.debug(
             'ApiConfigDistributor: 主题数据缺少 code 字段，使用 selectedThemeCode: $selectedThemeCode',
           );
         }
@@ -263,12 +265,12 @@ class ApiConfigDistributor {
 
         // 🔧 检测微信端自定义主题逻辑：如果 title 是 "自定义"，说明用户选择了自定义主题
         if (themeData['title'] == '自定义') {
-          debugPrint('ApiConfigDistributor: 检测到微信端自定义主题（title=自定义）');
+          AppLogger.debug('ApiConfigDistributor: 检测到微信端自定义主题（title=自定义）');
           // 标记需要使用自定义主题
           // selectedThemeCode 将在后面根据 customTheme 的 code 设置
         }
       } catch (e) {
-        debugPrint('ApiConfigDistributor: 解析选中主题失败: $e');
+        AppLogger.debug('ApiConfigDistributor: 解析选中主题失败: $e');
       }
     }
 
@@ -282,15 +284,17 @@ class ApiConfigDistributor {
               try {
                 return Theme.fromJson(themeJson as Map<String, dynamic>);
               } catch (e) {
-                debugPrint('ApiConfigDistributor: 解析自定义主题失败: $e');
+                AppLogger.debug('ApiConfigDistributor: 解析自定义主题失败: $e');
                 return null;
               }
             })
             .whereType<Theme>()
             .toList();
-        debugPrint('ApiConfigDistributor: 成功解析 ${customThemes.length} 个自定义主题');
+        AppLogger.debug(
+          'ApiConfigDistributor: 成功解析 ${customThemes.length} 个自定义主题',
+        );
       } catch (e) {
-        debugPrint('ApiConfigDistributor: 解析自定义主题列表失败: $e');
+        AppLogger.debug('ApiConfigDistributor: 解析自定义主题列表失败: $e');
       }
     } else if (themeConfigData.containsKey('theme-customTheme') &&
         themeConfigData['theme-customTheme'] != null) {
@@ -307,9 +311,9 @@ class ApiConfigDistributor {
         }
 
         customThemes = [Theme.fromJson(customThemeData)];
-        debugPrint('ApiConfigDistributor: 检测到旧格式单个自定义主题，已转换为列表');
+        AppLogger.debug('ApiConfigDistributor: 检测到旧格式单个自定义主题，已转换为列表');
       } catch (e) {
-        debugPrint('ApiConfigDistributor: 解析旧格式自定义主题失败: $e');
+        AppLogger.debug('ApiConfigDistributor: 解析旧格式自定义主题失败: $e');
       }
     }
 
@@ -319,7 +323,7 @@ class ApiConfigDistributor {
         selectedTheme.title == '自定义' &&
         customThemes.isNotEmpty) {
       final customThemeCode = customThemes[0].code;
-      debugPrint(
+      AppLogger.debug(
         'ApiConfigDistributor: 微信端使用自定义主题，更新 selectedThemeCode: $selectedThemeCode -> $customThemeCode',
       );
       selectedThemeCode = customThemeCode;
@@ -378,24 +382,24 @@ class ApiConfigDistributor {
                 final theme = Theme.fromJson(themeJson as Map<String, dynamic>);
                 // 🔧 过滤掉预设主题（防止服务器数据污染）
                 if (theme.code.startsWith('classic-theme-')) {
-                  debugPrint(
+                  AppLogger.debug(
                     'ApiConfigDistributor: 跳过预设主题 ${theme.code}（不应出现在 customThemes 中）',
                   );
                   return null;
                 }
                 return theme;
               } catch (e) {
-                debugPrint('ApiConfigDistributor: 解析自定义主题失败: $e');
+                AppLogger.debug('ApiConfigDistributor: 解析自定义主题失败: $e');
                 return null;
               }
             })
             .whereType<Theme>()
             .toList();
-        debugPrint(
+        AppLogger.debug(
           'ApiConfigDistributor: [提取] 自定义主题列表 - ${customThemes.length} 个',
         );
       } catch (e) {
-        debugPrint('ApiConfigDistributor: 提取自定义主题列表失败: $e');
+        AppLogger.debug('ApiConfigDistributor: 提取自定义主题列表失败: $e');
       }
     } else if (themeConfigData.containsKey('theme-customTheme') &&
         themeConfigData['theme-customTheme'] != null) {
@@ -412,9 +416,9 @@ class ApiConfigDistributor {
         }
 
         customThemes = [Theme.fromJson(customThemeData)];
-        debugPrint('ApiConfigDistributor: [提取] 检测到旧格式单个自定义主题');
+        AppLogger.debug('ApiConfigDistributor: [提取] 检测到旧格式单个自定义主题');
       } catch (e) {
-        debugPrint('ApiConfigDistributor: 提取旧格式自定义主题失败: $e');
+        AppLogger.debug('ApiConfigDistributor: 提取旧格式自定义主题失败: $e');
       }
     }
 
@@ -423,7 +427,7 @@ class ApiConfigDistributor {
 
   /// 创建空的配置（当API数据不可用时）
   static ConfigDistributionResult createDefaultConfigs() {
-    debugPrint('ApiConfigDistributor: 创建默认配置');
+    AppLogger.debug('ApiConfigDistributor: 创建默认配置');
     return ConfigDistributionResult.success(
       appConfig: AppConfig.defaultConfig,
       themeConfig: ThemeConfig.defaultConfig,
@@ -438,12 +442,12 @@ class ApiConfigDistributor {
     if (format == 'nested') {
       // 验证嵌套格式
       if (!apiData.containsKey('appConfig') || apiData['appConfig'] is! Map) {
-        debugPrint('ApiConfigDistributor: 缺少 appConfig 部分');
+        AppLogger.debug('ApiConfigDistributor: 缺少 appConfig 部分');
         return false;
       }
       if (!apiData.containsKey('themeConfig') ||
           apiData['themeConfig'] is! Map) {
-        debugPrint('ApiConfigDistributor: 缺少 themeConfig 部分');
+        AppLogger.debug('ApiConfigDistributor: 缺少 themeConfig 部分');
         return false;
       }
       return true;
@@ -457,13 +461,13 @@ class ApiConfigDistributor {
 
       for (final key in requiredKeys) {
         if (!apiData.containsKey(key)) {
-          debugPrint('ApiConfigDistributor: 缺少必要配置项: $key');
+          AppLogger.debug('ApiConfigDistributor: 缺少必要配置项: $key');
           return false;
         }
       }
       return true;
     } else {
-      debugPrint('ApiConfigDistributor: 未知的配置格式');
+      AppLogger.debug('ApiConfigDistributor: 未知的配置格式');
       return false;
     }
   }
@@ -561,7 +565,7 @@ class ApiConfigDistributor {
     }
 
     if (missingFields.isNotEmpty) {
-      debugPrint(
+      AppLogger.debug(
         'ApiConfigDistributor: 检测到缺失字段 ($format): ${missingFields.join(", ")}',
       );
     }
@@ -575,11 +579,13 @@ class ApiConfigDistributor {
     final missingFields = checkConfigIntegrity(apiData);
 
     if (missingFields.isEmpty) {
-      debugPrint('ApiConfigDistributor: 配置数据完整，无需修复');
+      AppLogger.debug('ApiConfigDistributor: 配置数据完整，无需修复');
       return repairedData;
     }
 
-    debugPrint('ApiConfigDistributor: 开始修复 ${missingFields.length} 个缺失字段...');
+    AppLogger.debug(
+      'ApiConfigDistributor: 开始修复 ${missingFields.length} 个缺失字段...',
+    );
 
     final format = _detectConfigFormat(apiData);
     final defaultConfig = AppConfig.defaultConfig.toJson();
@@ -605,7 +611,7 @@ class ApiConfigDistributor {
           final key = field.substring('appConfig.'.length);
           if (defaultConfig.containsKey(key)) {
             appConfig[key] = defaultConfig[key];
-            debugPrint(
+            AppLogger.debug(
               'ApiConfigDistributor: 填充 $field = ${defaultConfig[key]}',
             );
           }
@@ -619,19 +625,21 @@ class ApiConfigDistributor {
               final themeTheme = themeConfig['theme-theme'];
               if (themeTheme is Map && themeTheme.containsKey('code')) {
                 themeConfig[key] = themeTheme['code'];
-                debugPrint(
+                AppLogger.debug(
                   'ApiConfigDistributor: 填充 $field = ${themeTheme['code']} (从 theme-theme.code 读取)',
                 );
                 continue;
               }
             } catch (e) {
-              debugPrint('ApiConfigDistributor: 从 theme-theme.code 读取失败: $e');
+              AppLogger.debug(
+                'ApiConfigDistributor: 从 theme-theme.code 读取失败: $e',
+              );
             }
           }
 
           if (defaultTheme.containsKey(key)) {
             themeConfig[key] = defaultTheme[key];
-            debugPrint(
+            AppLogger.debug(
               'ApiConfigDistributor: 填充 $field = ${defaultTheme[key]}',
             );
           }
@@ -647,31 +655,33 @@ class ApiConfigDistributor {
             final themeTheme = repairedData['theme-theme'];
             if (themeTheme is Map && themeTheme.containsKey('code')) {
               repairedData[field] = themeTheme['code'];
-              debugPrint(
+              AppLogger.debug(
                 'ApiConfigDistributor: 填充 $field = ${themeTheme['code']} (从 theme-theme.code 读取)',
               );
               continue;
             }
           } catch (e) {
-            debugPrint('ApiConfigDistributor: 从 theme-theme.code 读取失败: $e');
+            AppLogger.debug(
+              'ApiConfigDistributor: 从 theme-theme.code 读取失败: $e',
+            );
           }
         }
 
         if (defaultConfig.containsKey(field)) {
           repairedData[field] = defaultConfig[field];
-          debugPrint(
+          AppLogger.debug(
             'ApiConfigDistributor: 填充 $field = ${defaultConfig[field]}',
           );
         } else if (defaultTheme.containsKey(field)) {
           repairedData[field] = defaultTheme[field];
-          debugPrint(
+          AppLogger.debug(
             'ApiConfigDistributor: 填充 $field = ${defaultTheme[field]}',
           );
         }
       }
     }
 
-    debugPrint('ApiConfigDistributor: 配置数据修复完成');
+    AppLogger.debug('ApiConfigDistributor: 配置数据修复完成');
     return repairedData;
   }
 

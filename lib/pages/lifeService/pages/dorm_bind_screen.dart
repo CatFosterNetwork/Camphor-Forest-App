@@ -1,6 +1,8 @@
 // lib/pages/lifeService/pages/dorm_bind_screen.dart
 
 import 'package:flutter/material.dart';
+
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
@@ -48,7 +50,7 @@ class _DormBindScreenState extends ConsumerState<DormBindScreen> {
         }
       }
     } catch (e) {
-      debugPrint('加载当前宿舍信息失败: $e');
+      AppLogger.debug('加载当前宿舍信息失败: $e');
     }
   }
 

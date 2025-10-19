@@ -1,6 +1,6 @@
 // lib/core/config/providers/app_config_provider.dart
 
-import 'package:flutter/foundation.dart';
+import '../../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/core_providers.dart';
@@ -33,10 +33,10 @@ class AppConfigNotifier extends StateNotifier<AsyncValue<AppConfig>> {
       state = const AsyncValue.loading();
       final config = await _service.loadConfig();
       state = AsyncValue.data(config);
-      debugPrint('AppConfigNotifier: 配置加载成功');
+      AppLogger.debug('AppConfigNotifier: 配置加载成功');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      debugPrint('AppConfigNotifier: 配置加载失败: $e');
+      AppLogger.debug('AppConfigNotifier: 配置加载失败: $e');
     }
   }
 
@@ -45,10 +45,10 @@ class AppConfigNotifier extends StateNotifier<AsyncValue<AppConfig>> {
     try {
       final updatedConfig = await _service.updateConfigItem(key, value);
       state = AsyncValue.data(updatedConfig);
-      debugPrint('AppConfigNotifier: 更新配置项 $key = $value');
+      AppLogger.debug('AppConfigNotifier: 更新配置项 $key = $value');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      debugPrint('AppConfigNotifier: 更新配置项失败: $e');
+      AppLogger.debug('AppConfigNotifier: 更新配置项失败: $e');
     }
   }
 
@@ -57,10 +57,10 @@ class AppConfigNotifier extends StateNotifier<AsyncValue<AppConfig>> {
     try {
       final updatedConfig = await _service.updateMultipleItems(updates);
       state = AsyncValue.data(updatedConfig);
-      debugPrint('AppConfigNotifier: 批量更新${updates.length}个配置项');
+      AppLogger.debug('AppConfigNotifier: 批量更新${updates.length}个配置项');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      debugPrint('AppConfigNotifier: 批量更新配置失败: $e');
+      AppLogger.debug('AppConfigNotifier: 批量更新配置失败: $e');
     }
   }
 
@@ -69,10 +69,10 @@ class AppConfigNotifier extends StateNotifier<AsyncValue<AppConfig>> {
     try {
       final defaultConfig = await _service.resetToDefault();
       state = AsyncValue.data(defaultConfig);
-      debugPrint('AppConfigNotifier: 重置为默认配置');
+      AppLogger.debug('AppConfigNotifier: 重置为默认配置');
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      debugPrint('AppConfigNotifier: 重置配置失败: $e');
+      AppLogger.debug('AppConfigNotifier: 重置配置失败: $e');
     }
   }
 

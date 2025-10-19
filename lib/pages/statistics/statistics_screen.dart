@@ -1,6 +1,8 @@
 // lib/pages/statistics/statistics_screen.dart
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -49,7 +51,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
   Future<void> _findAndSetSemesterForCourse(String courseId) async {
     try {
-      print('🔍 查找课程 $courseId 对应的学期...');
+      AppLogger.debug('🔍 查找课程 $courseId 对应的学期...');
       final gradeState = ref.read(grade_provider.gradeProvider);
 
       // 从成绩数据中找到对应课程的学期信息
@@ -62,7 +64,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             displayName: _formatSemesterDisplay(detail.xnm, detail.xqm),
           );
 
-          print('✅ 找到课程 ${detail.kcmc} 的学期: ${targetSemester.displayName}');
+          AppLogger.info(
+            '✅ 找到课程 ${detail.kcmc} 的学期: ${targetSemester.displayName}',
+          );
 
           // 检查这个学期是否在可选列表中
           final availableSemesters = ref.read(availableSemestersProvider);
@@ -74,18 +78,18 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
           if (semesterExists) {
             ref.read(selectedSemesterProvider.notifier).state = targetSemester;
-            print('✅ 已切换到学期: ${targetSemester.displayName}');
+            AppLogger.info('✅ 已切换到学期: ${targetSemester.displayName}');
 
             // 等待一帧，确保学期切换完成
             await Future.delayed(const Duration(milliseconds: 100));
           } else {
-            print('⚠️ 学期 ${targetSemester.displayName} 不在可选列表中');
+            AppLogger.warning('⚠️ 学期 ${targetSemester.displayName} 不在可选列表中');
           }
           break;
         }
       }
     } catch (e) {
-      print('❌ 查找课程学期失败: $e');
+      AppLogger.error('❌ 查找课程学期失败: $e');
     }
   }
 
@@ -103,25 +107,25 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   double? _getPersonalScore(String courseId) {
     try {
       final gradeState = ref.read(grade_provider.gradeProvider);
-      print('🔍 查找个人成绩: courseId=$courseId');
-      print('📊 总成绩数量: ${gradeState.gradeDetails.length}');
+      AppLogger.debug('🔍 查找个人成绩: courseId=$courseId');
+      AppLogger.debug('📊 总成绩数量: ${gradeState.gradeDetails.length}');
 
       // 从成绩数据中找到对应课程的个人成绩
       for (final detail in gradeState.gradeDetails) {
-        print(
+        AppLogger.debug(
           '🔍 检查成绩: ${detail.kcmc} (kch: ${detail.kch}, 成绩: ${detail.xmcj})',
         );
         if (detail.kch == courseId) {
           // 尝试解析成绩为数字
           final score = double.tryParse(detail.xmcj.toString());
-          print('✅ 找到个人成绩: $score');
+          AppLogger.info('✅ 找到个人成绩: $score');
           return score;
         }
       }
-      print('❌ 未找到个人成绩');
+      AppLogger.error('❌ 未找到个人成绩');
       return null;
     } catch (e) {
-      print('❌ 获取个人成绩失败: $e');
+      AppLogger.error('❌ 获取个人成绩失败: $e');
       return null;
     }
   }

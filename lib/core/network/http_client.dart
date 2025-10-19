@@ -1,6 +1,8 @@
 // lib/core/utils/http_client.dart
 
 import 'dart:async';
+
+import '../../core/utils/app_logger.dart';
 import 'package:camphor_forest/core/services/user_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -44,7 +46,7 @@ class HttpClient implements IHttpClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (opts, handler) async {
-          debugPrint('🌐 HTTP 请求拦截器: ${opts.path}');
+          AppLogger.debug('🌐 HTTP 请求拦截器: ${opts.path}');
 
           // 从 secure storage 获取 JWT 和 Cookie
           final token = await _secureStorage.read(key: UserService.jwtKey);
@@ -54,17 +56,17 @@ class HttpClient implements IHttpClient {
           final cookies = <String>[];
           if (token != null && token.isNotEmpty) {
             cookies.add(token);
-            debugPrint('🔐 添加 JWT: ${token.substring(0, 20)}...');
+            AppLogger.debug('🔐 添加 JWT: ${token.substring(0, 20)}...');
           }
           if (slSession != null && slSession.isNotEmpty) {
             cookies.add('sl-session=$slSession');
-            debugPrint('🍪 添加 sl-session: $slSession');
+            AppLogger.debug('🍪 添加 sl-session: $slSession');
           }
 
           // 如果有 Cookie，则设置请求头
           if (cookies.isNotEmpty) {
             opts.headers['Cookie'] = cookies.join('; ');
-            debugPrint('🌈 完整 Cookie: ${opts.headers['Cookie']}');
+            AppLogger.debug('🌈 完整 Cookie: ${opts.headers['Cookie']}');
           }
 
           return handler.next(opts);
@@ -81,7 +83,7 @@ class HttpClient implements IHttpClient {
                   key: UserService.jwtKey,
                   value: cookie.split(';').first,
                 );
-                debugPrint('🔑 更新 JWT: ${cookie.substring(0, 50)}...');
+                AppLogger.debug('🔑 更新 JWT: ${cookie.substring(0, 50)}...');
               }
             }
           }
@@ -89,17 +91,19 @@ class HttpClient implements IHttpClient {
           return handler.next(response);
         },
         onError: (DioException err, handler) async {
-          debugPrint('❌ HTTP 请求错误: ${err.type}, ${err.response?.statusCode}');
+          AppLogger.debug(
+            '❌ HTTP 请求错误: ${err.type}, ${err.response?.statusCode}',
+          );
 
           // SSL证书错误特殊处理
           if (err.message?.contains('CERTIFICATE_VERIFY_FAILED') == true ||
               err.message?.contains('certificate has expired') == true) {
-            debugPrint('🔒 SSL证书错误：服务器证书可能已过期，请联系管理员');
+            AppLogger.debug('🔒 SSL证书错误：服务器证书可能已过期，请联系管理员');
           }
 
           // 401 处理：清理 Token 并重定向到登录
           if (err.response?.statusCode == 401) {
-            debugPrint('🚨 401 未授权，清理 Token');
+            AppLogger.debug('🚨 401 未授权，清理 Token');
             await _secureStorage.deleteAll();
           }
 

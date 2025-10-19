@@ -1,7 +1,8 @@
 // lib/core/services/image_service.dart
 
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,14 +31,14 @@ class ImageService {
         pickedFile.path,
       );
       if (croppedFile == null) {
-        debugPrint('用户取消了裁剪操作');
+        AppLogger.debug('用户取消了裁剪操作');
         return null; // 用户取消裁剪，返回null
       }
 
       // 3. 验证裁剪结果
       final isValid = await ImageCropService.isCroppedImageValid(croppedFile);
       if (!isValid) {
-        debugPrint('裁剪后的图片无效');
+        AppLogger.debug('裁剪后的图片无效');
         return null;
       }
 
@@ -46,7 +47,7 @@ class ImageService {
 
       return compressedFile;
     } catch (e) {
-      debugPrint('选择和处理图片失败: $e');
+      AppLogger.debug('选择和处理图片失败: $e');
       return null;
     }
   }
@@ -97,12 +98,12 @@ class ImageService {
       );
       await compressedFile.writeAsBytes(compressedBytes);
 
-      debugPrint(
+      AppLogger.debug(
         '图片压缩完成: 原大小 ${originalBytes.length} -> 压缩后 ${compressedBytes.length}',
       );
       return compressedFile;
     } catch (e) {
-      debugPrint('图片压缩失败: $e');
+      AppLogger.debug('图片压缩失败: $e');
       // 如果压缩失败，返回原文件
       return File(imagePath);
     }

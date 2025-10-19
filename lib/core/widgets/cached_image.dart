@@ -1,6 +1,8 @@
 // lib/core/widgets/cached_image.dart
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import '../services/image_cache_service.dart';
 
 /// 缓存感知的图片组件
@@ -72,7 +74,7 @@ class _CachedImageState extends State<CachedImage> {
         });
       }
     } catch (e) {
-      debugPrint('❌ Error loading cached image: $e');
+      AppLogger.debug('❌ Error loading cached image: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -100,7 +102,7 @@ class _CachedImageState extends State<CachedImage> {
         height: widget.height,
         fit: widget.fit,
         errorBuilder: (context, error, stackTrace) {
-          debugPrint('❌ Image render error: $error');
+          AppLogger.debug('❌ Image render error: $error');
           return widget.errorWidget ?? _buildDefaultErrorWidget();
         },
       );

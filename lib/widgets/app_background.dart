@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
+import '../core/utils/app_logger.dart';
 import 'fade_background.dart';
 
 /// 通用背景组件，支持：
@@ -50,10 +52,10 @@ class AppBackground extends StatelessWidget {
 
     // 深色模式下使用纯色背景
     if (effectiveIsDarkMode) {
-      debugPrint('AppBackground: 深色模式激活，使用纯色背景 #202125');
+      AppLogger.debug('AppBackground: 深色模式激活，使用纯色背景 #202125');
       layers.add(Container(color: const Color(0xFF202125)));
     } else {
-      debugPrint('AppBackground: 浅色模式，显示背景图片: $imageUrl');
+      AppLogger.debug('AppBackground: 浅色模式，显示背景图片: $imageUrl');
       // 浅色模式下正常显示背景图片
       if (imageUrl != null && imageUrl!.isNotEmpty) {
         // 支持网络图片和本地文件路径
@@ -61,10 +63,12 @@ class AppBackground extends StatelessWidget {
             imageUrl!.startsWith('http://') ||
             imageUrl!.startsWith('https://')) {
           final isLocal = FadeBackground.isLocalPath(imageUrl!);
-          debugPrint('AppBackground: 使用${isLocal ? "本地" : "网络"}图片: $imageUrl');
+          AppLogger.debug(
+            'AppBackground: 使用${isLocal ? "本地" : "网络"}图片: $imageUrl',
+          );
           layers.add(FadeBackground(imageUrl!));
         } else {
-          debugPrint('AppBackground: 无效的URL格式，使用默认背景: $imageUrl');
+          AppLogger.debug('AppBackground: 无效的URL格式，使用默认背景: $imageUrl');
           layers.add(Container(color: Theme.of(context).colorScheme.surface));
         }
       } else {

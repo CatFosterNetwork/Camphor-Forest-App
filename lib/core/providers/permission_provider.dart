@@ -1,6 +1,8 @@
 // lib/core/providers/permission_provider.dart
 
 import 'package:flutter/material.dart';
+
+import '../../core/utils/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -158,7 +160,7 @@ class PermissionNotifier extends StateNotifier<PermissionState> {
       }
 
       if (!result.isGranted) {
-        debugPrint('🔒 权限被拒绝: ${result.errorMessage}');
+        AppLogger.debug('🔒 权限被拒绝: ${result.errorMessage}');
         if (context.mounted) {
           PermissionService.showErrorSnackBar(
             context,
@@ -173,14 +175,14 @@ class PermissionNotifier extends StateNotifier<PermissionState> {
       final XFile? pickedFile = await picker.pickImage(source: source);
 
       if (pickedFile != null) {
-        debugPrint('🖼️ 选择图片成功: ${pickedFile.path}');
+        AppLogger.debug('🖼️ 选择图片成功: ${pickedFile.path}');
         return pickedFile.path;
       } else {
-        debugPrint('🖼️ 用户取消选择图片');
+        AppLogger.debug('🖼️ 用户取消选择图片');
         return null;
       }
     } catch (e) {
-      debugPrint('🔒 选择图片异常: $e');
+      AppLogger.debug('🔒 选择图片异常: $e');
       if (context.mounted) {
         PermissionService.showErrorSnackBar(context, '选择图片失败: $e');
       }
@@ -202,7 +204,7 @@ class PermissionNotifier extends StateNotifier<PermissionState> {
       );
 
       if (!result.isGranted) {
-        debugPrint('🔒 保存图片权限被拒绝: ${result.errorMessage}');
+        AppLogger.debug('🔒 保存图片权限被拒绝: ${result.errorMessage}');
         if (context.mounted) {
           PermissionService.showErrorSnackBar(
             context,
@@ -214,10 +216,10 @@ class PermissionNotifier extends StateNotifier<PermissionState> {
 
       // 权限获取成功，保存图片
       // 这里可以集成Gal等保存库
-      debugPrint('🖼️ 保存图片到相册: $imagePath');
+      AppLogger.debug('🖼️ 保存图片到相册: $imagePath');
       return true;
     } catch (e) {
-      debugPrint('🔒 保存图片异常: $e');
+      AppLogger.debug('🔒 保存图片异常: $e');
       if (context.mounted) {
         PermissionService.showErrorSnackBar(context, '保存图片失败: $e');
       }
