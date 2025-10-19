@@ -3,6 +3,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/core_providers.dart';
+import '../../../core/providers/grade_provider.dart' as grade_provider;
+import '../../classtable/providers/classtable_providers.dart';
 import '../models/statistics_model.dart';
 
 // 单个课程统计提供者
@@ -145,133 +147,108 @@ final availableSemestersProvider = Provider<List<SemesterInfo>>((ref) {
 });
 
 // 获取指定学期的课程列表
-final semesterCoursesProvider = FutureProvider.family<List<CourseInfo>, SemesterInfo>((
-  ref,
-  semesterInfo,
-) async {
-  try {
-    final apiService = ref.read(apiServiceProvider);
+final semesterCoursesProvider =
+    FutureProvider.family<List<CourseInfo>, SemesterInfo>((
+      ref,
+      semesterInfo,
+    ) async {
+      try {
+        final xnm = semesterInfo.xnm;
+        final xqm = semesterInfo.xqm;
 
-    // 直接使用学期信息中的xnm和xqm参数
-    final xnm = semesterInfo.xnm;
-    final xqm = semesterInfo.xqm;
+        // 1. 从本地缓存读取课表
+        final classTableAsync = ref.read(
+          classTableProvider((xnm: xnm, xqm: xqm)),
+        );
 
-    // 获取该学期的课表数据
-    print('🔍 semesterCoursesProvider: 获取课表数据 xnm=$xnm, xqm=$xqm');
-    final classTableResponse = await apiService.getClassTable(
-      xnm: xnm,
-      xqm: xqm,
-    );
+        // 2. 从 gradeProvider 读取已缓存的成绩数据
+        final gradeState = ref.read(grade_provider.gradeProvider);
+        final gradesData = gradeState.gradeDetails;
 
-    // 获取成绩数据
-    final gradesResponse = await apiService.getGrades();
+        print('📚 本地成绩数据数量: ${gradesData.length}');
 
-    print('📊 课表API响应: ${classTableResponse['success']}');
-    print('📊 成绩API响应: ${gradesResponse['success']}');
+        // 3. 从课表和成绩中提取课程信息
+        final Set<CourseInfo> courseSet = {};
 
-    if (!classTableResponse['success'] || !gradesResponse['success']) {
-      print('❌ API调用失败');
-      return [];
-    }
+        // 首先从成绩数据中提取该学期的课程
+        int matchingGrades = 0;
+        for (final grade in gradesData) {
+          // 只提取匹配当前学期的课程
+          if (grade.xnm == xnm && grade.xqm == xqm) {
+            final kch = grade.kch;
+            final kcmc = grade.kcmc;
 
-    // 解析课表数据，提取课程列表
-    final classTableData = classTableResponse['data'] as Map<String, dynamic>?;
-    final gradesData = gradesResponse['data'] as List<dynamic>?;
-
-    if (classTableData == null || gradesData == null) {
-      print(
-        '❌ 数据为空: classTableData=${classTableData != null}, gradesData=${gradesData != null}',
-      );
-      return [];
-    }
-
-    print('📚 成绩数据数量: ${gradesData.length}');
-    print('📚 课表数据keys: ${classTableData.keys}');
-
-    // 从课表和成绩中提取课程信息
-    final Set<CourseInfo> courseSet = {};
-
-    // 首先从成绩数据中提取该学期的课程
-    int matchingGrades = 0;
-    for (final grade in gradesData) {
-      final gradeMap = grade as Map<String, dynamic>?;
-      if (gradeMap == null) continue;
-
-      final gradeXnm = gradeMap['xnm'] as String?;
-      final gradeXqm = gradeMap['xqm'] as String?;
-      final kch = gradeMap['kch'] as String?;
-      final kcmc = gradeMap['kcmc'] as String?;
-
-      print(
-        '🔍 检查成绩: $kcmc, xnm=$gradeXnm, xqm=$gradeXqm (目标: xnm=$xnm, xqm=$xqm)',
-      );
-
-      // 只提取匹配当前学期的课程
-      if (gradeXnm == xnm &&
-          gradeXqm == xqm &&
-          kch != null &&
-          kch.isNotEmpty &&
-          kcmc != null &&
-          kcmc.isNotEmpty) {
-        courseSet.add(CourseInfo(id: kch, name: kcmc));
-        matchingGrades++;
-        print('✅ 找到匹配课程: $kcmc (kch: $kch)');
-      }
-    }
-
-    print('🎯 从成绩数据中找到 $matchingGrades 门课程');
-
-    // 如果成绩数据中没有找到课程，再从课表数据中提取
-    if (courseSet.isEmpty) {
-      final List<Map<String, dynamic>> flatCourses = [];
-
-      // 先将嵌套的课表数据扁平化
-      for (final dayEntry in classTableData.entries) {
-        final dayData = dayEntry.value as Map<String, dynamic>?;
-        if (dayData == null) continue;
-
-        for (final timeEntry in dayData.entries) {
-          final timeData = timeEntry.value as Map<String, dynamic>?;
-          if (timeData == null) continue;
-
-          for (final courseEntry in timeData.entries) {
-            final courseData = courseEntry.value as Map<String, dynamic>?;
-            if (courseData == null) continue;
-
-            flatCourses.add(courseData);
-          }
-        }
-      }
-
-      // 处理扁平化的课程数据
-      for (final courseData in flatCourses) {
-        String? kch = courseData['kch'] as String?;
-        final kcmc = courseData['kcmc'] as String?;
-
-        // 如果课表中没有kch，尝试从成绩数据中匹配
-        if ((kch == null || kch.isEmpty) && kcmc != null) {
-          for (final grade in gradesData) {
-            final gradeMap = grade as Map<String, dynamic>?;
-            if (gradeMap != null && gradeMap['kcmc'] == kcmc) {
-              kch = gradeMap['kch'] as String?;
-              break;
+            if (kch.isNotEmpty && kcmc.isNotEmpty) {
+              courseSet.add(CourseInfo(id: kch, name: kcmc));
+              matchingGrades++;
             }
           }
         }
 
-        // 使用Map去重，只有有效的kch才添加
-        if (kch != null && kch.isNotEmpty && kcmc != null && kcmc.isNotEmpty) {
-          courseSet.add(CourseInfo(id: kch, name: kcmc));
-        }
-      }
-    }
+        print('🎯 从成绩数据中找到 $matchingGrades 门课程');
 
-    return courseSet.toList()..sort((a, b) => a.name.compareTo(b.name));
-  } catch (e) {
-    print('Error getting semester courses: $e');
-    return [];
-  }
-});
+        // 如果成绩数据中没有找到课程，再从课表数据中提取
+        if (courseSet.isEmpty) {
+          print('⚠️ 成绩数据中没有该学期课程，尝试从课表中提取...');
+
+          await classTableAsync.when(
+            data: (classTable) {
+              // 获取所有课程
+              final courses = classTable
+                  .getAllCourses()
+                  .values
+                  .expand((e) => e)
+                  .toList();
+
+              print('📚 课表中共有 ${courses.length} 门课程');
+
+              // 处理每门课程
+              for (final course in courses) {
+                String kch = course.id;
+                final kcmc = course.title;
+
+                // 如果课表中的课程ID是自定义的（以 custom_ 开头），尝试从成绩中匹配
+                if (kch.startsWith('custom_') && kcmc.isNotEmpty) {
+                  try {
+                    final matchingGrade = gradesData.firstWhere(
+                      (grade) => grade.kcmc == kcmc,
+                    );
+                    kch = matchingGrade.kch;
+                    print('🔗 课程 $kcmc 从成绩中匹配到 kch: $kch');
+                  } catch (e) {
+                    // 没找到匹配的成绩，跳过
+                  }
+                }
+
+                // 只添加有效的课程ID
+                if (kch.isNotEmpty &&
+                    !kch.startsWith('custom_') &&
+                    kcmc.isNotEmpty) {
+                  courseSet.add(CourseInfo(id: kch, name: kcmc));
+                }
+              }
+
+              print('📋 从课表中提取了 ${courseSet.length} 门课程');
+            },
+            loading: () {
+              print('⏳ 课表数据加载中...');
+            },
+            error: (error, stack) {
+              print('❌ 课表数据加载失败: $error');
+            },
+          );
+        }
+
+        final result = courseSet.toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
+        print('✅ 最终课程列表: ${result.length} 门课程');
+
+        return result;
+      } catch (e) {
+        print('Error getting semester courses: $e');
+        return [];
+      }
+    });
 
 // 课程信息类
 class CourseInfo {

@@ -23,6 +23,7 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   String? _selectedCourseId;
   String? _selectedCourseName;
+  bool _isInitializing = true;
 
   @override
   void initState() {
@@ -32,14 +33,23 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
     // 如果传入了课程ID，需要找到对应的学期并设置
     if (widget.kch != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _findAndSetSemesterForCourse(widget.kch!);
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _findAndSetSemesterForCourse(widget.kch!);
+        // 初始化完成
+        if (mounted) {
+          setState(() {
+            _isInitializing = false;
+          });
+        }
       });
+    } else {
+      _isInitializing = false;
     }
   }
 
-  void _findAndSetSemesterForCourse(String courseId) async {
+  Future<void> _findAndSetSemesterForCourse(String courseId) async {
     try {
+      print('🔍 查找课程 $courseId 对应的学期...');
       final gradeState = ref.read(grade_provider.gradeProvider);
 
       // 从成绩数据中找到对应课程的学期信息
@@ -52,6 +62,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             displayName: _formatSemesterDisplay(detail.xnm, detail.xqm),
           );
 
+          print('✅ 找到课程 ${detail.kcmc} 的学期: ${targetSemester.displayName}');
+
           // 检查这个学期是否在可选列表中
           final availableSemesters = ref.read(availableSemestersProvider);
           final semesterExists = availableSemesters.any(
@@ -62,12 +74,18 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
           if (semesterExists) {
             ref.read(selectedSemesterProvider.notifier).state = targetSemester;
+            print('✅ 已切换到学期: ${targetSemester.displayName}');
+
+            // 等待一帧，确保学期切换完成
+            await Future.delayed(const Duration(milliseconds: 100));
+          } else {
+            print('⚠️ 学期 ${targetSemester.displayName} 不在可选列表中');
           }
           break;
         }
       }
     } catch (e) {
-      print('Error finding semester for course: $e');
+      print('❌ 查找课程学期失败: $e');
     }
   }
 
@@ -210,7 +228,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
         color: isDarkMode
             ? Colors.grey.shade800.withAlpha(128)
             : Colors.white.withAlpha(204),
-        borderRadius: BorderRadius.circular(25), // 与成绩页面保持一致
+        borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(26),
@@ -228,7 +246,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.calendar_month, // 与成绩页面保持一致
+                Icons.calendar_month,
                 color: isDarkMode ? Colors.white : Colors.black,
                 size: 20,
               ),
@@ -241,11 +259,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   color: isDarkMode ? Colors.white : Colors.black,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               Icon(
                 Icons.keyboard_arrow_down,
-                color: isDarkMode ? Colors.white70 : Colors.black54,
-                size: 18,
+                color: isDarkMode ? Colors.white : Colors.black,
+                size: 20,
               ),
             ],
           ),
@@ -284,15 +302,17 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
           // 检查当前选择的课程是否在新的课程列表中
           if (_selectedCourseId != null &&
               !courses.any((course) => course.id == _selectedCourseId)) {
-            // 如果当前选择的课程不在新的学期中，选择第一个课程
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                setState(() {
-                  _selectedCourseId = courses.first.id;
-                  _selectedCourseName = courses.first.name;
-                });
-              }
-            });
+            // 如果当前选择的课程不在新的学期中
+            if (!_isInitializing) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() {
+                    _selectedCourseId = courses.first.id;
+                    _selectedCourseName = courses.first.name;
+                  });
+                }
+              });
+            }
           } else if (_selectedCourseId == null && courses.isNotEmpty) {
             // 如果没有选择课程，选择第一个
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -900,6 +920,13 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   }
 
   void _showSemesterPicker(bool isDarkMode) {
+    final selectedSemester = ref.read(selectedSemesterProvider);
+    final availableSemesters = ref.read(availableSemestersProvider);
+    final currentTheme = ref.read(selectedCustomThemeProvider);
+    final themeColor = currentTheme.colorList.isNotEmpty == true
+        ? currentTheme.colorList[0]
+        : Theme.of(context).primaryColor;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -911,8 +938,20 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // 拖拽指示器
             Container(
-              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(top: 8),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // 标题
+            Padding(
+              padding: const EdgeInsets.all(20),
               child: Text(
                 '选择学期',
                 style: TextStyle(
@@ -922,29 +961,42 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 ),
               ),
             ),
-            ...ref
-                .read(availableSemestersProvider)
-                .map(
-                  (semesterInfo) => ListTile(
+
+            // 学期列表
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: availableSemesters.length,
+                itemBuilder: (context, index) {
+                  final semester = availableSemesters[index];
+                  final isSelected =
+                      semester.xnm == selectedSemester.xnm &&
+                      semester.xqm == selectedSemester.xqm;
+
+                  return ListTile(
                     title: Text(
-                      semesterInfo.displayName,
+                      semester.displayName,
                       style: TextStyle(
                         color: isDarkMode ? Colors.white : Colors.black,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
-                    selected:
-                        semesterInfo == ref.read(selectedSemesterProvider),
-                    selectedTileColor: Theme.of(
-                      context,
-                    ).primaryColor.withOpacity(0.1),
+                    trailing: isSelected
+                        ? Icon(Icons.check, color: themeColor)
+                        : null,
                     onTap: () {
                       ref.read(selectedSemesterProvider.notifier).state =
-                          semesterInfo;
+                          semester;
                       Navigator.pop(context);
                     },
-                  ),
-                ),
-            const SizedBox(height: 16),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 20),
           ],
         ),
       ),
