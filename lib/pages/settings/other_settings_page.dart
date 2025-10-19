@@ -190,7 +190,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                       // TODO: 实现推送通知开关
                     },
                     contentPadding: EdgeInsets.zero,
-                    activeColor: activeColor,
+                    activeThumbColor: activeColor,
                   ),
 
                   SwitchListTile(
@@ -211,7 +211,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                       // TODO: 实现课程提醒开关
                     },
                     contentPadding: EdgeInsets.zero,
-                    activeColor: activeColor,
+                    activeThumbColor: activeColor,
                   ),
                 ],
               ),
@@ -389,7 +389,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                       // TODO: 实现WiFi下载限制
                     },
                     contentPadding: EdgeInsets.zero,
-                    activeColor: activeColor,
+                    activeThumbColor: activeColor,
                   ),
 
                   ListTile(
@@ -573,7 +573,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                       // TODO: 实现灵动岛功能
                     },
                     contentPadding: EdgeInsets.zero,
-                    activeColor: activeColor,
+                    activeThumbColor: activeColor,
                   ),
 
                   SwitchListTile(
@@ -594,7 +594,7 @@ class _OtherSettingsPageState extends ConsumerState<OtherSettingsPage> {
                       // TODO: 实现自动续期签到服务
                     },
                     contentPadding: EdgeInsets.zero,
-                    activeColor: activeColor,
+                    activeThumbColor: activeColor,
                   ),
                 ],
               ),

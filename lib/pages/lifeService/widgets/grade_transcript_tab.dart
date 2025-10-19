@@ -9,7 +9,6 @@ import '../../../core/models/grade_models.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/services/preview_service.dart';
 import '../../../core/services/permission_service.dart';
-import '../../../core/widgets/theme_aware_dialog.dart';
 
 /// 成绩单Tab页
 class GradeTranscriptTab extends ConsumerStatefulWidget {

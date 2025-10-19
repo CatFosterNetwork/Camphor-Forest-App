@@ -194,7 +194,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               );
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -222,7 +222,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               .updateConfigItem('forest-showBBS', value);
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -255,7 +255,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               );
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -285,7 +285,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               .updateConfigItem('forest-showFeedback', value);
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -370,7 +370,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               .updateConfigItem('index-showTodo', value);
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -403,7 +403,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               );
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -431,7 +431,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               .updateConfigItem('index-showExams', value);
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -459,7 +459,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               .updateConfigItem('index-showExpense', value);
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),
@@ -487,7 +487,7 @@ class IndexSettingsPage extends ConsumerWidget {
                               .updateConfigItem('index-showGrades', value);
                         },
                         contentPadding: EdgeInsets.zero,
-                        activeColor: activeColor,
+                        activeThumbColor: activeColor,
                       );
                     },
                   ),

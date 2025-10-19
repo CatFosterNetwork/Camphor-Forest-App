@@ -320,7 +320,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                             // TODO: 实现数据统计开关
                           },
                           contentPadding: EdgeInsets.zero,
-                          activeColor: activeColor,
+                          activeThumbColor: activeColor,
                         ),
 
                         SwitchListTile(
@@ -343,7 +343,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                             // TODO: 实现崩溃报告开关
                           },
                           contentPadding: EdgeInsets.zero,
-                          activeColor: activeColor,
+                          activeThumbColor: activeColor,
                         ),
                       ],
                     ),

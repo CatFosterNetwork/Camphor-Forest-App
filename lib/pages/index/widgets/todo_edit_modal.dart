@@ -626,7 +626,7 @@ class _TodoEditModalState extends ConsumerState<TodoEditModal>
                     _currentTodo = _currentTodo.copyWith(important: value);
                   });
                 },
-                activeColor: Colors.orange,
+                activeThumbColor: Colors.orange,
                 activeTrackColor: Colors.orange.withAlpha(76),
               ),
             ],

@@ -459,7 +459,7 @@ class _AddCustomCourseDialogState extends ConsumerState<AddCustomCourseDialog> {
         ),
         const SizedBox(height: 4),
         DropdownButtonFormField<int>(
-          value: value,
+          initialValue: value,
           onChanged: onChanged,
           style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
           decoration: InputDecoration(
