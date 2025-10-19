@@ -57,6 +57,9 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   final List<bmf_map.BMFPolyline> _polylines = [];
   final List<bmf_map.BMFMarker> _busStopMarkers = [];
   final List<bmf_map.BMFMarker> _busMarkers = [];
+  final Map<String, bmf_map.BMFMarker> _busMarkersMap =
+      {}; // 车辆ID -> Marker映射，用于增量更新
+  final Map<String, double> _busDirectionMap = {}; // 车辆ID -> 角度映射，用于检测角度变化
   final List<bmf_map.BMFMarker> _locationMarkers = [];
   final List<bmf_map.BMFText> _stationLabels = []; // 存储站点名称标签
 
@@ -76,6 +79,8 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   // 磁力计传感器监听（获取设备朝向）
   StreamSubscription<MagnetometerEvent>? _magnetometerSubscription;
   double _currentDeviceHeading = 0.0;
+  bool _hasMagnetometerData = false; // 磁力计是否已有有效数据
+  int _lastMagnetometerUpdateMs = 0; // 磁力计节流：上次更新时间戳
 
   // 最后的GPS位置（用于磁力计更新时保持位置）
   Position? _lastGpsPosition;
@@ -94,6 +99,8 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   static const double _initialZoomLevel = 16.0; // 初始缩放级别
   static const double _baseScaleFactor = 1.08; // 缩放因子（每级放大8%，适中变化）
   double _currentZoomLevel = _initialZoomLevel;
+  Timer? _zoomDebounceTimer; // 缩放防抖定时器
+  double? _pendingZoomLevel; // 待处理的缩放级别
 
   // Text Label缩放相关参数
   static const double _baseLabelFontSize = 12.0; // 基础字体大小
@@ -562,11 +569,23 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
                   );
                   _currentZoomLevel = zoomLevel.toDouble();
 
-                  // 动态调整所有marker的尺寸
-                  await _updateMarkersScale();
+                  // 使用防抖优化：延迟执行缩放更新，避免连续缩放时重复更新
+                  _pendingZoomLevel = _currentZoomLevel;
+                  _zoomDebounceTimer?.cancel();
+                  _zoomDebounceTimer = Timer(
+                    const Duration(milliseconds: 300),
+                    () async {
+                      if (_pendingZoomLevel != null) {
+                        // 动态调整所有marker的尺寸
+                        await _updateMarkersScale();
 
-                  // 🏷️ 动态调整所有标签的样式和位置
-                  await _updateLabelsScale();
+                        // 🏷️ 动态调整所有标签的样式和位置
+                        await _updateLabelsScale();
+
+                        _pendingZoomLevel = null;
+                      }
+                    },
+                  );
                 }
               } catch (e) {
                 AppLogger.debug('💥 [缩放监听异常] $e');
@@ -1196,79 +1215,148 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   ) async {
     if (_baiduMapController == null) return;
 
-    // 清除之前的车辆标注
-    for (final marker in _busMarkers) {
-      await _baiduMapController!.removeMarker(marker);
-    }
-    _busMarkers.clear();
-
-    if (busData.isEmpty) return;
-
     // 🚌 根据选中的线路过滤车辆数据
     List<BusData> filteredBusData;
     if (selectedLineIndex != null) {
-      // 只显示选中线路的车辆
       final selectedLine = busLines[selectedLineIndex!];
       filteredBusData = busData
           .where((bus) => bus.lineId == selectedLine.id)
           .toList();
-      AppLogger.debug(
-        '🚌 [车辆过滤] 选中线路: ${selectedLine.name}, 过滤后车辆数: ${filteredBusData.length}/${busData.length}',
-      );
     } else {
-      // 显示所有车辆
       filteredBusData = busData;
-      AppLogger.debug('🚌 [车辆过滤] 显示所有线路车辆: ${filteredBusData.length}');
     }
 
-    if (filteredBusData.isEmpty) return;
+    // 🎯 增量更新：计算需要添加、更新、删除的车辆
+    final newBusIds = filteredBusData.map((bus) => 'bus_${bus.id}').toSet();
+    final existingBusIds = _busMarkersMap.keys.toSet();
 
-    List<bmf_map.BMFMarker> markers = [];
+    // 1️⃣ 删除不再存在的车辆
+    final toRemove = existingBusIds.difference(newBusIds);
+    if (toRemove.isNotEmpty) {
+      final removeFutures = <Future<void>>[];
+      for (final busId in toRemove) {
+        final marker = _busMarkersMap[busId];
+        if (marker != null) {
+          removeFutures.add(_baiduMapController!.removeMarker(marker));
+          _busMarkers.remove(marker);
+        }
+        _busMarkersMap.remove(busId);
+        _busDirectionMap.remove(busId); // 同时清除角度记录
+      }
+      await Future.wait(removeFutures);
+      AppLogger.debug('🗑️ [车辆删除] 移除 ${toRemove.length} 辆车');
+    }
 
-    // 添加新的车辆标注
+    // 2️⃣ 更新现有车辆或添加新车辆
+    final updateFutures = <Future<void>>[];
+    final addFutures = <Future<void>>[];
+    final recreateFutures = <Future<void>>[];
+    int updateCount = 0;
+    int addCount = 0;
+    int recreateCount = 0;
+
     for (final bus in filteredBusData) {
-      // 找到对应的线路，用于显示线路信息
-      final line = busLines.firstWhere(
-        (line) => line.id == bus.lineId,
-        orElse: () => busLines.first,
-      );
-
+      final busId = 'bus_${bus.id}';
+      final existingMarker = _busMarkersMap[busId];
       final coordinate = bmf_base.BMFCoordinate(bus.latitude, bus.longitude);
+      final lastDirection = _busDirectionMap[busId];
 
-      // 根据线路ID获取对应的校车图标
-      final iconPath = BusIconUtils.getBusIconPath(bus.lineId);
+      if (existingMarker != null) {
+        // 检查角度是否有显著变化（超过5度）
+        final directionChanged =
+            lastDirection == null ||
+            ((-bus.direction) - lastDirection).abs() > 5.0;
 
-      final marker = bmf_map.BMFMarker.icon(
-        position: coordinate, // 指定车辆的经纬度坐标
-        identifier: 'bus_${bus.id}',
-        icon: iconPath, // 使用线路特定的图标
-        title: '${line.name} - 车辆${bus.id}', // 显示线路和车辆信息
-        subtitle: '速度: ${bus.speed.toStringAsFixed(1)} km/h', // 添加速度信息
-        rotation: -bus.direction, // 校正校车方向角度
-        centerOffset: bmf_base.BMFPoint(0, -12), // 调整标记点位置
-        zIndex: 25, // 车辆标记层级高于站点
-        // 缩放相关设置
-        isPerspective: false, // 🚌 禁用透视效果，保持固定大小不随地图缩放
-        scaleX: 0.4, // 🚌 车辆图标固定大小
-        scaleY: 0.4, // 🚌 车辆图标固定大小
-        // 锚点设置：图标中心对准坐标点
-        anchorX: 0.5, // 水平居中
-        anchorY: 0.5, // 垂直居中
-        enabled: false,
-        canShowCallout: false,
-      );
+        if (directionChanged) {
+          // 🔄 角度变化较大，需要重新创建marker
+          final line = busLines.firstWhere(
+            (line) => line.id == bus.lineId,
+            orElse: () => busLines.first,
+          );
+          final iconPath = BusIconUtils.getBusIconPath(bus.lineId);
 
-      markers.add(marker);
-      _busMarkers.add(marker);
+          recreateFutures.add(
+            _baiduMapController!.removeMarker(existingMarker).then((_) async {
+              final newMarker = bmf_map.BMFMarker.icon(
+                position: coordinate,
+                identifier: busId,
+                icon: iconPath,
+                title: '${line.name} - 车辆${bus.id}',
+                subtitle: '速度: ${bus.speed.toStringAsFixed(1)} km/h',
+                rotation: -bus.direction,
+                centerOffset: bmf_base.BMFPoint(0, -12),
+                zIndex: 25,
+                isPerspective: false,
+                scaleX: 0.4,
+                scaleY: 0.4,
+                anchorX: 0.5,
+                anchorY: 0.5,
+                enabled: false,
+                canShowCallout: false,
+              );
+              await _baiduMapController!.addMarker(newMarker);
+              _busMarkersMap[busId] = newMarker;
+              _busDirectionMap[busId] = -bus.direction;
+              final index = _busMarkers.indexOf(existingMarker);
+              if (index != -1) {
+                _busMarkers[index] = newMarker;
+              }
+            }),
+          );
+          recreateCount++;
+        } else {
+          // ✏️ 只更新位置（角度变化不大）
+          updateFutures.add(existingMarker.updatePosition(coordinate));
+          updateCount++;
+        }
+      } else {
+        // ➕ 添加新车辆
+        final line = busLines.firstWhere(
+          (line) => line.id == bus.lineId,
+          orElse: () => busLines.first,
+        );
+        final iconPath = BusIconUtils.getBusIconPath(bus.lineId);
+
+        final marker = bmf_map.BMFMarker.icon(
+          position: coordinate,
+          identifier: busId,
+          icon: iconPath,
+          title: '${line.name} - 车辆${bus.id}',
+          subtitle: '速度: ${bus.speed.toStringAsFixed(1)} km/h',
+          rotation: -bus.direction,
+          centerOffset: bmf_base.BMFPoint(0, -12),
+          zIndex: 25,
+          isPerspective: false,
+          scaleX: 0.4,
+          scaleY: 0.4,
+          anchorX: 0.5,
+          anchorY: 0.5,
+          enabled: false,
+          canShowCallout: false,
+        );
+
+        addFutures.add(
+          _baiduMapController!.addMarker(marker).then((_) {
+            _busMarkers.add(marker);
+            _busMarkersMap[busId] = marker;
+            _busDirectionMap[busId] = -bus.direction;
+          }),
+        );
+        addCount++;
+      }
     }
 
-    // 优化批量添加性能：并行处理而非串行等待
-    final List<Future<void>> addMarkerFutures = markers
-        .map((marker) => _baiduMapController!.addMarker(marker))
-        .toList();
+    // 并行执行所有更新、重建和添加操作
+    await Future.wait([...updateFutures, ...recreateFutures, ...addFutures]);
 
-    // 并行执行所有添加操作
-    await Future.wait(addMarkerFutures);
+    if (updateCount > 0 ||
+        addCount > 0 ||
+        recreateCount > 0 ||
+        toRemove.isNotEmpty) {
+      AppLogger.debug(
+        '🚌 [车辆更新] 更新: $updateCount 辆, 重建: $recreateCount 辆, 新增: $addCount 辆, 删除: ${toRemove.length} 辆',
+      );
+    }
   }
 
   // Apple地图更新车辆标注
@@ -1364,61 +1452,100 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     if (_baiduMapController == null) return;
 
     try {
-      // 清除折线
-      for (final polyline in _polylines) {
-        try {
-          await _baiduMapController!.removeOverlay(polyline.id);
-        } catch (e) {
-          AppLogger.debug('移除折线覆盖物失败: ${polyline.id}, 错误: $e');
-        }
-      }
+      // 创建副本并清空原列表，避免并发修改
+      final polylinesToRemove = List<bmf_map.BMFPolyline>.from(_polylines);
+      final busStopMarkersToRemove = List<bmf_map.BMFMarker>.from(
+        _busStopMarkers,
+      );
+      final busMarkersToRemove = List<bmf_map.BMFMarker>.from(_busMarkers);
+      final locationMarkersToRemove = List<bmf_map.BMFMarker>.from(
+        _locationMarkers,
+      );
+      final stationLabelsToRemove = List<bmf_map.BMFText>.from(_stationLabels);
+
       _polylines.clear();
+      _busStopMarkers.clear();
+      _busMarkers.clear();
+      _busMarkersMap.clear(); // 清空车辆映射表
+      _busDirectionMap.clear(); // 清空角度映射表
+      _locationMarkers.clear();
+      _stationLabels.clear();
+
+      // ⚡ 优化：并行删除所有覆盖物，提升清理速度
+      final removeFutures = <Future<void>>[];
+
+      // 清除折线
+      for (final polyline in polylinesToRemove) {
+        removeFutures.add(
+          _baiduMapController!
+              .removeOverlay(polyline.id)
+              .then((_) {})
+              .catchError((e) {
+                AppLogger.debug('移除折线覆盖物失败: ${polyline.id}, 错误: $e');
+                return null;
+              }),
+        );
+      }
 
       // 清除站点标注
-      for (final marker in _busStopMarkers) {
-        try {
-          await _baiduMapController!.removeMarker(marker);
-        } catch (e) {
-          AppLogger.debug('移除站点标注失败: 错误: $e');
-        }
+      for (final marker in busStopMarkersToRemove) {
+        removeFutures.add(
+          _baiduMapController!.removeMarker(marker).then((_) {}).catchError((
+            e,
+          ) {
+            AppLogger.debug('移除站点标注失败: 错误: $e');
+            return null;
+          }),
+        );
       }
-      _busStopMarkers.clear();
 
       // 清除车辆标注
-      for (final marker in _busMarkers) {
-        try {
-          await _baiduMapController!.removeMarker(marker);
-        } catch (e) {
-          AppLogger.debug('移除车辆标注失败: 错误: $e');
-        }
+      for (final marker in busMarkersToRemove) {
+        removeFutures.add(
+          _baiduMapController!.removeMarker(marker).then((_) {}).catchError((
+            e,
+          ) {
+            AppLogger.debug('移除车辆标注失败: 错误: $e');
+            return null;
+          }),
+        );
       }
-      _busMarkers.clear();
 
       // 清除位置标注
-      for (final marker in _locationMarkers) {
-        try {
-          await _baiduMapController!.removeMarker(marker);
-        } catch (e) {
-          AppLogger.debug('移除位置标注失败: 错误: $e');
-        }
+      for (final marker in locationMarkersToRemove) {
+        removeFutures.add(
+          _baiduMapController!.removeMarker(marker).then((_) {}).catchError((
+            e,
+          ) {
+            AppLogger.debug('移除位置标注失败: 错误: $e');
+            return null;
+          }),
+        );
       }
-      _locationMarkers.clear();
 
       // 清除站点名称标签
-      for (final textLabel in _stationLabels) {
-        try {
-          await _baiduMapController!.removeOverlay(textLabel.id);
-        } catch (e) {
-          AppLogger.debug('移除站点标签失败: 错误: $e');
-        }
+      for (final textLabel in stationLabelsToRemove) {
+        removeFutures.add(
+          _baiduMapController!
+              .removeOverlay(textLabel.id)
+              .then((_) {})
+              .catchError((e) {
+                AppLogger.debug('移除站点标签失败: 错误: $e');
+                return null;
+              }),
+        );
       }
-      _stationLabels.clear();
+
+      // 并行执行所有删除操作
+      await Future.wait(removeFutures, eagerError: false);
     } catch (e) {
       AppLogger.debug('清理地图覆盖物时出现异常: $e');
       // 即使出现异常，也要清理本地列表
       _polylines.clear();
       _busStopMarkers.clear();
       _busMarkers.clear();
+      _busMarkersMap.clear(); // 清空车辆映射表
+      _busDirectionMap.clear(); // 清空角度映射表
       _locationMarkers.clear();
       _stationLabels.clear();
     }
@@ -1737,6 +1864,8 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       _polylines.clear();
       _busStopMarkers.clear();
       _busMarkers.clear();
+      _busMarkersMap.clear(); // 清空车辆映射表
+      _busDirectionMap.clear(); // 清空角度映射表
       _locationMarkers.clear();
       _stationLabels.clear();
 
@@ -2478,10 +2607,11 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
     if (_baiduMapController == null) return;
 
     // 清除之前的位置标注
-    for (final marker in _locationMarkers) {
+    final markersToRemove = List<bmf_map.BMFMarker>.from(_locationMarkers);
+    _locationMarkers.clear();
+    for (final marker in markersToRemove) {
       await _baiduMapController!.removeMarker(marker);
     }
-    _locationMarkers.clear();
 
     // 使用百度官方标点方法创建位置标记点
     final coordinate = bmf_base.BMFCoordinate(
@@ -2783,7 +2913,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
         timeLimit: Duration(seconds: 30), // 30秒超时
       );
 
-      AppLogger.debug('🔄 [位置流] 开始监听位置变化（每秒更新）...');
+      AppLogger.debug('🔄 [位置流] 开始监听位置变化');
       _positionStreamSubscription =
           Geolocator.getPositionStream(
             locationSettings: locationSettings,
@@ -2823,6 +2953,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       if (_magnetometerSubscription != null) {
         await _magnetometerSubscription!.cancel();
         _magnetometerSubscription = null;
+        _hasMagnetometerData = false; // 重置磁力计数据标志
         AppLogger.debug('✅ [停止传感器] 磁力计传感器已停止');
       }
 
@@ -2839,6 +2970,13 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
       _magnetometerSubscription = magnetometerEventStream().listen(
         (MagnetometerEvent event) {
+          // 100ms 更新一次（每秒10次）
+          final nowMs = DateTime.now().millisecondsSinceEpoch;
+          if (nowMs - _lastMagnetometerUpdateMs < 100) {
+            return; // 跳过高频更新
+          }
+          _lastMagnetometerUpdateMs = nowMs;
+
           // 计算设备朝向角度（相对于磁北）
           double heading = math.atan2(event.y, event.x) * 180 / math.pi;
 
@@ -2858,6 +2996,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
           // 平滑处理，避免朝向跳动太频繁
           if ((heading - _currentDeviceHeading).abs() > 1.0) {
             _currentDeviceHeading = heading;
+            _hasMagnetometerData = true; // 标记已有有效数据
             AppLogger.debug('🧭 [设备朝向] 磁力计朝向: ${heading.toStringAsFixed(1)}°');
 
             // 🧭 磁力计更新时也更新地图上的用户位置朝向
@@ -2884,8 +3023,7 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
       AppLogger.debug(
         '📍 [位置更新] 新位置: 纬度=${position.latitude.toStringAsFixed(6)}, '
         '经度=${position.longitude.toStringAsFixed(6)}, '
-        '精度=${position.accuracy.toStringAsFixed(1)}米, '
-        '移动方向=${position.heading.toStringAsFixed(1)}°',
+        '精度=${position.accuracy.toStringAsFixed(1)}米',
       );
 
       // 针对不同平台更新位置
@@ -2896,19 +3034,37 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
           position.longitude,
         );
 
+        // 🧭 选择朝向：
+        // 1. 如果设备在移动（速度>1m/s），优先使用GPS朝向（更准确）
+        // 2. 如果设备静止或慢速移动，使用磁力计朝向（静止时GPS朝向无效）
+        // 3. 如果磁力计未初始化，使用GPS朝向
+        final isMoving = position.speed > 1.0; // 速度大于1m/s算移动
+        final useGpsHeading = isMoving || !_hasMagnetometerData;
+
+        final effectiveHeading = useGpsHeading
+            ? position.heading
+            : _currentDeviceHeading;
+
+        AppLogger.debug(
+          '🧭 [朝向选择] GPS朝向=${position.heading.toStringAsFixed(1)}°, '
+          '磁力计朝向=${_currentDeviceHeading.toStringAsFixed(1)}°, '
+          '速度=${position.speed.toStringAsFixed(2)}m/s, '
+          '使用=${useGpsHeading ? "GPS" : "磁力计"}(${effectiveHeading.toStringAsFixed(1)}°)',
+        );
+
         // 创建BMFLocation对象，包含移动方向
         final bmfLocation = bmf_map.BMFLocation(
           coordinate: gcj02Coordinate,
           altitude: position.altitude,
-          course: position.heading, // 🧭 使用处理后的有效朝向
+          course: effectiveHeading, // 🧭 使用磁力计朝向
           speed: position.speed,
           timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
         );
 
         // 创建设备朝向对象（罗盘方向）
         final bmfHeading = bmf_map.BMFHeading(
-          trueHeading: position.heading, // 🧭 设备朝向（真北方向）
-          magneticHeading: position.heading, // 磁北方向（简化处理）
+          trueHeading: effectiveHeading, // 🧭 设备朝向（使用磁力计）
+          magneticHeading: effectiveHeading, // 🧭 磁北方向（使用磁力计）
           headingAccuracy: 5.0, // 朝向精度
           timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
         );
@@ -3228,14 +3384,15 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
   Future<void> _clearStationLabels() async {
     if (_stationLabels.isNotEmpty) {
       AppLogger.debug('🧹 [清理标签] 清除之前的 ${_stationLabels.length} 个站点标签...');
-      for (final textLabel in _stationLabels) {
+      final labelsToRemove = List<bmf_map.BMFText>.from(_stationLabels);
+      _stationLabels.clear();
+      for (final textLabel in labelsToRemove) {
         try {
           await _baiduMapController!.removeOverlay(textLabel.id);
         } catch (e) {
           AppLogger.debug('💥 [清理失败] 移除标签失败: $e');
         }
       }
-      _stationLabels.clear();
     }
   }
 
@@ -3647,6 +3804,9 @@ class _SchoolNavigationScreenState extends ConsumerState<SchoolNavigationScreen>
 
     // 取消磁力计监听
     _magnetometerSubscription?.cancel();
+
+    // 取消缩放防抖定时器
+    _zoomDebounceTimer?.cancel();
 
     // 清理搜索控制器
     _searchController.dispose();
