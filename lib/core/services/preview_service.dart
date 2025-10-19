@@ -1,14 +1,16 @@
 // lib/core/services/preview_service.dart
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gal/gal.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:camphor_forest/core/services/toast_service.dart';
 
 import '../../core/utils/app_logger.dart';
-import 'package:camphor_forest/core/services/toast_service.dart';
 import 'permission_service.dart';
-import 'package:path_provider/path_provider.dart';
 // photo_view dependency removed - using simple InteractiveViewer
 
 /// 预览服务 - 用于显示和保存图片预览
@@ -191,6 +193,9 @@ class PreviewService {
     Uint8List imageData,
     String title,
   ) async {
+    File? tempFile;
+    bool progressDialogVisible = false;
+
     try {
       // 使用全局权限管理器请求存储权限
       final result = await PermissionService.requestStoragePermission(
@@ -198,38 +203,51 @@ class PreviewService {
         showRationale: true,
       );
       if (!result.isGranted) {
-        _showSnackBar(
+        PermissionService.showErrorSnackBar(
           context,
-          result.errorMessage ?? '需要存储权限才能保存图片',
-          isError: true,
+          result.errorMessage ?? '需要存储权限才能保存图片到相册',
         );
         return;
       }
 
-      // 获取保存路径
-      Directory? directory;
-      if (Platform.isAndroid) {
-        directory = Directory('/storage/emulated/0/Download');
-      } else if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
+      PermissionService.showSaveProgressDialog(context, '正在保存图片...');
+      progressDialogVisible = true;
+
+      final tempDir = await getTemporaryDirectory();
+      final sanitizedTitle = title
+          .replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')
+          .replaceAll(RegExp(r'\s+'), '_')
+          .replaceAll(RegExp(r'_+'), '_')
+          .replaceAll(RegExp(r'^_+|_+$'), '');
+      final fileName =
+          '${sanitizedTitle.isEmpty ? 'preview' : sanitizedTitle}_${DateTime.now().millisecondsSinceEpoch}.png';
+
+      tempFile = File('${tempDir.path}/$fileName');
+      await tempFile.writeAsBytes(imageData);
+
+      await Gal.putImage(tempFile.path);
+
+      if (context.mounted) {
+        Navigator.of(context).pop(); // 关闭进度对话框
+        progressDialogVisible = false;
+        PermissionService.showSuccessSnackBar(context, '图片已成功保存到相册');
       }
-
-      if (directory == null || !directory.existsSync()) {
-        directory = await getExternalStorageDirectory();
-      }
-
-      if (directory == null) {
-        throw Exception('无法找到保存路径');
-      }
-
-      // 保存文件
-      final fileName = '${title}_${DateTime.now().millisecondsSinceEpoch}.png';
-      final file = File('${directory.path}/$fileName');
-      await file.writeAsBytes(imageData);
-
-      _showSnackBar(context, '保存成功: $fileName');
     } catch (e) {
-      _showSnackBar(context, '保存失败: $e', isError: true);
+      AppLogger.debug('保存图片到相册失败: $e');
+      if (progressDialogVisible && context.mounted) {
+        Navigator.of(context).pop(); // 确保关闭进度对话框
+        progressDialogVisible = false;
+      }
+      if (context.mounted) {
+        PermissionService.showErrorSnackBar(context, '保存失败: $e');
+      }
+    } finally {
+      if (tempFile != null && await tempFile.exists()) {
+        await tempFile.delete();
+      }
+      if (progressDialogVisible && context.mounted) {
+        Navigator.of(context).pop();
+      }
     }
   }
 
