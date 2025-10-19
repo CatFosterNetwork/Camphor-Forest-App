@@ -251,15 +251,24 @@ class CourseDetailModal extends StatelessWidget {
                     // 显示课程属性：优先显示API的kcxz，然后是自定义的courseType
                     // 只有当属性不为空且不是纯空格时才显示
                     if (course.kcxz != null && course.kcxz!.trim().isNotEmpty)
-                      _buildCourseAttributeItem('课程性质', course.kcxz!.trim()),
+                      _buildCourseAttributeItem(
+                        '课程性质',
+                        course.kcxz!.trim(),
+                        showColor: true, // 课程性质显示颜色
+                      ),
                     if (course.kclb != null && course.kclb!.trim().isNotEmpty)
-                      _buildCourseAttributeItem('课程类别', course.kclb!.trim()),
+                      _buildCourseAttributeItem(
+                        '课程类别',
+                        course.kclb!.trim(),
+                        showColor: false, // 课程类别不显示颜色
+                      ),
                     if (course.courseType != null &&
                         course.courseType!.trim().isNotEmpty &&
                         (course.kcxz == null || course.kcxz!.trim().isEmpty))
                       _buildCourseAttributeItem(
                         '课程类型',
                         course.courseType!.trim(),
+                        showColor: true, // 课程类型显示颜色
                       ),
                     if (course.classroom.isNotEmpty)
                       _buildCompactDetailItem(
@@ -307,9 +316,12 @@ class CourseDetailModal extends StatelessWidget {
     );
   }
 
-  /// 构建课程属性项（带颜色，与其他详情项UI一致）
-  Widget _buildCourseAttributeItem(String label, String value) {
-    final typeColor = _getCourseAttributeColor(value);
+  /// 构建课程属性项
+  Widget _buildCourseAttributeItem(
+    String label,
+    String value, {
+    bool showColor = true,
+  }) {
     // 在深色模式下使用更明亮的图标颜色
     final iconColor = isDarkMode ? Colors.blue.shade300 : courseColor;
     final iconBackgroundColor = isDarkMode
@@ -344,28 +356,39 @@ class CourseDetailModal extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: typeColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: typeColor.withOpacity(0.3),
-                      width: 1,
+                if (showColor)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
                     ),
-                  ),
-                  child: Text(
+                    decoration: BoxDecoration(
+                      color: _getCourseAttributeColor(value).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _getCourseAttributeColor(value).withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: _getCourseAttributeColor(value),
+                      ),
+                    ),
+                  )
+                else
+                  // 不显示颜色时，使用普通文本样式
+                  Text(
                     value,
                     style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: typeColor,
+                      fontSize: 14,
+                      color: isDarkMode ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -374,10 +397,10 @@ class CourseDetailModal extends StatelessWidget {
     );
   }
 
-  /// 获取课程属性对应的颜色（简化版本：只有必修课显示红色）
+  /// 获取课程属性对应的颜色
   Color _getCourseAttributeColor(String attribute) {
     // 检查是否为必修课相关的属性
-    final requiredKeywords = ['必修', '实践', '专必', '专业必修', '专业发展'];
+    final requiredKeywords = ['必', '实践'];
     if (requiredKeywords.any((keyword) => attribute.contains(keyword))) {
       return const Color(0xFFE53E3E); // 红色
     }
