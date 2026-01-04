@@ -1,6 +1,6 @@
 // pages/login/login_screen.dart
 
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../core/utils/app_logger.dart';
@@ -17,6 +17,9 @@ import 'package:camphor_forest/core/providers/grade_provider.dart';
 import 'package:camphor_forest/core/services/toast_service.dart';
 import 'package:camphor_forest/core/widgets/theme_aware_scaffold.dart';
 import 'package:camphor_forest/pages/classtable/providers/classtable_providers.dart';
+
+/// 检测是否在 WASM 模式下运行
+const bool kIsRunningWithWasm = bool.fromEnvironment('dart.tool.dart2wasm');
 
 /// 登录页面，提供用户身份验证和交互界面
 ///
@@ -79,17 +82,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final plugin = DeviceInfoPlugin();
       String sysInfo;
-      if (Platform.isAndroid) {
-        final info = await plugin.androidInfo;
+      if (kIsWeb) {
+        final info = await plugin.webBrowserInfo;
         sysInfo =
-            '${info.brand} ${info.model} (Android ${info.version.release})';
-      } else if (Platform.isIOS) {
-        final info = await plugin.iosInfo;
-        sysInfo =
-            '${info.name} ${info.utsname.machine} (iOS ${info.systemVersion})';
+            '${info.browserName.name} (Web${kIsRunningWithWasm ? "/WASM" : "/JS"})';
       } else {
         final info = await plugin.deviceInfo;
-        sysInfo = info.data.toString();
+        // 使用 device_info_plus 的通用方法获取设备信息
+        final data = info.data;
+        if (data.containsKey('brand') && data.containsKey('model')) {
+          // Android
+          sysInfo =
+              '${data['brand']} ${data['model']} (Android ${data['version']?['release'] ?? 'Unknown'})';
+        } else if (data.containsKey('name') &&
+            data.containsKey('systemVersion')) {
+          // iOS
+          sysInfo = '${data['name']} (iOS ${data['systemVersion']})';
+        } else {
+          sysInfo = data.toString();
+        }
       }
       AppLogger.debug('🛠 DeviceInfo: $sysInfo');
       if (!mounted) return;
@@ -510,6 +521,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                // WASM/JS 运行模式指示器
+                if (kIsWeb)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: kIsRunningWithWasm
+                          ? Colors.green.withAlpha(180)
+                          : Colors.orange.withAlpha(180),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          kIsRunningWithWasm ? Icons.bolt : Icons.javascript,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          kIsRunningWithWasm ? 'WASM' : 'JavaScript',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 Text(
                   '设备: ${_system.isEmpty ? '加载中...' : _system}',
                   style: const TextStyle(color: Colors.white54, fontSize: 12),
